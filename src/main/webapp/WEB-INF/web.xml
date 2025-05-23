@@ -10,5 +10,14 @@
 		<welcome-file>index.htm</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
+	
+	<servlet>
+		<servlet-name>CampServlet</servlet-name>
+		<servlet-class>com.lutu.camp.controller.CampServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CampServlet</servlet-name>
+		<url-pattern>/camp/camp.do</url-pattern>
+	</servlet-mapping>
 
 </web-app>

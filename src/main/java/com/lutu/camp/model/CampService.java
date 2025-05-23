@@ -1,4 +1,4 @@
-package com.camp.model;
+package com.lutu.camp.model;
 
 import java.sql.Date;
 import java.util.List;
@@ -36,20 +36,20 @@ public class CampService {
     
     public CampVO addCamp(CampVO campVO) {
 
-        campVO.setOwnerId(campVO.getOwnerId());
-        campVO.setCampName(campVO.getCampName());
-        campVO.setCampContent(campVO.getCampContent());
-        campVO.setCampCity(campVO.getCampCity());
-        campVO.setCampDist(campVO.getCampDist());
-        campVO.setCampAddr(campVO.getCampAddr());
-        campVO.setCampReleaseStatus(campVO.getCampReleaseStatus());
-        campVO.setCampPic1(campVO.getCampPic1());
-        campVO.setCampPic2(campVO.getCampPic2());
-        campVO.setCampPic3(campVO.getCampPic3());
-        campVO.setCampPic4(campVO.getCampPic4());
-        campVO.setCampCommentNumberCount(campVO.getCampCommentNumberCount());
-        campVO.setCampCommentSumScore(campVO.getCampCommentSumScore());
-        campVO.setCampRegDate(campVO.getCampRegDate());
+//        campVO.setOwnerId(campVO.getOwnerId());
+//        campVO.setCampName(campVO.getCampName());
+//        campVO.setCampContent(campVO.getCampContent());
+//        campVO.setCampCity(campVO.getCampCity());
+//        campVO.setCampDist(campVO.getCampDist());
+//        campVO.setCampAddr(campVO.getCampAddr());
+//        campVO.setCampReleaseStatus(campVO.getCampReleaseStatus());
+//        campVO.setCampPic1(campVO.getCampPic1());
+//        campVO.setCampPic2(campVO.getCampPic2());
+//        campVO.setCampPic3(campVO.getCampPic3());
+//        campVO.setCampPic4(campVO.getCampPic4());
+//        campVO.setCampCommentNumberCount(campVO.getCampCommentNumberCount());
+//        campVO.setCampCommentSumScore(campVO.getCampCommentSumScore());
+//        campVO.setCampRegDate(campVO.getCampRegDate());
         dao.insert(campVO);
         return campVO;
     }
@@ -74,8 +74,12 @@ public class CampService {
         return campVO;
     }
     
-    public void deleteCamp(int campId) {
+    public void deleteCamp(Integer campId) {
         dao.delete(campId);
+    }
+    
+    public CampVO getOneCamp(Integer campId) {
+        return dao.getOneCamp(campId);
     }
 
     public List<CampVO> getAll() {
