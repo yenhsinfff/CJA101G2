@@ -35,41 +35,11 @@ public class CampService {
 //    }
     
     public CampVO addCamp(CampVO campVO) {
-
-//        campVO.setOwnerId(campVO.getOwnerId());
-//        campVO.setCampName(campVO.getCampName());
-//        campVO.setCampContent(campVO.getCampContent());
-//        campVO.setCampCity(campVO.getCampCity());
-//        campVO.setCampDist(campVO.getCampDist());
-//        campVO.setCampAddr(campVO.getCampAddr());
-//        campVO.setCampReleaseStatus(campVO.getCampReleaseStatus());
-//        campVO.setCampPic1(campVO.getCampPic1());
-//        campVO.setCampPic2(campVO.getCampPic2());
-//        campVO.setCampPic3(campVO.getCampPic3());
-//        campVO.setCampPic4(campVO.getCampPic4());
-//        campVO.setCampCommentNumberCount(campVO.getCampCommentNumberCount());
-//        campVO.setCampCommentSumScore(campVO.getCampCommentSumScore());
-//        campVO.setCampRegDate(campVO.getCampRegDate());
         dao.insert(campVO);
         return campVO;
     }
     
     public CampVO updateCamp(CampVO campVO) {
-
-        campVO.setOwnerId(campVO.getOwnerId());
-        campVO.setCampName(campVO.getCampName());
-        campVO.setCampContent(campVO.getCampContent());
-        campVO.setCampCity(campVO.getCampCity());
-        campVO.setCampDist(campVO.getCampDist());
-        campVO.setCampAddr(campVO.getCampAddr());
-        campVO.setCampReleaseStatus(campVO.getCampReleaseStatus());
-        campVO.setCampPic1(campVO.getCampPic1());
-        campVO.setCampPic2(campVO.getCampPic2());
-        campVO.setCampPic3(campVO.getCampPic3());
-        campVO.setCampPic4(campVO.getCampPic4());
-        campVO.setCampCommentNumberCount(campVO.getCampCommentNumberCount());
-        campVO.setCampCommentSumScore(campVO.getCampCommentSumScore());
-        campVO.setCampRegDate(campVO.getCampRegDate());
         dao.update(campVO);
         return campVO;
     }
