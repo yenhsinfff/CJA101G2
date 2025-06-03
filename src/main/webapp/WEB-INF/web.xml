@@ -11,6 +11,7 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 	
+<!--	Servlet的對應-->
 	<servlet>
 		<servlet-name>CampServlet</servlet-name>
 		<servlet-class>com.lutu.camp.controller.CampServlet</servlet-class>

@@ -29,19 +29,13 @@ public class CampDAO implements CampDAO_interface {
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/lutudb?serverTimezone=Asia/Taipei";
 	String userid = "root";
-	String passwd = "password";
+	String passwd = "loveyou81905";
 
 	private static final String INSERT_STMT = "INSERT INTO CAMP (OWNER_ID,CAMP_NAME,CAMP_CONTENT,CAMP_CITY,CAMP_DIST,CAMP_ADDR,CAMP_RELEASE_STATUS,CAMP_PIC1,CAMP_PIC2,CAMP_PIC3,CAMP_PIC4,CAMP_COMMENT_NUMBER_COUNT,CAMP_COMMENT_SUM_SCORE,CAMP_REG_DATE) VALUES (?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?)";
-//	private static final String UPDATE_STMT = "UPDATE CAMP SET OWNER_ID=?,CAMP_NAME=?,CAMP_CONTENT=?,CAMP_CITY=?,CAMP_DIST=?,CAMP_ADDR=?,CAMP_RELEASE_STATUS=?,CAMP_PIC1=?,CAMP_PIC2=?,CAMP_PIC3=?,CAMP_PIC4=?,CAMP_COMMENT_NUMBER_COUNT=?,CAMP_COMMENT_SUM_SCORE=?,CAMP_REG_DATE=? WHERE CAMP_ID = ?";
 	private static final String UPDATE_STMT = "UPDATE CAMP SET OWNER_ID=?,CAMP_NAME=?,CAMP_CONTENT=?,CAMP_CITY=?,CAMP_DIST=?,CAMP_ADDR=?,CAMP_RELEASE_STATUS=? WHERE CAMP_ID = ?";
 	private static final String GET_ALL_STMT = "SELECT * FROM CAMP";
 	private static final String GET_ONE_STMT = "SELECT * FROM CAMP WHERE CAMP_ID = ?";
-	// private static final String INSERT_STMT = "SELECT
-	// OWNER_ID,CAMP_NAME,CAMP_CONTENT,CAMP_CITY,CAMP_DIST,CAMP_ADDR,CAMP_RELEASE_STATUS,CAMP_PIC1,CAMP_PIC2,CAMP_PIC3,CAMP_PIC4,CAMP_COMMENT_NUMBER_COUNT,CAMP_COMMENT_SUM_SCORE,CAMP_REG_DATE
-	// FROM emp2 where empno = ?";
 	private static final String DELETE = "DELETE FROM camp where CAMP_ID = ?";
-	// private static final String UPDATE = "UPDATE emp2 set ename=?, job=?,
-	// hiredate=?, sal=?, comm=?, deptno=? where empno = ?";
 
 	@Override
 	public void insert(CampVO campVO) {

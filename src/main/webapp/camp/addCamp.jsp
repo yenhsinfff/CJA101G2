@@ -100,7 +100,7 @@ CampVO campVO = (CampVO) request.getAttribute("campVO");
 		<td>上下架狀態:<font color=red><b>*</b></font></td>
 		<td><select size="1" name="campReleaseStatus">
 			<option value=0>下架
-			<option value=1>上架
+			<option value=1 selected>上架
 		</select></td>
 	</tr>
 	
