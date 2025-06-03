@@ -3,23 +3,22 @@ package com.lutu.campsitetype.model;
 import java.io.Serializable;
 
 public class CampsiteTypeVO implements Serializable{
-	private Integer campsiteId; //營地房間編號
+	private Integer campsiteTypeId; //營地房型編號
 	private Integer campId; //營地編號
 	private String campsiteName; //營地房型名稱
-	private Integer camsitePeople; //可入住人數
-	private byte camsiteNum; //房間數量
-	private Integer camsitePrice; //房間價格
-	private byte[] camsitePic1; //房間照片1
-	private byte[] camsitePic2; //房間照片2
-	private byte[] camsitePic3; //房間照片3
-	private byte[] camsitePic4; //房間照片4
+	private Integer campsitePeople; //可入住人數
+	private byte campsiteNum; //房間數量
+	private Integer campsitePrice; //房間價格
+	private byte[] campsitePic1; //房間照片1
+	private byte[] campsitePic2; //房間照片2
+	private byte[] campsitePic3; //房間照片3
+	private byte[] campsitePic4; //房間照片4
 	
-	
-	public Integer getCampsiteId() {
-		return campsiteId;
+	public Integer getCampsiteTypeId() {
+		return campsiteTypeId;
 	}
-	public void setCampsiteId(Integer campsiteId) {
-		this.campsiteId = campsiteId;
+	public void setCampsiteTypeId(Integer campsiteTypeId) {
+		this.campsiteTypeId = campsiteTypeId;
 	}
 	public Integer getCampId() {
 		return campId;
@@ -33,49 +32,48 @@ public class CampsiteTypeVO implements Serializable{
 	public void setCampsiteName(String campsiteName) {
 		this.campsiteName = campsiteName;
 	}
-	public Integer getCamsitePeople() {
-		return camsitePeople;
+	public Integer getCampsitePeople() {
+		return campsitePeople;
 	}
-	public void setCamsitePeople(Integer camsitePeople) {
-		this.camsitePeople = camsitePeople;
+	public void setCampsitePeople(Integer campsitePeople) {
+		this.campsitePeople = campsitePeople;
 	}
-	public byte getCamsiteNum() {
-		return camsiteNum;
+	public byte getCampsiteNum() {
+		return campsiteNum;
 	}
-	public void setCamsiteNum(byte camsiteNum) {
-		this.camsiteNum = camsiteNum;
+	public void setCampsiteNum(byte campsiteNum) {
+		this.campsiteNum = campsiteNum;
 	}
-	public Integer getCamsitePrice() {
-		return camsitePrice;
+	public Integer getCampsitePrice() {
+		return campsitePrice;
 	}
-	public void setCamsitePrice(Integer camsitePrice) {
-		this.camsitePrice = camsitePrice;
+	public void setCampsitePrice(Integer campsitePrice) {
+		this.campsitePrice = campsitePrice;
 	}
-	public byte[] getCamsitePic1() {
-		return camsitePic1;
+	public byte[] getCampsitePic1() {
+		return campsitePic1;
 	}
-	public void setCamsitePic1(byte[] camsitePic1) {
-		this.camsitePic1 = camsitePic1;
+	public void setCampsitePic1(byte[] campsitePic1) {
+		this.campsitePic1 = campsitePic1;
 	}
-	public byte[] getCamsitePic2() {
-		return camsitePic2;
+	public byte[] getCampsitePic2() {
+		return campsitePic2;
 	}
-	public void setCamsitePic2(byte[] camsitePic2) {
-		this.camsitePic2 = camsitePic2;
+	public void setCampsitePic2(byte[] campsitePic2) {
+		this.campsitePic2 = campsitePic2;
 	}
-	public byte[] getCamsitePic3() {
-		return camsitePic3;
+	public byte[] getCampsitePic3() {
+		return campsitePic3;
 	}
-	public void setCamsitePic3(byte[] camsitePic3) {
-		this.camsitePic3 = camsitePic3;
+	public void setCampsitePic3(byte[] campsitePic3) {
+		this.campsitePic3 = campsitePic3;
 	}
-	public byte[] getCamsitePic4() {
-		return camsitePic4;
+	public byte[] getCampsitePic4() {
+		return campsitePic4;
 	}
-	public void setCamsitePic4(byte[] camsitePic4) {
-		this.camsitePic4 = camsitePic4;
+	public void setCampsitePic4(byte[] campsitePic4) {
+		this.campsitePic4 = campsitePic4;
 	}
-	
 	
 	
 }

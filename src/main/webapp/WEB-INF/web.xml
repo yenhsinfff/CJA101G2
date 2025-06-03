@@ -10,5 +10,15 @@
 		<welcome-file>index.htm</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
+	
+	 <!--註冊servlet類別-->
+	<servlet>
+		<servlet-name>CampsiteTypeServlet</servlet-name>
+		<servlet-class>com.lutu.campsitetype.controller.CampsiteTypeServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CampsiteTypeServlet</servlet-name>
+		<url-pattern>/campsiteType/campsiteType.do</url-pattern>
+	</servlet-mapping>
 
 </web-app>
