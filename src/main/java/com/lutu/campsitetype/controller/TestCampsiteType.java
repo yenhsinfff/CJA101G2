@@ -11,8 +11,6 @@ public class TestCampsiteType {
 	public static void main(String[] args) throws Exception {
 		CampsiteTypeDAO_interface dao = new CampsiteTypeDAO();
 
-		
-		
 		// 新增
 //		
 		byte[] dummyPic = "image bytes".getBytes(); // 模擬圖片資料
