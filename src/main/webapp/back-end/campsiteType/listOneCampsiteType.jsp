@@ -6,6 +6,7 @@
   CampsiteTypeVO campsiteTypeVO = (CampsiteTypeVO) request.getAttribute("campsiteTypeVO"); //EmpServlet.java(Concroller), 存入req的empVO物件
 %>
 
+
 <html>
 <head>
 <title>營地房型資料 - listOneCampsiteType.jsp</title>

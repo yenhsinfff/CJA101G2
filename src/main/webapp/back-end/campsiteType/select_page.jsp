@@ -5,6 +5,7 @@
 <head>
 <title>lutu CampsiteType: Home</title>
 
+
 <style>
   table#table-1 {
 	width: 450px;

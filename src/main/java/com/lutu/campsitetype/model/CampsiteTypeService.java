@@ -11,7 +11,7 @@ public class CampsiteTypeService {
 	}
 
 	public CampsiteTypeVO addCampsiteType(Integer campsiteTypeId, Integer campId, String campsiteName,
-			Integer campsitePeople, byte campsiteNum, Integer campsitePrice, 
+			Integer campsitePeople, Byte campsiteNum, Integer campsitePrice, 
 			byte[] campsitePic1, byte[] campsitePic2, byte[] campsitePic3, byte[] campsitePic4) {
 
 		CampsiteTypeVO campsiteTypeVO = new CampsiteTypeVO();
@@ -32,7 +32,7 @@ public class CampsiteTypeService {
 	}
 
 	public CampsiteTypeVO updateCampsiteType(Integer campsiteTypeId, Integer campId, String campsiteName,
-			Integer campsitePeople, byte campsiteNum, Integer campsitePrice, 
+			Integer campsitePeople, Byte campsiteNum, Integer campsitePrice, 
 			byte[] campsitePic1, byte[] campsitePic2, byte[] campsitePic3, byte[] campsitePic4) {
 
 

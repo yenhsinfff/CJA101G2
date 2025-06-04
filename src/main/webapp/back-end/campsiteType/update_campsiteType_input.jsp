@@ -69,36 +69,38 @@
 <FORM METHOD="post" ACTION="campsiteType.do" name="form1">
 <table>
 	<tr>
-		<td>營地房型編號:<font color=red><b>*</b></font></td>
+		<td>營地房型編號:</td>
 		<td><%=campsiteTypeVO.getCampsiteTypeId()%></td>
 	</tr>
+	
 	<tr>
-		<td>營地編號:<font color=red><b>*</b></font></td>
-		<td><input type="TEXT" name="campId" value="<%=campsiteTypeVO.getCampId()%>" /></td>
+		<td>營地編號:</td>
+		<td><%=campsiteTypeVO.getCampId()%></td>
 	</tr>
+	
 	<tr>
 		<td>營地房型名稱:<font color=red><b>*</b></font></td>
-		<td><input type="TEXT" name="campsiteName" value="<%= (campsiteTypeVO==null)? "超級無敵豪華營地" : campsiteTypeVO.getCampsiteName()%>" size="45"/></td>
+		<td><input type="TEXT" name="campsiteName" value="<%=campsiteTypeVO.getCampsiteName()%>" size="45"/></td>
 	</tr>
 	<tr>
 		<td>可入住人數:<font color=red><b>*</b></font></td>
-		<td><input  type="TEXT" name="campsitePeople" value="<%= (campsiteTypeVO==null)? "22" : campsiteTypeVO.getCampsitePeople()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsitePeople" value="<%=campsiteTypeVO.getCampsitePeople()%>" size="45"/></td>
 	</tr>
 	<tr>
 		<td>房間數量:<font color=red><b>*</b></font></td>
-		<td><input  type="TEXT" name="campsiteTypeNum" value="<%= (campsiteTypeVO==null)? "22" : campsiteTypeVO.getCampsiteNum()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsiteNum" value="<%=campsiteTypeVO.getCampsiteNum()%>" size="45"/></td>
 	</tr>
 	<tr>
 		<td>房間價格:<font color=red><b>*</b></font></td>
-		<td><input  type="TEXT" name="campsiteTypePrice" value="<%= (campsiteTypeVO==null)? "22" : campsiteTypeVO.getCampsitePrice()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsitePrice" value="<%=campsiteTypeVO.getCampsitePrice()%>" size="45"/></td>
 	</tr>
-
 
 
 </table>
 <br>
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="campsiteTypeId" value="<%=campsiteTypeVO.getCampsiteTypeId()%>">
+<input type="hidden" name="campId" value="<%=campsiteTypeVO.getCampId()%>">
 <input type="submit" value="送出修改"></FORM>
 </body>
 

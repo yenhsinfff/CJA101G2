@@ -50,7 +50,7 @@
 <table id="table-1">
 	<tr><td>
 		 <h3>營地房型資料新增 - addCampsiteType.jsp</h3></td><td>
-		 <h4><a href="select_page.jsp"><img src="images/tomcat.png" width="100" height="100" border="0">回首頁</a></h4>
+		 <h4><a href="${pageContext.request.contextPath}/back-end/select_page.jsp"><img src="${pageContext.request.contextPath}/back-end/images/tomcat.png" width="100" height="100" border="0">回首頁</a></h4>
 	</td></tr>
 </table>
 
@@ -86,11 +86,11 @@
 	</tr>
 	<tr>
 		<td>房間數量:</td>
-		<td><input  type="TEXT" name="campsiteTypeNum" value="<%= (campsiteTypeVO==null)? "22" : campsiteTypeVO.getCampsiteNum()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsiteNum" value="<%= (campsiteTypeVO==null)? "22" : campsiteTypeVO.getCampsiteNum()%>" size="45"/></td>
 	</tr>
 	<tr>
 		<td>房間價格:</td>
-		<td><input  type="TEXT" name="campsiteTypePrice" value="<%= (campsiteTypeVO==null)? "22" : campsiteTypeVO.getCampsitePrice()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsitePrice" value="<%= (campsiteTypeVO==null)? "22" : campsiteTypeVO.getCampsitePrice()%>" size="45"/></td>
 	</tr>
 	
 

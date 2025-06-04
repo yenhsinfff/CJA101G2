@@ -33,16 +33,16 @@ public class CampsiteTypeServlet extends HttpServlet {
 			req.setAttribute("errorMsgs", errorMsgs);
 
 			/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 **********************/
-//			String str = req.getParameter("campsiteTypeId");
-//			if (str == null || (str.trim()).length() == 0) {
-//				errorMsgs.add("請輸入房型編號");
-//			}
-//			// Send the use back to the form, if there were errors
-//			if (!errorMsgs.isEmpty()) {
-//				RequestDispatcher failureView = req.getRequestDispatcher("<%= request.getContextPath() %>/back-end/campsiteType/select_page.jsp");
-//				failureView.forward(req, res);
-//				return;// 程式中斷
-//			}
+			String str = req.getParameter("campsiteTypeId");
+			if (str == null || (str.trim()).length() == 0) {
+				errorMsgs.add("請輸入房型編號");
+			}
+			// Send the use back to the form, if there were errors
+			if (!errorMsgs.isEmpty()) {
+				RequestDispatcher failureView = req.getRequestDispatcher("/back-end/campsiteType/select_page.jsp");
+				failureView.forward(req, res);
+				return;// 程式中斷
+			}
 
 			Integer campsiteTypeId = null;
 			try {
@@ -108,35 +108,44 @@ public class CampsiteTypeServlet extends HttpServlet {
 			/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 **********************/
 
 			Integer campsiteTypeId = Integer.valueOf(req.getParameter("campsiteTypeId").trim());
-			
-			
-			Integer campId = Integer.valueOf(req.getParameter("campId").trim());
-			if (campId == null) {
-				errorMsgs.add("請輸入營地編號!");
-			}
+			Integer campId = Integer.valueOf(req.getParameter("campId").trim());			
 
-			String campsiteName = req.getParameter("campsiteName").trim();
+			String campsiteName = req.getParameter("campsiteName");
+			String campsiteNameReg = "^[\u4e00-\u9fa5a-zA-Z0-9_]{3,20}$";
 			if (campsiteName == null || campsiteName.trim().length() == 0) {
-				errorMsgs.add("請輸入營地房型名稱!");
-			}
+				errorMsgs.add("營地房型名稱不得為空");
+			}else if(!campsiteName.trim().matches(campsiteNameReg)) { //以下練習正則(規)表示式(regular-expression)
+				campsiteName = "";
+				errorMsgs.add("營地房型名稱: 只能是中、英文字母、數字和_ , 且長度必需在3到20之間");
+            }
 
-			Integer campsitePeople = Integer.valueOf(req.getParameter("campsitePeople").trim());
-			if (campsitePeople == null) {
-				errorMsgs.add("請輸入可入住人數!");
-			}
+		
+			Integer campsitePeople = null;
+	        try {
+	        	campsitePeople = Integer.valueOf(req.getParameter("campsitePeople").trim());
+	        }catch(NumberFormatException e) {
+	        	campsitePeople = null;
+	        	errorMsgs.add("可入住人數不得為空");
+	        }
 
 
 	        Byte campsiteNum = null;
 	        try {
-	        	campsiteNum = Byte.valueOf(req.getParameter("campsiteTypeNum").trim());
+	        	campsiteNum = Byte.valueOf(req.getParameter("campsiteNum").trim());
 	        }catch(NumberFormatException e) {
-	        	errorMsgs.add("請輸入房間數量!");
+	        	campsiteNum= null;
+	        	errorMsgs.add("房間數量不得為空");
 	        }
-
-			Integer campsitePrice = Integer.valueOf(req.getParameter("campsiteTypePrice").trim());
-			if (campsitePrice == null) {
-				errorMsgs.add("請輸入房間價格!");
-			}
+	        
+	        Integer campsitePrice = null;
+	        try {
+	        	campsitePrice = Integer.valueOf(req.getParameter("campsitePrice").trim());
+	        }catch(NumberFormatException e) {
+	        	campsitePrice= null;
+	        	errorMsgs.add("房型價格不得為空");
+	        }
+		
+			
 			byte[] dummyPic = "fake image bytes".getBytes(); // 模擬圖片資料
 			byte[] campsitePic1 = dummyPic;
 			byte[] campsitePic2 = dummyPic;
@@ -144,8 +153,11 @@ public class CampsiteTypeServlet extends HttpServlet {
 			byte[] campsitePic4 = dummyPic;
 	
 	
+			// 僅放入需要更新的資料
 			CampsiteTypeVO campsiteTypeVO = new CampsiteTypeVO();
+			// 塞入固定資料(沒有被調整的)
 			campsiteTypeVO.setCampsiteTypeId(campsiteTypeId);
+			// 塞入剛剛update_camp_input.jsp的資料
 			campsiteTypeVO.setCampId(campId);
 			campsiteTypeVO.setCampsiteName(campsiteName);
 			campsiteTypeVO.setCampsitePeople(campsitePeople);
@@ -187,10 +199,7 @@ Integer campsiteTypeId = Integer.valueOf(req.getParameter("campsiteTypeId").trim
 			
 			
 			Integer campId = Integer.valueOf(req.getParameter("campId").trim());
-			if (campId == null) {
-				errorMsgs.add("請輸入營地編號!");
-			}
-
+		
 			String campsiteName = req.getParameter("campsiteName").trim();
 			if (campsiteName == null || campsiteName.trim().length() == 0) {
 				errorMsgs.add("請輸入營地房型名稱!");
@@ -206,6 +215,7 @@ Integer campsiteTypeId = Integer.valueOf(req.getParameter("campsiteTypeId").trim
 	        try {
 	        	campsiteNum = Byte.valueOf(req.getParameter("campsiteTypeNum").trim());
 	        }catch(NumberFormatException e) {
+	        	campsiteNum = null;
 	        	errorMsgs.add("請輸入房間數量!");
 	        }
 
@@ -214,6 +224,7 @@ Integer campsiteTypeId = Integer.valueOf(req.getParameter("campsiteTypeId").trim
 				errorMsgs.add("請輸入房間價格!");
 			}
 			byte[] dummyPic = "fake image bytes".getBytes(); // 模擬圖片資料
+			
 			byte[] campsitePic1 = dummyPic;
 			byte[] campsitePic2 = dummyPic;
 			byte[] campsitePic3 = dummyPic;

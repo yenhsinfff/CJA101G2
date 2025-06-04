@@ -20,5 +20,6 @@
 		<servlet-name>CampsiteTypeServlet</servlet-name>
 		<url-pattern>/campsiteType/campsiteType.do</url-pattern>
 	</servlet-mapping>
+	
 
 </web-app>
