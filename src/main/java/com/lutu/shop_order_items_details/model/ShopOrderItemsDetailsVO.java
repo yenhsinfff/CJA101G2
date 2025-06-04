@@ -9,7 +9,7 @@ public class ShopOrderItemsDetailsVO implements Serializable {
 	private Integer prodId; // 商品編號
 	private Integer shopOrderQty; // 購買數量
 	private Integer prodOrderPrice; // 商品售價
-	private byte commentSatis; // 評價滿意度
+	private Byte commentSatis; // 評價滿意度
 	private String commentContent; // 評價內容
 	private LocalDateTime commentDate; // 評價日期
 	private Integer prodColorId; // 商品顏色編號

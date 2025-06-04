@@ -7,21 +7,21 @@ public class ShopOrderVO implements Serializable {
 	private Integer shopOrderId; // 商品訂單編號
 	private Integer memId; // 露營者編號
 	private LocalDateTime shopOrderDate; // 訂單日期
-	private byte shopOrderShipment; // 出貨方式
+	private Byte shopOrderShipment; // 出貨方式
 	private Integer shopOrderShipFee; // 運費
 	private Integer beforeDiscountAmount; // 折價前總金額
 	private String discountCodeId; // 折價券編號
 	private Integer discountAmount; // 折價金額
 	private Integer afterDiscountAmount; // 實付金額
-	private byte shopOrderPayment; // 付款方式
+	private Byte shopOrderPayment; // 付款方式
 	private String orderName; // 訂購人姓名
 	private String orderEmail; // 訂購人郵件
 	private String orderPhone; // 訂購人手機
 	private String orderShippingAddress; // 訂購人地址
 	private String shopOrderNote; // shop_order_note
 	private LocalDateTime shopOrderShipDate; // 出貨日期
-	private byte shopOrderStatus; // 訂單狀態
-	private byte shopReturnApply; // 退貨申請
+	private Byte shopOrderStatus; // 訂單狀態
+	private Byte shopReturnApply; // 退貨申請
 
 	public ShopOrderVO() {
 

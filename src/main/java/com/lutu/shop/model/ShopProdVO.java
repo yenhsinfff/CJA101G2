@@ -3,6 +3,7 @@ package com.lutu.shop.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class ShopProdVO implements Serializable {
@@ -10,22 +11,23 @@ public class ShopProdVO implements Serializable {
 	private Integer prodId; // PK
 	private String prodName;
 	private String prodIntro;
-	private Date prodReleaseDate;
+	private Timestamp prodReleaseDate;
 	private BigDecimal prodDiscount; // 定價折扣
-	private Date prodDiscountStart;
-	private Date prodDiscountEnd;
+	private Timestamp prodDiscountStart;
+	private Timestamp prodDiscountEnd;
 	private Integer prodCommentCount;
 	private Integer prodCommentSumScore;
 	private Integer prodTypeId;
 	private Byte prodStatus; // 0:未上架 1:上架
 	private Byte prodColorOrNot; // 0: 單一顏色 1: 有不同顏色
-
+	
+	
 	public ShopProdVO() {
 		super();
 	}
 
-	public ShopProdVO(Integer prodId, String prodName, String prodIntro, Date prodReleaseDate, BigDecimal prodDiscount,
-			Date prodDiscountStart, Date prodDiscountEnd, Integer prodCommentCount, Integer prodCommentSumScore,
+	public ShopProdVO(Integer prodId, String prodName, String prodIntro, Timestamp prodReleaseDate, BigDecimal prodDiscount,
+			Timestamp prodDiscountStart, Timestamp prodDiscountEnd, Integer prodCommentCount, Integer prodCommentSumScore,
 			Integer prodTypeId, Byte prodStatus, Byte prodColorOrNot) {
 		super();
 		this.prodId = prodId;
@@ -66,11 +68,11 @@ public class ShopProdVO implements Serializable {
 		this.prodIntro = prodIntro;
 	}
 
-	public Date getProdReleaseDate() {
+	public Timestamp getProdReleaseDate() {
 		return prodReleaseDate;
 	}
 
-	public void setProdReleaseDate(Date prodReleaseDate) {
+	public void setProdReleaseDate(Timestamp prodReleaseDate) {
 		this.prodReleaseDate = prodReleaseDate;
 	}
 
@@ -82,19 +84,19 @@ public class ShopProdVO implements Serializable {
 		this.prodDiscount = prodDiscount;
 	}
 
-	public Date getProdDiscountStart() {
+	public Timestamp getProdDiscountStart() {
 		return prodDiscountStart;
 	}
 
-	public void setProdDiscountStart(Date prodDiscountStart) {
+	public void setProdDiscountStart(Timestamp prodDiscountStart) {
 		this.prodDiscountStart = prodDiscountStart;
 	}
 
-	public Date getProdDiscountEnd() {
+	public Timestamp getProdDiscountEnd() {
 		return prodDiscountEnd;
 	}
 
-	public void setProdDiscountEnd(Date prodDiscountEnd) {
+	public void setProdDiscountEnd(Timestamp prodDiscountEnd) {
 		this.prodDiscountEnd = prodDiscountEnd;
 	}
 
