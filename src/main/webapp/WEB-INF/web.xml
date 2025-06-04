@@ -10,7 +10,7 @@
 		<welcome-file>index.htm</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-	
+
 	 <!--註冊servlet類別-->
 	<servlet>
 		<servlet-name>CampsiteTypeServlet</servlet-name>
@@ -21,5 +21,16 @@
 		<url-pattern>/campsiteType/campsiteType.do</url-pattern>
 	</servlet-mapping>
 	
+
+<!--	Servlet的對應-->
+	<servlet>
+		<servlet-name>CampServlet</servlet-name>
+		<servlet-class>com.lutu.camp.controller.CampServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CampServlet</servlet-name>
+		<url-pattern>/camp/camp.do</url-pattern>
+	</servlet-mapping>
+
 
 </web-app>

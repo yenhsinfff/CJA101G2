@@ -1,4 +1,4 @@
-package com.camp.model;
+package com.lutu.camp.model;
 
 import java.sql.Date;
 
