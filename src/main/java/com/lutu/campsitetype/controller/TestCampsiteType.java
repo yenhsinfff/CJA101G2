@@ -2,7 +2,6 @@ package com.lutu.campsitetype.controller;
 
 import java.util.List;
 
-
 import com.lutu.campsitetype.model.CampsiteTypeDAO;
 import com.lutu.campsitetype.model.CampsiteTypeDAO_interface;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
