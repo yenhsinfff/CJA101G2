@@ -8,8 +8,8 @@ public class ShopCancellationVO implements Serializable {
 	private Integer shopOrderId; // 商城訂單編號
 	private LocalDateTime shopCancelDate; // 取消日期
 	private String shopCancelReason; // 取消理由
-	private byte shopCancelStatus; // 取消狀態
-	private byte returnMethod; // 退款方式
+	private Byte shopCancelStatus; // 取消狀態
+	private Byte returnMethod; // 退款方式
 
 	public ShopCancellationVO() {
 
