@@ -104,8 +104,10 @@
 	<tr>
 		<td>上下架狀態:<font color=red><b>*</b></font></td>
 		<td><select size="1" name="campReleaseStatus">
-			<option value=0>下架
-			<option value=1>上架
+<!-- 			<option value=0>下架 -->
+<!-- 			<option value=1>上架 -->
+			<option value="0" <%= (campVO.getCampReleaseStatus() == 0) ? "selected" : "" %>>下架</option>
+  			<option value="1" <%= (campVO.getCampReleaseStatus() == 1) ? "selected" : "" %>>上架</option>
 		</select></td>
 	</tr>
 <%-- 	<jsp:useBean id="deptSvc" scope="page" class="com.dept.model.DeptService" />
