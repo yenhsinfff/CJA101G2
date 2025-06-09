@@ -59,6 +59,7 @@ public class ShopProdVO implements Serializable {
 	@JoinColumn(name = "prod_type_id", referencedColumnName = "prod_type_id")
 	private ProdTypeVO prodTypeVO; //商品類型編號(物件)
 	
+	
 	@Column(name = "prod_status")
 	private Byte prodStatus; // 0:未上架 1:上架
 	
