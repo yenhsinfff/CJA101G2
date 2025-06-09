@@ -2,23 +2,68 @@ package com.lutu.shop.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public class ShopProdVO implements Serializable {
+import com.lutu.product_type.model.ProdTypeVO;
 
-	private Integer prodId; // PK
-	private String prodName;
-	private String prodIntro;
-	private Timestamp prodReleaseDate;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+
+@Entity
+@Table(name = "shop_prod")
+public class ShopProdVO implements Serializable {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY) //AI
+	@Column(name = "prod_id", updatable = false)
+	private Integer prodId; 		// PK 商品編號
+	
+	@Column(name = "prod_name")
+	private String prodName;		//商品名稱
+	
+	@Column(name = "prod_intro")
+	private String prodIntro;		//商品介紹
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "prod_release_date")
+	private Timestamp prodReleaseDate;//上架日期
+	
+	@Column(name = "prod_discount")
 	private BigDecimal prodDiscount; // 定價折扣
-	private Timestamp prodDiscountStart;
-	private Timestamp prodDiscountEnd;
-	private Integer prodCommentCount;
-	private Integer prodCommentSumScore;
-	private Integer prodTypeId;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "prod_discount_start")
+	private Timestamp prodDiscountStart; //折扣開始時間
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "prod_discount_end")
+	private Timestamp prodDiscountEnd; //折扣結束時間
+	
+	@Column(name = "prod_comment_count")
+	private Integer prodCommentCount; //評價總數
+	
+	@Column(name = "prod_comment_sum_score")
+	private Integer prodCommentSumScore; //評價總分數
+	
+	@ManyToOne(fetch = FetchType.LAZY) 
+	@JoinColumn(name = "prod_type_id", referencedColumnName = "prod_type_id")
+	private ProdTypeVO prodTypeVO; //商品類型編號(物件)
+	
+	
+	@Column(name = "prod_status")
 	private Byte prodStatus; // 0:未上架 1:上架
+	
+	@Column(name = "prod_color_or_not")
 	private Byte prodColorOrNot; // 0: 單一顏色 1: 有不同顏色
 	
 	
@@ -39,7 +84,7 @@ public class ShopProdVO implements Serializable {
 		this.prodDiscountEnd = prodDiscountEnd;
 		this.prodCommentCount = prodCommentCount;
 		this.prodCommentSumScore = prodCommentSumScore;
-		this.prodTypeId = prodTypeId;
+		this.prodTypeVO = prodTypeVO;
 		this.prodStatus = prodStatus;
 		this.prodColorOrNot = prodColorOrNot;
 	}
@@ -116,12 +161,12 @@ public class ShopProdVO implements Serializable {
 		this.prodCommentSumScore = prodCommentSumScore;
 	}
 
-	public Integer getProdTypeId() {
-		return prodTypeId;
+	public ProdTypeVO getProdTypeVO() {
+		return prodTypeVO;
 	}
 
-	public void setProdTypeId(Integer prodTypeId) {
-		this.prodTypeId = prodTypeId;
+	public void setProdTypeVO(ProdTypeVO prodTypeVO) {
+		this.prodTypeVO = prodTypeVO;
 	}
 
 	public Byte getProdStatus() {
@@ -159,14 +204,14 @@ public class ShopProdVO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ShopProd [商品編號=" + prodId + ", 商品名稱=" + prodName + ", 商品介紹=" + prodIntro + ", 商品上架日期="
+		return "Prodoucts [商品編號=" + prodId + ", 商品名稱=" + prodName + ", 商品介紹=" + prodIntro + ", 商品上架日期="
 				+ prodReleaseDate + ", 商品折扣=" + prodDiscount + ", 折扣開始日期=" + prodDiscountStart
 				+ ", 折扣結束日期=" + prodDiscountEnd + ", 評價總數=" + prodCommentCount
-				+ ", 評價總分數=" + prodCommentSumScore + ", 商品類型編號=" + prodTypeId + ", 商品狀態="
-				+ prodStatus + ", 是否有不同顏色=" + prodColorOrNot + "]";
+				+ ", 評價總分數=" + prodCommentSumScore  + ", 商品狀態="
+				+ prodStatus + ", 是否有不同顏色=" + prodColorOrNot 
+				+ ", 商品類型(物件)=" + prodTypeVO 
+				+ "]";
 	}
 
-	
-	
 	
 }
