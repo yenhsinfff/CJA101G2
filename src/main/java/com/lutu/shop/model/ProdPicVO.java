@@ -4,10 +4,26 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "prod_pic")
 public class ProdPicVO implements Serializable{
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY) //AI
+	@Column(name = "prod_pic_id", updatable = false)
 	private Integer prodPicId;    // 商品圖片編號 PK
+	
+	@Column(name = "prod_id")
     private Integer prodId;       // 商品編號
+	
+	@Column(name = "prod_pic")
     private byte[] prodPic;       // 商品圖片
     
 	public ProdPicVO() {
