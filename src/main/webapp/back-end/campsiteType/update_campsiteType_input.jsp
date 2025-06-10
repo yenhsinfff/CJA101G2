@@ -80,19 +80,19 @@
 	
 	<tr>
 		<td>營地房型名稱:<font color=red><b>*</b></font></td>
-		<td><input type="TEXT" name="campsiteName" value="<%=campsiteTypeVO.getCampsiteName()%>" size="45"/></td>
+		<td><input type="TEXT" name="campsiteName" value="<%=(campsiteTypeVO.getCampsiteName()==null)?"":campsiteTypeVO.getCampsiteName()%>" size="45"/></td>
 	</tr>
 	<tr>
 		<td>可入住人數:<font color=red><b>*</b></font></td>
-		<td><input  type="TEXT" name="campsitePeople" value="<%=campsiteTypeVO.getCampsitePeople()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsitePeople" value="<%=(campsiteTypeVO.getCampsitePeople()==null)?"":campsiteTypeVO.getCampsitePeople()%>" size="45"/></td>
 	</tr>
 	<tr>
 		<td>房間數量:<font color=red><b>*</b></font></td>
-		<td><input  type="TEXT" name="campsiteNum" value="<%=campsiteTypeVO.getCampsiteNum()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsiteNum" value="<%=(campsiteTypeVO.getCampsiteNum()==null)?"":campsiteTypeVO.getCampsiteNum()%>" size="45"/></td>
 	</tr>
 	<tr>
 		<td>房間價格:<font color=red><b>*</b></font></td>
-		<td><input  type="TEXT" name="campsitePrice" value="<%=campsiteTypeVO.getCampsitePrice()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsitePrice" value="<%=(campsiteTypeVO.getCampsitePrice()==null)?"":campsiteTypeVO.getCampsitePrice()%>" size="45"/></td>
 	</tr>
 
 
