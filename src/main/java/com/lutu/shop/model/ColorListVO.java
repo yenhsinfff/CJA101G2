@@ -2,12 +2,16 @@ package com.lutu.shop.model;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 
 
@@ -22,6 +26,10 @@ public class ColorListVO implements Serializable{
 	
 	@Column(name = "color_name")
     private String colorName;     // 顏色名稱
+	
+	@OneToMany(mappedBy = "colorListVO", cascade = CascadeType.ALL)
+	@OrderBy("prodColorId asc")
+	private Set<ProdColorListVO> prodColors;
   
 	public ColorListVO() {
 		super();
@@ -47,6 +55,14 @@ public class ColorListVO implements Serializable{
 
 	public void setColorName(String colorName) {
 		this.colorName = colorName;
+	}
+
+	public Set<ProdColorListVO> getProdColors() {
+		return prodColors;
+	}
+
+	public void setProdColors(Set<ProdColorListVO> prodColors) {
+		this.prodColors = prodColors;
 	}
 
 	@Override

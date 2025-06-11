@@ -8,8 +8,11 @@ import com.lutu.shop.model.ProdSpecListVO.CompositeDetail2;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,6 +31,14 @@ public class ProdSpecListVO implements Serializable {
 	@Column(name = "prod_spec_price")
 	private Integer prodSpecPrice; // 規格價格
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "prod_spec_id", referencedColumnName = "spec_id")
+	private SpecListVO specListVO;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id")
+	private ShopProdVO shopProdVO;
+	
 	// 特別加上對複合主鍵物件的 getter / setter
 	public CompositeDetail2 getCompositeKey() {
 		return new CompositeDetail2(prodId, prodSpecId);
@@ -71,6 +82,22 @@ public class ProdSpecListVO implements Serializable {
 
 	public void setProdSpecPrice(Integer prodSpecPrice) {
 		this.prodSpecPrice = prodSpecPrice;
+	}
+
+	public SpecListVO getSpecListVO() {
+		return specListVO;
+	}
+
+	public void setSpecListVO(SpecListVO specListVO) {
+		this.specListVO = specListVO;
+	}
+
+	public ShopProdVO getShopProdVO() {
+		return shopProdVO;
+	}
+
+	public void setShopProdVO(ShopProdVO shopProdVO) {
+		this.shopProdVO = shopProdVO;
 	}
 
 	@Override
