@@ -20,6 +20,7 @@ import jakarta.validation.constraints.Size;
 public class ShopOrderVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
 
 	@Id
 	@Column(name = "shop_order_id")

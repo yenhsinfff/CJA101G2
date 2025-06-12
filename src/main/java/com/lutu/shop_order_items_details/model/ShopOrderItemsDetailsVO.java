@@ -25,6 +25,7 @@ public class ShopOrderItemsDetailsVO implements Serializable {
 	@Column(name = "shop_order_id")
 	private Integer shopOrderId; // 訂單編號
 
+	
 	@Id
 	@Column(name = "prod_id")
 	private Integer prodId; // 商品編號

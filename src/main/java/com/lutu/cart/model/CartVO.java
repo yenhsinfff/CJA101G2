@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisHash;
 public class CartVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
 
 	@Id
 	private CartKey CartKey;	// 唯一主鍵

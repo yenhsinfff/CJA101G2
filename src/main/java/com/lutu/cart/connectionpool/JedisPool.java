@@ -6,6 +6,7 @@ import redis.clients.jedis.util.Pool;
 public class JedisPool {
 	private static Pool<Jedis> pool = null;
 	
+	
 	public static void main(String[] args) {
 		pool = JedisUtil.getJedisPool();
 		Jedis jedis = pool.getResource();

@@ -20,6 +20,7 @@ public class TestCart {
 		Jedis jedis = pool.getResource();
 		
 	
+		
 
 		CartVO cart1 = new CartVO(10000001, 1, 3, 3, 2);
 		CartVO cart2 = new CartVO(10000001, 2, 1, 2, 1);

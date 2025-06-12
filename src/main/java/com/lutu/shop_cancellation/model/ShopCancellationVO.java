@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 @Table(name = "shop_cancellation")
 public class ShopCancellationVO implements Serializable {
 	
+	
 	@Id
 	@Column(name = "shop_cancel_id")
 	private Integer shopCancelId; // 商城取消編號
