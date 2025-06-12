@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import com.lutu.member.model.MemberVO;
+import com.lutu.shopProd.model.ShopProdVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

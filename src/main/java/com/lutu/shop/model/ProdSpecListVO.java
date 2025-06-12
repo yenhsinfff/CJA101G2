@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.lutu.shop.model.ProdColorListVO.CompositeDetail;
 import com.lutu.shop.model.ProdSpecListVO.CompositeDetail2;
+import com.lutu.shopProd.model.ShopProdVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
