@@ -23,6 +23,7 @@ public class CampsiteTypeServlet extends HttpServlet {
 
 		req.setCharacterEncoding("UTF-8");
 		String action = req.getParameter("action");
+		System.out.println("head:"+action);
 
 		//查詢單筆資料
 		if ("getOne_For_Display".equals(action)) { // 來自select_page.jsp的請求
@@ -113,36 +114,47 @@ public class CampsiteTypeServlet extends HttpServlet {
 			String campsiteName = req.getParameter("campsiteName");
 			String campsiteNameReg = "^[\u4e00-\u9fa5a-zA-Z0-9_]{3,20}$";
 			if (campsiteName == null || campsiteName.trim().length() == 0) {
-				errorMsgs.add("營地房型名稱不得為空");
+				errorMsgs.add("營地房型名稱請勿空白");
 			}else if(!campsiteName.trim().matches(campsiteNameReg)) { //以下練習正則(規)表示式(regular-expression)
 				campsiteName = "";
 				errorMsgs.add("營地房型名稱: 只能是中、英文字母、數字和_ , 且長度必需在3到20之間");
             }
 
-		
+			
 			Integer campsitePeople = null;
-	        try {
+	        try {     
 	        	campsitePeople = Integer.valueOf(req.getParameter("campsitePeople").trim());
+	        	if(campsitePeople <= 0) {
+	        		errorMsgs.add("可入住人數須大於0人");
+	        	}
+	        	
 	        }catch(NumberFormatException e) {
 	        	campsitePeople = null;
-	        	errorMsgs.add("可入住人數不得為空");
+	        	errorMsgs.add("請確認可入住人數輸入是否正確");
 	        }
 
 
 	        Byte campsiteNum = null;
 	        try {
 	        	campsiteNum = Byte.valueOf(req.getParameter("campsiteNum").trim());
+	        	if(campsiteNum < 0) {
+	        		errorMsgs.add("房間數量最少為0間");
+	        	}
 	        }catch(NumberFormatException e) {
 	        	campsiteNum= null;
-	        	errorMsgs.add("房間數量不得為空");
+	        	errorMsgs.add("請確認房間數量輸入是否正確");
 	        }
 	        
 	        Integer campsitePrice = null;
 	        try {
+	        	
 	        	campsitePrice = Integer.valueOf(req.getParameter("campsitePrice").trim());
+	        	if(campsitePrice <= 0) {
+	        		errorMsgs.add("房型價格應為正整數");
+	        	}
 	        }catch(NumberFormatException e) {
 	        	campsitePrice= null;
-	        	errorMsgs.add("房型價格不得為空");
+	        	errorMsgs.add("請確認房型價格輸入是否正確");
 	        }
 		
 			
@@ -157,8 +169,8 @@ public class CampsiteTypeServlet extends HttpServlet {
 			CampsiteTypeVO campsiteTypeVO = new CampsiteTypeVO();
 			// 塞入固定資料(沒有被調整的)
 			campsiteTypeVO.setCampsiteTypeId(campsiteTypeId);
-			// 塞入剛剛update_camp_input.jsp的資料
 			campsiteTypeVO.setCampId(campId);
+			// 塞入剛剛update_camp_input.jsp的資料
 			campsiteTypeVO.setCampsiteName(campsiteName);
 			campsiteTypeVO.setCampsitePeople(campsitePeople);
 			campsiteTypeVO.setCampsiteNum(campsiteNum);
@@ -178,10 +190,11 @@ public class CampsiteTypeServlet extends HttpServlet {
 
 			/*************************** 2.開始修改資料 *****************************************/
 			CampsiteTypeService campsiteTypeSvc = new CampsiteTypeService();
-			campsiteTypeVO = campsiteTypeSvc.updateCampsiteType(campsiteTypeId, campId, campsiteName, campsitePeople, campsiteNum, campsitePrice, campsitePic1, campsitePic2, campsitePic3, campsitePic4);
-		
+			campsiteTypeSvc.updateCampsiteType(campsiteTypeId, campId, campsiteName, campsitePeople, campsiteNum, campsitePrice, campsitePic1, campsitePic2, campsitePic3, campsitePic4);
+			// 更新完後，再透過getOneCampsiteType來取得該筆campsiteTypeId最新的完整資料
+			CampsiteTypeVO campsiteTypeVO2 = campsiteTypeSvc.getOneCampsiteType(campsiteTypeId);			
 			/*************************** 3.修改完成,準備轉交(Send the Success view) *************/
-			req.setAttribute("campsiteTypeVO", campsiteTypeVO); // 資料庫update成功後,正確的的empVO物件,存入req
+			req.setAttribute("campsiteTypeVO", campsiteTypeVO2);
 			String url = "/back-end/campsiteType/listOneCampsiteType.jsp";
 			RequestDispatcher successView = req.getRequestDispatcher(url); // 修改成功後,轉交listOneEmp.jsp
 			successView.forward(req, res);
@@ -195,44 +208,78 @@ public class CampsiteTypeServlet extends HttpServlet {
 			req.setAttribute("errorMsgs", errorMsgs);
 
 			/*********************** 1.接收請求參數 - 輸入格式的錯誤處理 *************************/
-Integer campsiteTypeId = Integer.valueOf(req.getParameter("campsiteTypeId").trim());
-			
-			
-			Integer campId = Integer.valueOf(req.getParameter("campId").trim());
 		
-			String campsiteName = req.getParameter("campsiteName").trim();
+			Integer campId = null;
+	        try {     
+	        	campId = Integer.valueOf(req.getParameter("campId").trim());
+	        	if(campId <= 1000) { // 營地房型編號從1000開始，1000以下都是有問題
+	        		errorMsgs.add("營地房型編號從1000開始");
+	        	}
+	        	
+	        }catch(NumberFormatException e) {
+	        	campId = null;
+	        	errorMsgs.add("請確認營地編號輸入是否正確");
+	        }
+			
+		
+			String campsiteName = req.getParameter("campsiteName");
+			String campsiteNameReg = "^[\u4e00-\u9fa5a-zA-Z0-9_]{3,20}$";
 			if (campsiteName == null || campsiteName.trim().length() == 0) {
-				errorMsgs.add("請輸入營地房型名稱!");
-			}
+				errorMsgs.add("營地房型名稱請勿空白");
+			}else if(!campsiteName.trim().matches(campsiteNameReg)) { //以下練習正則(規)表示式(regular-expression)
+				campsiteName = "";
+				errorMsgs.add("營地房型名稱: 只能是中、英文字母、數字和_ , 且長度必需在3到20之間");
+            }
 
-			Integer campsitePeople = Integer.valueOf(req.getParameter("campsitePeople").trim());
-			if (campsitePeople == null) {
-				errorMsgs.add("請輸入可入住人數!");
-			}
+			
+			Integer campsitePeople = null;
+	        try {     
+	        	campsitePeople = Integer.valueOf(req.getParameter("campsitePeople").trim());
+	        	if(campsitePeople <= 0) {
+	        		errorMsgs.add("可入住人數須大於0人");
+	        	}
+	        	
+	        }catch(NumberFormatException e) {
+	        	campsitePeople = null;
+	        	errorMsgs.add("可入住人數請勿空白");
+	        }
 
 
 	        Byte campsiteNum = null;
 	        try {
-	        	campsiteNum = Byte.valueOf(req.getParameter("campsiteTypeNum").trim());
+	        	campsiteNum = Byte.valueOf(req.getParameter("campsiteNum").trim());
+	        	if(campsiteNum < 0) {
+	        		errorMsgs.add("房間數量最少為0間");
+	        	}
 	        }catch(NumberFormatException e) {
-	        	campsiteNum = null;
-	        	errorMsgs.add("請輸入房間數量!");
+	        	campsiteNum= null;
+	        	errorMsgs.add("房間數量請勿空白");
 	        }
-
-			Integer campsitePrice = Integer.valueOf(req.getParameter("campsiteTypePrice").trim());
-			if (campsitePrice == null) {
-				errorMsgs.add("請輸入房間價格!");
-			}
-			byte[] dummyPic = "fake image bytes".getBytes(); // 模擬圖片資料
+	        
+	        Integer campsitePrice = null;
+	        try {
+	        	
+	        	campsitePrice = Integer.valueOf(req.getParameter("campsitePrice").trim());
+	        	if(campsitePrice <= 0) {
+	        		errorMsgs.add("房型價格應為正整數");
+	        	}
+	        }catch(NumberFormatException e) {
+	        	campsitePrice= null;
+	        	errorMsgs.add("房型價格請勿空白");
+	        }
+		
 			
+			byte[] dummyPic = "fake image bytes".getBytes(); // 模擬圖片資料
 			byte[] campsitePic1 = dummyPic;
 			byte[] campsitePic2 = dummyPic;
 			byte[] campsitePic3 = dummyPic;
 			byte[] campsitePic4 = dummyPic;
 	
 	
+			// 僅放入需要更新的資料
 			CampsiteTypeVO campsiteTypeVO = new CampsiteTypeVO();
-			campsiteTypeVO.setCampsiteTypeId(campsiteTypeId);
+
+			// 塞入剛剛update_camp_input.jsp的資料
 			campsiteTypeVO.setCampId(campId);
 			campsiteTypeVO.setCampsiteName(campsiteName);
 			campsiteTypeVO.setCampsitePeople(campsitePeople);
@@ -246,17 +293,17 @@ Integer campsiteTypeId = Integer.valueOf(req.getParameter("campsiteTypeId").trim
 			// Send the use back to the form, if there were errors
 			if (!errorMsgs.isEmpty()) {
 				req.setAttribute("campsiteTypeVO", campsiteTypeVO); // 含有輸入格式錯誤的empVO物件,也存入req
-				RequestDispatcher failureView = req.getRequestDispatcher("/back-end/campsiteType/update_campsiteType_input.jsp");
+				RequestDispatcher failureView = req.getRequestDispatcher("/back-end/campsiteType/addCampsiteType.jsp");
 				failureView.forward(req, res);
 				return; // 程式中斷
 			}
 
 			/*************************** 2.開始新增資料 ***************************************/
 			CampsiteTypeService campsiteTypeSvc = new CampsiteTypeService();
-			campsiteTypeVO = campsiteTypeSvc.addCampsiteType(campsiteTypeId, campId, campsiteName, campsitePeople, campsiteNum, campsitePrice, campsitePic1, campsitePic2, campsitePic3, campsitePic4);
-
+			campsiteTypeVO = campsiteTypeSvc.addCampsiteType(campId, campsiteName, campsitePeople, campsiteNum, campsitePrice, campsitePic1, campsitePic2, campsitePic3, campsitePic4);
+			                                                 
 			/*************************** 3.新增完成,準備轉交(Send the Success view) ***********/
-			String url = "/back-end/campsiteType/listAllcampsiteType.jsp";
+			String url = "/back-end/campsiteType/listAllCampsiteType.jsp";
 			RequestDispatcher successView = req.getRequestDispatcher(url); // 新增成功後轉交listAllEmp.jsp
 			successView.forward(req, res);
 		}

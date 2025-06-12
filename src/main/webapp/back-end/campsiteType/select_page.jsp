@@ -53,7 +53,7 @@
   
   
   <li>
-    <FORM METHOD="post" ACTION="campsiteType.do" >
+    <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/campsiteType/campsiteType.do" >
         <b>輸入營地房型編號 (如2001):</b>
         <input type="text" name="campsiteTypeId">
         <input type="hidden" name="action" value="getOne_For_Display">
@@ -61,10 +61,10 @@
     </FORM>
   </li>
 
-  <jsp:useBean id="CampsiteTypeSvc" scope="page" class="com.lutu.campsitetype.model.CampsiteTypeService" />
+  <jsp:useBean id="campsiteTypeSvc" scope="page" class="com.lutu.campsitetype.model.CampsiteTypeService" />
    
   <li>
-     <FORM METHOD="post" ACTION="campsiteType.do" >
+     <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/campsiteType/campsiteType.do" >
        <b>選擇營地房型編號:</b>
        <select size="1" name="campsiteTypeId">
          <c:forEach var="campsiteTypeVO" items="${campsiteTypeSvc.all}" > 
@@ -77,11 +77,11 @@
   </li>
   
   <li>
-     <FORM METHOD="post" ACTION="campsiteType.do" >
+     <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/campsiteType/campsiteType.do" >
        <b>選擇營地房型名稱:</b>
        <select size="1" name="campsiteTypeName">
          <c:forEach var="campsiteTypeVO" items="${campsiteTypeSvc.all}" > 
-          <option value="${campsiteTypeVO.campsiteTypeId}">${campsiteTypeVO.campsiteTypeId}
+          <option value="${campsiteTypeVO.campsiteTypeId}">${campsiteTypeVO.campsiteName}
          </c:forEach>   
        </select>
        <input type="hidden" name="action" value="getOne_For_Display">
