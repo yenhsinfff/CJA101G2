@@ -3,7 +3,9 @@ package com.lutu.product_type.model;
 import java.io.Serializable;
 import java.util.Set;
 
-import com.lutu.shop.model.ShopProdVO;
+
+import com.lutu.shopProd.model.ShopProdVO;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -64,3 +66,4 @@ public class ProdTypeVO implements Serializable {
 	}
 
 }
+
