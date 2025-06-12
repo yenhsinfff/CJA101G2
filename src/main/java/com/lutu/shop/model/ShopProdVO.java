@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Objects;
+import java.util.Set;
 
 import com.lutu.product_type.model.ProdTypeVO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,6 +17,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -59,13 +63,26 @@ public class ShopProdVO implements Serializable {
 	@JoinColumn(name = "prod_type_id", referencedColumnName = "prod_type_id")
 	private ProdTypeVO prodTypeVO; //商品類型編號(物件)
 	
-	
 	@Column(name = "prod_status")
 	private Byte prodStatus; // 0:未上架 1:上架
 	
 	@Column(name = "prod_color_or_not")
 	private Byte prodColorOrNot; // 0: 單一顏色 1: 有不同顏色
 	
+	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+	@OrderBy("prodId asc")
+	private Set<ProdColorListVO> prodColorList;
+	
+	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+	@OrderBy("prodId asc")
+	private Set<ProdSpecListVO> prodSpecList;
+	
+	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+	@OrderBy("prodPicId asc")
+	private Set<ProdPicVO> prodPicList;
+	
+	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+	private Set<ProdFavListVO> prodFavList;
 	
 	public ShopProdVO() {
 		super();
@@ -185,6 +202,39 @@ public class ShopProdVO implements Serializable {
 		this.prodColorOrNot = prodColorOrNot;
 	}
 
+	public Set<ProdColorListVO> getProdColorList() {
+		return prodColorList;
+	}
+
+	public void setProdColorList(Set<ProdColorListVO> prodColorList) {
+		this.prodColorList = prodColorList;
+	}
+
+	public Set<ProdSpecListVO> getProdSpecList() {
+		return prodSpecList;
+	}
+
+	public void setProdSpecList(Set<ProdSpecListVO> prodSpecList) {
+		this.prodSpecList = prodSpecList;
+	}
+
+	public Set<ProdPicVO> getProdPicList() {
+		return prodPicList;
+	}
+
+	public void setProdPicList(Set<ProdPicVO> prodPicList) {
+		this.prodPicList = prodPicList;
+	}
+
+	public Set<ProdFavListVO> getProdFavList() {
+		return prodFavList;
+	}
+
+	public void setProdFavList(Set<ProdFavListVO> prodFavList) {
+		this.prodFavList = prodFavList;
+	}
+
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(prodId);

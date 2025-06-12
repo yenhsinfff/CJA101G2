@@ -8,9 +8,12 @@ import com.lutu.shop.model.ProdColorListVO.CompositeDetail;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -30,6 +33,13 @@ public class ProdColorListVO implements Serializable {
 	@Column(name = "prod_color_picture")
 	private byte[] prodColorPicture;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "prod_color_id", referencedColumnName = "color_id")
+	private ColorListVO colorListVO;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id")
+	private ShopProdVO shopProdVO;
 	
 	// 特別加上對複合主鍵物件的 getter / setter
 	public CompositeDetail getCompositeKey() {
@@ -75,6 +85,22 @@ public class ProdColorListVO implements Serializable {
 
 	public void setProdColorPicture(byte[] prodColorPicture) {
 		this.prodColorPicture = prodColorPicture;
+	}
+
+	public ColorListVO getColorListVO() {
+		return colorListVO;
+	}
+
+	public void setColorListVO(ColorListVO colorListVO) {
+		this.colorListVO = colorListVO;
+	}
+
+	public ShopProdVO getShopProdVO() {
+		return shopProdVO;
+	}
+
+	public void setShopProdVO(ShopProdVO shopProdVO) {
+		this.shopProdVO = shopProdVO;
 	}
 
 	@Override
