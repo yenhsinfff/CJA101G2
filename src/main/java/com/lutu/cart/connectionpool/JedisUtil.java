@@ -7,6 +7,7 @@ public class JedisUtil {
 	// Singleton
 	private static JedisPool pool = null;
 
+	
 	public JedisUtil() {
 	}
 
