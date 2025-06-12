@@ -1,4 +1,4 @@
-package com.lutu.shop.model;
+package com.lutu.shopProd.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -7,6 +7,10 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.lutu.product_type.model.ProdTypeVO;
+import com.lutu.shop.model.ProdColorListVO;
+import com.lutu.shop.model.ProdFavListVO;
+import com.lutu.shop.model.ProdPicVO;
+import com.lutu.shop.model.ProdSpecListVO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
