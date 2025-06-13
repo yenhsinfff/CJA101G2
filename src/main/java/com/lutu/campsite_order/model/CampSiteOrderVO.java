@@ -3,8 +3,13 @@ package com.lutu.campsite_order.model;
 import java.sql.Date;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.lutu.camp.model.CampVO;
+import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -89,10 +95,12 @@ public class CampSiteOrderVO implements java.io.Serializable {
 	@Column(name = "comment_date")
 	private Timestamp commentDate; // 評價日期
 	// name:自己的欄位 ｜｜referencedColumnName是關聯的欄位
-//	@ManyToOne(fetch = FetchType.LAZY)
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
 	private CampVO campVO;
+
+	@OneToMany(mappedBy = "campSiteOrderVO", cascade = CascadeType.ALL)
+	private Set<CampSiteOrderDetailsVO> campsiteOrderDetails = new HashSet<>();
 
 	public String getCampsiteOrderId() {
 		return campsiteOrderId;
@@ -100,6 +108,14 @@ public class CampSiteOrderVO implements java.io.Serializable {
 
 	public void setCampsiteOrderId(String campsiteOrderId) {
 		this.campsiteOrderId = campsiteOrderId;
+	}
+
+	public Set<CampSiteOrderDetailsVO> getCampSiteOrderDetails() {
+		return campsiteOrderDetails;
+	}
+
+	public void setCampSiteOrderDetails(Set<CampSiteOrderDetailsVO> campsiteOrders) {
+		this.campsiteOrderDetails = campsiteOrders;
 	}
 
 	public Integer getMemId() {

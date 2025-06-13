@@ -64,6 +64,10 @@ public class TestHibernate {
 			System.out.println("訂單編號：" + order.getCampsiteOrderId() + ", 會員ID：" + order.getMemId() + ", content："
 					+ order.getCampVO().getCampContent());
 		}
+		
+		//透過訂單查詢
+		
+		//
 		context.close();
 	}
 
