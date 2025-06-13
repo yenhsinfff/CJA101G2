@@ -1,4 +1,4 @@
-package com.lutu.camp_hibernate.model;
+package com.lutu.camp.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
