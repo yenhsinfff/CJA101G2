@@ -21,7 +21,7 @@ public class ShopCancellationVO implements Serializable {
 	@Column(name = "shop_cancel_id")
 	private Integer shopCancelId; // 商城取消編號
 	
-	@OneToOne
+//	@OneToOne
 	@Column(name = "shop_order_id")
 	private Integer shopOrderId; // 商城訂單編號
 	

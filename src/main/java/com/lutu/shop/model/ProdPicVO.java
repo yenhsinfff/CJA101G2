@@ -31,7 +31,7 @@ public class ProdPicVO implements Serializable{
 	@Column(name = "prod_pic")
     private byte[] prodPic;       // 商品圖片
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+//	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id")
 	private ShopProdVO shopProdVO;
 	

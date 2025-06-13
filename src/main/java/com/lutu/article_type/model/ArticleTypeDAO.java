@@ -13,7 +13,7 @@ public class ArticleTypeDAO implements ArticleTypeDAO_interface {
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/lutudb?serverTimezone=Asia/Taipei";
 	String userid = "root";
-	String passwd = "password";
+	String passwd = "880510";
 
 	private static final String INSERT_STMT = "INSERT INTO ArticleType (AC_TYPE_KIND, AC_TYPE_TEXT) VALUES (?, ?)";
 	private static final String GET_ALL_STMT = "SELECT acTypeId,acTypeKind,acTypeText FROM ArticleType order by acTypeId";

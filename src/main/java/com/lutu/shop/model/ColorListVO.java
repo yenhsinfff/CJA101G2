@@ -27,7 +27,7 @@ public class ColorListVO implements Serializable{
 	@Column(name = "color_name")
     private String colorName;     // 顏色名稱
 	
-	@OneToMany(mappedBy = "colorListVO", cascade = CascadeType.ALL)
+//	@OneToMany(mappedBy = "colorListVO", cascade = CascadeType.ALL)
 	@OrderBy("prodColorId asc")
 	private Set<ProdColorListVO> prodColors;
   
