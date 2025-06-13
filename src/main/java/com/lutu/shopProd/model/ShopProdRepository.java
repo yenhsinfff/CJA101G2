@@ -1,11 +1,13 @@
 // https://docs.spring.io/spring-data/jpa/docs/current/reference/html/
 
 package com.lutu.shopProd.model;
+
+
+import java.sql.Timestamp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ShopProdRepository extends JpaRepository<ShopProdVO, Integer> {
+public interface ShopProdRepository extends JpaRepository<ShopProdVO, Integer> { //(VO,PK型別)
 
 //	@Transactional
 //	@Modifying
@@ -13,9 +15,10 @@ public interface ShopProdRepository extends JpaRepository<ShopProdVO, Integer> {
 //	void deleteByProdId(int prodId);
 
 	//● (自訂)條件查詢
-//	@Query(value = "from EmpVO where empno=?1 and ename like?2 and hiredate=?3 order by empno")
-//	List<ShopProdVO> findByOthers(Integer prodId , String prodName , java.sql.Date hiredate);
-	
+
+	//@Query(value = "from ShopProdVO where prodId=?1 and prodName like?2 and prodReleaseDate=?3 order by prodId")
+	//List<ShopProdVO> findByOthers(Integer prodId , String prodName , Timestamp prodReleaseDate);
+
 //	//● (自訂)條件查詢
 //	@Query(value = "from EmpVO where empno=?1 order by empno")
 //	List<EmpVO> findByOthers(int empno);

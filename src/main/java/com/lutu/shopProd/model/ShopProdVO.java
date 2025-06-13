@@ -94,7 +94,7 @@ public class ShopProdVO implements Serializable {
 
 	public ShopProdVO(Integer prodId, String prodName, String prodIntro, Timestamp prodReleaseDate, BigDecimal prodDiscount,
 			Timestamp prodDiscountStart, Timestamp prodDiscountEnd, Integer prodCommentCount, Integer prodCommentSumScore,
-			Integer prodTypeId, Byte prodStatus, Byte prodColorOrNot) {
+			ProdTypeVO prodTypeVO, Byte prodStatus, Byte prodColorOrNot) {
 		super();
 		this.prodId = prodId;
 		this.prodName = prodName;
