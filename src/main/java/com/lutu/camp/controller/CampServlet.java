@@ -89,7 +89,7 @@ public class CampServlet extends HttpServlet {
 			Integer campId = Integer.valueOf(req.getParameter("campId"));
 
 			/*************************** 2.開始查詢資料 ****************************************/
-			CampService campSvc = new CampService();
+			CampService campSvc = new CampService();   //這邊會new一個service的檔案，將VO跟DAO做結合，可以參考line群組秉豐的圖片分享
 			CampVO campVO = campSvc.getOneCamp(campId);
 
 			/*************************** 3.查詢完成,準備轉交(Send the Success view) ************/

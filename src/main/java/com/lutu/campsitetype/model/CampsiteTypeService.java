@@ -2,6 +2,9 @@ package com.lutu.campsitetype.model;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class CampsiteTypeService {
 
 	private CampsiteTypeDAO_interface dao;
@@ -10,13 +13,12 @@ public class CampsiteTypeService {
 		dao = new CampsiteTypeDAO();
 	}
 
-	public CampsiteTypeVO addCampsiteType(Integer campsiteTypeId, Integer campId, String campsiteName,
+	public CampsiteTypeVO addCampsiteType(Integer campId, String campsiteName,
 			Integer campsitePeople, Byte campsiteNum, Integer campsitePrice, 
 			byte[] campsitePic1, byte[] campsitePic2, byte[] campsitePic3, byte[] campsitePic4) {
 
 		CampsiteTypeVO campsiteTypeVO = new CampsiteTypeVO();
 
-		campsiteTypeVO.setCampsiteTypeId(campsiteTypeId);
 		campsiteTypeVO.setCampId(campId);
 		campsiteTypeVO.setCampsiteName(campsiteName);
 		campsiteTypeVO.setCampsitePeople(campsitePeople);

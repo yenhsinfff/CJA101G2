@@ -4,11 +4,37 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
+import com.lutu.shopProd.model.ShopProdVO;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "prod_pic")
 public class ProdPicVO implements Serializable{
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY) //AI
+	@Column(name = "prod_pic_id", updatable = false)
 	private Integer prodPicId;    // 商品圖片編號 PK
-    private Integer prodId;       // 商品編號
+	
+	@Column(name = "prod_id")
+    private Integer prodId;       // 商品編號 FK
+	
+	@Column(name = "prod_pic")
     private byte[] prodPic;       // 商品圖片
+	
+//	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id")
+	private ShopProdVO shopProdVO;
+	
     
 	public ProdPicVO() {
 		super();
@@ -43,6 +69,14 @@ public class ProdPicVO implements Serializable{
 
 	public void setProdPic(byte[] prodPic) {
 		this.prodPic = prodPic;
+	}
+
+	public ShopProdVO getShopProdVO() {
+		return shopProdVO;
+	}
+
+	public void setShopProdVO(ShopProdVO shopProdVO) {
+		this.shopProdVO = shopProdVO;
 	}
 
 	@Override

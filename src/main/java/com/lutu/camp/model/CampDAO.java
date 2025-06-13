@@ -35,6 +35,7 @@ public class CampDAO implements CampDAO_interface {
 	private static final String UPDATE_STMT = "UPDATE CAMP SET OWNER_ID=?,CAMP_NAME=?,CAMP_CONTENT=?,CAMP_CITY=?,CAMP_DIST=?,CAMP_ADDR=?,CAMP_RELEASE_STATUS=? WHERE CAMP_ID = ?";
 	private static final String GET_ALL_STMT = "SELECT * FROM CAMP";
 	private static final String GET_ONE_STMT = "SELECT * FROM CAMP WHERE CAMP_ID = ?";
+
 	private static final String DELETE = "DELETE FROM camp where CAMP_ID = ?";
 
 	@Override

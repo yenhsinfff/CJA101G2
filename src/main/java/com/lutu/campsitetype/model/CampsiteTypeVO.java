@@ -2,16 +2,34 @@ package com.lutu.campsitetype.model;
 
 import java.io.Serializable;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+
+
+@Entity
+@Table(name = "campsite_type")
 public class CampsiteTypeVO implements Serializable{
+	@Id
+	@Column(name = "campsite_type_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer campsiteTypeId; //營地房型編號
+	@Column(name = "camp_id")
 	private Integer campId; //營地編號
+	@Column(name = "campsite_name")
 	private String campsiteName; //營地房型名稱
+	@Column(name = "campsite_people")
 	private Integer campsitePeople; //可入住人數
+	@Column(name = "campsite_num")
 	private Byte campsiteNum; //房間數量
+	@Column(name = "campsite_price")
 	private Integer campsitePrice; //房間價格
+	@Column(name = "campsite_pic1")
 	private byte[] campsitePic1; //房間照片1
+	@Column(name = "campsite_pic2")
 	private byte[] campsitePic2; //房間照片2
+	@Column(name = "campsite_pic3")
 	private byte[] campsitePic3; //房間照片3
+	@Column(name = "campsite_pic4")
 	private byte[] campsitePic4; //房間照片4
 	
 

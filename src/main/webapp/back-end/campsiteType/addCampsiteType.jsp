@@ -5,7 +5,6 @@
 <% //見com.emp.controller.EmpServlet.java第238行存入req的empVO物件 (此為輸入格式有錯誤時的empVO物件)
    CampsiteTypeVO campsiteTypeVO = (CampsiteTypeVO) request.getAttribute("campsiteTypeVO");
 %>
---<%= campsiteTypeVO==null %>--${campsiteTypeVO.campId}-- <!-- for line 100 -->
 
 <html>
 <head>
@@ -48,9 +47,11 @@
 <body bgcolor='white'>
 
 <table id="table-1">
+	<tr>
+	<td><h3>營地房型資料新增 - addCampsiteType.jsp</h3></td>
+	</tr>
 	<tr><td>
-		 <h3>營地房型資料新增 - addCampsiteType.jsp</h3></td><td>
-		 <h4><a href="${pageContext.request.contextPath}/back-end/select_page.jsp"><img src="${pageContext.request.contextPath}/back-end/images/tomcat.png" width="100" height="100" border="0">回首頁</a></h4>
+		 <h4><a href="${pageContext.request.contextPath}/back-end/campsiteType/select_page.jsp"><img src="${pageContext.request.contextPath}/images/tomcat.png" width="80" height="80" border="0">回首頁</a></h4>
 	</td></tr>
 </table>
 
@@ -66,31 +67,40 @@
 	</ul>
 </c:if>
 
-<FORM METHOD="post" ACTION="campsiteType.do" name="form1">
-<table>
-	
-	
-	
-	
+<FORM METHOD="post" ACTION="<%=request.getContextPath()%>/campsiteType/campsiteType.do" name="form1">
+<table>	
+
+  
+<!-- 	<tr> -->
+<!-- 		<td>營地編號:</td> -->
+<%-- 		<td><input type="TEXT" name="campId" value="<%= (campsiteTypeVO==null || campsiteTypeVO.getCampId() == null )? "" : campsiteTypeVO.getCampId()%>" size="45"/></td> --%>
+<!-- 	</tr> -->
+
+	<jsp:useBean id="campSvc" scope="page" class="com.lutu.camp.model.CampService" />
 	<tr>
-		<td>營地房型編號:</td>
-		<td><input type="TEXT" name="campsiteTypeId" value="<%= (campsiteTypeVO==null)? "2222" : campsiteTypeVO.getCampsiteTypeId()%>" size="45"/></td>
+		<td>營地:<font color=red><b>*</b></font></td>
+		<td><select size="1" name="campId">
+			<c:forEach var="campVO" items="${campSvc.all}">
+				<option value="${campVO.campId}" ${(campsiteTypeVO.campId==campVO.campId)? 'selected':'' } >${campVO.campName}
+			</c:forEach>
+		</select></td>
 	</tr>
+	
 	<tr>
 		<td>營地房型名稱:</td>
-		<td><input type="TEXT" name="campsiteName" value="<%= (campsiteTypeVO==null)? "超級無敵豪華營地" : campsiteTypeVO.getCampsiteName()%>" size="45"/></td>
+		<td><input type="TEXT" name="campsiteName" value="<%= (campsiteTypeVO==null || campsiteTypeVO.getCampsiteName() == null)? "" : campsiteTypeVO.getCampsiteName()%>" size="45"/></td>
 	</tr>
 	<tr>
 		<td>可入住人數:</td>
-		<td><input  type="TEXT" name="campsitePeople" value="<%= (campsiteTypeVO==null)? "22" : campsiteTypeVO.getCampsitePeople()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsitePeople" value="<%= (campsiteTypeVO==null || campsiteTypeVO.getCampsitePeople() == null)? "" : campsiteTypeVO.getCampsitePeople()%>" size="45"/></td>
 	</tr>
 	<tr>
 		<td>房間數量:</td>
-		<td><input  type="TEXT" name="campsiteNum" value="<%= (campsiteTypeVO==null)? "22" : campsiteTypeVO.getCampsiteNum()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsiteNum" value="<%= (campsiteTypeVO==null || campsiteTypeVO.getCampsiteNum() == null)? "" : campsiteTypeVO.getCampsiteNum()%>" size="45"/></td>
 	</tr>
 	<tr>
 		<td>房間價格:</td>
-		<td><input  type="TEXT" name="campsitePrice" value="<%= (campsiteTypeVO==null)? "22" : campsiteTypeVO.getCampsitePrice()%>" size="45"/></td>
+		<td><input  type="TEXT" name="campsitePrice" value="<%= (campsiteTypeVO==null || campsiteTypeVO.getCampsitePrice() == null)? "" : campsiteTypeVO.getCampsitePrice()%>" size="45"/></td>
 	</tr>
 	
 

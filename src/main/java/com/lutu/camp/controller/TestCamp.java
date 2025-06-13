@@ -14,7 +14,7 @@ public class TestCamp {
 		// // 建立假圖片資料
 		byte[] dummyPic = "fake image bytes".getBytes(); // 模擬圖片資料
 
-		//新增營地
+		// 新增營地
 		CampVO campVO1 = new CampVO();
 
 		campVO1.setOwnerId(20000008);
@@ -47,11 +47,11 @@ public class TestCamp {
 		campVO2.setCampId(1008);
 
 		CampVO newCampVO2 = campSvc.updateCamp(campVO2);
-		
-		//刪除資料
+
+		// 刪除資料
 		campSvc.deleteCamp(1011);
-		
-		//查詢單筆資料
+
+		// 查詢單筆資料
 		CampVO campVO = campSvc.getOneCamp(1008);
 		System.out.println(campVO.getCampId() + " " + campVO.getCampName() + " " + campVO.getOwnerId() + " "
 				+ campVO.getCampCity() + " " + campVO.getCampAddr());
