@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.lutu.camp.model.CampService;
+import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 
@@ -19,6 +21,9 @@ public class IndexController {
 
 	// @Autowired (●自動裝配)(Spring ORM 課程)
 	// 目前自動裝配了EmpService --> 供第66使用
+	@Autowired
+	CampService campSvc;
+	
 	@Autowired
 	CampSiteOrderService campsiteOrdSvc;
 

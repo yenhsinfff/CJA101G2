@@ -4,7 +4,7 @@ import java.sql.Date;
 
 import java.sql.Timestamp;
 
-import com.lutu.camp_hibernate.model.CampVO;
+import com.lutu.camp.model.CampVO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

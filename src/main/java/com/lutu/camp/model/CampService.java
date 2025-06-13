@@ -1,35 +1,43 @@
 package com.lutu.camp.model;
 
-import java.sql.Date;
 import java.util.List;
 
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import org.springframework.transaction.annotation.Transactional;
+
+@Service("campService")
 public class CampService {
-    private CampDAO_interface dao;
 
-    public CampService() {
-        dao = new CampDAO();
-    }
-
+	@Autowired
+	CampRepository campRepository;
+	
+	@Autowired
+//	private SessionFactory sessionFactory;
+	
+    @Transactional
+	public List<CampVO> getAllCamp() {
+		
+		return campRepository.findAll();
+		
+	}
     
-    public CampVO addCamp(CampVO campVO) {
-        dao.insert(campVO);
-        return campVO;
-    }
-    
-    public CampVO updateCamp(CampVO campVO) {
-        dao.update(campVO);
-        return campVO;
-    }
-    
-    public void deleteCamp(Integer campId) {
-        dao.delete(campId);
-    }
-    
+    @Transactional
     public CampVO getOneCamp(Integer campId) {
-        return dao.getOneCamp(campId);
+    	CampVO camp = campRepository.findById(campId).orElse(null);
+//    	byte[] img = (camp != null) ? camp.getCampPic1() : null;
+    	if (camp != null) {
+            camp.getCampsiteOrders().size(); // 強制初始化
+        }
+    	return camp;
+    	
     }
-
-    public List<CampVO> getAll() {
-        return dao.getAll();
-    }
+    
+    public CampVO createOneCamp(CampVO campVO) {
+    	campRepository.save(campVO);
+    	CampVO campVO2 = getOneCamp(campVO.getCampId());
+    	return campVO2;
+	}
 }

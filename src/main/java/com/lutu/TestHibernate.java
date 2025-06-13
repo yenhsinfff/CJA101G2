@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import com.lutu.camp.model.CampVO;
-import com.lutu.camp_hibernate.model.CampService;
+import com.lutu.camp.model.CampService;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 
@@ -58,7 +58,7 @@ public class TestHibernate {
 //		System.out.print(campVO.getCampContent() + ",");
 
 		// 測試關聯
-		com.lutu.camp_hibernate.model.CampVO campVO = campService.getOneCamp(1001);
+		CampVO campVO = campService.getOneCamp(1001);
 		Set<CampSiteOrderVO> orders = campVO.getCampsiteOrders();
 		for (CampSiteOrderVO order : orders) {
 			System.out.println("訂單編號：" + order.getCampsiteOrderId() + ", 會員ID：" + order.getMemId() + ", content："

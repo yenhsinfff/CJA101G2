@@ -75,7 +75,7 @@
 					<tbody>
 						<tr th:each="order : ${campsiteOrderList}">
 							<td th:text="${order.campsiteOrderId}"></td>
-							<td th:text="${order.campId}"></td>
+							<td th:text="${order.campVO.campId}"></td>
 							<td
 								th:text="${#dates.format(order.checkIn, 'yyyy-MM-dd')}"></td>
 							<td
