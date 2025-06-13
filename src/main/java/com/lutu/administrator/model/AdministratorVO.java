@@ -1,9 +1,8 @@
-package com.lutu.adminstrator.model;
+package com.lutu.administrator.model;
 
-import java.io.Serializable;
 
-public class AdminstratorVO implements Serializable{
-
+public class AdministratorVO implements java.io.Serializable{
+	
 	private Integer adminId; //管理員編號
 	private String adminAcc; //管理員帳號
 	private String adminPwd; //管理員密碼
@@ -11,23 +10,6 @@ public class AdminstratorVO implements Serializable{
 	private byte adminStatus; //帳號狀態
 	private String adminName; //姓名
 	
-	public AdminstratorVO() {
-		super();
-	}
-
-	public AdminstratorVO(Integer adminId, String adminAcc, String adminPwd, String adminPwdHash, byte adminStatus,
-			String adminName) {
-		super();
-		this.adminId = adminId;
-		this.adminAcc = adminAcc;
-		this.adminPwd = adminPwd;
-		this.adminPwdHash = adminPwdHash;
-		this.adminStatus = adminStatus;
-		this.adminName = adminName;
-	}
-
-	
-	// --- Getters and Setters ---
 	
 	public Integer getAdminId() {
 		return adminId;
