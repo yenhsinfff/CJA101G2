@@ -21,6 +21,8 @@ public class CampServlet extends HttpServlet {
 
 		req.setCharacterEncoding("UTF-8");
 		String action = req.getParameter("action");
+		
+		System.out.println("aaaaaa:"+action);
 
 		// 查詢單筆資料
 		if ("getOne_For_Display".equals(action)) { // 來自select_page.jsp的請求
