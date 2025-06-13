@@ -27,7 +27,7 @@ public class ShopOrderVO implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer shopOrderId; // 商品訂單編號
 	
-	@ManyToOne
+//	@ManyToOne
 	@Column(name = "mem_id")
 	private Integer memId; // 露營者編號
 	
@@ -44,7 +44,7 @@ public class ShopOrderVO implements Serializable {
 	@Column(name = "before_discount_amount")
 	private Integer beforeDiscountAmount; // 折價前總金額
 	
-	@ManyToOne
+//	@ManyToOne
 	@Column(name = "discount_code_id")
 	@Size(min = 6, max = 6, message = "折扣碼為6位數")
 	private String discountCodeId; // 折價券編號

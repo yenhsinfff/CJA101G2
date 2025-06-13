@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-@Service("ShopProdService")
+@Service("shopProdService")
 public class ShopProdService {
 
 	@Autowired
@@ -27,7 +27,7 @@ public class ShopProdService {
 
 	public void deleteEmp(Integer prodId) {
 		if (repository.existsById(prodId)) {
-			repository.deleteByProdId(prodId);
+//			repository.deleteByProdId(prodId);
 //		    repository.deleteById(prodId);
 		}
 

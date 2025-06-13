@@ -19,7 +19,7 @@ public class ReturnOrrderVO implements Serializable {
 	@Column(name = "return_order_id")
 	private Integer returnOrderId; // 退貨編號
 	
-	@OneToOne
+//	@OneToOne
 	@Column(name = "shop_order_id")
 	private Integer shopOrderId; // 訂單編號
 	

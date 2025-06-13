@@ -63,7 +63,7 @@ public class ShopProdVO implements Serializable {
 	@Column(name = "prod_comment_sum_score")
 	private Integer prodCommentSumScore; //評價總分數
 	
-	@ManyToOne(fetch = FetchType.LAZY) 
+//	@ManyToOne(fetch = FetchType.LAZY) 
 	@JoinColumn(name = "prod_type_id", referencedColumnName = "prod_type_id")
 	private ProdTypeVO prodTypeVO; //商品類型編號(物件)
 	
@@ -73,19 +73,19 @@ public class ShopProdVO implements Serializable {
 	@Column(name = "prod_color_or_not")
 	private Byte prodColorOrNot; // 0: 單一顏色 1: 有不同顏色
 	
-	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+//	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
 	@OrderBy("prodId asc")
 	private Set<ProdColorListVO> prodColorList;
 	
-	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+//	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
 	@OrderBy("prodId asc")
 	private Set<ProdSpecListVO> prodSpecList;
 	
-	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+//	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
 	@OrderBy("prodPicId asc")
 	private Set<ProdPicVO> prodPicList;
 	
-	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+//	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
 	private Set<ProdFavListVO> prodFavList;
 	
 	public ShopProdVO() {

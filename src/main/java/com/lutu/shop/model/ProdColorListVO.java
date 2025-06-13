@@ -34,11 +34,11 @@ public class ProdColorListVO implements Serializable {
 	@Column(name = "prod_color_picture")
 	private byte[] prodColorPicture;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+//	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_color_id", referencedColumnName = "color_id")
 	private ColorListVO colorListVO;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+//	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id")
 	private ShopProdVO shopProdVO;
 	
