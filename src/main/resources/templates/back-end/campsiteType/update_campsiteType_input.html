@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>營地房型資料修改 - update_campsiteType_input.html</title>
+    <style>
+        table#table-1 {
+            background-color: #CCCCFF;
+            border: 2px solid black;
+            text-align: center;
+        }
+
+        table#table-1 h4 {
+            color: red;
+            display: block;
+            margin-bottom: 1px;
+        }
+
+        h4 {
+            color: blue;
+            display: inline;
+        }
+
+        table {
+            width: 480px;
+            background-color: white;
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        table, th, td {
+            border: 0px solid #CCCCFF;
+        }
+
+        th, td {
+            width: 110px;
+            padding: 1px;
+        }
+    </style>
+</head>
+<body bgcolor='white'>
+
+<table id="table-1">
+    <tr>
+        <td>
+            <h3>營地房型資料修改 - update_campsiteType_input.html</h3>
+            <h4>
+                <a th:href="@{/back-end/campsiteType/select_page}">
+                    <img th:src="@{/images/back1.gif}" width="100" height="32" border="0">回首頁
+                </a>
+            </h4>
+        </td>
+    </tr>
+</table>
+
+<h3>資料修改:</h3>
+
+<!-- 錯誤訊息顯示 -->
+<div th:if="${errorMsgs != null}">
+    <font style="color:red">請修正以下錯誤:</font>
+    <ul>
+        <li th:each="msg : ${errorMsgs}" th:text="${msg}" style="color:red"></li>
+    </ul>
+</div>
+
+<form method="post" th:action="@{/back-end/campsiteType/update}" name="form1">
+    <table>
+        <tr>
+            <td>營地房型編號:</td>
+            <td th:text="${campsiteTypeVO.campsiteTypeId}">[campsiteTypeId]</td>
+        </tr>
+        <tr>
+            <td>營地編號:</td>
+            <td th:text="${campsiteTypeVO.campId}">[campId]</td>
+        </tr>
+        <tr>
+            <td>營地房型名稱:<font color="red"><b>*</b></font></td>
+            <td>
+                <input type="text" name="campsiteName" th:value="${campsiteTypeVO.campsiteName}" size="45"/>
+            </td>
+        </tr>
+        <tr>
+            <td>可入住人數:<font color="red"><b>*</b></font></td>
+            <td>
+                <input type="text" name="campsitePeople" th:value="${campsiteTypeVO.campsitePeople}" size="45"/>
+            </td>
+        </tr>
+        <tr>
+            <td>房間數量:<font color="red"><b>*</b></font></td>
+            <td>
+                <input type="text" name="campsiteNum" th:value="${campsiteTypeVO.campsiteNum}" size="45"/>
+            </td>
+        </tr>
+        <tr>
+            <td>房間價格:<font color="red"><b>*</b></font></td>
+            <td>
+                <input type="text" name="campsitePrice" th:value="${campsiteTypeVO.campsitePrice}" size="45"/>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <input type="hidden" name="campsiteTypeId" th:value="${campsiteTypeVO.campsiteTypeId}"/>
+    <input type="hidden" name="campId" th:value="${campsiteTypeVO.campId}"/>
+    <input type="submit" value="送出修改"/>
+</form>
+
+</body>
+</html>
