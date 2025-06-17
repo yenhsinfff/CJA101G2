@@ -16,7 +16,7 @@ import com.lutu.shopProd.model.ShopProdVO;
 
 @Transactional
 @SpringBootApplication
-public class Test_Application_CommandLineRunner2 implements CommandLineRunner {
+public class Test_Application_CommandLineRunner3 implements CommandLineRunner {
 
 	@Autowired
 	ShopProdRepository repository ;
@@ -28,7 +28,7 @@ public class Test_Application_CommandLineRunner2 implements CommandLineRunner {
     private SessionFactory sessionFactory;
 	
 	public static void main(String[] args) {
-        SpringApplication.run(Test_Application_CommandLineRunner2.class);
+        SpringApplication.run(Test_Application_CommandLineRunner3.class);
     }
 
     @Override
