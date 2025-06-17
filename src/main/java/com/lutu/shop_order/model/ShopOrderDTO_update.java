@@ -1,100 +1,80 @@
 package com.lutu.shop_order.model;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-@Entity
-@Table(name = "shop_order")
-public class ShopOrderVO implements Serializable {
-
-	private static final long serialVersionUID = 1L;
-
-	@Id
-	@Column(name = "shop_order_id", updatable = false)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ShopOrderDTO_update {
+	
+	@NotNull(message = "訂單編號必填")
 	private Integer shopOrderId; // 商品訂單編號
 
-//	@ManyToOne
-//	@JoinColumn(name = "mem_id", updatable = false)
-//	private MemberVO memId;						// 露營者編號
+	// private MemberVO memId;
+	@NotNull(message = "請輸入露營者編號")	
 	private Integer memId; // 露營者編號
-
-	@Column(insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-	private LocalDateTime shopOrderDate; // 訂單日期
-
-	@Column(name = "shop_order_shipment")
+	
+	@NotNull(message = "請選擇出貨方式")	
 	private Byte shopOrderShipment; // 出貨方式
-
-	@Column(name = "shop_order_ship_fee")
+	
+	@NotNull(message = "若免運費請輸入為0")
 	private Integer shopOrderShipFee; // 運費
 
-	@Column(name = "before_discount_amount")
+	@NotNull(message = "折價錢總金額不為0")
 	private Integer beforeDiscountAmount; // 折價前總金額
 
-//	@ManyToOne
-//	@JoinColumn(name = "discount_code_id")
-	@Column(name = "discount_code_id")
-//	private DiscountCodeVO discountCodeId;				// 折價券編號
 	private String discountCodeId; // 折價券編號
 
-	@Column(name = "discount_amount")
 	private Integer discountAmount; // 折價金額
 
-	@Column(name = "after_discount_amount")
+	@NotNull(message = "請確認實付金額")
 	private Integer afterDiscountAmount; // 實付金額
 
-	@Column(name = "shop_order_payment")
+	@NotNull(message = "請確認付款方式")
 	private Byte shopOrderPayment; // 付款方式
 
-	@Column(name = "order_name")
+	@NotEmpty(message = "請輸入訂購人姓名")
 	@Size(max = 40, message = "姓名不得超過40字")
 	private String orderName; // 訂購人姓名
 
-	@Column(name = "order_email")
+	@NotEmpty(message = "請輸入訂購人郵件")
 	@Email(message = "請輸入有效的電子郵件格式")
 	private String orderEmail; // 訂購人郵件
 
-	@Column(name = "order_phone")
+	@NotEmpty(message = "請輸入訂購人手機")
 	@Pattern(regexp = "^09\\d{8}$", message = "請輸入手機號碼正確格式")
 	private String orderPhone; // 訂購人手機
 
-	@Column(name = "order_shipping_address")
+	@NotEmpty(message = "請確認寄送地址")
 	@Size(max = 60, message = "地址不得超過60字")
 	private String orderShippingAddress; // 訂購人地址
 
-	@Column(name = "shop_order_note")
 	@Size(max = 30, message = "備註不得超過30字")
 	private String shopOrderNote; // 訂單備註
 
-	@Column(name = "shop_order_ship_date")
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private LocalDateTime shopOrderShipDate; // 出貨日期
 
-	@Column(name = "shop_order_status")
+	@NotNull(message = "請確認訂單狀態")
 	private Byte shopOrderStatus; // 訂單狀態
 
-	@Column(name = "shop_return_apply")
+	@NotNull(message = "請確認退貨申請")
 	private Byte shopReturnApply; // 退貨申請
 
-	public ShopOrderVO() {
-
+	public ShopOrderDTO_update() {
 	}
 
 	// --- Getters and Setters ---
-
+	
 	public Integer getShopOrderId() {
 		return shopOrderId;
 	}
@@ -102,28 +82,21 @@ public class ShopOrderVO implements Serializable {
 	public void setShopOrderId(Integer shopOrderId) {
 		this.shopOrderId = shopOrderId;
 	}
+	
 
-//	public MemberVO getMemId() {
-//		return memId;
-//	}
-//
-//	public void setMemId(MemberVO memId) {
-//		this.memId = memId;
-//	}
-
-	public LocalDateTime getShopOrderDate() {
-		return shopOrderDate;
+	public Integer getMemId() {
+		return memId;
 	}
 
-	public void setShopOrderDate(LocalDateTime shopOrderDate) {
-		this.shopOrderDate = shopOrderDate;
+	public void setMemId(Integer memId) {
+		this.memId = memId;
 	}
 
 	public Byte getShopOrderShipment() {
 		return shopOrderShipment;
 	}
 
-	public void setShopOrderShipment(byte shopOrderShipment) {
+	public void setShopOrderShipment(Byte shopOrderShipment) {
 		this.shopOrderShipment = shopOrderShipment;
 	}
 
@@ -141,22 +114,6 @@ public class ShopOrderVO implements Serializable {
 
 	public void setBeforeDiscountAmount(Integer beforeDiscountAmount) {
 		this.beforeDiscountAmount = beforeDiscountAmount;
-	}
-
-//	public DiscountCodeVO getDiscountCodeId() {
-//		return discountCodeId;
-//	}
-//
-//	public void setDiscountCodeId(DiscountCodeVO discountCodeId) {
-//		this.discountCodeId = discountCodeId;
-//	}
-
-	public Integer getMemId() {
-		return memId;
-	}
-
-	public void setMemId(Integer memId) {
-		this.memId = memId;
 	}
 
 	public String getDiscountCodeId() {
@@ -187,7 +144,7 @@ public class ShopOrderVO implements Serializable {
 		return shopOrderPayment;
 	}
 
-	public void setShopOrderPayment(byte shopOrderPayment) {
+	public void setShopOrderPayment(Byte shopOrderPayment) {
 		this.shopOrderPayment = shopOrderPayment;
 	}
 
@@ -243,7 +200,7 @@ public class ShopOrderVO implements Serializable {
 		return shopOrderStatus;
 	}
 
-	public void setShopOrderStatus(byte shopOrderStatus) {
+	public void setShopOrderStatus(Byte shopOrderStatus) {
 		this.shopOrderStatus = shopOrderStatus;
 	}
 
@@ -251,8 +208,7 @@ public class ShopOrderVO implements Serializable {
 		return shopReturnApply;
 	}
 
-	public void setShopReturnApply(byte shopReturnApply) {
+	public void setShopReturnApply(Byte shopReturnApply) {
 		this.shopReturnApply = shopReturnApply;
 	}
-
 }
