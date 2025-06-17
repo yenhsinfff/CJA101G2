@@ -13,13 +13,13 @@ public class ArticleTypeDAO implements ArticleTypeDAO_interface {
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/lutudb?serverTimezone=Asia/Taipei";
 	String userid = "root";
-	String passwd = "password";
+	String passwd = "Lightcavalry2";
 
-	private static final String INSERT_STMT = "INSERT INTO ArticleType (AC_TYPE_KIND, AC_TYPE_TEXT) VALUES (?, ?)";
-	private static final String GET_ALL_STMT = "SELECT acTypeId,acTypeKind,acTypeText FROM ArticleType order by acTypeId";
-	private static final String GET_ONE_STMT = "SELECT acTypeId,acTypeKind,acTypeText FROM ArticleType where acTypeId = ?";
-	private static final String DELETE = "DELETE FROM ArticleType where acTypeId = ?";
-	private static final String UPDATE = "UPDATE ArticleType set  AC_TYPE_KIND=?, AC_TYPE_TEXT=? where acTypeId = ?";
+	private static final String INSERT_STMT = "INSERT INTO article_type (ac_type_kind, ac_type_text) VALUES (?, ?)";
+	private static final String GET_ALL_STMT = "SELECT ac_type_id,ac_type_kind,ac_type_text FROM article_type order by ac_type_id";
+	private static final String GET_ONE_STMT = "SELECT ac_type_id,ac_type_kind,ac_type_text FROM article_type where ac_type_id = ?";
+	private static final String DELETE = "DELETE FROM article_type where ac_type_id = ?";
+	private static final String UPDATE = "UPDATE article_type set  ac_type_kind=?, ac_type_text=? where ac_type_id = ?";
 
 	@Override
 	public void insert(ArticleTypeVO ArticleTypeVO) {
@@ -33,12 +33,13 @@ public class ArticleTypeDAO implements ArticleTypeDAO_interface {
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(INSERT_STMT);
 
-			pstmt.setInt(1, ArticleTypeVO.getAcTypeId()); // 這要看你的主鍵是否為手動給值
-			pstmt.setString(2, ArticleTypeVO.getAcTypeKind());
-			pstmt.setString(3, ArticleTypeVO.getAcTypeText());
+//			pstmt.setInt(1, ArticleTypeVO.getAcTypeId()); // 這要看你的主鍵是否為手動給值
+			pstmt.setString(1, ArticleTypeVO.getAcTypeKind());
+			pstmt.setString(2, ArticleTypeVO.getAcTypeText());
 
 			pstmt.executeUpdate();
 
+			// Handle any SQL errors
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
 			// Handle any SQL errors
@@ -121,7 +122,7 @@ public class ArticleTypeDAO implements ArticleTypeDAO_interface {
 
 			pstmt.executeUpdate();
 
-			// Handle any driver errors
+			// Handle any SQL errors
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
 			// Handle any SQL errors
@@ -147,7 +148,7 @@ public class ArticleTypeDAO implements ArticleTypeDAO_interface {
 	}
 
 	@Override
-	public ArticleTypeVO findByPrimaryKey(Integer acTypeId) {
+	public ArticleTypeVO getOneArticleType(Integer acTypeId) {
 
 		ArticleTypeVO articleTypeVO = null;
 
@@ -168,11 +169,13 @@ public class ArticleTypeDAO implements ArticleTypeDAO_interface {
 			while (rs.next()) {
 				
 				articleTypeVO = new ArticleTypeVO();
-				articleTypeVO.setAcTypeId(rs.getInt("acTypeId"));
-				articleTypeVO.setAcTypeKind(rs.getString("acTypeKind"));
-				articleTypeVO.setAcTypeText(rs.getString("acTypeText"));
+				articleTypeVO.setAcTypeId(rs.getInt("ac_type_id"));
+				articleTypeVO.setAcTypeKind(rs.getString("ac_type_kind"));
+				articleTypeVO.setAcTypeText(rs.getString("ac_type_text"));
 			
-			} // Handle any driver errors
+			} 
+			
+			// Handle any driver errors
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
 			// Handle any SQL errors
@@ -224,9 +227,9 @@ public class ArticleTypeDAO implements ArticleTypeDAO_interface {
 			while (rs.next()) {
 
 				articleTypeVO = new ArticleTypeVO();
-				articleTypeVO.setAcTypeId(rs.getInt("acTypeId"));
-				articleTypeVO.setAcTypeKind(rs.getString("acTypeKind"));
-				articleTypeVO.setAcTypeText(rs.getString("acTypeText"));
+				articleTypeVO.setAcTypeId(rs.getInt("ac_type_id"));
+				articleTypeVO.setAcTypeKind(rs.getString("ac_type_kind"));
+				articleTypeVO.setAcTypeText(rs.getString("ac_type_text"));
 				list.add(articleTypeVO);
 
 			}
@@ -265,58 +268,5 @@ public class ArticleTypeDAO implements ArticleTypeDAO_interface {
 	}
 	
 	
-	//============================================================
 	
-	public static void main(String[] args) {
-		
-		ArticleTypeDAO dao = new ArticleTypeDAO();
-		
-		// 新增類別----------------------------------------------
-		ArticleTypeVO articleTypeVO1 = new ArticleTypeVO();
-		
-		articleTypeVO1.setAcTypeKind("露營知識");
-		articleTypeVO1.setAcTypeText("露營小知識");
-
-		dao.insert(articleTypeVO1);
-		
-		//更新資料----------------------------------------------
-		ArticleTypeVO articleTypeVO2 = new ArticleTypeVO();
-		
-		articleTypeVO1.setAcTypeId(30001);
-		articleTypeVO1.setAcTypeKind("露營知識");
-		articleTypeVO1.setAcTypeText("露營小知識");
-		dao.update(articleTypeVO2);
-		
-		// 刪除----------------------------------------------
-		
-		dao.delete(30001);
-		
-		
-		// 查詢單筆類別----------------------------------------------
-		
-		ArticleTypeVO articleTypeVO3 = dao.findByPrimaryKey(7001);
-		
-		System.out.print(articleTypeVO3.getAcTypeId() + ",");
-		System.out.print(articleTypeVO3.getAcTypeKind() + ",");
-		System.out.print(articleTypeVO3.getAcTypeText() + ",");
-
-		System.out.println("---------------------");
-		
-		
-		// 查詢所有類別----------------------------------------------
-		
-		List<ArticleTypeVO> list = dao.getAll();
-		for (ArticleTypeVO aEmp : list) {
-			System.out.print(aEmp.getAcTypeId() + ",");
-			System.out.print(aEmp.getAcTypeKind() + ",");
-			System.out.print(aEmp.getAcTypeText() + ",");
-			
-			System.out.println();
-		}
-		
-		
-		
-		
-		}
-
 }

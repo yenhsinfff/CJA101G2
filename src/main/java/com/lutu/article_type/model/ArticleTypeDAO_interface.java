@@ -10,7 +10,8 @@ public interface  ArticleTypeDAO_interface {
     
     public void delete(Integer acTypeId); 
     
-    public ArticleTypeVO findByPrimaryKey(Integer acTypeId);
+    public ArticleTypeVO getOneArticleType(Integer acTypeId);
+	// public ArticleTypeVO findByPrimaryKey(Integer acTypeId);
    
     public List<ArticleTypeVO> getAll();
     

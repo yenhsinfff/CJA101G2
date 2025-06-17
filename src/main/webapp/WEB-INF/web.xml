@@ -31,6 +31,8 @@
 		<servlet-name>CampServlet</servlet-name>
 		<url-pattern>/camp/camp.do</url-pattern>
 	</servlet-mapping>
+	
+	
 
 
 </web-app>
