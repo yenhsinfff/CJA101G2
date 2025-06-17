@@ -4,54 +4,102 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+@Entity
+@Table(name = "MEMBER")
 public class MemberVO implements Serializable{
+	private static final long serialVersionUID = 1L;
 	
+	@Id  
+	@Column(name = "mem_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer memId; //露營者編號
+	
+	@Column(name = "mem_acc")
+	@NotEmpty(message="露營者帳號: 請勿空白")
 	private String membAcc; //露營者帳號
+	
+	@Column(name = "mem_pwd")
+	@NotEmpty(message="露營者密碼: 請勿空白")
 	private String memPwd; //露營者密碼
+	
+	@Column(name = "acc_status")
+	@NotNull(message = "帳號狀態: 請勿空白")
+	@Min(value = 0, message = "帳號狀態只能是 0:未啟用、1:已啟用、2:停權")
+	@Max(value = 2, message = "帳號狀態只能是 0:未啟用、1:已啟用、2:停權")
 	private byte accStatus; //帳號狀態
+	
+	@Column(name = "mem_nation")
+	@NotNull(message = "國籍: 請勿空白")
+	@Min(value = 0, message = "會員國籍: 只能是 0（本國籍）或 1（非本國籍）")
+	@Max(value = 1, message = "會員國籍: 只能是 0（本國籍）或 1（非本國籍）")
 	private byte memNation; //國籍
+	
+	@Column(name = "mem_nation_id")
+	@Size(min=8,max=10,message="會員身分證或是護照號碼: 長度必需在{min}到{max}之間")
 	private String memNationId; //身分證/護照
+	
+	@Column(name = "mem_name")
+	@NotEmpty(message="姓名: 請勿空白")
+	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$", message = "露營找姓名: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間")
 	private String memName; //姓名
+	
+	@Column(name = "mem_gender")
+	@NotNull(message = "性別: 請勿空白")
+	@Min(value = 1, message = "性別: 只能是 1:男、2:女、3:其他")
+	@Max(value = 3, message = "性別: 只能是 1:男、2:女、3:其他")
 	private byte memGender; //性別
+	
+	@Column(name = "mem_email")
+	@NotEmpty(message="信箱: 請勿空白")
 	private String memEmail; //信箱
+	
+	@Column(name = "mem_mobile")
+	@NotEmpty(message="手機: 請勿空白")
 	private String memMobile; //手機
+	
+	@Column(name = "mem_addr")
+	@NotEmpty(message="地址: 請勿空白")
 	private String memAddr; //地址
+	
+	@Column(name = "mem_reg_date")
+	@NotNull(message="加入時間: 請勿空白")
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") 
 	private LocalDateTime memRegDate; //加入時間
-	private byte[] memPic; //會員照片
-	private Date memBirth; //會員生日
+	
+	@Column(name = "mem_pic")
+	private byte[] memPic; //露營者照片
+	
+	@Column(name = "mem_brith")
+	@Past(message="日期必須是在今日(含)之前")
+	@DateTimeFormat(pattern="yyyy-MM-dd") 
+	private Date memBirth; //露營者生日
+	
+	
+	
 	
 	public MemberVO() {
-		super();
 	}
-
-	public MemberVO(Integer memId, String membAcc, String memPwd, byte accStatus, byte memNation, String memNationId,
-			String memName, byte memGender, String memEmail, String memMobile, String memAddr, LocalDateTime memRegDate,
-			byte[] memPic, Date memBirth) {
-		super();
-		this.memId = memId;
-		this.membAcc = membAcc;
-		this.memPwd = memPwd;
-		this.accStatus = accStatus;
-		this.memNation = memNation;
-		this.memNationId = memNationId;
-		this.memName = memName;
-		this.memGender = memGender;
-		this.memEmail = memEmail;
-		this.memMobile = memMobile;
-		this.memAddr = memAddr;
-		this.memRegDate = memRegDate;
-		this.memPic = memPic;
-		this.memBirth = memBirth;
-	}
-
-	
-	// --- Getters and Setters ---
 	
 	public Integer getMemId() {
 		return memId;
 	}
-
+	
 	public void setMemId(Integer memId) {
 		this.memId = memId;
 	}
