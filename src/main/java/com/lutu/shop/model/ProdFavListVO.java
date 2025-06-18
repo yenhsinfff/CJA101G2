@@ -23,11 +23,11 @@ public class ProdFavListVO implements Serializable {
 	@EmbeddedId
 	private CompositeDetail compositeKey;
 	
-//	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prodId", referencedColumnName = "prod_id", insertable = false, updatable = false)
 	private ShopProdVO shopProdVO;
 	
-//	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "memId", referencedColumnName = "mem_id", insertable = false, updatable = false)
 	private MemberVO memberVO;
 
