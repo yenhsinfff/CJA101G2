@@ -23,7 +23,7 @@ import jakarta.persistence.Table;
 public class ProdColorListVO implements Serializable {
 
 	@Id
-	@Column(name = "prod_id")
+	@Column(name = "prod_id", insertable = false, updatable = false)
 	private Integer prodId; // PK
 
 	@Id
@@ -31,14 +31,14 @@ public class ProdColorListVO implements Serializable {
 	private Integer prodColorId; // PK
 
 	@Lob
-	@Column(name = "prod_color_picture")
-	private byte[] prodColorPicture;
+	@Column(name = "prod_color_pic")
+	private byte[] prodColorPic;
 
-//	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_color_id", referencedColumnName = "color_id")
 	private ColorListVO colorListVO;
 	
-//	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id")
 	private ShopProdVO shopProdVO;
 	
@@ -57,11 +57,11 @@ public class ProdColorListVO implements Serializable {
 		super();
 	}
 
-	public ProdColorListVO(Integer prodId, Integer prodColorId, byte[] prodColorPicture) {
+	public ProdColorListVO(Integer prodId, Integer prodColorId, byte[] prodColorPic) {
 		super();
 		this.prodId = prodId;
 		this.prodColorId = prodColorId;
-		this.prodColorPicture = prodColorPicture;
+		this.prodColorPic = prodColorPic;
 	}
 
 	public Integer getProdId() {
@@ -80,12 +80,12 @@ public class ProdColorListVO implements Serializable {
 		this.prodColorId = prodColorId;
 	}
 
-	public byte[] getProdColorPicture() {
-		return prodColorPicture;
+	public byte[] getProdColorPic() {
+		return prodColorPic;
 	}
 
-	public void setProdColorPicture(byte[] prodColorPicture) {
-		this.prodColorPicture = prodColorPicture;
+	public void setProdColorPic(byte[] prodColorPic) {
+		this.prodColorPic = prodColorPic;
 	}
 
 	public ColorListVO getColorListVO() {
@@ -124,7 +124,7 @@ public class ProdColorListVO implements Serializable {
 	@Override
 	public String toString() {
 		return "ProdColorList [商品編號=" + prodId + ", 商品顏色編號=" + prodColorId + ", 商品顏色圖片="
-				+ Arrays.toString(prodColorPicture) + "]";
+				+ Arrays.toString(prodColorPic) + "]";
 	}
 
 	

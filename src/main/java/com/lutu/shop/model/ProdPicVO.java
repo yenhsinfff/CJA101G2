@@ -25,13 +25,13 @@ public class ProdPicVO implements Serializable{
 	@Column(name = "prod_pic_id", updatable = false)
 	private Integer prodPicId;    // 商品圖片編號 PK
 	
-	@Column(name = "prod_id")
+	@Column(name = "prod_id", insertable = false, updatable = false)
     private Integer prodId;       // 商品編號 FK
 	
 	@Column(name = "prod_pic")
     private byte[] prodPic;       // 商品圖片
 	
-//	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id")
 	private ShopProdVO shopProdVO;
 	
