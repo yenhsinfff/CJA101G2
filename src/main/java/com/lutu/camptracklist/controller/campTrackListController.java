@@ -1,20 +1,14 @@
 package com.lutu.camptracklist.controller;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+//import org.springframework.ui.ModelMap;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +17,6 @@ import com.lutu.camp.model.CampService;
 import com.lutu.camptracklist.model.CampTrackListService;
 import com.lutu.camptracklist.model.CampTrackListVO;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Controller
@@ -36,14 +29,14 @@ public class campTrackListController {
 	@Autowired
 	CampService campSvc;  //來自camp_id的關聯
 	
-	@Autowired
+//	@Autowired
 //	MemService memSvc; //來自mem_id的關聯
 
 	/*
 	 * This method will serve as addCampTrackList.html handler.
 	 */
 	@GetMapping("addCampTrackList")
-	public String addCampTrackList(ModelMap model) {
+	public String addCampTrackList(Model model) {
 		CampTrackListVO campTrackListVO = new CampTrackListVO();
 		model.addAttribute("campTrackListVO", campTrackListVO);
 		return "back-end/camptracklist/addCampTrackList";
@@ -52,27 +45,27 @@ public class campTrackListController {
 	/*
 	 * This method will be called on addCampTrackList.html form submission, handling POST request It also validates the user input
 	 */
-//	@PostMapping("insert")
-//	public String insert(
-//			@Valid CampTrackListVO campTrackListVO, 
-//			BindingResult result, 
-//			ModelMap model) throws IOException {
-//
-//		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 ************************/
-//		if (result.hasErrors()) {
-//			return "back-end/camptracklist/addCampTrackList";
-//		}
-//		/*************************** 2.開始新增資料 *****************************************/
-//		campTrackListSvc.addCampTrackList(campTrackListVO);
-//		/*************************** 3.新增完成,準備轉交(Send the Success view) **************/
-//		List<CampTrackListVO> list = campTrackListSvc.getAll();
-//		model.addAttribute("campTrackListData", list); // for listAllCampTrackList.html 第85行用
-//		model.addAttribute("success", "- (新增成功)");
-//		return "redirect:/camptracklist/listAllCampTrackList"; // 新增成功後重導至IndexController_inSpringBoot.java的第58行@GetMapping("/emp/listAllEmp")
-//	}
+	@PostMapping("insert")
+	public String insert(
+			@Valid CampTrackListVO campTrackListVO, 
+			BindingResult result, 
+			Model model) throws IOException {
+
+		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 ************************/
+		if (result.hasErrors()) {
+			return "back-end/camptracklist/addCampTrackList";
+		}
+		/*************************** 2.開始新增資料 *****************************************/
+		campTrackListSvc.addCampTrackList(campTrackListVO);
+		/*************************** 3.新增完成,準備轉交(Send the Success view) **************/
+		List<CampTrackListVO> list = campTrackListSvc.getAll();
+		model.addAttribute("campTrackListData", list); // for listAllCampTrackList.html 第85行用
+		model.addAttribute("success", "- (新增成功)");
+		return "redirect:/camptracklist/listAllCampTrackList"; // 新增成功後重導至IndexController_inSpringBoot.java的第58行@GetMapping("/emp/listAllEmp")
+	}
 
 	@PostMapping("delete")
-	public String delete(@RequestParam("memId") Integer memId, @RequestParam("campId") Integer campId, ModelMap model) {
+	public String delete(@RequestParam("memId") Integer memId, @RequestParam("campId") Integer campId, Model model) {
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 ************************/
 		/*************************** 2.開始刪除資料 *****************************************/
 		

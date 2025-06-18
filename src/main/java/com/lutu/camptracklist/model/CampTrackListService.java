@@ -16,8 +16,9 @@ public class CampTrackListService {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public void addCampTrackList(CampTrackListVO campTrackListVO) {
+	public void  addCampTrackList(CampTrackListVO campTrackListVO) {
 		repository.save(campTrackListVO);
+		System.out.println("OKK");
 	}
 
 	// 收藏功能不寫修改功能
@@ -35,6 +36,8 @@ public class CampTrackListService {
 
 	public CampTrackListVO getOneCampTrackList(Integer campId, Integer memId) {
 		CampTrackListVO.CompositeDetail id = new CampTrackListVO.CompositeDetail();
+		id.setCampId(campId);
+		id.setMemId(memId);
 		Optional<CampTrackListVO> optional = repository.findById(id);
 //		return optional.get(); //如果沒值會丟例外，不建議使用
 		return optional.orElse(null); // public T orElse(T other) : 如果值存在就回傳其值，否則回傳other的值
