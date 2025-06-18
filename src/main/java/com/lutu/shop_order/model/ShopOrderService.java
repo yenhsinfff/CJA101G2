@@ -55,7 +55,7 @@ public class ShopOrderService {
 		if (dtoUpdate.getMemId() != null) {
 			sovo.setMemId(dtoUpdate.getMemId());
 		}
-		
+
 		if (dtoUpdate.getShopOrderShipment() != null) {
 			sovo.setShopOrderShipment(dtoUpdate.getShopOrderShipment());
 		}
@@ -95,24 +95,35 @@ public class ShopOrderService {
 		if (dtoUpdate.getShopOrderShipDate() != null) {
 			sovo.setShopOrderShipDate(dtoUpdate.getShopOrderShipDate());
 		}
+		
 		if (dtoUpdate.getShopOrderStatus() != null) {
-			sovo.setShopOrderShipment(dtoUpdate.getShopOrderStatus());
+			//如果ShopReturnApply不是未申請退貨(0)就不能進行修改
+			if (sovo.getShopReturnApply() == 0) {
+						// 判斷ShopOrderStatus輸入範圍
+				if (dtoUpdate.getShopOrderStatus() >= 0 && dtoUpdate.getShopOrderStatus() <= 5) {
+					sovo.setShopOrderStatus(dtoUpdate.getShopOrderStatus());
+				} else {
+					throw new IllegalArgumentException("0: 等待付款中 1: 已取消 2: 等待賣家確認中 3: 準備出貨中 4: 已出貨 5: 未取貨，退回賣家 ");
+				}
+			} else {
+				throw new IllegalArgumentException("商品訂單已進行退貨申請流程");
+			}
 		}
-		if (dtoUpdate.getShopReturnApply() != null) {
-			sovo.setShopOrderShipment(dtoUpdate.getShopReturnApply());
-		}
-		
-		
-		
-		
-		
-		
-		
-		
 
-		
-		
-		
+		if (dtoUpdate.getShopReturnApply() != null) {
+			// ShopOrderStatus要在4才有資格申請退貨
+			if (sovo.getShopOrderStatus() != null && sovo.getShopOrderStatus() == 4) {
+				
+					// ReturnApply介於0~3之間
+				if (dtoUpdate.getShopReturnApply() >= 0 && dtoUpdate.getShopReturnApply() <= 3) {
+					sovo.setShopReturnApply(dtoUpdate.getShopReturnApply());
+				} else {
+					throw new IllegalArgumentException("0: 未申請退貨 1: 申請退貨 2: 退貨成功 3: 退貨失敗");
+				}
+			}  else {
+				throw new IllegalArgumentException("確認商品訂單是否為已出貨狀態");
+			}
+		}
 
 		sor.save(sovo);
 		ShopOrderVO sovo2 = getOneShopOrder(sovo.getShopOrderId());
@@ -120,8 +131,7 @@ public class ShopOrderService {
 	}
 
 	public ShopOrderVO getOneShopOrder(Integer shopOrderId) {
-		return sor.findById(shopOrderId)
-				.orElseThrow(() -> new RuntimeException("查無此筆訂單資料"));
+		return sor.findById(shopOrderId).orElseThrow(() -> new RuntimeException("查無此筆訂單資料"));
 		// public T orElse(T other) : 如果值存在就回傳其值，否則回傳other的值
 	}
 

@@ -79,6 +79,7 @@ public class ShopOrderController {
 	}
 	
 	
+<<<<<<< Upstream, based on branch 'master' of https://github.com/yenhsinfff/CJA101G2.git
 	// 依訂單編號單筆查詢
 	@GetMapping("/api/getOneById")
 	public ApiResponse getOneById(@RequestParam("shopOrderId") Integer shopOrderId) {
@@ -91,8 +92,50 @@ public class ShopOrderController {
 //	@GetMapping("/api/getOneByMemId")
 //	public ApiResponse getOneByMemId(@RequestParam("memId") Integer memId) {
 //		List<ShopOrderVO> memOrders = sos.getAll(memId);
+=======
+	@PostMapping("/api/updateShopOrder")
+	public ApiResponse updateShopOrder(@Valid @RequestBody ShopOrderDTO_update dtoUpdate) {
+		
+		ShopOrderVO sovo = new ShopOrderVO();
+		try {
+			
+			ShopOrderVO newSOVO = sos.updateShopOrder(dtoUpdate);
+			return new ApiResponse<>("success", newSOVO, "修改成功");
+			
+		} catch (Exception e) {
+			 return new ApiResponse<>("fail", sovo, "修改失敗");
+		}
+		
+	}
+	
+	
+	// 依訂單編號單筆查詢
+	@GetMapping("/api/getOneById")
+	public ApiResponse getOneById(@RequestParam("shopOrderId") Integer shopOrderId) {
+		ShopOrderVO sovo = sos.getOneShopOrder(shopOrderId);
+		
+		return new ApiResponse<>("success", sovo, "查詢成功");
+	}
+	
+	// 依訂單編號單筆查詢
+	@GetMapping("/api/getOneByMemId")
+	public ApiResponse getOneByMemId(@RequestParam("memId") Integer memId) {
+		List<ShopOrderVO> memOrders = sos.getAll(memId);
+		
+		return new ApiResponse<>("success", memOrders , "查詢成功");
+	}
+	
+	
+//	@GetMapping("/api/compositeQuery")
+//	public ApiResponse compositeQuery(@RequestParam Map<String, String[]> params) {
+//		List<ShopOrderVO> shopOrders2 = sos.getAll(params);	
+>>>>>>> 3196bc9 [feat] 新增商品訂單 修改/依訂單查詢/依會員查詢
 //		
+<<<<<<< Upstream, based on branch 'master' of https://github.com/yenhsinfff/CJA101G2.git
 //		return new ApiResponse<>("success", memOrders , "查詢成功");
+=======
+//		return new ApiResponse<>("success", shopOrders2 , "查詢成功");
+>>>>>>> 3196bc9 [feat] 新增商品訂單 修改/依訂單查詢/依會員查詢
 //	}
 	
 	
