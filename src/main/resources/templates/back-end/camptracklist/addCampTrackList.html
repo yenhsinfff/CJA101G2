@@ -1,0 +1,103 @@
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>營地收藏資料新增 - addCampTrackList.html</title>
+
+<head th:insert="~{/back-end/camptracklist/included-fragment}"></head>
+<style type="text/css">
+	
+	button {
+		padding: 5px;
+	}
+	form {
+		display: table;
+	}
+	form div {
+		display: table-row;
+	}
+	label, input, span, select {
+		display: table-cell;
+		margin: 5px;
+		text-align: left;		
+	}
+	input[type=text], input[type=password], select, textarea {
+		width: 200px;
+		margin: 5px;
+	}
+	form div div {
+		display: table-cell;
+	}
+	.center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-success fixed-top justify-content-center">
+		 <div align="center"> <h2>營地收藏資料新增 - addCampTrackList.html</h2>
+		 <h3><a class="navbar-brand" th:href="@{/camptracklist/select_page}"><img th:src="@{/images/back1.gif}">回查詢頁</a></h3></div>
+</nav>
+
+	<div align="center">
+		<h3><b>所有欄位皆為必填欄位</b></h3>
+		<form th:action="@{insert}" method="post" th:object="${CampTrackListVO}" enctype="multipart/form-data">
+			
+			
+			
+			
+			
+			
+			<div>
+			<label>營地編號:</label>
+			<input type="text" th:field="*{campId}" onclick="hideContent('campId.errors');" /><br/>
+			<span  th:if="${#fields.hasErrors('campId')}" th:errors="*{campId}" class="error" id="campId.errors"></span>
+			</div>
+			
+			<div>
+			<label>露營者編號:</label>
+			<input type="text" th:field="*{memId}" onclick="hideContent('memId.errors');" /><br/>
+			<span  th:if="${#fields.hasErrors('memId')}" th:errors="*{memId}" class="error" id="memId.errors"></span>
+			</div>
+			
+			<div>
+			<label>收藏日期:</label>
+			<input type="date" th:field="*{memTrackDate}" onclick="hideContent('memTrackDate.errors');" /><br/>
+			<span  th:if="${#fields.hasErrors('memTrackDate')}" th:errors="*{memTrackDate}" class="error" id="memTrackDate.errors"></span>
+			</div>
+				
+		
+			
+			<div>
+				<div></div>
+				<div><button type="submit" id="submit"> 送出新增 </button></div>
+				<div></div>
+			</div>		
+		</form>
+	
+	</div>
+
+
+<!-- JavaScript part -->
+<script type="text/javascript">
+//清除提示信息
+function hideContent(d) {
+     document.getElementById(d).style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
