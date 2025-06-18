@@ -1,6 +1,7 @@
 package com.lutu.shop_order.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -8,10 +9,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
 import com.lutu.shop_order.model.ShopOrderDTO_insert;
+import com.lutu.shop_order.model.ShopOrderDTO_update;
 import com.lutu.shop_order.model.ShopOrderService;
 import com.lutu.shop_order.model.ShopOrderVO;
 
@@ -60,24 +63,44 @@ public class ShopOrderController {
 	}
 	
 	
-//	@PostMapping("/api/updateShopOrder")
-//	public String updateShopOrder(@Valid ShopOrderVO sovo, BindingResult result, ModelMap model) {
+	@PostMapping("/api/updateShopOrder")
+	public ApiResponse updateShopOrder(@Valid @RequestBody ShopOrderDTO_update dtoUpdate) {
+		
+		ShopOrderVO sovo = new ShopOrderVO();
+		try {
+			
+			ShopOrderVO newSOVO = sos.updateShopOrder(dtoUpdate);
+			return new ApiResponse<>("success", newSOVO, "修改成功");
+			
+		} catch (Exception e) {
+			 return new ApiResponse<>("fail", sovo, "修改失敗");
+		}
+		
+	}
+	
+	
+	// 依訂單編號單筆查詢
+	@GetMapping("/api/getOneById")
+	public ApiResponse getOneById(@RequestParam("shopOrderId") Integer shopOrderId) {
+		ShopOrderVO sovo = sos.getOneShopOrder(shopOrderId);
+		
+		return new ApiResponse<>("success", sovo, "查詢成功");
+	}
+	
+	// 依訂單編號單筆查詢
+	@GetMapping("/api/getOneByMemId")
+	public ApiResponse getOneByMemId(@RequestParam("memId") Integer memId) {
+		List<ShopOrderVO> memOrders = sos.getAll(memId);
+		
+		return new ApiResponse<>("success", memOrders , "查詢成功");
+	}
+	
+	
+//	@GetMapping("/api/compositeQuery")
+//	public ApiResponse compositeQuery(@RequestParam Map<String, String[]> params) {
+//		List<ShopOrderVO> shopOrders2 = sos.getAll(params);	
 //		
-//		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 ************************/
-//		if (result.hasErrors()) {
-//			model.addAttribute("error2", "資料填寫格式錯誤，請重新確認");
-//			return "back-end/shop_order/update_ShopOrder_input";
-//		}
-//		
-//		/*************************** 2.開始修改資料 *****************************************/
-//		sos.updateShopOrder(sovo);
-//		
-//		/*************************** 3.修改完成,準備轉交(Send the Success view) **************/
-//		model.addAttribute("success", "- (修改成功)");
-//		sovo = sos.getOneShopOrder(Integer.valueOf(sovo.getShopOrderId()));
-//		model.addAttribute("sovo", sovo);
-//		return "back-end/shop_order/listOneShopOrder";
-//		
+//		return new ApiResponse<>("success", shopOrders2 , "查詢成功");
 //	}
 
 }

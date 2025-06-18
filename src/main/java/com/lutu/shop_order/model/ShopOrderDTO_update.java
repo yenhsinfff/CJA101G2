@@ -20,41 +20,31 @@ public class ShopOrderDTO_update {
 	private Integer shopOrderId; // 商品訂單編號
 
 	// private MemberVO memId;
-	@NotNull(message = "請輸入露營者編號")	
 	private Integer memId; // 露營者編號
 	
-	@NotNull(message = "請選擇出貨方式")	
 	private Byte shopOrderShipment; // 出貨方式
 	
-	@NotNull(message = "若免運費請輸入為0")
 	private Integer shopOrderShipFee; // 運費
 
-	@NotNull(message = "折價錢總金額不為0")
 	private Integer beforeDiscountAmount; // 折價前總金額
 
 	private String discountCodeId; // 折價券編號
 
 	private Integer discountAmount; // 折價金額
 
-	@NotNull(message = "請確認實付金額")
 	private Integer afterDiscountAmount; // 實付金額
 
-	@NotNull(message = "請確認付款方式")
 	private Byte shopOrderPayment; // 付款方式
 
-	@NotEmpty(message = "請輸入訂購人姓名")
 	@Size(max = 40, message = "姓名不得超過40字")
 	private String orderName; // 訂購人姓名
 
-	@NotEmpty(message = "請輸入訂購人郵件")
 	@Email(message = "請輸入有效的電子郵件格式")
 	private String orderEmail; // 訂購人郵件
 
-	@NotEmpty(message = "請輸入訂購人手機")
 	@Pattern(regexp = "^09\\d{8}$", message = "請輸入手機號碼正確格式")
 	private String orderPhone; // 訂購人手機
 
-	@NotEmpty(message = "請確認寄送地址")
 	@Size(max = 60, message = "地址不得超過60字")
 	private String orderShippingAddress; // 訂購人地址
 
@@ -64,10 +54,8 @@ public class ShopOrderDTO_update {
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private LocalDateTime shopOrderShipDate; // 出貨日期
 
-	@NotNull(message = "請確認訂單狀態")
 	private Byte shopOrderStatus; // 訂單狀態
 
-	@NotNull(message = "請確認退貨申請")
 	private Byte shopReturnApply; // 退貨申請
 
 	public ShopOrderDTO_update() {
