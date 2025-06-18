@@ -63,7 +63,7 @@ public class Test_Application_CommandLineRunner3 implements CommandLineRunner {
 		p.setProdStatus(Byte.valueOf((byte)0));
 		p.setProdColorOrNot(Byte.valueOf((byte)0));
 		repository.save(p);
-		System.out.println("新增成功");
+		System.out.println("修改成功");
 		System.out.println("--------------------------------");
 //		EmpVO empVO2 = new EmpVO();
 //		empVO2.setEmpno(7001);

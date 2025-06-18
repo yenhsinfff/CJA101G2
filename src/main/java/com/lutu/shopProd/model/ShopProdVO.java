@@ -89,7 +89,7 @@ public class ShopProdVO implements Serializable {
 	@OrderBy("prodPicId asc")
 	private Set<ProdPicVO> prodPicList;
 	
-//	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
 	private Set<ProdFavListVO> prodFavList;
 	
 	public ShopProdVO() {
