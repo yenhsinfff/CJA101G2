@@ -20,7 +20,7 @@ public class BundleItemVO implements Serializable {
 	private Integer bundleId; // 加購項目編號
 
 	@Column(name = "camp_id", nullable = false)
-	private Integer CampId; // 營地編號
+	private Integer campId; // 營地編號
 
 	@Column(name = "bundle_name", nullable = false)
 	private String bundleName; // 加購項目名稱
@@ -40,11 +40,11 @@ public class BundleItemVO implements Serializable {
 	}
 
 	public Integer getCampId() {
-		return CampId;
+		return campId;
 	}
 
 	public void setCampId(Integer campId) {
-		CampId = campId;
+		this.campId = campId;
 	}
 
 	public String getBundleName() {
