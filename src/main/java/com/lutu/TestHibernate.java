@@ -83,7 +83,7 @@ public class TestHibernate {
 //      		}
 
 		// getALLCamp
-		CampService campService = context.getBean(CampService.class);
+//		CampService campService = context.getBean(CampService.class);
 //      		List<com.lutu.camp_hibernate.model.CampVO> list = campService.getAllCamp();
 //  		for (com.lutu.camp_hibernate.model.CampVO campVO : list) {
 //			System.out.print(campVO.getCampId() + ",");
@@ -99,16 +99,23 @@ public class TestHibernate {
 //		System.out.print(campVO.getCampContent() + ",");
 
 		// 測試關聯
-		CampVO campVO = campService.getOneCamp(1001);
-		Set<CampSiteOrderVO> orders = campVO.getCampsiteOrders();
-		for (CampSiteOrderVO order : orders) {
-			System.out.println("訂單編號：" + order.getCampsiteOrderId() + ", 會員ID：" + order.getMemId() + ", content："
-					+ order.getCampVO().getCampContent());
-		}
+//		CampService campService = context.getBean(CampService.class);
+//		CampVO campVO = campService.getOneCamp(1001);
+//		Set<CampSiteOrderVO> orders = campVO.getCampsiteOrders();
+//		for (CampSiteOrderVO order : orders) {
+//			System.out.println("訂單編號：" + order.getCampsiteOrderId() + ", 會員ID：" + order.getMemId() + ", content："
+//					+ order.getCampVO().getCampContent());
+//		}
 		
 		//透過訂單查詢
+		CampSiteOrderService campSiteOrderService = context.getBean(CampSiteOrderService.class);
+		CampSiteOrderVO campSiteOrderVO = campSiteOrderService.getOneCampsiteOrder("ORD20250124001");
+		Set<CampSiteOrderDetailsVO> campsiteOrderDetails = campSiteOrderVO.getCampSiteOrderDetails();
+		for (CampSiteOrderDetailsVO detail : campsiteOrderDetails) {
+			System.out.println("營地訂單明細：" + detail.getCampsiteDetailsId() + ", 明細總價：" + detail.getCampsiteAmount() + ", content："
+					+ detail.getcampSiteOrderVO().getCommentContent());
+		}
 		
-		//
 		context.close();
 	}
 

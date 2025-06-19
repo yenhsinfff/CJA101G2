@@ -1,16 +1,44 @@
 package com.lutu.campsite_cancellation.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class CampsiteCancellation {
+import com.lutu.campsite_order.model.CampSiteOrderVO;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "campsite_cancellation")
+public class CampsiteCancellationVO implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@Column(name = "campsite_cancel_id", length = 20, nullable = false)
 	private String campsiteCancelId; // 營地取消編號
-	private Integer campOrderId; // 營地訂單編號
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "campsite_order_id", nullable = false)
+	private CampSiteOrderVO campsiteOrderVO; // 營地訂單（建議建立對應Entity）
+	@Column(name = "campsite_cancel_date", nullable = false)
 	private Timestamp campsiteCancelDate; // 取消日期
+
+	@Column(name = "campsite_cancel_reason", length = 500, nullable = false)
 	private String campsiteCancelReason; // 取消理由
+
+	@Column(name = "campsite_cancel_status", nullable = false)
 	private byte campsiteCancelStatus; // 取消狀態
+
+	@Column(name = "campsite_cancel_reply_customer", length = 500)
 	private String campsiteCancelReplyCustomer; // 營地主回覆
-	private byte returnMethod;
+
+	@Column(name = "return_method", nullable = false)
+	private byte returnMethod; // 退款方式
 
 	public String getCampsiteCancelId() {
 		return campsiteCancelId;
@@ -20,12 +48,12 @@ public class CampsiteCancellation {
 		this.campsiteCancelId = campsiteCancelId;
 	}
 
-	public Integer getCampOrderId() {
-		return campOrderId;
+	public CampSiteOrderVO getCampsiteOrderVO() {
+		return campsiteOrderVO;
 	}
 
-	public void setCampOrderId(Integer campOrderId) {
-		this.campOrderId = campOrderId;
+	public void setCampSiteOrder(CampSiteOrderVO campsiteOrderVO) {
+		this.campsiteOrderVO = campsiteOrderVO;
 	}
 
 	public Timestamp getCampsiteCancelDate() {

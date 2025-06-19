@@ -15,10 +15,13 @@ import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 
 @Entity
 @Table(name = "camp")
+@JsonFilter("campFilter")
 public class CampVO implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +73,8 @@ public class CampVO implements java.io.Serializable {
     @Column(name = "camp_reg_date", nullable = false)
     private Date campRegDate; // 加入日期
     
-    @OneToMany(mappedBy = "campVO", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "campVO", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<CampSiteOrderVO> campsiteOrders = new HashSet<>();
 
 

@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
 
@@ -32,9 +34,9 @@ import jakarta.validation.constraints.Pattern;
 @Entity // 要加上@Entity才能成為JPA的一個Entity類別
 @Table(name = "campsite_order") // 代表這個class是對應到資料庫的實體table，目前對應的table是EMP2
 public class CampSiteOrderVO implements java.io.Serializable {
+//	@GeneratedValue(strategy = GenerationType.IDENTITY) //@GeneratedValue的generator屬性指定要用哪個generator //【strategy的GenerationType, 有四種值: AUTO, IDENTITY(MySQL的AI), SEQUENCE, TABLE】
 	@Id // @Id代表這個屬性是這個Entity的唯一識別屬性，並且對映到Table的主鍵
 	@Column(name = "campsite_order_id") // @Column指這個屬性是對應到資料庫Table的哪一個欄位 //【非必要，但當欄位名稱與屬性名稱不同時則一定要用】
-//	@GeneratedValue(strategy = GenerationType.IDENTITY) //@GeneratedValue的generator屬性指定要用哪個generator //【strategy的GenerationType, 有四種值: AUTO, IDENTITY(MySQL的AI), SEQUENCE, TABLE】
 	private String campsiteOrderId; // 營地訂單編號
 
 //	@ManyToOne //多筆訂單屬於同個會員(都是這個欄位對PK的關係)
@@ -97,6 +99,7 @@ public class CampSiteOrderVO implements java.io.Serializable {
 	// name:自己的欄位 ｜｜referencedColumnName是關聯的欄位
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
+	@JsonBackReference
 	private CampVO campVO;
 
 	@OneToMany(mappedBy = "campSiteOrderVO", cascade = CascadeType.ALL)
