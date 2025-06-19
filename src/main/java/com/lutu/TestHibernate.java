@@ -1,5 +1,10 @@
 package com.lutu;
 
+
+
+
+import java.time.LocalDate;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,7 +14,6 @@ import com.lutu.bundleitem.model.BundleItemService;
 import com.lutu.bundleitem.model.BundleItemVO;
 import com.lutu.camp.model.CampService;
 import com.lutu.camptracklist.model.CampTrackListService;
-import com.lutu.camptracklist.model.CampTrackListVO;
 
 @SpringBootApplication
 //@ComponentScan(basePackages = "com.lutu")  // 掃描你的 Service 等 component
@@ -48,15 +52,13 @@ public class TestHibernate {
 //		System.out.print(bundleItemVO.getBundlePrice());
 
 		// 修改
-//		BundleItemVO bundleItemVO = new BundleItemVO();
-//		bundleItemVO.setBundleId(1);
-//		bundleItemVO.setCampId(1008);
-//		bundleItemVO.setBundleName("手作課程");
-//		bundleItemVO.setBundlePrice(3999);
-//		String dateStr = "2025-05-30";
-//		java.sql.Date sqlDate = java.sql.Date.valueOf(dateStr);
-//		bundleItemVO.setBundleAddDate(sqlDate);
-//		bundleItemSvc.addBundleItem(bundleItemVO);
+		BundleItemVO bundleItemVO = bundleItemSvc.getOneBundleItem(13);
+		bundleItemVO.setCampId(1008);
+		bundleItemVO.setBundleName("手作課程");
+		bundleItemVO.setBundlePrice(3999);
+		LocalDate localDate = LocalDate.parse("2025-05-29");
+		bundleItemVO.setBundleAddDate(localDate);
+		bundleItemSvc.addBundleItem(bundleItemVO);
 		
 		// 新增
 //		BundleItemVO bundleItemVO = new BundleItemVO();
