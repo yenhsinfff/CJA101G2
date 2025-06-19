@@ -38,7 +38,7 @@ public class Test_Application_CommandLineRunner3 implements CommandLineRunner {
 //		DeptVO deptVO = new DeptVO(); // 部門POJO
 //		deptVO.setDeptno(1);
     	ProdTypeVO prodTypeVO = new ProdTypeVO();
-    	prodTypeVO.setProdTypeId(2);
+    	prodTypeVO.setProdTypeId(3);
     	
 //		EmpVO empVO1 = new EmpVO();
 //		empVO1.setEname("吳永志1");
@@ -48,23 +48,38 @@ public class Test_Application_CommandLineRunner3 implements CommandLineRunner {
 //		empVO1.setComm(new Double(500));
 //		empVO1.setDeptVO(deptVO);
 //		repository.save(empVO1);
+//    	ShopProdVO p = new ShopProdVO();
+//		p.setProdName("吳永志peter3");
+//		p.setProdIntro("他要退休了沒");
+////		p.setProdReleaseDate("");
+//		p.setProdDiscount(BigDecimal.valueOf(0.5));
+//		p.setProdDiscountStart(Timestamp.valueOf("2025-03-09 09:00:00"));
+//		p.setProdDiscountEnd(Timestamp.valueOf("2025-07-18 16:30:59"));
+//		p.setProdCommentCount(87);
+//		p.setProdCommentSumScore(9487);
+//		p.setProdTypeVO(prodTypeVO);
+//		
+//		p.setProdStatus(Byte.valueOf((byte)1));
+//		p.setProdColorOrNot(Byte.valueOf((byte)0));
+//		repository.save(p);
+//		System.out.println("新增成功");
 
 		//● 修改
-    	ShopProdVO p = new ShopProdVO();
-		p.setProdId(3);
-		p.setProdName("吳永志2");
-		p.setProdIntro("");
+//    	ShopProdVO p = new ShopProdVO();
+//		p.setProdId(3);
+//		p.setProdName("吳永志2");
+//		p.setProdIntro("");
 //		p.setProdReleaseDate("");
-		p.setProdDiscount(BigDecimal.valueOf(0.1));
-		p.setProdDiscountStart(Timestamp.valueOf("2025-06-15 12:00:00"));
-		p.setProdDiscountEnd(Timestamp.valueOf("2025-06-17 16:30:00"));
-		p.setProdTypeVO(prodTypeVO);
-		
-		p.setProdStatus(Byte.valueOf((byte)0));
-		p.setProdColorOrNot(Byte.valueOf((byte)0));
-		repository.save(p);
-		System.out.println("修改成功");
-		System.out.println("--------------------------------");
+//		p.setProdDiscount(BigDecimal.valueOf(0.1));
+//		p.setProdDiscountStart(Timestamp.valueOf("2025-06-15 12:00:00"));
+//		p.setProdDiscountEnd(Timestamp.valueOf("2025-06-17 16:30:00"));
+//		p.setProdTypeVO(prodTypeVO);
+//		
+//		p.setProdStatus(Byte.valueOf((byte)0));
+//		p.setProdColorOrNot(Byte.valueOf((byte)0));
+//		repository.save(p);
+//		System.out.println("修改成功");
+//		System.out.println("--------------------------------");
 //		EmpVO empVO2 = new EmpVO();
 //		empVO2.setEmpno(7001);
 //		empVO2.setEname("吳永志2");

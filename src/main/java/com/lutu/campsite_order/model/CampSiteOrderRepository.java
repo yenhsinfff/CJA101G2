@@ -17,14 +17,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface CampSiteOrderRepository extends JpaRepository<CampSiteOrderVO, Integer> {
+public interface CampSiteOrderRepository extends JpaRepository<CampSiteOrderVO, String> {
 
 //    @Transactional
 //    @Modifying
 //    @Query(value = "delete from emp3 where empno =?1", nativeQuery = true)
 //    void deleteByEmpno(int empno);
 //
-//    // ● (自訂)條件查詢
-//    @Query(value = "from EmpVO where empno=?1 and ename like?2 and hiredate=?3 order by empno")
-//    List<EmpVO> findByOthers(int empno, String ename, java.sql.Date hiredate);
+    // ● (自訂)條件查詢
+//    @Query(value = "from CampSiteOrderVO where campsite_order_id=?1")
+    @Query("from CampSiteOrderVO where campsiteOrderId = ?1")
+    CampSiteOrderVO findByCampSiteOrderId(String campSiteOrderId);
 }

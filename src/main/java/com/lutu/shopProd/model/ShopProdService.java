@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+
 @Service("ShopProdService")
 public class ShopProdService {
 
@@ -32,7 +32,8 @@ public class ShopProdService {
 //		    repository.deleteById(prodId);
 //		}
 //	}
-
+	
+	@Transactional
 	public ShopProdVO getProdById(Integer prodId) {
 		Optional<ShopProdVO> optional = repository.findById(prodId);
 //		Optional<ShopProdVO> optional = repository.selectProdById(prodId);
@@ -41,6 +42,7 @@ public class ShopProdService {
 		return optional.orElse(null);  // public T orElse(T other) : 如果值存在就回傳其值，否則回傳other的值
 	}
 
+	@Transactional
 	public List<ShopProdVO> getAll() {
 //		return repository.selectAllProducts();
 		return repository.findAll();
