@@ -2,25 +2,40 @@ package com.lutu.functions.model;
 
 import java.io.Serializable;
 
-public class FunctionsVO implements Serializable{
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
+
+@Entity
+@Table(name = "functions")
+public class FunctionsVO implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	@Id  
+	@Column(name = "func_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer funcId; //權限編號
+	
+	
+	@Column(name = "func_name")
+	@NotEmpty(message="權限功能名稱: 請勿空白")
 	private String funcName;//權限功能名稱
+	
+	
+	@Column(name = "func_des")
+	@NotEmpty(message="功能敘述: 請勿空白")
 	private String funcDes;//功能敘述
 	
-	public FunctionsVO() {
-		super();
-	}
-
-	public FunctionsVO(Integer funcId, String funcName, String funcDes) {
-		super();
-		this.funcId = funcId;
-		this.funcName = funcName;
-		this.funcDes = funcDes;
-	}
-
 	
-	// --- Getters and Setters ---
+	
+	
+	public FunctionsVO() {
+	}
 	
 	public Integer getFuncId() {
 		return funcId;
