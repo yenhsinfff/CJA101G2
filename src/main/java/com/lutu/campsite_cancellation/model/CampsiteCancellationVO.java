@@ -23,7 +23,7 @@ public class CampsiteCancellationVO implements Serializable {
 	private String campsiteCancelId; // 營地取消編號
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "campsite_order_id", nullable = false)
+//	@JoinColumn(name = "campsite_order_id", nullable = false)
 	private CampSiteOrderVO campsiteOrderVO; // 營地訂單（建議建立對應Entity）
 	@Column(name = "campsite_cancel_date", nullable = false)
 	private Timestamp campsiteCancelDate; // 取消日期
