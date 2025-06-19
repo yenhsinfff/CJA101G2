@@ -1,19 +1,19 @@
 package com.lutu;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lutu.camp.model.CampService;
 import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
-
-import java.util.*;
+import com.lutu.camptracklist.model.CampTrackListService;
+import com.lutu.camptracklist.model.CampTrackListVO;
 
 //@PropertySource("classpath:application.properties") // 於https://start.spring.io建立Spring Boot專案時, application.properties文件預設已經放在我們的src/main/resources 目錄中，它會被自動檢測到
 @Controller
@@ -26,6 +26,9 @@ public class IndexController {
 	
 	@Autowired
 	CampSiteOrderService campsiteOrdSvc;
+	
+	@Autowired
+	CampTrackListService campTrackListSvc;
 
 	// inject(注入資料) via application.properties
 	@Value("${welcome.message}")
@@ -36,7 +39,7 @@ public class IndexController {
 	public String index() {
 		return "index"; // view
 	}
-
+	
 	// 營地訂單
 
 	@GetMapping("/campsite_order")
@@ -45,6 +48,14 @@ public class IndexController {
 		model.addAttribute("campsiteOrderList", campsiteOrderList);
 		return "back-end/campsite_order/campsite_order";
 	}
+	
+	// 營地收藏
+
+	 @GetMapping("/campTrackList/listAllCampTrackList")
+		public String listAllCampTrackList(Model model) {
+			return "back-end/emp/listAllCampTrackList";
+		}
+	
 //    public String index(Model model) {
 //    	model.addAttribute("message", message);
 //        model.addAttribute("myList", myList);

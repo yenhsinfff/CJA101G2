@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>所有營地房型資料 - listAllCampsiteType.html</title>
+
+    <style>
+        table#table-1 {
+            background-color: #CCCCFF;
+            border: 2px solid black;
+            text-align: center;
+        }
+        table#table-1 h4 {
+            color: red;
+            display: block;
+            margin-bottom: 1px;
+        }
+        h4 {
+            color: blue;
+            display: inline;
+        }
+
+        table {
+            width: 800px;
+            background-color: white;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        table, th, td {
+            border: 1px solid #CCCCFF;
+        }
+
+        th, td {
+            padding: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body bgcolor='white'>
+
+<h4>此頁已改用 Thymeleaf 顯示資料:</h4>
+
+<table id="table-1">
+    <tr>
+        <td>
+            <h3>所有營地房型資料 - listAllCampsiteType.html</h3>
+            <h4>
+                <a th:href="@{/back-end/campsiteType/select_page}">
+                    <img th:src="@{/images/back1.gif}" width="100" height="32" border="0">回首頁
+                </a>
+            </h4>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th>營地房型編號</th>
+            <th>營地編號</th>
+            <th>營地房型名稱</th>
+            <th>可入住人數</th>
+            <th>房間數量</th>
+            <th>房間價格</th>
+            <th>修改</th>
+            <th>刪除</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="campsiteTypeVO : ${campsiteTypeList}">
+            <td th:text="${campsiteTypeVO.campsiteTypeId}"></td>
+            <td th:text="${campsiteTypeVO.campId}"></td>
+            <td th:text="${campsiteTypeVO.campsiteName}"></td>
+            <td th:text="${campsiteTypeVO.campsitePeople}"></td>
+            <td th:text="${campsiteTypeVO.campsiteNum}"></td>
+            <td th:text="${campsiteTypeVO.campsitePrice}"></td>
+            <td>
+                <form method="post" th:action="@{/campsiteType/campsiteType.do}">
+                    <input type="submit" value="修改" />
+                    <input type="hidden" name="campsiteTypeId" th:value="${campsiteTypeVO.campsiteTypeId}" />
+                    <input type="hidden" name="action" value="getOne_For_Update" />
+                </form>
+            </td>
+            <td>
+                <form method="post" th:action="@{/campsiteType/campsiteType.do}">
+                    <input type="submit" value="刪除" />
+                    <input type="hidden" name="campsiteTypeId" th:value="${campsiteTypeVO.campsiteTypeId}" />
+                    <input type="hidden" name="action" value="delete" />
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- 頁碼顯示區 -->
+<div style="margin-top: 10px;" th:if="${totalPages > 1}">
+    <span>第 <span th:text="${currentPage}"></span> / <span th:text="${totalPages}"></span> 頁</span>
+
+    <div>
+        <a th:if="${currentPage > 1}" th:href="@{'/back-end/campsiteType/listAll?page=' + ${currentPage - 1}}">上一頁</a>
+        <a th:if="${currentPage < totalPages}" th:href="@{'/back-end/campsiteType/listAll?page=' + ${currentPage + 1}}">下一頁</a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -26,6 +26,8 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "shop_prod")
@@ -37,13 +39,15 @@ public class ShopProdVO implements Serializable {
 	private Integer prodId; 		// PK 商品編號
 	
 	@Column(name = "prod_name")
+	@NotEmpty(message="商品名稱: 請勿空白")
+	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,50}$", message = "商品名稱: 只能是中、英文字母、數字和_ , 且長度必需在2到50之間")
 	private String prodName;		//商品名稱
 	
 	@Column(name = "prod_intro")
 	private String prodIntro;		//商品介紹
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "prod_release_date")
+	@Column(name = "prod_release_date", insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
 	private Timestamp prodReleaseDate;//上架日期
 	
 	@Column(name = "prod_discount")
@@ -63,7 +67,7 @@ public class ShopProdVO implements Serializable {
 	@Column(name = "prod_comment_sum_score")
 	private Integer prodCommentSumScore; //評價總分數
 	
-//	@ManyToOne(fetch = FetchType.LAZY) 
+	@ManyToOne(fetch = FetchType.LAZY) 
 	@JoinColumn(name = "prod_type_id", referencedColumnName = "prod_type_id")
 	private ProdTypeVO prodTypeVO; //商品類型編號(物件)
 	
@@ -73,19 +77,19 @@ public class ShopProdVO implements Serializable {
 	@Column(name = "prod_color_or_not")
 	private Byte prodColorOrNot; // 0: 單一顏色 1: 有不同顏色
 	
-//	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
 	@OrderBy("prodId asc")
 	private Set<ProdColorListVO> prodColorList;
 	
-//	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
 	@OrderBy("prodId asc")
 	private Set<ProdSpecListVO> prodSpecList;
 	
-//	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
 	@OrderBy("prodPicId asc")
 	private Set<ProdPicVO> prodPicList;
 	
-//	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "shopProdVO", cascade = CascadeType.ALL)
 	private Set<ProdFavListVO> prodFavList;
 	
 	public ShopProdVO() {

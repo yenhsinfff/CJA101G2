@@ -22,7 +22,7 @@ import jakarta.persistence.Table;
 public class ProdSpecListVO implements Serializable {
 
 	@Id
-	@Column(name = "prod_id")
+	@Column(name = "prod_id", insertable = false, updatable = false)
 	private Integer prodId; // 商品編號 PK
 
 	@Id
@@ -32,11 +32,11 @@ public class ProdSpecListVO implements Serializable {
 	@Column(name = "prod_spec_price")
 	private Integer prodSpecPrice; // 規格價格
 
-//	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_spec_id", referencedColumnName = "spec_id")
 	private SpecListVO specListVO;
 	
-//	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id")
 	private ShopProdVO shopProdVO;
 	

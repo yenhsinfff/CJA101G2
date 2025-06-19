@@ -16,7 +16,8 @@ import com.lutu.camp.model.CampVO;
 import com.lutu.camp.model.CampService;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
-import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
+import com.lutu.camptracklist.model.CampTrackListService;
+import com.lutu.camptracklist.model.CampTrackListVO;
 
 @SpringBootApplication
 //@ComponentScan(basePackages = "com.lutu")  // 掃描你的 Service 等 component
@@ -31,6 +32,45 @@ public class TestHibernate {
 		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
 		ConfigurableApplicationContext context = app.run(args);
 
+		//================================ 營地收藏 =======================================
+				CampTrackListService campTrackListSvc = context.getBean(CampTrackListService.class);		
+				
+				// CampTrackListVO _ getAllCampTrackList
+//		      		List<CampTrackListVO> list = campTrackListSvc.getAll();
+//		      		for (CampTrackListVO campTrackListVO : list) {
+//		      			System.out.print(campTrackListVO.getCompositeKey().getCampId()+ ",");
+//		      			System.out.print(campTrackListVO.getCompositeKey().getMemId() + ",");
+//		      			System.out.print(campTrackListVO.getMemTrackDate());
+//		      			System.out.println();
+//		      		}
+				
+				// 查詢-findByPrimaryKey CampTrackListVO_getOneCampTrackList
+				//(多方emp2.hbm.xml必須設為lazy="false")(優!)
+//				CampTrackListVO campTrackListVO = campTrackListSvc.getOneCampTrackList(1001, 10000001);
+//				System.out.print(campTrackListVO.getCompositeKey().getCampId()+ ",");
+//				System.out.print(campTrackListVO.getCompositeKey().getMemId() + ",");
+//				System.out.print(campTrackListVO.getMemTrackDate());
+				
+				
+				//新增
+				CampTrackListVO campTrackListVO = new CampTrackListVO();
+//				CampTrackListVO.CompositeDetail id = new CampTrackListVO.CompositeDetail();
+//				id.setCampId(1005);
+//				id.setMemId(10000001);
+//				campTrackListVO.setCompositeKey(id);
+//				String dateStr = "2025-05-30";
+//				java.sql.Date sqlDate = java.sql.Date.valueOf(dateStr);
+//				campTrackListVO.setMemTrackDate(sqlDate);
+//				campTrackListSvc.addCampTrackList(campTrackListVO);
+				
+				// 刪除CampTrackListVO_deleteCampTrackList
+				CampTrackListVO.CompositeDetail id2 = new CampTrackListVO.CompositeDetail();
+				id2.setCampId(1005);
+				id2.setMemId(10000001);
+				campTrackListSvc.deleteCampTrackList(id2.getCampId(), id2.getMemId());
+				
+				//=========================================================================	
+		
 //        CampSiteOrderService campsiteOrdSvc = context.getBean(CampSiteOrderService.class);
 //
 //        	//CampSiteOrderVO _ getAllCampsiteOrder
