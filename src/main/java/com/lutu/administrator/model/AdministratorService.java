@@ -1,56 +1,49 @@
 package com.lutu.administrator.model;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+
+
+
+@Service("administratorService")
 public class AdministratorService {
 
-	private AdministratorDAO_interface dao;
+	@Autowired
+	AdministratorRepository repository;
+	
+	@Autowired
+    private SessionFactory sessionFactory;
+	
+	
+	public void addAdministrator(AdministratorVO administratorVO) {
+		repository.save(administratorVO);
+	}
 
-	public AdministratorService() {
-		dao = new AdministratorJDBCDAO();
+	public void updateAdministrator(AdministratorVO administratorVO) {
+		repository.save(administratorVO);
 	}
-	
-	public AdministratorVO addAdministrator(String adminAcc, String adminPwd, 
-			String adminPwdHash, byte adminStatus, String adminName) {
-		
-		AdministratorVO administratorVO = new AdministratorVO();
-		
-		administratorVO.setAdminAcc(adminAcc);
-		administratorVO.setAdminPwd(adminPwd);
-		administratorVO.setAdminPwdHash(adminPwdHash);
-		administratorVO.setAdminStatus(adminStatus);
-		administratorVO.setAdminName(adminName);
-		dao.insert(administratorVO);
-		
-		return administratorVO;
-	}
-	
-	public AdministratorVO updateAdministrator(Integer adminId, String adminAcc, String adminPwd, 
-			String adminPwdHash, byte adminStatus, String adminName) {
-		
-		AdministratorVO administratorVO = new AdministratorVO();
-		
-		administratorVO.setAdminId(adminId);
-		administratorVO.setAdminAcc(adminAcc);
-		administratorVO.setAdminPwd(adminPwd);
-		administratorVO.setAdminPwdHash(adminPwdHash);
-		administratorVO.setAdminStatus(adminStatus);
-		administratorVO.setAdminName(adminName);
-		dao.insert(administratorVO);
-		
-		return administratorVO;
-	}
-	
+
 	public void deleteAdministrator(Integer adminId) {
-		dao.delete(adminId);
+		if (repository.existsById(adminId))
+			repository.deleteById(adminId);
+		
 	}
-	
+
 	public AdministratorVO getOneAdministrator(Integer adminId) {
-		return dao.findByPrimaryKey(adminId);
+		Optional<AdministratorVO> optional = repository.findById(adminId);
+		
+		return optional.orElse(null); 
 	}
 	
 	public List<AdministratorVO> getAll(){
-		return dao.getAll();
+		return repository.findAll();
 	}
 	
 }

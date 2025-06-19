@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Column;
@@ -12,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -31,7 +33,8 @@ public class MemberVO implements Serializable{
 	private Integer memId; //露營者編號
 	
 	@Column(name = "mem_acc")
-	@NotEmpty(message="露營者帳號: 請勿空白")
+	@NotEmpty(message="露營者帳號: 請勿空白。露營者帳號=信箱。")
+	@Email(message = "帳號格式不正確。露營者帳號=信箱。")
 	private String membAcc; //露營者帳號
 	
 	@Column(name = "mem_pwd")
@@ -56,7 +59,7 @@ public class MemberVO implements Serializable{
 	
 	@Column(name = "mem_name")
 	@NotEmpty(message="姓名: 請勿空白")
-	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$", message = "露營找姓名: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間")
+	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$", message = "露營者姓名: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間")
 	private String memName; //姓名
 	
 	@Column(name = "mem_gender")
@@ -67,25 +70,30 @@ public class MemberVO implements Serializable{
 	
 	@Column(name = "mem_email")
 	@NotEmpty(message="信箱: 請勿空白")
+	@Email(message = "信箱格式不正確")
 	private String memEmail; //信箱
 	
 	@Column(name = "mem_mobile")
 	@NotEmpty(message="手機: 請勿空白")
+	@Pattern(
+			  regexp = "^09\\d{2}-\\d{3}-\\d{3}$",
+			  message = "手機號碼格式錯誤，請使用 0968-123-456 格式"
+			)
 	private String memMobile; //手機
 	
 	@Column(name = "mem_addr")
 	@NotEmpty(message="地址: 請勿空白")
 	private String memAddr; //地址
 	
-	@Column(name = "mem_reg_date")
-	@NotNull(message="加入時間: 請勿空白")
-	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") 
+	@Column(name = "mem_reg_date", nullable = false, updatable = false)
+	@CreationTimestamp
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime memRegDate; //加入時間
 	
 	@Column(name = "mem_pic")
 	private byte[] memPic; //露營者照片
 	
-	@Column(name = "mem_brith")
+	@Column(name = "mem_birth")
 	@Past(message="日期必須是在今日(含)之前")
 	@DateTimeFormat(pattern="yyyy-MM-dd") 
 	private Date memBirth; //露營者生日
