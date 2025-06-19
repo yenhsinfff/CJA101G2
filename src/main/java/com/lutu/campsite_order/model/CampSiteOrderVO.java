@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
 
@@ -97,6 +99,7 @@ public class CampSiteOrderVO implements java.io.Serializable {
 	// name:自己的欄位 ｜｜referencedColumnName是關聯的欄位
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
+	@JsonBackReference
 	private CampVO campVO;
 
 	@OneToMany(mappedBy = "campSiteOrderVO", cascade = CascadeType.ALL)

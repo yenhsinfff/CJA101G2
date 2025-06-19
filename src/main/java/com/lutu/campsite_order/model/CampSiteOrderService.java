@@ -26,13 +26,13 @@ public class CampSiteOrderService {
 
 	}
 	
-	@Transactional
+//	@Transactional
 	public CampSiteOrderVO getOneCampsiteOrder(String campSiteOrderId) {
 
 		CampSiteOrderVO campSiteOrderVO = campSiteOrderRepository.findByCampSiteOrderId(campSiteOrderId);
-		if (campSiteOrderVO != null) {
-			campSiteOrderVO.getCampSiteOrderDetails().size(); // 強制初始化
-		}
+//		if (campSiteOrderVO != null) {
+//			campSiteOrderVO.getCampSiteOrderDetails().size(); // 強制初始化
+//		}
 		return campSiteOrderVO;
 
 	}

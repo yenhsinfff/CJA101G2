@@ -48,13 +48,13 @@ public class CampsiteCancellationVO implements Serializable {
 		this.campsiteCancelId = campsiteCancelId;
 	}
 
-	 public CampSiteOrderVO getCampsiteOrderVO() {
-	        return campsiteOrderVO;
-	    }
+	public CampSiteOrderVO getCampsiteOrderVO() {
+		return campsiteOrderVO;
+	}
 
-	    public void setCampSiteOrder(CampSiteOrderVO campsiteOrderVO) {
-	        this.campsiteOrderVO = campsiteOrderVO;
-	    }
+	public void setCampSiteOrder(CampSiteOrderVO campsiteOrderVO) {
+		this.campsiteOrderVO = campsiteOrderVO;
+	}
 
 	public Timestamp getCampsiteCancelDate() {
 		return campsiteCancelDate;
