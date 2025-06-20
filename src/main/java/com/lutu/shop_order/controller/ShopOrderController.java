@@ -1,7 +1,7 @@
 package com.lutu.shop_order.controller;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +17,7 @@ import com.lutu.shop_order.model.ShopOrderDTO_insert;
 import com.lutu.shop_order.model.ShopOrderDTO_update;
 import com.lutu.shop_order.model.ShopOrderService;
 import com.lutu.shop_order.model.ShopOrderVO;
+import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsVO;
 
 import jakarta.validation.Valid;
 
@@ -47,22 +48,24 @@ public class ShopOrderController {
 	
 	
 	//新增
-	@PostMapping("/api/addShopOrder")								
-	public ApiResponse<ShopOrderVO> addShopOrder(@Valid @RequestBody ShopOrderDTO_insert dto) {
-		
-		ShopOrderVO sovo = new ShopOrderVO();
-		try {
-//			System.out.println("aaaaaa");
-			
-			ShopOrderVO newSOVO = sos.addShopOrder(dto);
-			return new ApiResponse<>("success", newSOVO, "新增成功");
-			
-		} catch (Exception e) {
-			return new ApiResponse<>("fail", sovo, "新增失敗");
-		}
-	}
+//	@PostMapping("/api/addShopOrder")								
+//	public ApiResponse<ShopOrderVO> addShopOrder(@Valid @RequestBody ShopOrderDTO_insert dto,List<ShopOrderItemsDetailsVO> detailsList) {
+//		
+//		ShopOrderVO sovo = new ShopOrderVO();
+//		List<ShopOrderItemsDetailsVO> List = new List();
+//		try {
+////			System.out.println("aaaaaa");
+//			
+//			ShopOrderVO newSOVO = sos.addShopOrder(dto, List);
+//			return new ApiResponse<>("success", newSOVO, "新增成功");
+//			
+//		} catch (Exception e) {
+//			return new ApiResponse<>("fail", sovo, "新增失敗");
+//		}
+//	}
+
 	
-	
+
 	@PostMapping("/api/updateShopOrder")
 	public ApiResponse updateShopOrder(@Valid @RequestBody ShopOrderDTO_update dtoUpdate) {
 		
@@ -95,12 +98,21 @@ public class ShopOrderController {
 		return new ApiResponse<>("success", memOrders , "查詢成功");
 	}
 	
+	//複合查詢
+//	@GetMapping("/api/compositeQuery")
+//	public ApiResponse compositeQuery(@RequestParam Map<String, String[]> params) {
+//		List<ShopOrderVO> shopOrders2 = sos.getAll(params);	
+
+//		return new ApiResponse<>("success", memOrders , "查詢成功");
+
+//	}
+	
 	
 //	@GetMapping("/api/compositeQuery")
 //	public ApiResponse compositeQuery(@RequestParam Map<String, String[]> params) {
 //		List<ShopOrderVO> shopOrders2 = sos.getAll(params);	
 //		
 //		return new ApiResponse<>("success", shopOrders2 , "查詢成功");
-//	}
+
 
 }

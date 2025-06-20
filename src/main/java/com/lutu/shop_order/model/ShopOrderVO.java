@@ -5,11 +5,16 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.lutu.discount_code.model.DiscountCodeVO;
+import com.lutu.member.model.MemberVO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -28,6 +33,7 @@ public class ShopOrderVO implements Serializable {
 
 //	@ManyToOne
 //	@JoinColumn(name = "mem_id", updatable = false)
+	@Column(name = "mem_id")
 //	private MemberVO memId;						// 露營者編號
 	private Integer memId; // 露營者編號
 

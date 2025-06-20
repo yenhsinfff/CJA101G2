@@ -32,7 +32,15 @@ public interface ShopOrderRepository extends JpaRepository<ShopOrderVO, Integer>
 //	
 //	
 	//會員訂單資料查詢
+<<<<<<< Upstream, based on branch 'master' of https://github.com/yenhsinfff/CJA101G2.git
+<<<<<<< Upstream, based on branch 'master' of https://github.com/yenhsinfff/CJA101G2.git
 	@Query(value = "SELECT o FROM ShopOrderVO o WHERE o.memId = :memId")
+=======
+	@Query(value = "from ShopOrderVO o where o.memId = :memId")
+>>>>>>> eec43f0 [Feat] 新增商品訂單複合查詢Hibernate [Modify] 商品訂單資料建立、查詢改為RESTFul
+=======
+	@Query(value = "SELECT o FROM ShopOrderVO o WHERE o.memId = :memId")
+>>>>>>> 3196bc9 [feat] 新增商品訂單 修改/依訂單查詢/依會員查詢
 	List<ShopOrderVO> findByMember(Integer memId);
 
 	
