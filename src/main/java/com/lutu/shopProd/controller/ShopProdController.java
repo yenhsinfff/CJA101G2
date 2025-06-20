@@ -5,34 +5,46 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.shopProd.model.ShopProdSelectDTO;
 import com.lutu.shopProd.model.ShopProdService;
-import com.lutu.shopProd.model.ShopProdVO;
-
-import jakarta.validation.Valid;
 
 //api格式 「http://localhost:8081/CJA101G02/api/campsite_orders」
 
 @RestController
-@CrossOrigin(origins = "*") //允許所有網域
+@CrossOrigin(origins = "*") //允許所有網域跨域存取
 public class ShopProdController {
-
-	@Autowired
-	CampSiteOrderService campsiteOrdSvc;
 
 	@Autowired
 	ShopProdService shopProdService;
 
-	// 取得所有商品，回傳 JSON
+	/**
+     * 查詢所有商品（DTO），回傳 JSON 格式
+     * GET http://localhost:8081/CJA101G02/api/productslist
+     */
 	@GetMapping("/api/productslist")
 	public ApiResponse<List<ShopProdSelectDTO>> getAllProds() {
 	    List<ShopProdSelectDTO> dtoList = shopProdService.getAllProdsByDTO();
 	    return new ApiResponse<>("success", dtoList, "查詢成功");
+	}
+	
+	/**
+     * 查詢單一商品（DTO）by 商品 ID
+     * GET http://localhost:8081/CJA101G02/api/products/{id}
+     */
+	@GetMapping("/api/products/{id}") //{id} 是路徑變數，要與 @PathVariable 名稱一致
+	public ApiResponse<ShopProdSelectDTO> getProdById(@PathVariable Integer id) { // 這裡的 id 就是從 URL 裡面的 {id} 抓來的
+	    ShopProdSelectDTO dto = shopProdService.getProdDTOById(id);
+	    
+	    if (dto != null) {
+	        return new ApiResponse<>("success", dto, "查詢成功");
+	    } else {
+	        return new ApiResponse<>("fail", null, "查無此商品");
+	    }
 	}
 
 //	@PostMapping("/addoneprod")
