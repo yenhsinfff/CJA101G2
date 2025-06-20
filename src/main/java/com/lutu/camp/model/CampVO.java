@@ -75,7 +75,7 @@ public class CampVO implements java.io.Serializable {
     
     @OneToMany(mappedBy = "campVO", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonManagedReference
-    private Set<CampSiteOrderVO> campsiteOrders = new HashSet<>();
+    private Set<CampSiteOrderVO> campsiteOrders = new HashSet<>();  
 
 
     // --- Getters and Setters ---

@@ -3,15 +3,21 @@ package com.lutu.member.model;
 import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.lutu.camp_report.model.CampReportVO;
+import com.lutu.campsite_order.model.CampSiteOrderVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -23,7 +29,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "MEMBER")
+@Table(name = "member")
 public class MemberVO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
@@ -97,6 +103,15 @@ public class MemberVO implements Serializable{
 	@Past(message="日期必須是在今日(含)之前")
 	@DateTimeFormat(pattern="yyyy-MM-dd") 
 	private Date memBirth; //露營者生日
+	
+	// ========物件關聯======//
+	@OneToMany(mappedBy = "memberVO")
+	private Set<CampSiteOrderVO> campsiteOrders = new HashSet<>();
+	
+	@OneToMany(mappedBy = "memberVO")
+	private Set<CampReportVO> campReports = new HashSet<>();
+	
+	
 	
 	
 	
@@ -215,6 +230,21 @@ public class MemberVO implements Serializable{
 	public void setMemBirth(Date memBirth) {
 		this.memBirth = memBirth;
 	}
+	// ========物件關聯 getter setter======//
+	public Set<CampSiteOrderVO> getCampsiteOrders() {
+        return campsiteOrders;
+    }
 
+    public void setCampsiteOrders(Set<CampSiteOrderVO> campsiteOrders) {
+        this.campsiteOrders = campsiteOrders;
+    } 
+    
+    public Set<CampReportVO> getCampReports() {
+        return campReports;
+    }
 
+    public void setCampReports(Set<CampReportVO> campReports) {
+        this.campReports = campReports;
+    } 
+	
 }
