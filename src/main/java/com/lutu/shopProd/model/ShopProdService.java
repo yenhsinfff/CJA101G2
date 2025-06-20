@@ -48,6 +48,39 @@ public class ShopProdService {
 		return repository.findAll();
 	}
 
+	@Transactional
+	public List<ShopProdSelectDTO> getAllProdsByDTO() {
+	    List<ShopProdVO> voList = repository.findAll();
+
+	    List<ShopProdSelectDTO> dtoList = voList.stream().map(vo -> {
+	        ShopProdSelectDTO dto = new ShopProdSelectDTO();
+	        dto.setProdId(vo.getProdId());
+	        dto.setProdName(vo.getProdName());
+	        dto.setProdIntro(vo.getProdIntro());
+	        dto.setProdReleaseDate(vo.getProdReleaseDate());
+	        dto.setProdDiscount(vo.getProdDiscount());
+	        dto.setProdDiscountStart(vo.getProdDiscountStart());
+	        dto.setProdDiscountEnd(vo.getProdDiscountEnd());
+	        dto.setProdCommentCount(vo.getProdCommentCount());
+	        dto.setProdCommentSumScore(vo.getProdCommentSumScore());
+
+	        if (vo.getProdTypeVO() != null) {
+	            dto.setProdTypeId(vo.getProdTypeVO().getProdTypeId());
+	        }
+
+	        dto.setProdStatus(vo.getProdStatus());
+	        dto.setProdColorOrNot(vo.getProdColorOrNot());
+
+	        return dto;
+	    }).toList();
+
+	    
+	    return dtoList;
+	}
+	
+	
+	
+	
 	//複合查詢
 //	public List<ShopProdVO> getAll(Map<String, String[]> map) {
 //		return HibernateUtil_CompositeQuery_Emp3.getAllC(map,sessionFactory.openSession());
