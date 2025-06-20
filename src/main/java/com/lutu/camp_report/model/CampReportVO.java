@@ -33,12 +33,12 @@ public class CampReportVO implements Serializable {
     private CampSiteOrderVO campsiteOrder; // 營地訂單（建議建立對應Entity）
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "mem_id", nullable = false)
-    private MemberVO member; // 露營者（建議建立對應Entity）
+    @JoinColumn(name = "mem_id", nullable = false)
+    private MemberVO memberVO; // 露營者（建議建立對應Entity）
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "admin_id")
-    private AdministratorVO administrator; // 管理員（可為NULL，建議建立對應Entity）
+    @JoinColumn(name = "admin_id")
+    private AdministratorVO administratorVO; // 管理員（可為NULL，建議建立對應Entity）
 
     @Column(name = "campsite_report_content", length = 500, nullable = false)
     private String campsiteReportContent; // 檢舉內容
@@ -70,20 +70,20 @@ public class CampReportVO implements Serializable {
         this.campsiteOrder = campsiteOrder;
     }
 
-    public MemberVO getMember() {
-        return member;
+    public MemberVO getMemberVO() {
+        return memberVO;
     }
 
-    public void setMember(MemberVO member) {
-        this.member = member;
+    public void setMemberVO(MemberVO memberVO) {
+        this.memberVO = memberVO;
     }
 
-    public AdministratorVO getAdministrator() {
-        return administrator;
+    public AdministratorVO getAdministratorVO() {
+        return administratorVO;
     }
 
-    public void setAdministrator(AdministratorVO administrator) {
-        this.administrator = administrator;
+    public void setAdministratorVO(AdministratorVO administratorVO) {
+        this.administratorVO = administratorVO;
     }
 
     public String getCampsiteReportContent() {
