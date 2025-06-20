@@ -220,9 +220,9 @@ public class ShopOrderService {
 		return sor.findAll();
 	}
 
-//	public List<ShopOrderVO> getAll(Integer memId) {
-//		return sor.findByMember(memId);
-//	}
+	public List<ShopOrderVO> getAll(Integer memId) {
+		return sor.findByMember(memId);
+	}
 
 //	public List<ShopOrderVO> getByMember(MemberVO memId) {
 //		return sor.findByMember(memId);
