@@ -7,10 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lutu.discount_code.model.DiscountCodeVO;
-import com.lutu.shop.model.ProdColorListRepository;
-import com.lutu.shop.model.ProdSpecListRepository;
-import com.lutu.shop.model.ProdSpecListVO;
+import com.lutu.prodColorList.model.ProdColorListRepository;
+import com.lutu.prodSpecList.model.ProdSpecListRepository;
+import com.lutu.prodSpecList.model.ProdSpecListVO;
 import com.lutu.shopProd.model.ShopProdRepository;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_insert_req;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsRepository;

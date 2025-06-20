@@ -8,12 +8,11 @@ import java.util.Set;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lutu.prodColorList.model.ProdColorListVO;
+import com.lutu.prodSpecList.model.ProdSpecListVO;
 import com.lutu.product_type.model.ProdTypeVO;
-import com.lutu.shop.model.ProdColorListVO;
 import com.lutu.shop.model.ProdFavListVO;
 import com.lutu.shop.model.ProdPicVO;
-import com.lutu.shop.model.ProdSpecListVO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,8 +26,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;

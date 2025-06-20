@@ -1,4 +1,4 @@
-package com.lutu.shop.model;
+package com.lutu.prodColorList.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
