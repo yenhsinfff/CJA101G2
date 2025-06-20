@@ -1,14 +1,20 @@
 package com.lutu.shop_order.model;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import compositeQuery.HibernateUtil_CompositeQuery_ShopOrder;
+import com.lutu.discount_code.model.DiscountCodeVO;
+import com.lutu.shop.model.ProdColorListRepository;
+import com.lutu.shop.model.ProdSpecListRepository;
+import com.lutu.shop.model.ProdSpecListVO;
+import com.lutu.shopProd.model.ShopProdRepository;
+import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_insert_req;
+import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsRepository;
+import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsVO;
 
 @Service
 public class ShopOrderService {
@@ -18,18 +24,40 @@ public class ShopOrderService {
 
 	@Autowired
 	private SessionFactory sessionFactory;
+	
+	@Autowired
+	ProdColorListRepository pclr;
+	
+	@Autowired
+	ProdSpecListRepository pslr;
+	
+	@Autowired
+	ShopProdRepository spr;
+	
+	@Autowired
+	ShopOrderItemsDetailsRepository soidr;
+	
+//	@Autowired
+//	DiscountCodeRepository dcr;
 
-	public ShopOrderVO addShopOrder(ShopOrderDTO_insert dto) {
+	@Transactional
+	public ShopOrderVO addShopOrder(ShopOrderDTO_insert dto, List<ShopOrderItemsDetailsDTO_insert_req> dtoDetails) {
 
+		// 1. 新增訂單
 		ShopOrderVO sovo = new ShopOrderVO();
+		
+		// 查出完整會員VO
+//		MemberVO mvo = MemberRepository.findById(dto.getMemId())
+//				.orElseThrow(() - > new NotFoundException("找不到會員資料"));
+//		
+//		sovo.setMemId(mvo);
 
 		sovo.setMemId(dto.getMemId());
 		sovo.setShopOrderShipment(dto.getShopOrderShipment());
 		sovo.setShopOrderShipFee(dto.getShopOrderShipFee());
-		sovo.setBeforeDiscountAmount(dto.getBeforeDiscountAmount());
-		sovo.setDiscountCodeId(dto.getDiscountCodeId());
-		sovo.setDiscountAmount(dto.getDiscountAmount());
-		sovo.setAfterDiscountAmount(dto.getAfterDiscountAmount());
+		// 於明細建立完成後取得折扣前總金額，先預設為0
+		Integer beforeDiscountAmount = 0;
+		
 		sovo.setShopOrderPayment(dto.getShopOrderPayment());
 		sovo.setOrderName(dto.getOrderName());
 		sovo.setOrderEmail(dto.getOrderEmail());
@@ -42,6 +70,54 @@ public class ShopOrderService {
 		sovo.setShopReturnApply(dto.getShopReturnApply() == null ? (byte) 0 : dto.getShopReturnApply());
 
 		sor.save(sovo);
+		
+		 // 2. 新增所有明細
+		for (ShopOrderItemsDetailsDTO_insert_req detailsDTO : dtoDetails) {
+			ShopOrderItemsDetailsVO soidVO = new ShopOrderItemsDetailsVO();
+			
+			soidVO.setShopOrderId(sovo.getShopOrderId());
+			soidVO.setProdId(detailsDTO.getProdId());
+			soidVO.setShopOrderQty(detailsDTO.getShopOrderQty());
+
+			// 取得價格
+			ProdSpecListVO spec = pslr.findById(detailsDTO.getProdSpecId())
+					  .orElseThrow(() -> new RuntimeException("查無該種規格"));
+			Integer price = spec.getProdSpecPrice();
+			
+			// 將價格存入訂單明細
+			soidVO.setProdOrderPrice(price);
+			
+			// 新增明細時不會有滿意度、評價內容、評價日期
+			soidVO.setProdColorId(detailsDTO.getProdColorId());
+			soidVO.setProdSpecId(detailsDTO.getProdSpecId());
+			
+			// 將明細存入明細資料庫
+			soidr.save(soidVO);
+			
+			// 依照明細計算折扣前金額
+			beforeDiscountAmount += price * detailsDTO.getShopOrderQty();
+		}
+		
+		// 設定折扣前總金額
+		sovo.setBeforeDiscountAmount(beforeDiscountAmount);
+		
+		// 如果有折扣碼需要扣除折扣碼金額來計算總金額
+//		if (dto.getDiscountCodeId() != null) {
+//			// 取得discountCodeType
+//			DiscountCodeVO dcVO = dcr.findById(dto.getDiscountCodeId())
+//					 .orElseThrow(() -> new RuntimeException("查無該種規格"));
+//			Byte type =  dcVO.getDiscountType();
+//			
+//			// 取得discountValue
+//			BigDecimal value = dcVO.getDiscountValue();
+//			
+//			if (type )
+//			
+//			
+//		}
+//		
+		sor.save(sovo);	// 再存一次，更新金額
+		
 		ShopOrderVO sovo2 = getOneShopOrder(sovo.getShopOrderId());
 		return sovo2;
 	}
@@ -53,6 +129,11 @@ public class ShopOrderService {
 
 		// 2. 只更新有傳值的欄位（可用if判斷，避免null覆蓋）
 		if (dtoUpdate.getMemId() != null) {
+			//取得Member Repository後
+//			MemberVO mvo = MemberRepository.findById(dtoUpdate.getMemId())
+//					.orElseThrow(() - > new NotFoundException("找不到會員資料"));
+//			sovo.setMemId(mvo);
+			
 			sovo.setMemId(dtoUpdate.getMemId());
 		}
 
@@ -100,7 +181,7 @@ public class ShopOrderService {
 			//如果ShopReturnApply不是未申請退貨(0)就不能進行修改
 			if (sovo.getShopReturnApply() == 0) {
 						// 判斷ShopOrderStatus輸入範圍
-				if (dtoUpdate.getShopOrderStatus() >= 0 && dtoUpdate.getShopOrderStatus() <= 5) {
+				if (dtoUpdate.getShopOrderStatus() >= 0 && dtoUpdate.getShopOrderStatus() <= 6) {
 					sovo.setShopOrderStatus(dtoUpdate.getShopOrderStatus());
 				} else {
 					throw new IllegalArgumentException("0: 等待付款中 1: 已取消 2: 等待賣家確認中 3: 準備出貨中 4: 已出貨 5: 未取貨，退回賣家 ");
@@ -111,8 +192,8 @@ public class ShopOrderService {
 		}
 
 		if (dtoUpdate.getShopReturnApply() != null) {
-			// ShopOrderStatus要在4才有資格申請退貨
-			if (sovo.getShopOrderStatus() != null && sovo.getShopOrderStatus() == 4) {
+			// ShopOrderStatus要在5(已取貨)才有資格申請退貨
+			if (sovo.getShopOrderStatus() != null && sovo.getShopOrderStatus() == 5) {
 				
 					// ReturnApply介於0~3之間
 				if (dtoUpdate.getShopReturnApply() >= 0 && dtoUpdate.getShopReturnApply() <= 3) {
@@ -147,8 +228,9 @@ public class ShopOrderService {
 //		return sor.findByMember(memId);
 //	}
 
-	public List<ShopOrderVO> getAll(Map<String, String[]> map) {
-		return HibernateUtil_CompositeQuery_ShopOrder.getAllC(map, sessionFactory.openSession());
-	}
+	// 複合查詢
+//	public List<ShopOrderVO> getAll(Map<String, String[]> map) {
+//		return HibernateUtil_CompositeQuery_ShopOrder.getAllC(map, sessionFactory.openSession());
+//	}
 
 }

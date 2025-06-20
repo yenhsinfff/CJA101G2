@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
@@ -24,6 +25,15 @@ public class ShopOrderItemsDetailsController {
 		List<ShopOrderItemsDetailsVO> details = soids.getAll();
 		
 		return new ApiResponse<> ("success", details, "查詢成功");
+	}
+	
+	// 依訂單編號取得明細資料
+	@GetMapping("/api/getByShopOrderId")
+	public ApiResponse<List<ShopOrderItemsDetailsVO>> getByShopOrderId(@RequestParam("shopOrderId") Integer shopOrderId) {
+		List<ShopOrderItemsDetailsVO> detailsById = soids.getAll(shopOrderId);
+		
+		return new ApiResponse<>("success", detailsById, "查詢成功");
+		
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lutu.shop_order.model.ShopOrderRepository;
+import com.lutu.shop_order.model.ShopOrderService;
 
 @Service
 public class ShopOrderItemsDetailsService {
@@ -14,11 +14,10 @@ public class ShopOrderItemsDetailsService {
 	ShopOrderItemsDetailsRepository soidr;
 	
 	@Autowired
-	ShopOrderRepository sor;
+	ShopOrderService sos;
 	
-	// 新增
-	
-	
+	// 商品訂單新增時同步新增訂單明細，故寫在ShopOrderService
+
 	// 全部查詢
 	public List<ShopOrderItemsDetailsVO> getAll() {
 		return soidr.findAll();

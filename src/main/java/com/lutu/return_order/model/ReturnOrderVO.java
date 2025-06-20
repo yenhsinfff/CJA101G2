@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "return_order")
-public class ReturnOrrderVO implements Serializable {
+public class ReturnOrderVO implements Serializable {
 	
 	@Id
 	@Column(name = "return_order_id")
@@ -42,10 +42,10 @@ public class ReturnOrrderVO implements Serializable {
 	@Column(name = "shop_return_status")
 	private byte shopReturnStatus; // 退貨狀態
 
-	public ReturnOrrderVO() {
+	public ReturnOrderVO() {
 	}
 
-	public ReturnOrrderVO(Integer returnOrderId, Integer shopOrderId, LocalDateTime shopReturnApplyDate,
+	public ReturnOrderVO(Integer returnOrderId, Integer shopOrderId, LocalDateTime shopReturnApplyDate,
 			String shopReturnReason, byte shopReturnConfirm, String shopReturnMessage, byte shopReturnMethod,
 			byte shopReturnStatus) {
 		super();

@@ -37,7 +37,7 @@ public class ShopOrderItemsDetailsVO implements Serializable {
 	private Integer prodOrderPrice; // 商品售價
 
 	@Column(name = "comment_satis")
-	private Byte commentSatis; // 評價滿意度
+	private Byte commentSatis = 0; // 評價滿意度，預設是0，代表尚未填寫，1~5才是有效分數
 
 	@Column(name = "comment_content")
 	private String commentContent; // 評價內容
