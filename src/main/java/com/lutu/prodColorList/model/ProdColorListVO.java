@@ -1,10 +1,11 @@
-package com.lutu.shop.model;
+package com.lutu.prodColorList.model;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
-import com.lutu.shop.model.ProdColorListVO.CompositeDetail;
+import com.lutu.prodColorList.model.ProdColorListVO.CompositeDetail;
+import com.lutu.shop.model.ColorListVO;
 import com.lutu.shopProd.model.ShopProdVO;
 
 import jakarta.persistence.Column;

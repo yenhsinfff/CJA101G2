@@ -1,4 +1,4 @@
-package com.lutu.shop.model;
+package com.lutu.prodSpecList.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
