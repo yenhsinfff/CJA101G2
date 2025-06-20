@@ -31,7 +31,6 @@ public interface ShopProdRepository extends JpaRepository<ShopProdVO, Integer> {
 			""")
 	Optional<ShopProdVO> selectProdById(Integer prodId);
 	
-	
 	@Query("SELECT p FROM ShopProdVO p WHERE p.prodName LIKE %:name%")
 	List<ShopProdVO> selectProductsByKeyword(@Param("name") String name);
 	
