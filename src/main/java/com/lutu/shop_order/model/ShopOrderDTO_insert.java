@@ -19,8 +19,7 @@ public class ShopOrderDTO_insert {
 	@NotNull(message = "請選擇出貨方式")	
 	private Byte shopOrderShipment; // 出貨方式
 	
-	@NotNull(message = "若免運費請輸入為0")
-	private Integer shopOrderShipFee; // 運費
+	private Integer shopOrderShipFee = 60; // 運費，預設60
 
 	@NotNull(message = "折價錢總金額不為0")
 	private Integer beforeDiscountAmount; // 折價前總金額

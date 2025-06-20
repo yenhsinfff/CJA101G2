@@ -45,7 +45,7 @@ public class ShopOrderVO implements Serializable {
 	private Byte shopOrderShipment; // 出貨方式
 
 	@Column(name = "shop_order_ship_fee")
-	private Integer shopOrderShipFee; // 運費
+	private Integer shopOrderShipFee = 60; // 運費，預設60
 
 	@Column(name = "before_discount_amount")
 	private Integer beforeDiscountAmount; // 折價前總金額
