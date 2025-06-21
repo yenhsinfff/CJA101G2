@@ -121,7 +121,7 @@ public class ArticlesVO implements Serializable {
         this.acStatus = acStatus;
     }
 
-    @OneToMany(mappedBy = "articleVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     public Set<ArticleImageVO> getArticleImages() {
         return articleImages;
     }
@@ -139,7 +139,7 @@ public class ArticlesVO implements Serializable {
         this.replies = replies;
     }
     
-    @OneToMany(mappedBy = "articleVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     public Set<NiceArticleVO> getNiceArticle() {
         return niceArticleVO;
     }

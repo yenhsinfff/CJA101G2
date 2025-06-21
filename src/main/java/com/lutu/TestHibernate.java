@@ -1,9 +1,5 @@
 package com.lutu;
 
-
-
-
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.boot.SpringApplication;
@@ -11,10 +7,9 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.lutu.bundleitem.model.BundleItemService;
-import com.lutu.bundleitem.model.BundleItemVO;
-import com.lutu.bundleitemdetails.model.BundleItemDetailsService;
 import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
+import com.lutu.campsitetype.model.CampsiteTypeService;
+import com.lutu.campsitetype.model.CampsiteTypeVO;
 import com.lutu.camptracklist.model.CampTrackListService;
 
 @SpringBootApplication
@@ -30,8 +25,64 @@ public class TestHibernate {
 		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
 		ConfigurableApplicationContext context = app.run(args);
 		
+		//================================ 營地型別項目明細 =======================================
+		CampsiteTypeService campsiteTypeSvc = context.getBean(CampsiteTypeService.class);
+
+//				CampsiteTypeVO_getAllCampsiteType
+				List<CampsiteTypeVO> list = campsiteTypeSvc.getAll();
+				for (CampsiteTypeVO vo : list) {
+					System.out.print(vo.getCompositeKey() + ",");
+					System.out.print(vo.getCampsiteName() + ",");
+					System.out.print(vo.getCampsitePeople() + ",");
+					System.out.print(vo.getCampsiteNum() + ",");
+					System.out.print(vo.getCampsitePrice() + ",");
+					System.out.print(vo.getCampsitePic1() + ",");
+					System.out.print(vo.getCampsitePic2() + ",");
+					System.out.print(vo.getCampsitePic3() + ",");
+					System.out.print(vo.getCampsitePic4() + ",");
+					System.out.println();
+				}
+
+				// 查詢-findByPrimaryKey BundleItemVO_getOneBundleItem
+				// (多方emp2.hbm.xml必須設為lazy="false")(優!)
+//				BundleItemDetailsVO vo = bundleItemDetailsSvc.getOneBundleItemDetails(8001);
+//				System.out.print(vo.getBundleDetailsId() + ",");
+//				System.out.print(vo.getCampsiteDetailsId() + ",");
+//				System.out.print(vo.getBundleId()+ ",");
+//				System.out.print(vo.getBundleBuyNum()+ ",");
+//				System.out.print(vo.getBundleBuyAmount());
+
+				// 修改
+//				BundleItemDetailsVO vo = bundleItemDetailsSvc.getOneBundleItemDetails(8003);
+//				vo.setBundleDetailsId(8004);
+//				vo.setCampsiteDetailsId(1000000007);
+//				vo.setBundleId(3999);
+//				vo.setBundleBuyNum(3);
+//				vo.setBundleBuyAmount(6000);
+//				bundleItemDetailsSvc.addBundleItemDetails(vo);
+				
+				// 新增
+//				BundleItemDetailsVO vo = new BundleItemDetailsVO();
+//				vo.setCampsiteDetailsId(1000000010);
+//				vo.setBundleId(3999);
+//				vo.setBundleBuyNum(3);
+//				vo.setBundleBuyAmount(6000);
+//				bundleItemDetailsSvc.addBundleItemDetails(vo);
+
+				//刪除   --> 自訂的刪除方法
+//				bundleItemSvc.deleteBundleItem(8);
+				
+				//● 刪除   //XXX --> Repository內建的刪除方法目前無法使用，因為有@ManyToOne
+				//System.out.println("--------------------------------");
+				//repository.deleteById(7001);      
+				//System.out.println("--------------------------------");
+	
+		
+				
+		
+		
 		//================================ 營地加購項目明細 =======================================
-		BundleItemDetailsService bundleItemDetailsSvc = context.getBean(BundleItemDetailsService.class);
+//		BundleItemDetailsService bundleItemDetailsSvc = context.getBean(BundleItemDetailsService.class);
 
 //				BundleItemDetailsVO_getAllBundleItemDetails
 //				List<BundleItemDetailsVO> list = bundleItemDetailsSvc.getAll();
@@ -82,18 +133,18 @@ public class TestHibernate {
 		
 
 //================================ 營地加購項目 =======================================
-		BundleItemService bundleItemSvc = context.getBean(BundleItemService.class);
+//		BundleItemService bundleItemSvc = context.getBean(BundleItemService.class);
 
 //		BundleItemVO_getAllBundleItem
-		List<BundleItemVO> list = bundleItemSvc.getAll();
-		for (BundleItemVO bundleItemVO : list) {
-			System.out.print(bundleItemVO.getBundleId() + ",");
-			System.out.print(bundleItemVO.getCampId() + ",");
-			System.out.print(bundleItemVO.getBundleName()+ ",");
-			System.out.print(bundleItemVO.getBundleAddDate()+ ",");
-			System.out.print(bundleItemVO.getBundlePrice()+ ",");
-			System.out.println();
-		}
+//		List<BundleItemVO> list = bundleItemSvc.getAll();
+//		for (BundleItemVO bundleItemVO : list) {
+//			System.out.print(bundleItemVO.getBundleId() + ",");
+//			System.out.print(bundleItemVO.getCampId() + ",");
+//			System.out.print(bundleItemVO.getBundleName()+ ",");
+//			System.out.print(bundleItemVO.getBundleAddDate()+ ",");
+//			System.out.print(bundleItemVO.getBundlePrice()+ ",");
+//			System.out.println();
+//		}
 
 		// 查詢-findByPrimaryKey BundleItemVO_getOneBundleItem
 		// (多方emp2.hbm.xml必須設為lazy="false")(優!)
@@ -124,7 +175,7 @@ public class TestHibernate {
 //		bundleItemSvc.addBundleItem(bundleItemVO);
 
 		//刪除   --> 自訂的刪除方法
-		bundleItemSvc.deleteBundleItem(8);
+//		bundleItemSvc.deleteBundleItem(8);
 		
 		//● 刪除   //XXX --> Repository內建的刪除方法目前無法使用，因為有@ManyToOne
 		//System.out.println("--------------------------------");

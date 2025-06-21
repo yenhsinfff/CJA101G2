@@ -35,7 +35,7 @@ public class ArticleImageVO implements Serializable {
         return articlesVO;
     }
 
-    public void setArticleVO(ArticlesVO articlesVO) {
+    public void setArticlesVO(ArticlesVO articlesVO) {
         this.articlesVO = articlesVO;
     }
 
