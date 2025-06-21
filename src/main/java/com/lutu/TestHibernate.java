@@ -1,5 +1,6 @@
 package com.lutu;
 
+
 import java.util.List;
 
 import org.springframework.boot.SpringApplication;
@@ -7,10 +8,10 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
+import com.lutu.article.model.ArticlesService;
+import com.lutu.article.model.ArticlesVO;
 import com.lutu.campsitetype.model.CampsiteTypeService;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
-import com.lutu.camptracklist.model.CampTrackListService;
 
 @SpringBootApplication
 //@ComponentScan(basePackages = "com.lutu")  // 掃描你的 Service 等 component
@@ -25,23 +26,24 @@ public class TestHibernate {
 		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
 		ConfigurableApplicationContext context = app.run(args);
 		
-		//================================ 營地型別項目明細 =======================================
-		CampsiteTypeService campsiteTypeSvc = context.getBean(CampsiteTypeService.class);
 
-//				CampsiteTypeVO_getAllCampsiteType
-				List<CampsiteTypeVO> list = campsiteTypeSvc.getAll();
-				for (CampsiteTypeVO vo : list) {
-					System.out.print(vo.getCompositeKey() + ",");
-					System.out.print(vo.getCampsiteName() + ",");
-					System.out.print(vo.getCampsitePeople() + ",");
-					System.out.print(vo.getCampsiteNum() + ",");
-					System.out.print(vo.getCampsitePrice() + ",");
-					System.out.print(vo.getCampsitePic1() + ",");
-					System.out.print(vo.getCampsitePic2() + ",");
-					System.out.print(vo.getCampsitePic3() + ",");
-					System.out.print(vo.getCampsitePic4() + ",");
-					System.out.println();
-				}
+		//================================ 營地型別項目明細 =======================================
+//		CampsiteTypeService campsiteTypeSvc = context.getBean(CampsiteTypeService.class);
+//
+////				CampsiteTypeVO_getAllCampsiteType
+//				List<CampsiteTypeVO> list = campsiteTypeSvc.getAll();
+//				for (CampsiteTypeVO vo : list) {
+//					System.out.print(vo.getCompositeKey() + ",");
+//					System.out.print(vo.getCampsiteName() + ",");
+//					System.out.print(vo.getCampsitePeople() + ",");
+//					System.out.print(vo.getCampsiteNum() + ",");
+//					System.out.print(vo.getCampsitePrice() + ",");
+//					System.out.print(vo.getCampsitePic1() + ",");
+//					System.out.print(vo.getCampsitePic2() + ",");
+//					System.out.print(vo.getCampsitePic3() + ",");
+//					System.out.print(vo.getCampsitePic4() + ",");
+//					System.out.println();
+//				}
 
 				// 查詢-findByPrimaryKey BundleItemVO_getOneBundleItem
 				// (多方emp2.hbm.xml必須設為lazy="false")(優!)
@@ -131,6 +133,66 @@ public class TestHibernate {
 	
 		
 		
+		//================================ 文章 =======================================
+		ArticlesService articlesSvc = context.getBean(ArticlesService.class);
+
+//				BundleItemVO_getAllBundleItem
+				List<ArticlesVO> list = articlesSvc.getAllArticles();
+				for (ArticlesVO VO : list) {
+					System.out.print(VO.getAcId() + ",");
+					System.out.print(VO.getAcTitle() + ",");
+					System.out.print(VO.getMemberVO()+ ",");
+					System.out.print(VO.getArticleTypeVO()+ ",");
+					System.out.print(VO.getAcTime()+ ",");
+					System.out.print(VO.getAcContext()+ ",");
+					System.out.print(VO.getAcStatus()+ ",");
+					System.out.print(VO.getArticleImages()+ ",");
+					System.out.print(VO.getReplies()+ ",");
+					System.out.print(VO.getNiceArticle()+ ",");
+					System.out.print(VO.getArticleReport()+ ",");
+					System.out.print(VO.getAcFavRecord()+ ",");
+					System.out.println();
+				}
+				
+//				System.out.print(VO.()+ ",");
+
+				// 查詢-findByPrimaryKey BundleItemVO_getOneBundleItem
+				// (多方emp2.hbm.xml必須設為lazy="false")(優!)
+//				BundleItemVO bundleItemVO = bundleItemSvc.getOneBundleItem(1);
+//				System.out.print(bundleItemVO.getBundleId() + ",");
+//				System.out.print(bundleItemVO.getCampId() + ",");
+//				System.out.print(bundleItemVO.getBundleName()+ ",");
+//				System.out.print(bundleItemVO.getBundleAddDate()+ ",");
+//				System.out.print(bundleItemVO.getBundlePrice());
+
+				// 修改
+//				BundleItemVO bundleItemVO = bundleItemSvc.getOneBundleItem(13);
+//				bundleItemVO.setCampId(1008);
+//				bundleItemVO.setBundleName("手作課程");
+//				bundleItemVO.setBundlePrice(3999);
+//				LocalDate localDate = LocalDate.parse("2025-05-29");
+//				bundleItemVO.setBundleAddDate(localDate);
+//				bundleItemSvc.addBundleItem(bundleItemVO);
+				
+				// 新增
+//				BundleItemVO bundleItemVO = new BundleItemVO();
+//				bundleItemVO.setCampId(1003);
+//				bundleItemVO.setBundleName("手作地毯課程");
+//				bundleItemVO.setBundlePrice(3600);
+//				String dateStr = "2025-01-01";
+//				java.sql.Date sqlDate = java.sql.Date.valueOf(dateStr);
+//				bundleItemVO.setBundleAddDate(sqlDate);
+//				bundleItemSvc.addBundleItem(bundleItemVO);
+
+				//刪除   --> 自訂的刪除方法
+//				bundleItemSvc.deleteBundleItem(8);
+				
+				//● 刪除   //XXX --> Repository內建的刪除方法目前無法使用，因為有@ManyToOne
+				//System.out.println("--------------------------------");
+				//repository.deleteById(7001);      
+				//System.out.println("--------------------------------");
+
+
 
 //================================ 營地加購項目 =======================================
 //		BundleItemService bundleItemSvc = context.getBean(BundleItemService.class);
@@ -163,7 +225,7 @@ public class TestHibernate {
 //		LocalDate localDate = LocalDate.parse("2025-05-29");
 //		bundleItemVO.setBundleAddDate(localDate);
 //		bundleItemSvc.addBundleItem(bundleItemVO);
-//		
+
 		// 新增
 //		BundleItemVO bundleItemVO = new BundleItemVO();
 //		bundleItemVO.setCampId(1003);
@@ -183,7 +245,7 @@ public class TestHibernate {
 		//System.out.println("--------------------------------");
 
 //================================ 營地收藏 =======================================
-				CampTrackListService campTrackListSvc = context.getBean(CampTrackListService.class);		
+//				CampTrackListService campTrackListSvc = context.getBean(CampTrackListService.class);		
 
 		// CampTrackListVO _ getAllCampTrackList
 //		      		List<CampTrackListVO> list = campTrackListSvc.getAll();

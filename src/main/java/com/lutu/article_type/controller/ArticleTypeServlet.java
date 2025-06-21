@@ -1,8 +1,10 @@
-package com.lutu.article_type.model;
+package com.lutu.article_type.controller;
 
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.lutu.article_type.model.ArticleTypeVO;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;

@@ -130,7 +130,7 @@ public class ArticlesVO implements Serializable {
         this.articleImages = articleImages;
     }
 
-    @OneToMany(mappedBy = "articleVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     public Set<ReplyVO> getReplies() {
         return replies;
     }
