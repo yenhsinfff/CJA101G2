@@ -29,7 +29,7 @@ public class ShopProdController {
      * 查詢所有商品（DTO），回傳 JSON 格式
      * GET http://localhost:8081/CJA101G02/api/productslist
      */
-	@GetMapping("/api/productslist")
+	@GetMapping("/api/products")
 	public ApiResponse<List<ShopProdDTO>> getAllProds() {
 	    List<ShopProdDTO> dtoList = shopProdService.getAllProdsByDTO();
 	    return new ApiResponse<>("success", dtoList, "查詢成功");

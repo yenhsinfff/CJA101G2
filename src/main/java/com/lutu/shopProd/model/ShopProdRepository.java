@@ -44,9 +44,11 @@ public interface ShopProdRepository extends JpaRepository<ShopProdVO, Integer> {
 	List<ShopProdVO> findByKeyword(@Param("keyword") String keyword);
 
 	// 類別查詢
-	List<ShopProdVO> findProdByProdType(Integer prodTypeId);
+	@Query("SELECT p FROM ShopProdVO p WHERE p.prodTypeVO.prodTypeId = :prodTypeId")
+	List<ShopProdVO> findByProdType(Integer prodTypeId);
 
 	// 最新上架（依上架日期倒序）
+	@Query("SELECT p FROM ShopProdVO p ORDER BY p.prodReleaseDate DESC")
 	List<ShopProdVO> findByReleaseDateDesc();
 
 	// 折扣查詢（折扣不為空且大於 0）
