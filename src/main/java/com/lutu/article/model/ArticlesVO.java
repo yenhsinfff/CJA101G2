@@ -40,6 +40,7 @@ public class ArticlesVO implements java.io.Serializable{
 	}  
 	
 	
+	
 	public void setAcTypeId(Integer acTypeId) {
 		this.acTypeId = acTypeId;
 	}
