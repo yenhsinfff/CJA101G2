@@ -2,14 +2,19 @@ package com.lutu.bundleitem.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -24,11 +29,11 @@ public class BundleItemVO implements Serializable {
 	private Integer bundleId; // 加購項目編號
 
 	@Column(name = "camp_id")
-	@NotNull(message="營地編號: 請勿空白")
+	@NotNull(message = "營地編號: 請勿空白")
 	private Integer campId; // 營地編號
 
 	@Column(name = "bundle_name")
-	@NotEmpty(message="加購項目名稱: 請勿空白")
+	@NotEmpty(message = "加購項目名稱: 請勿空白")
 	private String bundleName; // 加購項目名稱
 
 	@Column(name = "bundle_add_date")
@@ -36,8 +41,27 @@ public class BundleItemVO implements Serializable {
 	private LocalDate bundleAddDate; // 建立日期
 
 	@Column(name = "bundle_price", nullable = false)
-	@NotNull(message="加購項目價格: 請勿空白")
+	@NotNull(message = "加購項目價格: 請勿空白")
 	private Integer bundlePrice; // 加購項目價格
+
+//=======================================================	
+	
+	@OneToMany(mappedBy = "bundleItem", cascade = CascadeType.ALL)
+	private Set<BundleItemDetailsVO> bundleItemDetails;
+
+   public Set<BundleItemDetailsVO> getBundleItemDetails() {
+		return bundleItemDetails;
+	}
+
+	public void setBundleItemDetails(Set<BundleItemDetailsVO> bundleItemDetails) {
+		bundleItemDetails = bundleItemDetails;
+	}
+
+//=======================================================	
+	
+    public BundleItemVO(){
+		
+	}
 
 	public Integer getBundleId() {
 		return bundleId;
