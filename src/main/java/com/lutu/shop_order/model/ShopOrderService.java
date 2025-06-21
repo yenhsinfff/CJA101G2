@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lutu.discount_code.model.DiscountCodeRepository;
+import com.lutu.discount_code.model.DiscountCodeVO;
+import com.lutu.member.model.MemberRepository;
+import com.lutu.member.model.MemberVO;
 import com.lutu.prodColorList.model.ProdColorListRepository;
 import com.lutu.prodSpecList.model.ProdSpecListRepository;
 import com.lutu.prodSpecList.model.ProdSpecListVO;
@@ -16,6 +20,8 @@ import com.lutu.shopProd.model.ShopProdRepository;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_insert_req;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsRepository;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsVO;
+
+import javassist.NotFoundException;
 
 @Service
 public class ShopOrderService {
@@ -38,8 +44,11 @@ public class ShopOrderService {
 	@Autowired
 	ShopOrderItemsDetailsRepository soidr;
 
-//	@Autowired
-//	DiscountCodeRepository dcr;
+	@Autowired
+	DiscountCodeRepository dcr;
+
+	@Autowired
+	MemberRepository mr;
 
 	@Transactional
 	public ShopOrderVO addShopOrder(ShopOrderDTO_insert dto, List<ShopOrderItemsDetailsDTO_insert_req> dtoDetails) {
@@ -48,12 +57,9 @@ public class ShopOrderService {
 		ShopOrderVO sovo = new ShopOrderVO();
 
 		// 查出完整會員VO
-//		MemberVO mvo = MemberRepository.findById(dto.getMemId())
-//				.orElseThrow(() - > new NotFoundException("找不到會員資料"));
-//		
-//		sovo.setMemId(mvo);
+		MemberVO mvo = mr.findById(dto.getMemId()).orElseThrow(() -> new NotFoundException("找不到會員資料"));
+		sovo.setMemId(mvo);
 
-		sovo.setMemId(dto.getMemId());
 		sovo.setShopOrderShipment(dto.getShopOrderShipment());
 		sovo.setShopOrderShipFee(dto.getShopOrderShipFee());
 		// 於明細建立完成後取得折扣前總金額，先預設為BigDecimal 0，方便後續計算
@@ -122,42 +128,44 @@ public class ShopOrderService {
 		if (dto.getDiscountCodeId() != null) {
 
 			// 存入DiscountCodeId
-			sovo.setDiscountCodeId(dto.getDiscountCodeId());
-
-			// 取得discountCodeType
 			DiscountCodeVO dcVO = dcr.findById(dto.getDiscountCodeId())
 					.orElseThrow(() -> new RuntimeException("查無該種規格"));
-			Byte type = dcVO.getDiscountType();
+			sovo.setDiscountCodeId(dcVO);
 
-			// 取得discountValue
-			BigDecimal value = dcVO.getDiscountValue();
+			// 取得discountCodeType
+			if (sovo.getDiscountCodeId() != null) {
+				Byte type = sovo.getDiscountCodeId().getDiscountType();
 
-			if (type == 0) {
+				// 取得discountValue
+				BigDecimal value = dcVO.getDiscountValue();
 
-				sovo.setDiscountAmount(value.intValue()); // 將value轉換為Integer
+				if (type == 0) {
 
-				// 計算折扣後金額
-				BigDecimal totalAmount = beforeDiscountAmount.subtract(value);
+					sovo.setDiscountAmount(value.intValue()); // 將value轉換為Integer
 
-				// 加入運費計算實付金額
-				afterDiscountAmount = totalAmount.add(shipFee);
+					// 計算折扣後金額
+					BigDecimal totalAmount = beforeDiscountAmount.subtract(value);
 
-				// 將afterDiscountAmount存入商品訂單
-				sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
-			} else if (type == 1) {
-				// 折扣前金額*(1 - discountValue(%))並四捨五入
-				BigDecimal discountAmount = beforeDiscountAmount.multiply(BigDecimal.ONE.subtract(value1)).setScale(0,
-						RoundingMode.HALF_UP);
+					// 加入運費計算實付金額
+					afterDiscountAmount = totalAmount.add(shipFee);
 
-				// 計算折扣後金額，先以BigDecimal計算
-				BigDecimal totalAmount = beforeDiscountAmount.subtract(discountAmount);
+					// 將afterDiscountAmount存入商品訂單
+					sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
+				} else if (type == 1) {
+					// 折扣前金額*(1 - discountValue(%))並四捨五入
+					BigDecimal discountAmount = beforeDiscountAmount.multiply(BigDecimal.ONE.subtract(value))
+							.setScale(0, RoundingMode.HALF_UP);
 
-				// 加入運費計算實付金額
-				afterDiscountAmount = totalAmount.add(shipFee);
+					// 計算折扣後金額，先以BigDecimal計算
+					BigDecimal totalAmount = beforeDiscountAmount.subtract(discountAmount);
 
-				sovo.setDiscountAmount(discountAmount.intValue()); // 存入折扣金額
-				sovo.setAfterDiscountAmount(afterDiscountAmount.intValue()); // 存入實付金額
+					// 加入運費計算實付金額
+					afterDiscountAmount = totalAmount.add(shipFee);
 
+					sovo.setDiscountAmount(discountAmount.intValue()); // 存入折扣金額
+					sovo.setAfterDiscountAmount(afterDiscountAmount.intValue()); // 存入實付金額
+
+				}
 			}
 
 		} else {
@@ -182,9 +190,7 @@ public class ShopOrderService {
 		// 2. 只更新有傳值的欄位（可用if判斷，避免null覆蓋）
 		if (dtoUpdate.getMemId() != null) {
 			// 取得Member Repository後
-//			MemberVO mvo = MemberRepository.findById(dtoUpdate.getMemId())
-//					.orElseThrow(() - > new NotFoundException("找不到會員資料"));
-//			sovo.setMemId(mvo);
+			MemberVO mvo = mr.findById(dtoUpdate.getMemId()).orElseThrow(() -> new IllegalArgumentException("找不到會員資料"));
 
 			sovo.setMemId(dtoUpdate.getMemId());
 		}

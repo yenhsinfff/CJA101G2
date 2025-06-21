@@ -31,11 +31,10 @@ public class ShopOrderVO implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer shopOrderId; // 商品訂單編號
 
-//	@ManyToOne
-//	@JoinColumn(name = "mem_id", updatable = false)
-	@Column(name = "mem_id")
-//	private MemberVO memId;						// 露營者編號
-	private Integer memId; // 露營者編號
+	@ManyToOne
+	@JoinColumn(name = "mem_id", updatable = false)
+	private MemberVO memId;						// 露營者編號
+
 
 	@Column(insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
@@ -50,11 +49,9 @@ public class ShopOrderVO implements Serializable {
 	@Column(name = "before_discount_amount")
 	private Integer beforeDiscountAmount; // 折價前總金額
 
-//	@ManyToOne
-//	@JoinColumn(name = "discount_code_id")
-	@Column(name = "discount_code_id")
-//	private DiscountCodeVO discountCodeId;				// 折價券編號
-	private String discountCodeId; // 折價券編號
+	@ManyToOne
+	@JoinColumn(name = "discount_code_id")
+	private DiscountCodeVO discountCodeId;				// 折價券編號
 
 	@Column(name = "discount_amount")
 	private Integer discountAmount; // 折價金額
@@ -109,13 +106,13 @@ public class ShopOrderVO implements Serializable {
 		this.shopOrderId = shopOrderId;
 	}
 
-//	public MemberVO getMemId() {
-//		return memId;
-//	}
-//
-//	public void setMemId(MemberVO memId) {
-//		this.memId = memId;
-//	}
+	public MemberVO getMemId() {
+		return memId;
+	}
+
+	public void setMemId(MemberVO memId) {
+		this.memId = memId;
+	}
 
 	public LocalDateTime getShopOrderDate() {
 		return shopOrderDate;
@@ -149,32 +146,12 @@ public class ShopOrderVO implements Serializable {
 		this.beforeDiscountAmount = beforeDiscountAmount;
 	}
 
-//	public DiscountCodeVO getDiscountCodeId() {
-//		return discountCodeId;
-//	}
-//
-//	public void setDiscountCodeId(DiscountCodeVO discountCodeId) {
-//		this.discountCodeId = discountCodeId;
-//	}
-
-	public Integer getMemId() {
-		return memId;
-	}
-
-	public void setMemId(Integer memId) {
-		this.memId = memId;
-	}
-
-	public String getDiscountCodeId() {
+	public DiscountCodeVO getDiscountCodeId() {
 		return discountCodeId;
 	}
 
-	public void setDiscountCodeId(String discountCodeId) {
+	public void setDiscountCodeId(DiscountCodeVO discountCodeId) {
 		this.discountCodeId = discountCodeId;
-	}
-
-	public Integer getDiscountAmount() {
-		return discountAmount;
 	}
 
 	public void setDiscountAmount(Integer discountAmount) {
