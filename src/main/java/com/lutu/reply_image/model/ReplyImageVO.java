@@ -1,62 +1,54 @@
 package com.lutu.reply_image.model;
 
-import java.util.Objects;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.io.Serializable;
 
 import com.lutu.reply.model.ReplyVO;
 
-public class ReplyImageVO implements java.io.Serializable{
-	
-	private Integer replyImgId;		// 留言圖片編號(PK)
-	private Integer	replyId;		// 留言編號
-	private byte[]	replyImg;		// 圖片訊息
-	
-	
-	
-	public Integer getReplyImgId() {
-		return replyImgId;
-	}
-	public void setReplyImgId(Integer replyImgId) {
-		this.replyImgId = replyImgId;
-	}
-	public Integer getReplyId() {
-		return replyId;
-	}
-	public void setReplyId(Integer replyId) {
-		this.replyId = replyId;
-	}
-	public byte[] getReplyImg() {
-		return replyImg;
-	}
-	public void setReplyImg(byte[] replyImg) {
-		this.replyImg = replyImg;
-	}
-	
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(replyImgId);
-	}
-	
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ReplyImageVO other = (ReplyImageVO) obj;
-		return Objects.equals(replyImgId, other.replyImgId);
-	}
-	
-	
-	@Override
-	public String toString() {		// +", = "
-		return "ReplyImage [留言圖片編號 = " + replyImgId + 
-						 ", 留言編號 = "     + replyId + 
-						 ", 圖片訊息 = "     + replyImg + "]";
-	}
-	
+@Entity
+@Table(name = "reply_image")
+public class ReplyImageVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
+    private Integer replyImgId;	 // 留言圖片編號(PK)
+    private ReplyVO replyVO;	 // 留言編號(FK) 
+    private byte[] replyImg;	 // 圖片訊息
+
+    public ReplyImageVO() {
+    	
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reply_img_id")
+    public Integer getReplyImgId() {
+        return replyImgId;
+    }
+
+    public void setReplyImgId(Integer replyImgId) {
+        this.replyImgId = replyImgId;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "reply_id", nullable = false)
+    @NotNull(message = "留言: 必須指定所屬留言")
+    public ReplyVO getReplyVO() {
+        return replyVO;
+    }
+
+    public void setReplyVO(ReplyVO replyVO) {
+        this.replyVO = replyVO;
+    }
+
+    @Column(name = "reply_img", nullable = false, columnDefinition = "longblob")
+    @NotNull(message = "圖片: 請上傳圖片")
+    public byte[] getReplyImg() {
+        return replyImg;
+    }
+
+    public void setReplyImg(byte[] replyImg) {
+        this.replyImg = replyImg;
+    }
 }
+
