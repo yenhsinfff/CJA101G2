@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lutu.product_type.model.ProdTypeVO;
 
 @Transactional
-@Service("ShopProdService")
+@Service("shopProdService")
 public class ShopProdService {
 
 	@Autowired
@@ -85,7 +85,7 @@ public class ShopProdService {
 	}
 	//類別查詢
 	public List<ShopProdDTO> getByType(Integer typeId) {
-	    return repository.findProdByProdType(typeId).stream()
+	    return repository.findByProdType(typeId).stream()
 	                     .map(this::convertToDTO)
 	                     .toList();
 	}
