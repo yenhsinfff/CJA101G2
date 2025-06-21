@@ -62,7 +62,6 @@ public class ArticlesVO implements java.io.Serializable{
 		this.acStatus = acStatus;
 	}
 	
-	
 	@Override
 	public int hashCode() {
 		return Objects.hash(acId);
