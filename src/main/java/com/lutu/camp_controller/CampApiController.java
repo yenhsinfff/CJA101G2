@@ -256,7 +256,7 @@ public class CampApiController {
 		return new ApiResponse<>("success", orders, "查詢成功");
 	}
 
-	@GetMapping("/api/camps1/{campId}/pic2")
+	@GetMapping("/api/camps1/{campId}/pic1")
 	public void getCampPic2(@PathVariable Integer campId, HttpServletResponse response) throws IOException {
 
 		byte[] img = (campService.getOneCamp(campId)).getCampPic1(); // 從資料庫取得
