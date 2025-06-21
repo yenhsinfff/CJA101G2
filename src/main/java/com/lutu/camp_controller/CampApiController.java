@@ -128,7 +128,7 @@ public class CampApiController {
 	}
 
 	@GetMapping("/api/camps1/{campId}/pic1")
-	public void getCampPic2(@PathVariable Integer campId, HttpServletResponse response) throws IOException {
+	public void getCampPic3(@PathVariable Integer campId, HttpServletResponse response) throws IOException {
 
 		byte[] img = (campService.getOneCamp(campId)).getCampPic1(); // 從資料庫取得
 
