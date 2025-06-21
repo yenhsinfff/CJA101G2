@@ -19,7 +19,7 @@ import com.lutu.camptracklist.model.CampTrackListVO;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.lutu")  // 掃描你的 Service 等 component
-@EnableJpaRepositories(basePackages = "com.lutu")  // 掃描 Repository
+//@EnableJpaRepositories(basePackages = "com.lutu")  // 掃描 Repository
 @EntityScan(basePackages = "com.lutu")  //掃描           table
 public class TestCampReport {
 

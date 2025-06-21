@@ -3,6 +3,9 @@ package com.lutu.nice_article.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.lutu.article.model.ArticlesVO;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -15,7 +18,10 @@ public class NiceArticleVO implements Serializable {
     private Integer acId;				// 討論區文章編號 (PK, FK)
     private Integer memId;				// 露營者編號     (PK, FK)
     private LocalDateTime likeTime;		// 按讚時間
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ac_id", insertable = false, updatable = false)
+    private ArticlesVO articlesVO;
+    
     public NiceArticleVO() {
     	
     }
@@ -51,6 +57,14 @@ public class NiceArticleVO implements Serializable {
 
     public void setLikeTime(LocalDateTime likeTime) {
         this.likeTime = likeTime;
+    }
+    
+    public ArticlesVO getArticlesVO() {
+        return articlesVO;
+    }
+
+    public void setArticlesVO(ArticlesVO articlesVO) {
+        this.articlesVO = articlesVO;
     }
 }
 

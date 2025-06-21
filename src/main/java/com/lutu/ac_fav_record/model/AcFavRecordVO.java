@@ -3,6 +3,9 @@ package com.lutu.ac_fav_record.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.lutu.article.model.ArticlesVO;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -16,11 +19,22 @@ public class AcFavRecordVO implements Serializable {
 	private Integer acId;
 	private Integer memId;
 	private LocalDateTime acFavTime;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ac_id", insertable = false, updatable = false)
+	private ArticlesVO articlesVO;
 
 	public AcFavRecordVO() {
 	}
 
 	// ========================================================
+	public ArticlesVO getArticlesVO() {
+	    return articlesVO;
+	}
+
+	public void setArticlesVO(ArticlesVO articlesVO) {
+	    this.articlesVO = articlesVO;
+	}
 	// 特別加上對複合主鍵物件的 getter / setter
 	public AcFavRecordId getCompositeKey() {
 		return new AcFavRecordId(acId, memId);
