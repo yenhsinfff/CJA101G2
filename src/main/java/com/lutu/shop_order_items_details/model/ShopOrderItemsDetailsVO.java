@@ -6,12 +6,18 @@ import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.lutu.prodColorList.model.ProdColorListVO;
+import com.lutu.prodSpecList.model.ProdSpecListVO;
+import com.lutu.shopProd.model.ShopProdVO;
+import com.lutu.shop_order.model.ShopOrderVO;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsVO.CompositeDetail;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -37,7 +43,7 @@ public class ShopOrderItemsDetailsVO implements Serializable {
 	private Integer prodOrderPrice; // 商品售價
 
 	@Column(name = "comment_satis")
-	private Byte commentSatis; // 評價滿意度
+	private Byte commentSatis = 0; // 評價滿意度，預設是0，代表尚未填寫，1~5才是有效分數
 
 	@Column(name = "comment_content")
 	private String commentContent; // 評價內容
@@ -53,6 +59,23 @@ public class ShopOrderItemsDetailsVO implements Serializable {
 	@Id
 	@Column(name = "prod_spec_id")
 	private Integer prodSpecId; // 商品規格編號
+	
+	// 關聯欄位（新增於原本欄位之下）
+	@ManyToOne
+	@JoinColumn(name = "shop_order_id", referencedColumnName = "shop_order_id", insertable = false, updatable = false)
+	private ShopOrderVO shopOrder;
+
+	@ManyToOne
+	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id", insertable = false, updatable = false)
+	private ShopProdVO prod;
+
+	@ManyToOne
+	@JoinColumn(name = "prod_color_id", referencedColumnName = "prod_color_id", insertable = false, updatable = false)
+	private ProdColorListVO prodColor;
+
+	@ManyToOne
+	@JoinColumn(name = "prod_spec_id", referencedColumnName = "prod_spec_id", insertable = false, updatable = false)
+	private ProdSpecListVO prodSpec;
 
 	public CompositeDetail getCompositeKey() {
 		return new CompositeDetail(shopOrderId, prodId, prodColorId, prodSpecId);

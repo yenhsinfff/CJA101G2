@@ -1,85 +1,121 @@
 package com.lutu.reply.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.lutu.article.model.ArticlesVO;
+import com.lutu.member.model.MemberVO;
+import com.lutu.reply_image.model.ReplyImageVO;
+import com.lutu.reply_report.model.ReplyReportVO;
+import com.lutu.user_discount.model.UserDiscountVO;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.Set;
 
-import com.lutu.article_type.model.ArticleTypeVO;
+@Entity
+@Table(name = "reply")
+public class ReplyVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-public class ReplyVO implements java.io.Serializable{
-	
-	private Integer replyId;				// 留言編號(PK)
-	private Integer	memId;					// 露營者編號
-	private Integer	acId;					// 討論區文章編號
-	private LocalDateTime	replyTime;		// 回覆時間
-	private String	replyContext;			// 回覆內容
-	private byte	replyStatus;			// 留言狀態		Not Null / 0: 顯示 / 1: 不顯示
-	
-	
-	
-	public Integer getReplyId() {
-		return replyId;
-	}
-	public void setReplyId(Integer replyId) {
-		this.replyId = replyId;
-	}
-	public Integer getMemId() {
-		return memId;
-	}
-	public void setMemId(Integer memId) {
-		this.memId = memId;
-	}
-	public Integer getAcId() {
-		return acId;
-	}
-	public void setAcId(Integer acId) {
-		this.acId = acId;
-	}
-	public LocalDateTime getReplyTime() {
-		return replyTime;
-	}
-	public void setReplyTime(LocalDateTime replyTime) {
-		this.replyTime = replyTime;
-	}
-	public String getReplyContext() {
-		return replyContext;
-	}
-	public void setReplyContext(String replyContext) {
-		this.replyContext = replyContext;
-	}
-	public byte getReplyStatus() {
-		return replyStatus;
-	}
-	public void setReplyStatus(byte replyStatus) {
-		this.replyStatus = replyStatus;
-	}
-	
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(replyId);
-	}
+    private Integer replyId;					// 留言編號(PK)
+    private MemberVO memberVO;  	         	// 露營者編號(FK)
+    private ArticlesVO articlesVO;				// 討論區文章編號(FK)
+    private LocalDateTime replyTime;			// 回覆時間
+    private String replyContext;				// 回覆內容
+    private Byte replyStatus;				    // 留言狀態		Not Null / 0: 顯示 / 1: 不顯示
+    
+    private Set<ReplyImageVO> replyImages;		// 留言圖片
+    private Set<ReplyReportVO> replyReportVO;	// 討論區留言檢舉
+    
+    public ReplyVO() {
+    	
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ReplyVO other = (ReplyVO) obj;
-		return Objects.equals(replyId, other.replyId);
-	}
-	
-	
-	@Override
-	public String toString() {		// +", = "
-		return "Reply [留言編號 = "                      + replyId + 
-					", 露營者編號 = "                    + memId + 
-					", 討論區文章編號 = "                + acId + 
-					", 回覆時間 = "                      + replyTime + 
-					", 回覆內容 = "                      + replyContext + 
-					", 留言狀態	  0: 顯示  1: 不顯示 = " + replyStatus + "]";
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reply_id")
+    public Integer getReplyId() {
+        return replyId;
+    }
 
+    public void setReplyId(Integer replyId) {
+        this.replyId = replyId;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "mem_id", nullable = false)
+    @NotNull(message = "會員ID: 不能為空")
+    public MemberVO getMemberVO() {
+        return memberVO;
+    }
+
+    public void setMemberVO(MemberVO memberVO) {
+        this.memberVO = memberVO;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ac_id", nullable = false)
+    @NotNull(message = "文章: 必須指定回覆的文章")
+    public ArticlesVO getArticleVO() {
+        return articlesVO;
+    }
+
+    public void setArticleVO(ArticlesVO articleVO) {
+        this.articlesVO = articleVO;
+    }
+
+    @Column(name = "reply_time", nullable = false)
+    @NotNull(message = "回覆時間: 不能為空")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    public LocalDateTime getReplyTime() {
+        return replyTime;
+    }
+
+    public void setReplyTime(LocalDateTime replyTime) {
+        this.replyTime = replyTime;
+    }
+
+    @Column(name = "reply_context", nullable = false, length = 800)
+    @NotEmpty(message = "回覆內容: 請勿空白")
+    @Size(max = 800, message = "回覆內容: 長度不能超過{max}個字元")
+    public String getReplyContext() {
+        return replyContext;
+    }
+
+    public void setReplyContext(String replyContext) {
+        this.replyContext = replyContext;
+    }
+
+    @Column(name = "reply_status", nullable = false)
+    @NotNull(message = "回覆狀態: 不能為空")
+    @Min(value = 0, message = "回覆狀態: 值必須為0或1")
+    @Max(value = 1, message = "回覆狀態: 值必須為0或1")
+    public Byte getReplyStatus() {
+        return replyStatus;
+    }
+
+    public void setReplyStatus(Byte replyStatus) {
+        this.replyStatus = replyStatus;
+    }
+
+    @OneToMany(mappedBy = "replyVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    public Set<ReplyImageVO> getReplyImages() {
+        return replyImages;
+    }
+
+    public void setReplyImages(Set<ReplyImageVO> replyImages) {
+        this.replyImages = replyImages;
+    }
+    
+    @OneToMany(mappedBy = "replyVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    public Set<ReplyReportVO> getReplyReportVO() {
+        return replyReportVO;
+    }
+
+    public void setReplyReportVO(Set<ReplyReportVO> replyReportVO) {
+        this.replyReportVO = replyReportVO;
+    }
+    
 }

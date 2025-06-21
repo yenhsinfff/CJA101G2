@@ -6,11 +6,13 @@ import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Set;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.lutu.prodColorList.model.ProdColorListVO;
+import com.lutu.prodSpecList.model.ProdSpecListVO;
 import com.lutu.product_type.model.ProdTypeVO;
-import com.lutu.shop.model.ProdColorListVO;
 import com.lutu.shop.model.ProdFavListVO;
 import com.lutu.shop.model.ProdPicVO;
-import com.lutu.shop.model.ProdSpecListVO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,8 +26,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
@@ -51,8 +51,8 @@ public class ShopProdVO implements Serializable {
 	@Column(name = "prod_intro")
 	private String prodIntro;		//商品介紹
 	
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "prod_release_date", insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Timestamp prodReleaseDate;//上架日期
 	
 	@Column(name = "prod_discount")
@@ -60,12 +60,12 @@ public class ShopProdVO implements Serializable {
 	@DecimalMax(value = "1.0", inclusive = true, message = "定價折扣不能大於 1") //inclusive = true：包含邊界值（0 和 1 都可接受）
 	private BigDecimal prodDiscount; // 定價折扣
 	
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "prod_discount_start")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Timestamp prodDiscountStart; //折扣開始時間
 	
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "prod_discount_end")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Timestamp prodDiscountEnd; //折扣結束時間
 	
 	@Column(name = "prod_comment_count")

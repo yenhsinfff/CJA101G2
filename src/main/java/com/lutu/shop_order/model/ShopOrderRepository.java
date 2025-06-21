@@ -32,6 +32,7 @@ public interface ShopOrderRepository extends JpaRepository<ShopOrderVO, Integer>
 //	
 //	
 	//會員訂單資料查詢
+
 	@Query(value = "SELECT o FROM ShopOrderVO o WHERE o.memId = :memId")
 	List<ShopOrderVO> findByMember(Integer memId);
 

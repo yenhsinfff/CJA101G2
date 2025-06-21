@@ -47,20 +47,20 @@ public class ShopOrderController {
 	
 	
 	//新增
-	@PostMapping("/api/addShopOrder")								
-	public ApiResponse<ShopOrderVO> addShopOrder(@Valid @RequestBody ShopOrderDTO_insert dto) {
-		
-		ShopOrderVO sovo = new ShopOrderVO();
-		try {
-//			System.out.println("aaaaaa");
-			
-			ShopOrderVO newSOVO = sos.addShopOrder(dto);
-			return new ApiResponse<>("success", newSOVO, "新增成功");
-			
-		} catch (Exception e) {
-			return new ApiResponse<>("fail", sovo, "新增失敗");
-		}
-	}
+//	@PostMapping("/api/addShopOrder")								
+//	public ApiResponse<ShopOrderVO> addShopOrder(@Valid @RequestBody ShopOrderDTO_insert dto) {
+//		
+//		ShopOrderVO sovo = new ShopOrderVO();
+//		try {
+////			System.out.println("aaaaaa");
+//			
+//			ShopOrderVO newSOVO = sos.addShopOrder(dto);
+//			return new ApiResponse<>("success", newSOVO, "新增成功");
+//			
+//		} catch (Exception e) {
+//			return new ApiResponse<>("fail", sovo, "新增失敗");
+//		}
+//	}
 	
 	
 	@PostMapping("/api/updateShopOrder")

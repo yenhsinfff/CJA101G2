@@ -160,15 +160,6 @@ public class TestHibernate {
 //				java.sql.Date sqlDate = java.sql.Date.valueOf(dateStr);
 //				campTrackListVO.setMemTrackDate(sqlDate);
 //				campTrackListSvc.addCampTrackList(campTrackListVO);
-
-		// 刪除CampTrackListVO_deleteCampTrackList
-//				CampTrackListVO.CompositeDetail id2 = new CampTrackListVO.CompositeDetail();
-//				id2.setCampId(1005);
-//				id2.setMemId(10000001);
-//				campTrackListSvc.deleteCampTrackList(id2.getCampId(), id2.getMemId());
-
-		// =========================================================================
-
 //        CampSiteOrderService campsiteOrdSvc = context.getBean(CampSiteOrderService.class);
 //
 //        	//CampSiteOrderVO _ getAllCampsiteOrder
@@ -216,7 +207,17 @@ public class TestHibernate {
 //			System.out.println("營地訂單明細：" + detail.getCampsiteDetailsId() + ", 明細總價：" + detail.getCampsiteAmount() + ", content："
 //					+ detail.getcampSiteOrderVO().getCommentContent());
 //		}
+
 		
+				//測試取消訂單
+// 				CampsiteCancellationService campsiteCancellationSvc = context.getBean(CampsiteCancellationService.class);
+// 				List<CampsiteCancellationVO> campsiteCancellationList = campsiteCancellationSvc.getAllCampsiteCancellation();
+// 				for (CampsiteCancellationVO campsiteCancellationVO : campsiteCancellationList) {
+// 				System.out.println("營地訂單明細：" + campsiteCancellationVO.getCampsiteCancelId() + ", 明細總價：" + campsiteCancellationVO.getCampsiteCancelReason() + ", content："
+// 						+ campsiteCancellationVO.getCampsiteCancelStatus());
+// 			}
+		
+	
 
 		context.close();
 	}

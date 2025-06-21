@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface ShopProdRepository extends JpaRepository<ShopProdVO, Integer> { //(VO,PK型別)
 
+	/*
 	//查詢全部商品 JPQL
 	@Query("""
 			SELECT p FROM ShopProdVO p
@@ -31,13 +32,31 @@ public interface ShopProdRepository extends JpaRepository<ShopProdVO, Integer> {
 			""")
 	Optional<ShopProdVO> selectProdById(Integer prodId);
 	
-	
 	@Query("SELECT p FROM ShopProdVO p WHERE p.prodName LIKE %:name%")
 	List<ShopProdVO> selectProductsByKeyword(@Param("name") String name);
 	
 	@Query("SELECT p FROM ShopProdVO p JOIN FETCH p.prodTypeVO")
 	List<ShopProdVO> selectProductsByType();
+	*/
 	
+	// 關鍵字查詢（名稱或介紹）
+	@Query("SELECT p FROM ShopProdVO p WHERE p.prodName LIKE %:keyword% OR p.prodIntro LIKE %:keyword%")
+	List<ShopProdVO> findByKeyword(@Param("keyword") String keyword);
+
+	// 類別查詢
+	List<ShopProdVO> findProdByProdType(Integer prodTypeId);
+
+	// 最新上架（依上架日期倒序）
+	List<ShopProdVO> findByReleaseDateDesc();
+
+	// 折扣查詢（折扣不為空且大於 0）
+	@Query("SELECT p FROM ShopProdVO p WHERE p.prodDiscount IS NOT NULL AND p.prodDiscount > 0")
+	List<ShopProdVO> findByDiscounted();
+
+	// 隨機推薦（隨機取 N 筆，這個用 Native SQL 效率較佳）
+	@Query(value = "SELECT * FROM shop_prod ORDER BY RAND() LIMIT :limit", nativeQuery = true)
+	List<ShopProdVO> findRandom(@Param("limit") int limit);
+
 //	@Modifying
 //	@Transactional
 //	@Query("""
@@ -71,13 +90,7 @@ public interface ShopProdRepository extends JpaRepository<ShopProdVO, Integer> {
 	//@Query(value = "from ShopProdVO where prodId=?1 and prodName like?2 and prodReleaseDate=?3 order by prodId")
 	//List<ShopProdVO> findByOthers(Integer prodId , String prodName , Timestamp prodReleaseDate);
 
-//	//● (自訂)條件查詢
-//	@Query(value = "from EmpVO where empno=?1 order by empno")
-//	List<EmpVO> findByOthers(int empno);
-//	
-//	//● (自訂)條件查詢 依部門編號查詢
-//	@Query(value = "from DeptVO where deptno=?1 order by empno")
-//	List<EmpVO> findByOthers(DeptVO deptVO);
+
 	
 	
 	

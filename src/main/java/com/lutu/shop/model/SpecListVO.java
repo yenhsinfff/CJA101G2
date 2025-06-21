@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
+import com.lutu.prodSpecList.model.ProdSpecListVO;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +28,7 @@ public class SpecListVO implements Serializable{
 	@Column(name = "spec_name")
 	private String specName;      // 規格名稱 每項商品皆有規格(單一規格)
 	
-//	@OneToMany(mappedBy = "specListVO", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "specListVO", cascade = CascadeType.ALL)
 	@OrderBy("prodSpecId asc")
 	private Set<ProdSpecListVO> prodSpecs;
     

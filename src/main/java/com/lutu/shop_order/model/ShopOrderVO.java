@@ -5,11 +5,16 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.lutu.discount_code.model.DiscountCodeVO;
+import com.lutu.member.model.MemberVO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -26,10 +31,10 @@ public class ShopOrderVO implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer shopOrderId; // 商品訂單編號
 
-//	@ManyToOne
-//	@JoinColumn(name = "mem_id", updatable = false)
-//	private MemberVO memId;						// 露營者編號
-	private Integer memId; // 露營者編號
+	@ManyToOne
+	@JoinColumn(name = "mem_id", updatable = false)
+	private MemberVO memId;						// 露營者編號
+
 
 	@Column(insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
@@ -39,16 +44,14 @@ public class ShopOrderVO implements Serializable {
 	private Byte shopOrderShipment; // 出貨方式
 
 	@Column(name = "shop_order_ship_fee")
-	private Integer shopOrderShipFee; // 運費
+	private Integer shopOrderShipFee = 60; // 運費，預設60
 
 	@Column(name = "before_discount_amount")
 	private Integer beforeDiscountAmount; // 折價前總金額
 
-//	@ManyToOne
-//	@JoinColumn(name = "discount_code_id")
-	@Column(name = "discount_code_id")
-//	private DiscountCodeVO discountCodeId;				// 折價券編號
-	private String discountCodeId; // 折價券編號
+	@ManyToOne
+	@JoinColumn(name = "discount_code_id")
+	private DiscountCodeVO discountCodeId;				// 折價券編號
 
 	@Column(name = "discount_amount")
 	private Integer discountAmount; // 折價金額
@@ -103,13 +106,13 @@ public class ShopOrderVO implements Serializable {
 		this.shopOrderId = shopOrderId;
 	}
 
-//	public MemberVO getMemId() {
-//		return memId;
-//	}
-//
-//	public void setMemId(MemberVO memId) {
-//		this.memId = memId;
-//	}
+	public MemberVO getMemId() {
+		return memId;
+	}
+
+	public void setMemId(MemberVO memId) {
+		this.memId = memId;
+	}
 
 	public LocalDateTime getShopOrderDate() {
 		return shopOrderDate;
@@ -143,32 +146,12 @@ public class ShopOrderVO implements Serializable {
 		this.beforeDiscountAmount = beforeDiscountAmount;
 	}
 
-//	public DiscountCodeVO getDiscountCodeId() {
-//		return discountCodeId;
-//	}
-//
-//	public void setDiscountCodeId(DiscountCodeVO discountCodeId) {
-//		this.discountCodeId = discountCodeId;
-//	}
-
-	public Integer getMemId() {
-		return memId;
-	}
-
-	public void setMemId(Integer memId) {
-		this.memId = memId;
-	}
-
-	public String getDiscountCodeId() {
+	public DiscountCodeVO getDiscountCodeId() {
 		return discountCodeId;
 	}
 
-	public void setDiscountCodeId(String discountCodeId) {
+	public void setDiscountCodeId(DiscountCodeVO discountCodeId) {
 		this.discountCodeId = discountCodeId;
-	}
-
-	public Integer getDiscountAmount() {
-		return discountAmount;
 	}
 
 	public void setDiscountAmount(Integer discountAmount) {

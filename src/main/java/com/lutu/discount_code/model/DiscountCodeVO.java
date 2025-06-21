@@ -4,45 +4,89 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
+import com.lutu.owner.model.OwnerVO;
+import com.lutu.administrator.model.AdministratorVO;
+
+
+@Entity
+@Table(name = "discount_code")
 public class DiscountCodeVO implements Serializable{
+	private static final long serialVersionUID = 1L;
 	
+	@Id  
+	@Column(name = "discount_code_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String discountCodeId; //折價券編號
+	
+	@Column(name = "discount_code")
+	@NotEmpty(message="折價券名稱: 請勿空白")
 	private String discountCode; //折價券名稱
-	private Integer ownerId; //營地主編號
-	private Integer adminId; //管理員編號
+	
+	@ManyToOne
+	@JoinColumn(name = "owner_id")
+	private OwnerVO ownerVO; //營地主編號
+	
+	@ManyToOne
+	@JoinColumn(name = "admin_id")
+	private AdministratorVO administratorVO; //管理員編號
+	
+	@Column(name = "discount_type")
+	@NotNull(message = "折扣類型: 請勿空白")
+	@Min(value = 0, message = "折扣類型: 只能是 0（數值）或 1（%數）")
+	@Max(value = 1, message = "折扣類型: 只能是 0（數值）或 1（%數）")
 	private byte discountType; //折扣類型 0數值 1%數
+	
+	@Column(name = "discount_value")
+	@NotNull(message = "折扣值: 請勿空白")
 	private BigDecimal discountValue; //折扣值
+	
+	@Column(name = "discount_explain")
+	@NotNull(message = "折扣說明: 請勿空白")
 	private String discountExplain; //折扣說明
+	
+	@Column(name = "min_order_amount")
+	@NotNull(message = "最低訂單金額: 請勿空白")
 	private BigDecimal minOrderAmount; //最低訂單金額
+	
+	@Column(name = "start_date")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime startDate; //生效日期
+	
+	@Column(name = "end_date")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime endDate; //失效日期
+	
+	@Column(name = "created")
+	@CreationTimestamp
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime created; //建立時間
+	
+	@Column(name = "updated")
 	private LocalDateTime update; //更新時間
 	
-	public DiscountCodeVO() {
-		super();
-	}
-
-	public DiscountCodeVO(String discountCodeId, String discountCode, Integer ownerId, Integer adminId,
-			byte discountType, BigDecimal discountValue, String discountExplain, BigDecimal minOrderAmount,
-			LocalDateTime startDate, LocalDateTime endDate, LocalDateTime created, LocalDateTime update) {
-		super();
-		this.discountCodeId = discountCodeId;
-		this.discountCode = discountCode;
-		this.ownerId = ownerId;
-		this.adminId = adminId;
-		this.discountType = discountType;
-		this.discountValue = discountValue;
-		this.discountExplain = discountExplain;
-		this.minOrderAmount = minOrderAmount;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.created = created;
-		this.update = update;
-	}
-
 	
-	// --- Getters and Setters ---
+	
+	
+	public DiscountCodeVO() {
+	}
+
+
 	
 	public String getDiscountCodeId() {
 		return discountCodeId;
@@ -60,20 +104,20 @@ public class DiscountCodeVO implements Serializable{
 		this.discountCode = discountCode;
 	}
 
-	public Integer getOwnerId() {
-		return ownerId;
+	public OwnerVO getOwnerVO() {
+		return ownerVO;
 	}
 
-	public void setOwnerId(Integer ownerId) {
-		this.ownerId = ownerId;
+	public void setOwnerVO(OwnerVO ownerVO) {
+		this.ownerVO = ownerVO;
 	}
 
-	public Integer getAdminId() {
-		return adminId;
+	public AdministratorVO getAdministratorVO() {
+		return administratorVO;
 	}
 
-	public void setAdminId(Integer adminId) {
-		this.adminId = adminId;
+	public void setAdministratorVO(AdministratorVO administratorVO) {
+		this.administratorVO = administratorVO;
 	}
 
 	public byte getDiscountType() {
