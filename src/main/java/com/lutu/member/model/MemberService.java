@@ -1,5 +1,6 @@
 package com.lutu.member.model;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -8,6 +9,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.transaction.Transactional;
 
 
 
@@ -45,5 +49,21 @@ public class MemberService {
 		return repository.findAll();
 	}
 	
+	
+	@Transactional
+	public Boolean updateMemberPicture(Integer memId, MultipartFile file) {
+	    MemberVO member = repository.findById(memId)
+	        .orElseThrow(() -> new RuntimeException("會員不存在"));
+	    try {
+			member.setMemPic(file.getBytes());
+			repository.save(member);
+			return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	    
+	}
 
 }

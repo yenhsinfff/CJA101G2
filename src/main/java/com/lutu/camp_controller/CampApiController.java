@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,9 +45,7 @@ public class CampApiController {
 	@Autowired
 	CampService campService;
 
-	
-	
-	//取得營地訂單編號
+	// 取得營地訂單編號
 	@GetMapping("/api/campsite/newordernumber")
 	public ApiResponse<String> getNewCampsiteOrderNum() {
 		String newOrderNum = campsiteOrdSvc.generateCampsiteOrderId();
@@ -55,38 +54,36 @@ public class CampApiController {
 
 	// 取得所有營地訂單，回傳 JSON
 	@GetMapping("/api/getallcamps1")
-	public ResponseEntity<String> getAllCamps1(
-	        @RequestParam boolean withOrders) throws Exception {
-	    
-	    // 1. 獲取資料
-	    List<CampVO> camps = campService.getAllCamp();
-	    
-	    // 2. 設定動態過濾器
-	    ObjectMapper mapper = new ObjectMapper();
-	    SimpleFilterProvider filters = new SimpleFilterProvider();
-	    
-	    if (withOrders) {
-	        filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAll());
-	    } else {
-	        filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAllExcept("campsiteOrders"));
-	    }
-	    mapper.setFilterProvider(filters);
-	    
-	    // 3. 包裝回應並序列化
-	    ApiResponse<List<CampVO>> response = new ApiResponse<>("success", camps, "查詢成功");
-	    String json = mapper.writeValueAsString(response);
-	    
-	    // 4. 回傳 JSON 回應
-	    return ResponseEntity.ok()
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .body(json);
+	public ResponseEntity<String> getAllCamps1(@RequestParam boolean withOrders) throws Exception {
+
+		// 1. 獲取資料
+		List<CampVO> camps = campService.getAllCamp();
+
+		// 2. 設定動態過濾器
+		ObjectMapper mapper = new ObjectMapper();
+		SimpleFilterProvider filters = new SimpleFilterProvider();
+
+		if (withOrders) {
+			filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAll());
+		} else {
+			filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAllExcept("campsiteOrders"));
+		}
+		mapper.setFilterProvider(filters);
+
+		// 3. 包裝回應並序列化
+		ApiResponse<List<CampVO>> response = new ApiResponse<>("success", camps, "查詢成功");
+		String json = mapper.writeValueAsString(response);
+
+		// 4. 回傳 JSON 回應
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
 	}
 
 	@PostMapping("/api/camps/createonecamp")
-	public ApiResponse<CampVO> createOneCamp1(@RequestParam("ownerId") Integer ownerId,
-			@RequestParam("campName") String campName, @RequestParam("campContent") String campContent,
-			@RequestParam("campCity") String campCity, @RequestParam("campDist") String campDist,
-			@RequestParam("campAddr") String campAddr, @RequestParam("campReleaseStatus") Byte campReleaseStatus,
+	public ResponseEntity<MappingJacksonValue> createOneCamp1(@RequestParam boolean withOrders,
+			@RequestParam("ownerId") Integer ownerId, @RequestParam("campName") String campName,
+			@RequestParam("campContent") String campContent, @RequestParam("campCity") String campCity,
+			@RequestParam("campDist") String campDist, @RequestParam("campAddr") String campAddr,
+			@RequestParam("campReleaseStatus") Byte campReleaseStatus,
 			@RequestParam("campCommentNumberCount") Integer campCommentNumberCount,
 			@RequestParam("campCommentSumScore") Integer campCommentSumScore,
 			@RequestParam("campRegDate") String campRegDate, // yyyy-MM-dd
@@ -112,13 +109,145 @@ public class CampApiController {
 			if (campPic4 != null)
 				camp.setCampPic4(campPic4.getBytes());
 
+			// 2. 設定動態過濾器
 			CampVO newCampVO = campService.createOneCamp(camp);
-			return new ApiResponse<>("success", newCampVO, "查詢成功");
+			ApiResponse<CampVO> response = new ApiResponse<>("success", newCampVO, "查詢成功");
+
+			// 設定動態過濾器
+			SimpleFilterProvider filters = new SimpleFilterProvider();
+			if (withOrders) {
+				filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAll());
+			} else {
+				filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAllExcept("campsiteOrders"));
+			}
+
+			MappingJacksonValue mapping = new MappingJacksonValue(response);
+			mapping.setFilters(filters);
+
+			return ResponseEntity.ok().body(mapping);
+
 		} catch (Exception e) {
-			return new ApiResponse<>("fail", camp, "查詢失敗");
+			ApiResponse<CampVO> failResponse = new ApiResponse<>("fail", camp, "查詢失敗");
+			MappingJacksonValue mapping = new MappingJacksonValue(failResponse);
+			// 失敗時通常不用過濾，但為了保險也設一個 filter
+			SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("campFilter",
+					SimpleBeanPropertyFilter.serializeAll());
+			mapping.setFilters(filters);
+			return ResponseEntity.ok().body(mapping);
 		}
 
 	}
+//	http://localhost:8081/CJA101G02/api/camps/createonecamp?withOrders=false
+	@PostMapping("/api/camps/updateonecamp")
+	public ResponseEntity<MappingJacksonValue> updateOneCamp(@RequestParam boolean withOrders,
+			@RequestParam("campId") Integer campId, @RequestParam("ownerId") Integer ownerId,
+			@RequestParam("campName") String campName, @RequestParam("campContent") String campContent,
+			@RequestParam("campCity") String campCity, @RequestParam("campDist") String campDist,
+			@RequestParam("campAddr") String campAddr, @RequestParam("campReleaseStatus") Byte campReleaseStatus,
+			@RequestParam("campCommentNumberCount") Integer campCommentNumberCount,
+			@RequestParam("campCommentSumScore") Integer campCommentSumScore,
+			@RequestParam("campRegDate") String campRegDate, // yyyy-MM-dd
+			@RequestPart("campPic1") MultipartFile campPic1, @RequestPart("campPic2") MultipartFile campPic2,
+			@RequestPart(value = "campPic3", required = false) MultipartFile campPic3,
+			@RequestPart(value = "campPic4", required = false) MultipartFile campPic4) {
+		CampVO camp = new CampVO();
+		try {
+			camp.setCampId(campId);
+			camp.setOwnerId(ownerId);
+			camp.setCampName(campName);
+			camp.setCampContent(campContent);
+			camp.setCampCity(campCity);
+			camp.setCampDist(campDist);
+			camp.setCampAddr(campAddr);
+			camp.setCampReleaseStatus(campReleaseStatus);
+			camp.setCampCommentNumberCount(campCommentNumberCount);
+			camp.setCampCommentSumScore(campCommentSumScore);
+			camp.setCampRegDate(java.sql.Date.valueOf(campRegDate));
+			camp.setCampPic1(campPic1.getBytes());
+			camp.setCampPic2(campPic2.getBytes());
+			if (campPic3 != null)
+				camp.setCampPic3(campPic3.getBytes());
+			if (campPic4 != null)
+				camp.setCampPic4(campPic4.getBytes());
+
+			// 2. 設定動態過濾器
+			CampVO newCampVO = campService.createOneCamp(camp);
+			ApiResponse<CampVO> response = new ApiResponse<>("success", newCampVO, "查詢成功");
+
+			// 設定動態過濾器
+			SimpleFilterProvider filters = new SimpleFilterProvider();
+			if (withOrders) {
+				filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAll());
+			} else {
+				filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAllExcept("campsiteOrders"));
+			}
+
+			MappingJacksonValue mapping = new MappingJacksonValue(response);
+			mapping.setFilters(filters);
+
+			return ResponseEntity.ok().body(mapping);
+
+		} catch (Exception e) {
+			ApiResponse<CampVO> failResponse = new ApiResponse<>("fail", camp, "查詢失敗");
+			MappingJacksonValue mapping = new MappingJacksonValue(failResponse);
+			// 失敗時通常不用過濾，但為了保險也設一個 filter
+			SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("campFilter",
+					SimpleBeanPropertyFilter.serializeAll());
+			mapping.setFilters(filters);
+			return ResponseEntity.ok().body(mapping);
+		}
+
+	}
+
+//	@PostMapping("/api/camps/createonecamp")
+//	public ApiResponse<CampVO> createOneCamp1( @RequestParam boolean withOrders,@RequestParam("ownerId") Integer ownerId,
+//			@RequestParam("campName") String campName, @RequestParam("campContent") String campContent,
+//			@RequestParam("campCity") String campCity, @RequestParam("campDist") String campDist,
+//			@RequestParam("campAddr") String campAddr, @RequestParam("campReleaseStatus") Byte campReleaseStatus,
+//			@RequestParam("campCommentNumberCount") Integer campCommentNumberCount,
+//			@RequestParam("campCommentSumScore") Integer campCommentSumScore,
+//			@RequestParam("campRegDate") String campRegDate, // yyyy-MM-dd
+//			@RequestPart("campPic1") MultipartFile campPic1, @RequestPart("campPic2") MultipartFile campPic2,
+//			@RequestPart(value = "campPic3", required = false) MultipartFile campPic3,
+//			@RequestPart(value = "campPic4", required = false) MultipartFile campPic4) {
+//		CampVO camp = new CampVO();
+//		try {
+//			camp.setOwnerId(ownerId);
+//			camp.setCampName(campName);
+//			camp.setCampContent(campContent);
+//			camp.setCampCity(campCity);
+//			camp.setCampDist(campDist);
+//			camp.setCampAddr(campAddr);
+//			camp.setCampReleaseStatus(campReleaseStatus);
+//			camp.setCampCommentNumberCount(campCommentNumberCount);
+//			camp.setCampCommentSumScore(campCommentSumScore);
+//			camp.setCampRegDate(java.sql.Date.valueOf(campRegDate));
+//			camp.setCampPic1(campPic1.getBytes());
+//			camp.setCampPic2(campPic2.getBytes());
+//			if (campPic3 != null)
+//				camp.setCampPic3(campPic3.getBytes());
+//			if (campPic4 != null)
+//				camp.setCampPic4(campPic4.getBytes());
+//			
+//			// 2. 設定動態過濾器
+//		    ObjectMapper mapper = new ObjectMapper();
+//		    SimpleFilterProvider filters = new SimpleFilterProvider();
+//		    
+//		    if (withOrders) {
+//		        filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAll());
+//		    } else {
+//		        filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAllExcept("campsiteOrders"));
+//		    }
+//		    
+//		    mapper.setFilterProvider(filters);
+//			CampVO newCampVO = campService.createOneCamp(camp);
+//			return new ApiResponse<>("success", newCampVO, "查詢成功");
+//			
+//		} catch (Exception e) {
+//			return new ApiResponse<>("fail", camp, "查詢失敗");
+//		}
+//
+//	}
 
 	// 取得所有營地訂單，回傳 JSON
 	@GetMapping("/api/camps/campsite_orders")
@@ -136,6 +265,7 @@ public class CampApiController {
 		response.getOutputStream().write(img);
 	}
 
+//	http://localhost:8081/CJA101G02/api/camps/1001/3
 	// 抓取資料庫的營地圖片，提供給前端
 	@GetMapping("/api/camps1/{campId}/{num}")
 	public void getCampPic3(@PathVariable Integer campId, @PathVariable Integer num, HttpServletResponse response)
