@@ -23,6 +23,9 @@ public class CampService {
 		return campRepository.findAll();
 		
 	}
+	
+
+	
     
 //    @Transactional
     public CampVO getOneCamp(Integer campId) {
@@ -40,4 +43,19 @@ public class CampService {
     	CampVO campVO2 = getOneCamp(campVO.getCampId());
     	return campVO2;
 	}
+    
+	public void addCamp(CampVO campVO) {
+		campRepository.save(campVO);
+	}
+	
+	public void updateCamp(CampVO campVO) {
+		campRepository.save(campVO);
+	}
+	
+	public void deleteCamp(Integer campId) {
+		if (campRepository.existsById(campId))
+			campRepository.deleteById(campId);
+	}
+	
+	
 }

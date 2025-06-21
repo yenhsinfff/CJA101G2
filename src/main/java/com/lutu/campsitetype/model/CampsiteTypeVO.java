@@ -26,8 +26,8 @@ public class CampsiteTypeVO implements Serializable {
 
 	// 直接宣告複合識別類別的屬性，並加上 @EmbeddedId 標註
 	@EmbeddedId
-	private CompositeDetail compositeKey;
-	
+	private CompositeDetail id;
+
 	@Column(name = "campsite_name")
 	@NotEmpty(message = "營地房型名稱: 請勿空白")
 	private String campsiteName; // 營地房型名稱
@@ -56,39 +56,43 @@ public class CampsiteTypeVO implements Serializable {
 
 	@Column(name = "campsite_pic4")
 	private byte[] campsitePic4; // 房間照片4
-	
+
 	public CampsiteTypeVO() {
-		
+
 	}
-	
+
 //=======================Association==================================	
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("campId") // 映射為外鍵
 	@JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
 	private CampVO camp;
 
-    public CampVO getCamp() {
+	public CampVO getCamp() {
 		return camp;
 	}
 
 	public void setCamp(CampVO camp) {
 		this.camp = camp;
 	}
-	
-	
-	
 
 //=======================複合主鍵設定==================================
 	// 特別加上對複合主鍵物件的 getter / setter
-	public CompositeDetail getCompositeKey() {
-		return compositeKey;
+	public CompositeDetail getId() {
+		return id;
 	}
 
-	public void setCompositeKey(CompositeDetail compositeKey) {
-		this.compositeKey = compositeKey;
+	public void setId(CompositeDetail id) {
+		this.id = id;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "CampsiteTypeVO [id=" + id + ", campsiteName=" + campsiteName + ", campsitePeople="
+				+ campsitePeople + ", campsiteNum=" + campsiteNum + ", campsitePrice=" + campsitePrice
+				+ ", campsitePic1=" + Arrays.toString(campsitePic1);
+	}
+
 //==================================================================
 
 	public String getCampsiteName() {
@@ -156,7 +160,7 @@ public class CampsiteTypeVO implements Serializable {
 	}
 
 //=======================複合主鍵設定==================================	
-	
+
 	// 需要宣告一個有包含複合主鍵屬性的類別，並一定要實作 java.io.Serializable 介面
 	@Embeddable
 	public static class CompositeDetail implements Serializable {
@@ -167,11 +171,21 @@ public class CampsiteTypeVO implements Serializable {
 
 		@Column(name = "camp_id")
 		private Integer campId; // 營地編號
-		
+
 		// 一定要有無參數建構子
 		public CompositeDetail() {
 			super();
 		}
+		
+		
+
+		public CompositeDetail(Integer campsiteTypeId, Integer campId) {
+			super();
+			this.campsiteTypeId = campsiteTypeId;
+			this.campId = campId;
+		}
+
+
 
 		public Integer getCampsiteTypeId() {
 			return campsiteTypeId;
@@ -206,14 +220,12 @@ public class CampsiteTypeVO implements Serializable {
 			CompositeDetail other = (CompositeDetail) obj;
 			return Objects.equals(campId, other.campId) && Objects.equals(campsiteTypeId, other.campsiteTypeId);
 		}
-	
+
+		@Override
+		public String toString() {
+			return "CompositeDetail [campsiteTypeId=" + campsiteTypeId + ", campId=" + campId + "]";
+		}
+
 	}
 
-	@Override
-	public String toString() {
-		return "CampsiteTypeVO [compositeKey=" + compositeKey + ", campsiteName=" + campsiteName + ", campsitePeople="
-				+ campsitePeople + ", campsiteNum=" + campsiteNum + ", campsitePrice=" + campsitePrice
-				+ ", campsitePic1=" + Arrays.toString(campsitePic1);
-	}
-	
 }
