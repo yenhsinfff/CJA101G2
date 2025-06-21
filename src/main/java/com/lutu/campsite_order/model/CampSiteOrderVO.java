@@ -40,11 +40,11 @@ public class CampSiteOrderVO implements java.io.Serializable {
 	@Column(name = "campsite_order_id") // @Column指這個屬性是對應到資料庫Table的哪一個欄位 //【非必要，但當欄位名稱與屬性名稱不同時則一定要用】
 	private String campsiteOrderId; // 營地訂單編號
 
-	@ManyToOne //多筆訂單屬於同個會員(都是這個欄位對PK的關係)
-	@NotNull(message = "會員編號: 請勿空白")
-	@JoinColumn(name = "mem_id", nullable = false)
-    private MemberVO memberVO; // 露營者（建議建立對應Entity）
-	//private Integer memId; // 露營者編號
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "mem_id", referencedColumnName = "mem_id")
+	@JsonBackReference
+	private MemberVO memberVO;
 
 	@Column(name = "discount_code_id")
 	private String discountCodeId;// 折價券編號
@@ -122,13 +122,13 @@ public class CampSiteOrderVO implements java.io.Serializable {
 		this.campsiteOrderDetails = campsiteOrders;
 	}
 
-	 public MemberVO getMemberVO() {
-	        return memberVO;
-	    }
+	public MemberVO getMemberVO() {
+		return memberVO;
+	}
 
-	    public void setMemberVO(MemberVO memberVO) {
-	        this.memberVO = memberVO;
-	    }
+	public void setMemberVO(MemberVO memberVO) {
+		this.memberVO = memberVO;
+	}
 
 	// FK的關聯欄位
 	public CampVO getCampVO() {

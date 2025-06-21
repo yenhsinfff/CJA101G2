@@ -1,0 +1,112 @@
+package com.lutu.campsite_order.controller;
+
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import com.lutu.camp.model.CampVO;
+import com.lutu.campsite_order.model.CampSiteOrderService;
+import com.lutu.campsite_order.model.CampSiteOrderVO;
+import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
+import com.lutu.member.model.MemberVO;
+
+@SpringBootApplication
+@ComponentScan(basePackages = "com.lutu") // 掃描你的 Service 等 component
+//@EnableJpaRepositories(basePackages = "com.lutu")  // 掃描 Repository
+@EntityScan(basePackages = "com.lutu") // 掃描 table
+public class TestCampsiteOrder {
+
+	public static void main(String[] args) {
+		// 啟動 Spring Boot 並取得 ApplicationContext
+//        ConfigurableApplicationContext context = SpringApplication.run(TestHibernateCampsiteOrder.class, args);
+		SpringApplication app = new SpringApplication(TestCampsiteOrder.class);
+		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
+		ConfigurableApplicationContext context = app.run(args);
+
+		//================================ 營地訂單 =======================================
+		CampSiteOrderService svc = context.getBean(CampSiteOrderService.class);
+		String orderIdString = svc.generateCampsiteOrderId();
+		System.out.println("orderIdString:"+orderIdString);
+		
+		//新增訂單
+CampSiteOrderVO order = new CampSiteOrderVO();
+        
+        // 基本訂單資訊
+        order.setCampsiteOrderId("ORD20250620001");
+        order.setOrderDate(Timestamp.valueOf("2025-06-20 14:30:00"));
+        order.setCampsiteOrderStatus((byte) 3); // 訂單狀態: 3=訂單結案
+        order.setPayMethod((byte) 1); // 支付方式: 1=信用卡
+        
+        // 金額相關
+        order.setBundleAmount(1200);  // 加購項目總金額
+        order.setCampsiteAmount(8600); // 營地總金額
+        order.setBefAmount(9800);     // 折價前總金額
+        order.setDisAmount(200);       // 折價金額
+        order.setAftAmount(9600);      // 實付金額
+        
+        // 日期相關
+        order.setCheckIn(Date.valueOf("2025-07-15"));
+        order.setCheckOut(Date.valueOf("2025-07-17"));
+        
+        // 評價資訊（可選）
+        order.setCommentSatisfaction(5);
+        order.setCommentContent("營地設施完善，服務周到");
+        order.setCommentDate(Timestamp.valueOf("2025-07-20 10:00:00"));
+        
+        // 關聯營地物件
+        CampVO camp = new CampVO();
+        camp.setCampId(1001); // 對應 camp 表的 camp_id
+        camp.setCampName("山林秘境");
+        order.setCampVO(camp);
+        
+        // 關聯會員物件
+        MemberVO memberVO = new MemberVO();
+        memberVO.setMemId(10000001);
+        order.setMemberVO(memberVO);
+        
+        // 折價券資訊
+        order.setDiscountCodeId("C00001"); // 對應 discount_code 表
+        
+        // 訂單明細
+        Set<CampSiteOrderDetailsVO> details = new HashSet<>();
+        details.add(createOrderDetail(2001, 2, 10400,order)); // 小木屋四人房 x2
+        details.add(createOrderDetail(2002, 1, 3400,order));  // 小木屋雙人房 x1
+        order.setCampSiteOrderDetails(details);
+        
+        
+		
+		svc.createOneCampOrder(order);
+		System.out.println("FINISH");
+		
+				//測試取消訂單
+//				CampsiteCancellationService campsiteCancellationSvc = context.getBean(CampsiteCancellationService.class);
+//				List<CampsiteCancellationVO> campsiteCancellationList = campsiteCancellationSvc.getAllCampsiteCancellation();
+//				for (CampsiteCancellationVO campsiteCancellationVO : campsiteCancellationList) {
+//				System.out.println("營地訂單明細：" + campsiteCancellationVO.getCampsiteCancelId() + ", 明細總價：" + campsiteCancellationVO.getCampsiteCancelReason() + ", content："
+//						+ campsiteCancellationVO.getCampsiteCancelStatus());
+//			}
+		
+		
+		context.close();
+	}
+
+	private static CampSiteOrderDetailsVO createOrderDetail(int typeId, int num, int amount,CampSiteOrderVO order ) {
+
+		CampSiteOrderDetailsVO detail = new CampSiteOrderDetailsVO();
+		detail.setCampsiteTypeId(typeId);
+		detail.setCampsiteNum(num);
+		detail.setCampsiteAmount(amount);
+		detail.setcampSiteOrderVO(order);
+		return detail;
+	}
+
+}
