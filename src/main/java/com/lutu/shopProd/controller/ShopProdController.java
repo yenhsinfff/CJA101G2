@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
+import com.lutu.prodSpecList.model.ProdSpecListRepository;
 import com.lutu.product_type.model.ProdTypeDTO;
 import com.lutu.product_type.model.ProdTypeRepository;
 import com.lutu.shopProd.model.ShopProdDTO;
@@ -30,6 +31,9 @@ public class ShopProdController {
 	
 	@Autowired
 	ProdTypeRepository prodTypeRepository;
+	
+	@Autowired
+	ProdSpecListRepository prodSpecListRepository;
 
 	/**
      * 查詢所有商品（DTO），回傳 JSON 格式

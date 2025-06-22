@@ -46,6 +46,8 @@ public class ShopProdDTO {
 	@Min(value = 0, message = "評價總分數不能為負數")
 	private Integer prodTypeId; //商品類型編號
 	
+    private String prodTypeName;
+	
 	@NotNull(message = "商品狀態: 請勿空白")
 	@Min(value = 0, message = "商品狀態只能是 0 或 1")
 	@Max(value = 1, message = "商品狀態只能是 0 或 1")
@@ -55,7 +57,6 @@ public class ShopProdDTO {
 	@Min(value = 0, message = "商品顏色與否只能是 0 或 1")
 	@Max(value = 1, message = "商品顏色與否只能是 0 或 1")
 	private Byte prodColorOrNot; // 0: 單一顏色 1: 有不同顏色
-	
 	
 	public ShopProdDTO() {
 		super();
@@ -70,6 +71,14 @@ public class ShopProdDTO {
 		this.prodId = prodId;
 	}
 
+
+	public String getProdTypeName() {
+		return prodTypeName;
+	}
+
+	public void setProdTypeName(String prodTypeName) {
+		this.prodTypeName = prodTypeName;
+	}
 
 	public String getProdName() {
 		return prodName;
