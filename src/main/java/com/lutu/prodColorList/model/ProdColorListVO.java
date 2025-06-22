@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
+import com.lutu.colorList.model.ColorListVO;
 import com.lutu.prodColorList.model.ProdColorListVO.CompositeDetail;
-import com.lutu.shop.model.ColorListVO;
 import com.lutu.shopProd.model.ShopProdVO;
 
 import jakarta.persistence.Column;
@@ -28,7 +28,7 @@ public class ProdColorListVO implements Serializable {
 	private Integer prodId; // PK
 
 	@Id
-	@Column(name = "prod_color_id")
+	@Column(name = "prod_color_id", insertable = false, updatable = false)
 	private Integer prodColorId; // PK
 
 	@Lob

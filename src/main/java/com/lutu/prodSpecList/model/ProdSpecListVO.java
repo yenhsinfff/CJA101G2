@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import com.lutu.prodSpecList.model.ProdSpecListVO.CompositeDetail2;
-import com.lutu.shop.model.SpecListVO;
 import com.lutu.shopProd.model.ShopProdVO;
+import com.lutu.specList.model.SpecListVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
