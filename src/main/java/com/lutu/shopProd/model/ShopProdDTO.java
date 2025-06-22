@@ -14,7 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 
-public class ShopProdSelectDTO {
+public class ShopProdDTO {
 	
 	private Integer prodId; 		// PK 商品編號
 	
@@ -57,7 +57,7 @@ public class ShopProdSelectDTO {
 	private Byte prodColorOrNot; // 0: 單一顏色 1: 有不同顏色
 	
 	
-	public ShopProdSelectDTO() {
+	public ShopProdDTO() {
 		super();
 	}
 

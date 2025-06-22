@@ -1,16 +1,4 @@
 package com.lutu.camp.model;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-
-import java.io.Serializable;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +6,17 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
+import com.lutu.campsitetype.model.CampsiteTypeVO;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "camp")
@@ -77,10 +76,21 @@ public class CampVO implements java.io.Serializable {
     @JsonManagedReference
     private Set<CampSiteOrderVO> campsiteOrders = new HashSet<>();  
 
+    @OneToMany(mappedBy = "camp", cascade = CascadeType.ALL)
+    private Set<CampsiteTypeVO> campsiteTypes;
+    
 
     // --- Getters and Setters ---
     
-    public Set<CampSiteOrderVO> getCampsiteOrders() {
+    public Set<CampsiteTypeVO> getCampsiteTypes() {
+		return campsiteTypes;
+	}
+
+	public void setCampsiteTypes(Set<CampsiteTypeVO> campsiteTypes) {
+		this.campsiteTypes = campsiteTypes;
+	}
+
+	public Set<CampSiteOrderVO> getCampsiteOrders() {
         return campsiteOrders;
     }
 

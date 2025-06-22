@@ -1,46 +1,46 @@
-package com.lutu.article_report.model;
+package com.lutu.reply_report.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.lutu.administrator.model.AdministratorVO;
 import com.lutu.article.model.ArticlesVO;
 import com.lutu.member.model.MemberVO;
-import com.lutu.user_discount.model.UserDiscountVO;
+import com.lutu.reply.model.ReplyVO;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "article_report")
-public class ArticleReportVO implements Serializable {
+@Table(name = "reply_report")
+public class ReplyReportVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Integer acReportId;					// 文章案件編號 (PK)
-    private MemberVO memberVO;			 		// 露營者編號(FK)
-    private ArticlesVO articlesVO;				// 文章編號(FK)
-    private LocalDateTime rpTime;				// 檢舉時間
+    private Integer replyReportId;		 		// 留言案件編號 (PK)
+    private MemberVO memberVO;				 	// 露營者編號(FK)
+    private Integer acId;			         	// 文章編號(FK)
+    private ReplyVO replyVO;					// 留言編號(FK)
+    private AdministratorVO administratorVO;    // 管理員編號(FK)	
+    private LocalDateTime rpTime;		 		// 檢舉時間
     private String rpContent;					// 檢舉文字內容
-    private Integer adminId;					// 管理員編號(FK)
-    private String adminMemCustomer;			// 管理員回覆
-    private LocalDateTime rpDoneTime;			// 處理完成時間
-    private Byte rpStatus;					    // 處理狀態   Not Null   0: 未處理	1: 已處理
-    private Byte rpResult;					    // 處理結果   Not Null   0: 通過	    1: 未通過
-    private String rpNote;						// 處理註記
+    private String adminReply;			        // 管理員回覆
+    private LocalDateTime rpDoneTime;	        // 處理完成時間
+    private Byte rpStatus;				 		// 處理狀態
+    private Byte rpSresult;				 		// 處理結果
+    private String rpNote; 						// 處理註記
 
-    public ArticleReportVO() {
-    	
-    }
+    public ReplyReportVO() {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ac_report_id")
-    public Integer getAcReportId() {
-        return acReportId;
+    @Column(name = "reply_report_id")
+    public Integer getReplyReportId() {
+        return replyReportId;
     }
 
-    public void setAcReportId(Integer acReportId) {
-        this.acReportId = acReportId;
+    public void setReplyReportId(Integer replyReportId) {
+        this.replyReportId = replyReportId;
     }
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -53,16 +53,38 @@ public class ArticleReportVO implements Serializable {
     public void setMemberVO(MemberVO memberVO) {
         this.memberVO = memberVO;
     }
+    
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "acId", nullable = false)
-    @NotNull(message = "被檢舉文章ID: 不能為空")
-    public ArticlesVO getArticlesVO() {
-        return articlesVO;
+    @Column(name = "ac_id", nullable = false)
+    @NotNull(message = "文章ID: 不能為空")
+    public Integer getAcId() {
+        return acId;
     }
 
-    public void setArticlesVO(ArticlesVO articlesVO) {
-        this.articlesVO = articlesVO;
+    public void setAcId(Integer acId) {
+        this.acId = acId;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "replyId", nullable = false)
+    @NotNull(message = "被檢舉留言ID: 不能為空")
+    public ReplyVO getReplyVO() {
+        return replyVO;
+    }
+
+    public void setReplyVO(ReplyVO replyVO) {
+        this.replyVO = replyVO;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adminId", nullable = false)
+    @NotNull(message = "管理員ID: 不能為空")
+    public AdministratorVO getAdministratorVO() {
+        return administratorVO;
+    }
+
+    public void setAdministratorVO(AdministratorVO administratorVO) {
+        this.administratorVO = administratorVO;
     }
 
     @Column(name = "rp_time", nullable = false)
@@ -87,24 +109,14 @@ public class ArticleReportVO implements Serializable {
         this.rpContent = rpContent;
     }
 
-    @Column(name = "admin_id", nullable = false)
-    @NotNull(message = "處理管理員ID: 不能為空")
-    public Integer getAdminId() {
-        return adminId;
-    }
-
-    public void setAdminId(Integer adminId) {
-        this.adminId = adminId;
-    }
-
-    @Column(name = "admin_mem_customer", length = 800)
+    @Column(name = "admin_reply", length = 800)
     @Size(max = 800, message = "管理員回覆: 長度不能超過{max}個字元")
-    public String getAdminMemCustomer() {
-        return adminMemCustomer;
+    public String getAdminReply() {
+        return adminReply;
     }
 
-    public void setAdminMemCustomer(String adminMemCustomer) {
-        this.adminMemCustomer = adminMemCustomer;
+    public void setAdminReply(String adminReply) {
+        this.adminReply = adminReply;
     }
 
     @Column(name = "rp_done_time", nullable = false)
@@ -130,16 +142,16 @@ public class ArticleReportVO implements Serializable {
         this.rpStatus = rpStatus;
     }
 
-    @Column(name = "rp_result", nullable = false)
+    @Column(name = "rp_sresult", nullable = false)
     @NotNull(message = "處理結果: 不能為空")
     @Min(value = 0, message = "處理結果: 值必須為0或1")
     @Max(value = 1, message = "處理結果: 值必須為0或1")
-    public Byte getRpResult() {
-        return rpResult;
+    public Byte getRpSresult() {
+        return rpSresult;
     }
 
-    public void setRpResult(Byte rpResult) {
-        this.rpResult = rpResult;
+    public void setRpSresult(Byte rpSresult) {
+        this.rpSresult = rpSresult;
     }
 
     @Column(name = "rp_note", length = 800)

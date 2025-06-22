@@ -1,16 +1,22 @@
 package com.lutu.shopProd.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
-import com.lutu.campsite_order.model.CampSiteOrderService;
-import com.lutu.shopProd.model.ShopProdSelectDTO;
+import com.lutu.product_type.model.ProdTypeDTO;
+import com.lutu.product_type.model.ProdTypeRepository;
+import com.lutu.shopProd.model.ShopProdDTO;
 import com.lutu.shopProd.model.ShopProdService;
 
 //api格式 「http://localhost:8081/CJA101G02/api/campsite_orders」
@@ -21,14 +27,17 @@ public class ShopProdController {
 
 	@Autowired
 	ShopProdService shopProdService;
+	
+	@Autowired
+	ProdTypeRepository prodTypeRepository;
 
 	/**
      * 查詢所有商品（DTO），回傳 JSON 格式
-     * GET http://localhost:8081/CJA101G02/api/productslist
+     * GET http://localhost:8081/CJA101G02/api/products
      */
-	@GetMapping("/api/productslist")
-	public ApiResponse<List<ShopProdSelectDTO>> getAllProds() {
-	    List<ShopProdSelectDTO> dtoList = shopProdService.getAllProdsByDTO();
+	@GetMapping("/api/products")
+	public ApiResponse<List<ShopProdDTO>> getAllProds() {
+	    List<ShopProdDTO> dtoList = shopProdService.getAllProdsByDTO();
 	    return new ApiResponse<>("success", dtoList, "查詢成功");
 	}
 	
@@ -37,8 +46,8 @@ public class ShopProdController {
      * GET http://localhost:8081/CJA101G02/api/products/{id}
      */
 	@GetMapping("/api/products/{id}") //{id} 是路徑變數，要與 @PathVariable 名稱一致
-	public ApiResponse<ShopProdSelectDTO> getProdById(@PathVariable Integer id) { // 這裡的 id 就是從 URL 裡面的 {id} 抓來的
-	    ShopProdSelectDTO dto = shopProdService.getProdDTOById(id);
+	public ApiResponse<ShopProdDTO> getProdById(@PathVariable Integer id) { // 這裡的 id 就是從 URL 裡面的 {id} 抓來的
+		ShopProdDTO dto = shopProdService.getProdDTOById(id);
 	    
 	    if (dto != null) {
 	        return new ApiResponse<>("success", dto, "查詢成功");
@@ -47,6 +56,59 @@ public class ShopProdController {
 	    }
 	}
 
+	
+	@GetMapping("/api/products/keyword")
+	public ApiResponse<List<ShopProdDTO>> getByKeyword(@RequestParam String keyword) {
+	    return new ApiResponse<>("success", shopProdService.getByKeyword(keyword), "查詢成功");
+	}
+
+	@GetMapping("/api/products/type/{typeId}")
+	public ApiResponse<List<ShopProdDTO>> getByType(@PathVariable Integer typeId) {
+	    return new ApiResponse<>("success", shopProdService.getByType(typeId), "查詢成功");
+	}
+
+	@GetMapping("/api/product-types")
+	public List<ProdTypeDTO> getAllTypes() {
+	    return prodTypeRepository.findAll()
+	            .stream()
+	            .map(pt -> new ProdTypeDTO(pt.getProdTypeId(), pt.getProdTypeName()))
+	            .collect(Collectors.toList());
+	}
+
+
+	@GetMapping("/api/products/latest")
+	public ApiResponse<List<ShopProdDTO>> getLatest() {
+	    return new ApiResponse<>("success", shopProdService.getLatestProds(), "查詢成功");
+	}
+
+	@GetMapping("/api/products/discount")
+	public ApiResponse<List<ShopProdDTO>> getDiscounted() {
+	    return new ApiResponse<>("success", shopProdService.getDiscountProds(), "查詢成功");
+	}
+
+	@GetMapping("/api/products/random")
+	public ApiResponse<List<ShopProdDTO>> getRandom(@RequestParam(defaultValue = "6") int limit) {
+	    return new ApiResponse<>("success", shopProdService.getRandomProds(limit), "推薦成功");
+	}
+
+	//新增商品（接收 DTO）
+	@PostMapping("/api/addprod")
+	public ApiResponse<ShopProdDTO> addProd(@RequestBody ShopProdDTO dto) {
+	    ShopProdDTO saved = shopProdService.addProdByDTO(dto);
+	    return new ApiResponse<>("success", saved, "新增成功");
+	}
+
+	//修改商品（接收 DTO）
+	@PutMapping("/api/updateprod")
+	public ApiResponse<ShopProdDTO> updateProd(@RequestBody ShopProdDTO dto) {
+	    ShopProdDTO updated = shopProdService.updateProdByDTO(dto);
+	    if (updated != null) {
+	        return new ApiResponse<>("success", updated, "修改成功");
+	    } else {
+	        return new ApiResponse<>("fail", null, "查無此商品，無法修改");
+	    }
+	}
+	
 //	@PostMapping("/addoneprod")
 //	public ApiResponse<CampVO> createOneCamp(@RequestParam("ownerId") Integer ownerId,
 //			@RequestParam("campName") String campName, @RequestParam("campContent") String campContent,
@@ -83,13 +145,6 @@ public class ShopProdController {
 //			return new ApiResponse<>("fail", camp, "查詢失敗");
 //		}
 //
-//	}
-//
-//	// 取得所有營地訂單，回傳 JSON
-//	@GetMapping("/api/campsite_orders")
-//	public ApiResponse<List<CampSiteOrderVO>> getAllCampsiteOrders() {
-//		List<CampSiteOrderVO> orders = campsiteOrdSvc.getAllCampsiteOrder();
-//		return new ApiResponse<>("success", orders, "查詢成功");
 //	}
 //
 //	@GetMapping("/api/camps/{campId}/pic1")
@@ -140,10 +195,4 @@ public class ShopProdController {
 //			response.getOutputStream().write(img);
 //		}
 //	}
-
-//    @GetMapping("/api/campsite_orders")
-//    public List<CampSiteOrderVO> getAllCampsiteOrders() {
-//        List<CampSiteOrderVO> orders = campsiteOrdSvc.getAllCampsiteOrder();
-//        return orders;
-//    }
 }

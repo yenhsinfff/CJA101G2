@@ -1,60 +1,51 @@
 package com.lutu.article_image.model;
 
-import java.util.Objects;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.io.Serializable;
 
-import com.lutu.article_type.model.ArticleTypeVO;
+import com.lutu.article.model.ArticlesVO;
 
-public class ArticleImageVO implements java.io.Serializable{
-	
-	private Integer acImgId;	// 討論區圖片編號(PK)
-	private Integer acId;		// 討論區文章編號
-	private byte[] ac_img;		// 圖片訊息
-	
-	
-	
-	public Integer getAcImgId() {
-		return acImgId;
-	}
-	public void setAcImgId(Integer acImgId) {
-		this.acImgId = acImgId;
-	}
-	public Integer getAcId() {
-		return acId;
-	}
-	public void setAcId(Integer acId) {
-		this.acId = acId;
-	}
-	public byte[] getAc_img() {
-		return ac_img;
-	}
-	public void setAc_img(byte[] ac_img) {
-		this.ac_img = ac_img;
-	}
-	
-	
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(acImgId);
-	}
+@Entity
+@Table(name = "article_image")
+public class ArticleImageVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
+    private Integer acImgId;			// 討論區圖片編號(PK)
+    private ArticlesVO articlesVO;		// 討論區文章編號(FK) 
+    private byte[] acImg;				// 圖片訊息
 
-        ArticleImageVO other = (ArticleImageVO) obj;
-        return Objects.equals(acImgId, other.acImgId);
+    public ArticleImageVO() {}
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ac_img_id")
+    public Integer getAcImgId() {
+        return acImgId;
     }
 
-	@Override
-	public String toString() {		// +", = "
-		return "ArticleImage [討論區圖片編號 = " + acImgId + 
-						   ", 討論區文章編號 = " + acId + 
-						   ", 圖片訊息 = "       + ac_img + "]";
-	}
-	
+    public void setAcImgId(Integer acImgId) {
+        this.acImgId = acImgId;
+    }
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ac_id", nullable = false)
+    @NotNull(message = "文章: 必須指定所屬文章")
+    public ArticlesVO getArticlesVO() {
+        return articlesVO;
+    }
+
+    public void setArticlesVO(ArticlesVO articlesVO) {
+        this.articlesVO = articlesVO;
+    }
+
+    @Column(name = "ac_img", nullable = false, columnDefinition = "longblob")
+    @NotNull(message = "圖片: 請上傳圖片")
+    public byte[] getAcImg() {
+        return acImg;
+    }
+
+    public void setAcImg(byte[] acImg) {
+        this.acImg = acImg;
+    }
 }

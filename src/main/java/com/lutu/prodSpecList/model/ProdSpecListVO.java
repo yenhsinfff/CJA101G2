@@ -15,6 +15,8 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "prod_spec_list")
@@ -26,10 +28,12 @@ public class ProdSpecListVO implements Serializable {
 	private Integer prodId; // 商品編號 PK
 
 	@Id
-	@Column(name = "prod_spec_id")
+	@Column(name = "prod_spec_id", insertable = false, updatable = false)
 	private Integer prodSpecId; // 商品規格編號 PK
 
 	@Column(name = "prod_spec_price")
+	@NotNull(message = "規格價格: 請勿空白")
+	@Min(value = 0, message = "規格價格不能為負數")
 	private Integer prodSpecPrice; // 規格價格
 
 	@ManyToOne(fetch = FetchType.LAZY)
