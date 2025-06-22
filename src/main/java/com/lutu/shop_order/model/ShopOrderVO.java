@@ -36,7 +36,7 @@ public class ShopOrderVO implements Serializable {
 	private MemberVO memId;						// 露營者編號
 
 
-	@Column(insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+	@Column(name = "shop_order_date", insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime shopOrderDate; // 訂單日期
 
@@ -47,11 +47,11 @@ public class ShopOrderVO implements Serializable {
 	private Integer shopOrderShipFee = 60; // 運費，預設60
 
 	@Column(name = "before_discount_amount")
-	private Integer beforeDiscountAmount; // 折價前總金額
+	private Integer beforeDiscountAmount; 		// 折價前總金額
 
 	@ManyToOne
-	@JoinColumn(name = "discount_code_id")
-	private DiscountCodeVO discountCodeId;				// 折價券編號
+	@JoinColumn(name = "discount_code_id", nullable = true)
+	private DiscountCodeVO discountCodeId;		// 折價券編號
 
 	@Column(name = "discount_amount")
 	private Integer discountAmount; // 折價金額
@@ -154,8 +154,30 @@ public class ShopOrderVO implements Serializable {
 		this.discountCodeId = discountCodeId;
 	}
 
+	
+
+	public Integer getDiscountAmount() {
+		return discountAmount;
+	}
+
 	public void setDiscountAmount(Integer discountAmount) {
 		this.discountAmount = discountAmount;
+	}
+
+	public void setShopOrderShipment(Byte shopOrderShipment) {
+		this.shopOrderShipment = shopOrderShipment;
+	}
+
+	public void setShopOrderPayment(Byte shopOrderPayment) {
+		this.shopOrderPayment = shopOrderPayment;
+	}
+
+	public void setShopOrderStatus(Byte shopOrderStatus) {
+		this.shopOrderStatus = shopOrderStatus;
+	}
+
+	public void setShopReturnApply(Byte shopReturnApply) {
+		this.shopReturnApply = shopReturnApply;
 	}
 
 	public Integer getAfterDiscountAmount() {
