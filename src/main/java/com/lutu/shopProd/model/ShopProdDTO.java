@@ -2,8 +2,11 @@ package com.lutu.shopProd.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lutu.prodColorList.model.ProdColorListDTO;
+import com.lutu.prodSpecList.model.ProdSpecListDTO;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -46,8 +49,11 @@ public class ShopProdDTO {
 	@Min(value = 0, message = "評價總分數不能為負數")
 	private Integer prodTypeId; //商品類型編號
 	
-    private String prodTypeName;
-	
+    private String prodTypeName; //商品類別
+    
+    private List<ProdSpecListDTO> prodSpecList; //商品規格
+    private List<ProdColorListDTO> prodColorList; // 顏色
+
 	@NotNull(message = "商品狀態: 請勿空白")
 	@Min(value = 0, message = "商品狀態只能是 0 或 1")
 	@Max(value = 1, message = "商品狀態只能是 0 或 1")
@@ -187,6 +193,22 @@ public class ShopProdDTO {
 
 	public void setProdColorOrNot(Byte prodColorOrNot) {
 		this.prodColorOrNot = prodColorOrNot;
+	}
+
+	public List<ProdSpecListDTO> getProdSpecList() {
+		return prodSpecList;
+	}
+
+	public void setProdSpecList(List<ProdSpecListDTO> prodSpecList) {
+		this.prodSpecList = prodSpecList;
+	}
+
+	public List<ProdColorListDTO> getProdColorList() {
+		return prodColorList;
+	}
+
+	public void setProdColorList(List<ProdColorListDTO> prodColorList) {
+		this.prodColorList = prodColorList;
 	}
 
 }

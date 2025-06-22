@@ -3,7 +3,7 @@ package com.lutu.prodSpecList.model;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public class ProdSpecDTO {
+public class ProdSpecListDTO {
 
     private Integer prodId;
 

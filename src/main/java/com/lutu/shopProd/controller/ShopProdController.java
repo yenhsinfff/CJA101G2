@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
 import com.lutu.prodSpecList.model.ProdSpecListRepository;
-import com.lutu.product_type.model.ProdTypeDTO;
-import com.lutu.product_type.model.ProdTypeRepository;
+import com.lutu.productType.model.ProdTypeDTO;
+import com.lutu.productType.model.ProdTypeRepository;
 import com.lutu.shopProd.model.ShopProdDTO;
 import com.lutu.shopProd.model.ShopProdService;
 

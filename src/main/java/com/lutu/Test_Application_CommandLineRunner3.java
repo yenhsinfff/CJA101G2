@@ -1,8 +1,5 @@
 package com.lutu;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -10,9 +7,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lutu.product_type.model.ProdTypeVO;
+import com.lutu.productType.model.ProdTypeVO;
 import com.lutu.shopProd.model.ShopProdRepository;
-import com.lutu.shopProd.model.ShopProdVO;
 
 @Transactional
 @SpringBootApplication

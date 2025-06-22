@@ -1,4 +1,4 @@
-package com.lutu.product_type.model;
+package com.lutu.productType.model;
 
 public class ProdTypeDTO {
     private Integer prodTypeId;
