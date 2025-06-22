@@ -39,10 +39,15 @@ public class MemberService {
 		
 	}
 
+	@Transactional
 	public MemberVO getOneMember(Integer memId) {
 		Optional<MemberVO> optional = repository.findById(memId);
-		
-		return optional.orElse(null);
+		MemberVO member = optional.orElse(null);
+
+		if (member != null) {
+			member.getCampTrackLists().size();
+		}
+		return member;
 	}
 
 	public List<MemberVO> getAll() {

@@ -8,10 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.lutu.campsite.model.CampsiteService;
-import com.lutu.campsite.model.CampsiteVO;
-import com.lutu.campsitetype.model.CampsiteTypeService;
-import com.lutu.campsitetype.model.CampsiteTypeVO;
 import com.lutu.camptracklist.model.CampTrackListService;
+import com.lutu.camptracklist.model.CampTrackListVO;
+import com.lutu.member.model.MemberService;
+import com.lutu.member.model.MemberVO;
 
 @SpringBootApplication
 //@ComponentScan(basePackages = "com.lutu")  // 掃描你的 Service 等 component
@@ -53,7 +53,7 @@ public class TestHibernate {
 
 
 		// 刪除 --> 自訂的刪除方法
-				campsiteSvc.deleteCampsite(3016);
+//				campsiteSvc.deleteCampsite(3016);
 				
 		
 //========================== 測試關聯===========================================
@@ -76,7 +76,28 @@ public class TestHibernate {
 //		for (CampsiteVO campsite : campsites) {
 //				System.out.println("營地房間編號：" + campsite.getCampsiteId() + ", 營地房間名稱：" + campsite.getCampsiteIdName() + ", 露營者姓名："
 //				+ campsite.getCamperName());
-//		}		
+//		}	
+		
+		// 透過營地收藏查詢營地資訊
+
+//		CampTrackListService svc = context.getBean(CampTrackListService.class);
+//		CampTrackListVO campTrackListVO = svc.getOneCampTrackList(1002, 10000001); // memId, campId
+//
+//		if (campTrackListVO != null) {
+//		    CampVO camp = campTrackListVO.getCamp();
+//		    System.out.println("營地編號：" + camp.getCampId());
+//		    System.out.println("營地名稱：" + camp.getCampName());
+//		    System.out.println("營地縣市：" + camp.getCampCity());
+//		}	
+		
+		
+		//透過會員查詢收藏營地
+//		MemberService svc = context.getBean(MemberService.class);
+//		MemberVO memberVO = svc.getOneMember(10000001);
+//		Set<CampTrackListVO> campTrackLists = memberVO.getCampTrackLists();
+//		for(CampTrackListVO campTrackList : campTrackLists) {
+//			System.out.println("營地編號：" + campTrackList.getId());
+//		}
 				
 		
 

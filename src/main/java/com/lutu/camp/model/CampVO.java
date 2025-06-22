@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
+import com.lutu.camptracklist.model.CampTrackListVO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -79,10 +80,21 @@ public class CampVO implements java.io.Serializable {
     @OneToMany(mappedBy = "camp", cascade = CascadeType.ALL)
     private Set<CampsiteTypeVO> campsiteTypes;
     
+    @OneToMany(mappedBy = "camp", cascade = CascadeType.ALL)
+    private Set<CampTrackListVO> campTrackLists;
+    
 
     // --- Getters and Setters ---
     
-    public Set<CampsiteTypeVO> getCampsiteTypes() {
+    public Set<CampTrackListVO> getCampTrackLists() {
+		return campTrackLists;
+	}
+
+	public void setCampTrackLists(Set<CampTrackListVO> campTrackLists) {
+		this.campTrackLists = campTrackLists;
+	}
+
+	public Set<CampsiteTypeVO> getCampsiteTypes() {
 		return campsiteTypes;
 	}
 
