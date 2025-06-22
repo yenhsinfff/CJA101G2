@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lutu.product_type.model.ProdTypeVO;
 
 @Transactional
-@Service("shopProdService")
+@Service//("shopProdService")
 public class ShopProdService {
 
 	@Autowired
@@ -28,7 +28,7 @@ public class ShopProdService {
 	    return convertToDTO(vo); // 回傳儲存後的結果
 	}
 
-	//更新 DTO
+	//修改 DTO
 	public ShopProdDTO updateProdByDTO(ShopProdDTO dto) {
 	    Optional<ShopProdVO> opt = repository.findById(dto.getProdId());
 	    if (opt.isPresent()) {

@@ -1,6 +1,7 @@
 package com.lutu.shopProd.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
+import com.lutu.product_type.model.ProdTypeDTO;
+import com.lutu.product_type.model.ProdTypeRepository;
 import com.lutu.shopProd.model.ShopProdDTO;
 import com.lutu.shopProd.model.ShopProdService;
 
@@ -24,10 +27,13 @@ public class ShopProdController {
 
 	@Autowired
 	ShopProdService shopProdService;
+	
+	@Autowired
+	ProdTypeRepository prodTypeRepository;
 
 	/**
      * 查詢所有商品（DTO），回傳 JSON 格式
-     * GET http://localhost:8081/CJA101G02/api/productslist
+     * GET http://localhost:8081/CJA101G02/api/products
      */
 	@GetMapping("/api/products")
 	public ApiResponse<List<ShopProdDTO>> getAllProds() {
@@ -60,6 +66,15 @@ public class ShopProdController {
 	public ApiResponse<List<ShopProdDTO>> getByType(@PathVariable Integer typeId) {
 	    return new ApiResponse<>("success", shopProdService.getByType(typeId), "查詢成功");
 	}
+
+	@GetMapping("/api/product-types")
+	public List<ProdTypeDTO> getAllTypes() {
+	    return prodTypeRepository.findAll()
+	            .stream()
+	            .map(pt -> new ProdTypeDTO(pt.getProdTypeId(), pt.getProdTypeName()))
+	            .collect(Collectors.toList());
+	}
+
 
 	@GetMapping("/api/products/latest")
 	public ApiResponse<List<ShopProdDTO>> getLatest() {
