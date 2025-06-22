@@ -5,6 +5,10 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.lutu.member.model.MemberVO;
+
+import io.lettuce.core.dynamic.annotation.Param;
+
 public interface ShopOrderRepository extends JpaRepository<ShopOrderVO, Integer> {
 
 //	@Transactional
@@ -31,16 +35,17 @@ public interface ShopOrderRepository extends JpaRepository<ShopOrderVO, Integer>
 //	Optional<ShopOrderVO> findById(Integer shopOrderId);
 //	
 //	
-	//會員訂單資料查詢
-
-	@Query(value = "SELECT o FROM ShopOrderVO o WHERE o.memId = :memId")
-	List<ShopOrderVO> findByMember(Integer memId);
+//	//會員訂單資料查詢
+//	@Query(value = "SELECT o FROM ShopOrderVO o WHERE o.memId = :memId")
+//	List<ShopOrderVO> findByMember(Integer memId);
 
 	
-
-//	//會員訂單資料查詢
-//	@Query(value = "from ShopOrderVO o where o.memId = :memId")
-//	List<ShopOrderVO> findByMember(MemberVO memId);
+	//會員訂單資料查詢
+	@Query(value = "from ShopOrderVO o where o.memId = :memId")
+	List<ShopOrderVO> findByMember(MemberVO memId);
+	
+	 @Query(value = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'lutudb' AND TABLE_NAME = 'shop_order'", nativeQuery = true)
+	    Long findNextAutoIncrement();
 	
 //	//訂單資料單筆查詢
 //	@Query(value = "from ShopOrderVO o where o.shopOrderId = :shopOrderId")

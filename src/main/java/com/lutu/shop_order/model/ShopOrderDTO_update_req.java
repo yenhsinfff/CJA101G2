@@ -3,36 +3,25 @@ package com.lutu.shop_order.model;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class ShopOrderDTO_update {
+public class ShopOrderDTO_update_req {
 	
 	@NotNull(message = "訂單編號必填")
 	private Integer shopOrderId; // 商品訂單編號
-
-	// private MemberVO memId;
-	private Integer memId; // 露營者編號
 	
 	private Byte shopOrderShipment; // 出貨方式
 	
 	private Integer shopOrderShipFee; // 運費
 
-	private Integer beforeDiscountAmount; // 折價前總金額
-
 	private String discountCodeId; // 折價券編號
-
-	private Integer discountAmount; // 折價金額
-
-	private Integer afterDiscountAmount; // 實付金額
+	
+	private boolean discountCodeIdPresent = false;	//判斷折價卷編號是否有異動
 
 	private Byte shopOrderPayment; // 付款方式
 
@@ -58,7 +47,7 @@ public class ShopOrderDTO_update {
 
 	private Byte shopReturnApply; // 退貨申請
 
-	public ShopOrderDTO_update() {
+	public ShopOrderDTO_update_req() {
 	}
 
 	// --- Getters and Setters ---
@@ -71,15 +60,6 @@ public class ShopOrderDTO_update {
 		this.shopOrderId = shopOrderId;
 	}
 	
-
-	public Integer getMemId() {
-		return memId;
-	}
-
-	public void setMemId(Integer memId) {
-		this.memId = memId;
-	}
-
 	public Byte getShopOrderShipment() {
 		return shopOrderShipment;
 	}
@@ -96,37 +76,20 @@ public class ShopOrderDTO_update {
 		this.shopOrderShipFee = shopOrderShipFee;
 	}
 
-	public Integer getBeforeDiscountAmount() {
-		return beforeDiscountAmount;
-	}
-
-	public void setBeforeDiscountAmount(Integer beforeDiscountAmount) {
-		this.beforeDiscountAmount = beforeDiscountAmount;
-	}
-
 	public String getDiscountCodeId() {
 		return discountCodeId;
 	}
 
+	@JsonProperty("discountCodeId")
 	public void setDiscountCodeId(String discountCodeId) {
 		this.discountCodeId = discountCodeId;
+		this.discountCodeIdPresent = true;	//判斷前端有沒有帶這個欄位(異動)
 	}
-
-	public Integer getDiscountAmount() {
-		return discountAmount;
-	}
-
-	public void setDiscountAmount(Integer discountAmount) {
-		this.discountAmount = discountAmount;
-	}
-
-	public Integer getAfterDiscountAmount() {
-		return afterDiscountAmount;
-	}
-
-	public void setAfterDiscountAmount(Integer afterDiscountAmount) {
-		this.afterDiscountAmount = afterDiscountAmount;
-	}
+	
+	// 判斷前端有沒有帶這個欄位(異動)
+    public boolean hasDiscountCodeId() {
+        return discountCodeIdPresent;
+    }
 
 	public Byte getShopOrderPayment() {
 		return shopOrderPayment;

@@ -181,7 +181,7 @@ public class ShopOrderItemsDetailsVO implements Serializable {
 		this.prodSpecId = prodSpecId;
 	}
 
-	static class CompositeDetail implements Serializable {
+	public static class CompositeDetail implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private Integer shopOrderId; // 訂單編號

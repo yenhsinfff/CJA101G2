@@ -2,6 +2,10 @@ package com.lutu.prodSpecList.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProdSpecListRepository extends JpaRepository<ProdSpecListVO, Integer>{
+import com.lutu.prodSpecList.model.ProdSpecListVO.CompositeDetail2;
+
+public interface ProdSpecListRepository extends JpaRepository<ProdSpecListVO, CompositeDetail2>{
+
+
 
 }

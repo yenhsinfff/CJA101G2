@@ -124,7 +124,7 @@ public class ProdSpecListVO implements Serializable {
 	}
 
 	// 需要宣告一個有包含複合主鍵屬性的類別，並一定要實作 java.io.Serializable 介面
-	static class CompositeDetail2 implements Serializable {
+	public static class CompositeDetail2 implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private Integer prodId;
