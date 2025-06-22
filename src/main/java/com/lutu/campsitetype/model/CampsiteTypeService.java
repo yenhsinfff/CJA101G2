@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.lutu.campsitetype.model.CampsiteTypeVO.CompositeDetail;
 
+import jakarta.transaction.Transactional;
+
 @Service("campsiteTypeService")
 public class CampsiteTypeService {
 
@@ -29,12 +31,17 @@ public class CampsiteTypeService {
 	    }
 	}
 	
-	
+	@Transactional
 	public CampsiteTypeVO getOneCampsiteType(Integer campsiteTypeId, Integer campId) {
 	    CompositeDetail id = new CompositeDetail();
 	    id.setCampId(campId);
 	    id.setCampsiteTypeId(campsiteTypeId);
-	    return repository.findById(id).orElse(null);
+	    CampsiteTypeVO vo = repository.findById(id).orElse(null);
+	    
+		if (vo != null) 
+			vo.getCampsites().size();
+	    return vo;
+	    
 	}
 	
 	

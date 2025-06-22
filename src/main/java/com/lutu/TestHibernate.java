@@ -1,6 +1,6 @@
 package com.lutu;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
@@ -9,6 +9,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import com.lutu.campsite.model.CampsiteService;
 import com.lutu.campsite.model.CampsiteVO;
+import com.lutu.campsitetype.model.CampsiteTypeService;
+import com.lutu.campsitetype.model.CampsiteTypeVO;
 import com.lutu.camptracklist.model.CampTrackListService;
 
 @SpringBootApplication
@@ -24,6 +26,8 @@ public class TestHibernate {
 		SpringApplication app = new SpringApplication(TestHibernate.class);
 		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
 		ConfigurableApplicationContext context = app.run(args);
+		
+		
 
 // ================================ 營地房間明細=======================================
 		CampsiteService campsiteSvc = context.getBean(CampsiteService.class);
@@ -49,12 +53,10 @@ public class TestHibernate {
 
 
 		// 刪除 --> 自訂的刪除方法
-				campsiteSvc.deleteCampsite(3015);
-
-
+				campsiteSvc.deleteCampsite(3016);
 				
 		
-//========================== 測試關聯(camp & campsiteType)===========================================
+//========================== 測試關聯===========================================
 
 		// 透過營地查詢營地房型
 
@@ -66,6 +68,16 @@ public class TestHibernate {
 //					+ campsiteType.getCampsitePrice());
 //		}
 		
+		// 透過營地房型查詢營地房間
+
+//		CampsiteTypeService svc = context.getBean(CampsiteTypeService.class);
+//		CampsiteTypeVO campsiteTypeVO = svc.getOneCampsiteType(2006, 1004);
+//		Set<CampsiteVO> campsites = campsiteTypeVO.getCampsites();
+//		for (CampsiteVO campsite : campsites) {
+//				System.out.println("營地房間編號：" + campsite.getCampsiteId() + ", 營地房間名稱：" + campsite.getCampsiteIdName() + ", 露營者姓名："
+//				+ campsite.getCamperName());
+//		}		
+				
 		
 
 // ================================營地型別(複合主鍵)==========================================

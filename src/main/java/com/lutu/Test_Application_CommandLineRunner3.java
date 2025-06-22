@@ -1,18 +1,16 @@
 package com.lutu;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lutu.campsite.model.CampsiteService;
 import com.lutu.product_type.model.ProdTypeVO;
 import com.lutu.shopProd.model.ShopProdRepository;
-import com.lutu.shopProd.model.ShopProdVO;
 
 @Transactional
 @SpringBootApplication
@@ -31,6 +29,14 @@ public class Test_Application_CommandLineRunner3 implements CommandLineRunner {
         SpringApplication.run(Test_Application_CommandLineRunner3.class);
     }
 
+//	@Bean
+//	CommandLineRunner runTest(CampsiteService campsiteService) {
+//	    return args -> {
+//	        campsiteService.addCampsite(1004, 2006, "雙人小木屋B", "范晏新");
+//	    };
+//	}
+	
+	
     @Override
     public void run(String...args) throws Exception {
 

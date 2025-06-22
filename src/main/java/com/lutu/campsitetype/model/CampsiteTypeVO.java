@@ -79,7 +79,9 @@ public class CampsiteTypeVO implements Serializable {
 	}
 	
 	@OneToMany(mappedBy = "campsiteType", cascade =CascadeType.ALL)
-	private Set<CampsiteVO> campsites;	
+	private Set<CampsiteVO> campsites;
+	
+	
 
     public Set<CampsiteVO> getCampsites() {
 		return campsites;
