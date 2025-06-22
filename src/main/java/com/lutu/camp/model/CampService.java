@@ -27,13 +27,16 @@ public class CampService {
 
 	
     
-//    @Transactional
+    @Transactional
     public CampVO getOneCamp(Integer campId) {
     	CampVO camp = campRepository.findById(campId).orElse(null);
 //    	byte[] img = (camp != null) ? camp.getCampPic1() : null;
 //    	if (camp != null) {
 //            camp.getCampsiteOrders().size(); // 強制初始化
 //        }
+        if (camp != null) {
+            camp.getCampsiteTypes().size(); // 觸發初始化
+        }
     	return camp;
     	
     }

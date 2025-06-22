@@ -1,5 +1,7 @@
 package com.lutu;
 
+import java.util.Set;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,7 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import com.lutu.camp.model.CampService;
 import com.lutu.camp.model.CampVO;
-import com.lutu.campsitetype.model.CampsiteTypeService;
+import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
 import com.lutu.camptracklist.model.CampTrackListService;
 
@@ -23,7 +25,85 @@ public class TestHibernate {
 		SpringApplication app = new SpringApplication(TestHibernate.class);
 		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
 		ConfigurableApplicationContext context = app.run(args);
-				
+
+		
+//========================== 測試關聯(camp & campsiteType)===========================================
+
+		// 透過營地查詢營地房型
+
+		CampService svc = context.getBean(CampService.class);
+		CampVO campVO = svc.getOneCamp(1006);
+		Set<CampsiteTypeVO> campsiteTypes = campVO.getCampsiteTypes();
+		for (CampsiteTypeVO campsiteType : campsiteTypes) {
+			System.out.println("營地房型編號+營地編號：" + campsiteType.getId() + ", 營地房型名稱：" + campsiteType.getCampsiteName() + ", 房型價格："
+					+ campsiteType.getCampsitePrice());
+		}
+		
+		
+
+// ================================營地型別(複合主鍵)==========================================
+
+//		CampsiteTypeService campsiteTypeSvc = context.getBean(CampsiteTypeService.class);
+
+//				List<CampsiteTypeVO> list = campsiteTypeSvc.getAll();
+//				for (CampsiteTypeVO vo : list) {
+//					System.out.print(vo.getId() + ",");
+//					System.out.print(vo.getCampsiteName() + ",");
+//					System.out.print(vo.getCampsitePeople() + ",");
+//					System.out.print(vo.getCampsiteNum() + ",");
+//					System.out.print(vo.getCampsitePrice() + ",");
+//					System.out.print(vo.getCampsitePic1() + ",");
+//					System.out.print(vo.getCampsitePic2() + ",");
+//					System.out.print(vo.getCampsitePic3() + ",");
+//					System.out.print(vo.getCampsitePic4() + ",");
+//					System.out.println();
+//				}
+
+		// 查詢-findByPrimaryKey
+		// (多方emp2.hbm.xml必須設為lazy="false")(優!)
+//		        CampsiteTypeVO vo = campsiteTypeSvc.getOneCampsiteType(2001, 1001);
+//		        System.out.print(vo.getCampsiteName() + ",");
+//				System.out.print(vo.getCampsitePeople() + ",");
+//				System.out.print(vo.getCampsiteNum() + ",");
+//				System.out.print(vo.getCampsitePrice() + ",");
+//				System.out.print(vo.getCampsitePic1() + ",");
+//				System.out.print(vo.getCampsitePic2() + ",");
+//				System.out.print(vo.getCampsitePic3() + ",");
+//				System.out.print(vo.getCampsitePic4());	
+//				System.out.println();
+
+		// 修改
+//		        CampsiteTypeVO vo = campsiteTypeSvc.getOneCampsiteType(2013,1008);
+//		        vo.setCampsiteName("非常豪華帳棚");
+//		        vo.setCampsitePeople(88);
+//		        vo.setCampsiteNum((byte)3);
+//		        vo.setCampsitePrice(6666);
+////		        vo.setCampsitePic1(null);
+//				campsiteTypeSvc.updateCampsiteType(vo);
+
+		// 新增
+//		CampsiteTypeVO vo = new CampsiteTypeVO();
+//		CampsiteTypeVO.CompositeDetail id = new CampsiteTypeVO.CompositeDetail();
+//		
+//		// 設定關聯的 camp（重點）
+//		CampVO camp = new CampVO();
+//		camp.setCampId(1009);
+//		vo.setCamp(camp);	
+//		id.setCampsiteTypeId(2015); //複合主鍵無法自動遞增，務必手動設定
+//		vo.setId(id);
+//		
+//        vo.setCampsiteName("非常豪華帳棚");
+//        vo.setCampsitePeople(88);
+//        vo.setCampsiteNum((byte)3);
+//        vo.setCampsitePrice(6666);
+//        vo.setCampsitePic1("fake-image-data".getBytes());
+//        campsiteTypeSvc.addCampsiteType(vo);
+
+		// 刪除 --> 自訂的刪除方法
+//		CampsiteTypeVO.CompositeDetail id = new CampsiteTypeVO.CompositeDetail(2014, 1006);
+//		campsiteTypeSvc.deleteCampsiteType(id);
+
+
 		// ================================ 營地加購項目明細=======================================
 //		BundleItemDetailsService bundleItemDetailsSvc = context.getBean(BundleItemDetailsService.class);
 
