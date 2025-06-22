@@ -3,19 +3,21 @@ package com.lutu.campsitetype.model;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 
 import com.lutu.camp.model.CampVO;
+import com.lutu.campsite.model.CampsiteVO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -75,8 +77,19 @@ public class CampsiteTypeVO implements Serializable {
 	public void setCamp(CampVO camp) {
 		this.camp = camp;
 	}
+	
+	@OneToMany(mappedBy = "campsiteType", cascade =CascadeType.ALL)
+	private Set<CampsiteVO> campsites;	
 
-//=======================複合主鍵設定==================================
+    public Set<CampsiteVO> getCampsites() {
+		return campsites;
+	}
+
+	public void setCampsites(Set<CampsiteVO> campsites) {
+		this.campsites = campsites;
+	}
+
+	//=======================複合主鍵設定==================================
 	// 特別加上對複合主鍵物件的 getter / setter
 	public CompositeDetail getId() {
 		return id;
@@ -86,15 +99,11 @@ public class CampsiteTypeVO implements Serializable {
 		this.id = id;
 	}
 
-	@Override
-	public String toString() {
-		return "CampsiteTypeVO [id=" + id + ", campsiteName=" + campsiteName + ", campsitePeople="
-				+ campsitePeople + ", campsiteNum=" + campsiteNum + ", campsitePrice=" + campsitePrice
-				+ ", campsitePic1=" + Arrays.toString(campsitePic1);
-	}
+
 
 //==================================================================
 
+	
 	public String getCampsiteName() {
 		return campsiteName;
 	}
@@ -157,6 +166,13 @@ public class CampsiteTypeVO implements Serializable {
 
 	public void setCampsitePic4(byte[] campsitePic4) {
 		this.campsitePic4 = campsitePic4;
+	}
+	
+	@Override
+	public String toString() {
+		return "CampsiteTypeVO [id=" + id + ", campsiteName=" + campsiteName + ", campsitePeople="
+				+ campsitePeople + ", campsiteNum=" + campsiteNum + ", campsitePrice=" + campsitePrice
+				+ ", campsitePic1=" + Arrays.toString(campsitePic1);
 	}
 
 //=======================複合主鍵設定==================================	

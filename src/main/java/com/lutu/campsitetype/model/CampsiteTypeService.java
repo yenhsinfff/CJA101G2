@@ -13,6 +13,8 @@ public class CampsiteTypeService {
 	@Autowired
 	CampsiteTypeRepository repository;
 	
+
+	
 	public void addCampsiteType(CampsiteTypeVO campsiteTypeVO) {
 		repository.save(campsiteTypeVO);
 	}

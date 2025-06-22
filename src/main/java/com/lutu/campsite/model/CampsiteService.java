@@ -6,12 +6,17 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lutu.campsitetype.model.CampsiteTypeService;
+
 
 @Service("campsiteService")
 public class CampsiteService {
 
 	@Autowired
 	CampsiteRepository repository;
+	
+
+	
 	
 	public void addCampsite(CampsiteVO campsiteVO) {
 		repository.save(campsiteVO);
