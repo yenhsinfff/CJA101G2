@@ -144,6 +144,7 @@ public class ShopProdService {
 
 	    if (vo.getProdTypeVO() != null) {
 	        dto.setProdTypeId(vo.getProdTypeVO().getProdTypeId());
+	        dto.setProdTypeName(vo.getProdTypeVO().getProdTypeName()); 
 	    }
 
 	    dto.setProdStatus(vo.getProdStatus());
