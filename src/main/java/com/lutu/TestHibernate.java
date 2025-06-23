@@ -7,6 +7,9 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import com.lutu.bundleitem.model.BundleItemService;
+import com.lutu.bundleitem.model.BundleItemVO;
+import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
 import com.lutu.campsite.model.CampsiteService;
 import com.lutu.camptracklist.model.CampTrackListService;
 import com.lutu.camptracklist.model.CampTrackListVO;
@@ -97,6 +100,15 @@ public class TestHibernate {
 //		Set<CampTrackListVO> campTrackLists = memberVO.getCampTrackLists();
 //		for(CampTrackListVO campTrackList : campTrackLists) {
 //			System.out.println("營地編號：" + campTrackList.getId());
+//		}
+		
+		//透過加購項目查詢加購項目明細
+//		BundleItemService svc = context.getBean(BundleItemService.class);
+//		BundleItemVO bundleItemVO = svc.getOneBundleItem(3);
+//		Set<BundleItemDetailsVO> bundleItemDetailS = bundleItemVO.getBundleItemDetails();
+//		for(BundleItemDetailsVO bundleItemDetails : bundleItemDetailS) {
+//			System.out.println("加購項目明細編號：" + bundleItemDetails.getBundleDetailsId());
+//			System.out.println("訂單明細編號" + bundleItemDetails.getCampsiteDetailsId());
 //		}
 				
 		
