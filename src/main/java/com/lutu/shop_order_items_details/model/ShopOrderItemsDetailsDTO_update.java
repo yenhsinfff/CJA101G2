@@ -24,11 +24,15 @@ public class ShopOrderItemsDetailsDTO_update {
 
 	@NotNull(message = "請提供商品編號")
 	private Integer prodId; // 商品編號
+	
+	@NotNull(message = "請提供商品顏色編號")
+	private Integer prodColorId; // 商品顏色編號
 
-	@Column(name = "comment_satis")
+	@NotNull(message = "請提供商品規格編號")
+	private Integer prodSpecId; // 商品規格編號
+
 	private Byte commentSatis = 0; // 評價滿意度，預設是0，代表尚未填寫，1~5才是有效分數
 
-	@Column(name = "comment_content")
 	private String commentContent; // 評價內容
 
 	
@@ -47,6 +51,23 @@ public class ShopOrderItemsDetailsDTO_update {
 
 	public void setProdId(Integer prodId) {
 		this.prodId = prodId;
+	}
+	
+
+	public Integer getProdColorId() {
+		return prodColorId;
+	}
+
+	public void setProdColorId(Integer prodColorId) {
+		this.prodColorId = prodColorId;
+	}
+
+	public Integer getProdSpecId() {
+		return prodSpecId;
+	}
+
+	public void setProdSpecId(Integer prodSpecId) {
+		this.prodSpecId = prodSpecId;
 	}
 
 	public Byte getCommentSatis() {

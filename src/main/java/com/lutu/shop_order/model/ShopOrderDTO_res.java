@@ -22,7 +22,7 @@ public class ShopOrderDTO_res {
 	// private MemberVO memId;
 	private Integer memId; // 露營者編號
 	
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Taipei")
 	private LocalDateTime shopOrderDate; 
 	
 	private Byte shopOrderShipment; // 出貨方式
@@ -54,7 +54,7 @@ public class ShopOrderDTO_res {
 	@Size(max = 30, message = "備註不得超過30字")
 	private String shopOrderNote; // 訂單備註
 
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Taipei")
 	private LocalDateTime shopOrderShipDate; // 出貨日期
 
 	private Byte shopOrderStatus; // 訂單狀態
