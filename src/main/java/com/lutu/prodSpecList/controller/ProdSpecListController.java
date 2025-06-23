@@ -18,7 +18,7 @@ import com.lutu.prodSpecList.model.ProdSpecListDTO;
 import com.lutu.prodSpecList.model.ProdSpecListService;
 
 @RestController
-@RequestMapping("/api/prodspecs")
+@RequestMapping("/api/prod-specs")
 @CrossOrigin(origins = "*")
 public class ProdSpecListController {
 
@@ -26,20 +26,20 @@ public class ProdSpecListController {
     private ProdSpecListService service;
 
     /** 取得所有規格 
-     * http://localhost:8081/CJA101G02/api/prodspecs
+     * http://localhost:8081/CJA101G02/api/prod-specs
      * */
     @GetMapping("")
-    public ApiResponse<List<ProdSpecListDTO>> getAllSpecs() {
-        List<ProdSpecListDTO> list = service.findAll();
-        return new ApiResponse<>("success", list, "查詢所有規格成功");
+    public ApiResponse<List<ProdSpecListDTO>> getAllProdSpecs() {
+        List<ProdSpecListDTO> list = service.getAllProdSpecs();
+        return new ApiResponse<>("success", list, "查詢成功");
     }
 
     /** 取得某商品所有規格 
-     * http://localhost:8081/CJA101G02/api/prodspecs/{prodId}
+     * http://localhost:8081/CJA101G02/api/prod-specs/{prodId}
      * */
     @GetMapping("/{prodId}")
-    public ApiResponse<List<ProdSpecListDTO>> getSpecs(@PathVariable Integer prodId) {
-        List<ProdSpecListDTO> list = service.findByProd(prodId);
+    public ApiResponse<List<ProdSpecListDTO>> getProdSpecsByProdId(@PathVariable Integer prodId) {
+        List<ProdSpecListDTO> list = service.getProdSpecsByProdId(prodId);
         return new ApiResponse<>("success", list, "查詢成功");
     }
 
@@ -54,7 +54,7 @@ public class ProdSpecListController {
 
     /** 新增或修改（規格唯一鍵相同時即為更新） */
     @PostMapping
-    public ApiResponse<ProdSpecListDTO> save(@RequestBody @Validated ProdSpecListDTO dto) {
+    public ApiResponse<ProdSpecListDTO> saveOrUpdate(@RequestBody @Validated ProdSpecListDTO dto) {
         ProdSpecListDTO saved = service.saveOrUpdate(dto);
         return new ApiResponse<>("success", saved, "儲存成功");
     }

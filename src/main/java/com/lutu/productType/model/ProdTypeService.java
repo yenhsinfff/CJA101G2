@@ -12,46 +12,51 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProdTypeService {
 
-    @Autowired
-    private ProdTypeRepository repository;
+	@Autowired
+	private ProdTypeRepository repository;
 
-    // 查詢所有商品類型
-    public List<ProdTypeDTO> getAllTypes() {
-        List<ProdTypeVO> voList = repository.findAll();
-        List<ProdTypeDTO> dtoList = new ArrayList<>();
-        for (ProdTypeVO vo : voList) {
-            dtoList.add(convertToDTO(vo));
-        }
-        return dtoList;
-    }
+	// 查詢所有商品類型
+	public List<ProdTypeDTO> getAllTypes() {
+		List<ProdTypeVO> voList = repository.findAll();
+		List<ProdTypeDTO> dtoList = new ArrayList<>();
+		for (ProdTypeVO vo : voList) {
+			dtoList.add(convertToDTO(vo));
+		}
+		return dtoList;
+	}
 
-    // 查詢單筆商品類型 by ID
-    public ProdTypeDTO getById(Integer id) {
-        Optional<ProdTypeVO> optional = repository.findById(id);
-        return optional.map(this::convertToDTO).orElse(null);
-    }
+	// 查詢單筆商品類型 by ID
+	public ProdTypeDTO getProdTypeById(Integer id) {
+		Optional<ProdTypeVO> optional = repository.findById(id);
+		if (optional.isPresent()) {
+			ProdTypeVO vo = optional.get();
+			return convertToDTO(vo);
+		} else {
+			return null;
+		}
+	}
 
-    // 新增商品類型
-    public ProdTypeDTO addType(ProdTypeDTO dto) {
-        ProdTypeVO vo = convertToVO(dto);
-        repository.save(vo);
-        return convertToDTO(vo);
-    }
+	// 新增商品類型
+	public ProdTypeDTO addType(ProdTypeDTO dto) {
+		ProdTypeVO vo = convertToVO(dto);
+		repository.save(vo);
+		return convertToDTO(vo);
+	}
 
-    // 修改商品類型
-    public ProdTypeDTO updateType(ProdTypeDTO dto) {
-        Optional<ProdTypeVO> optional = repository.findById(dto.getProdTypeId());
-        if (optional.isPresent()) {
-            ProdTypeVO vo = optional.get();
-            vo.setProdTypeName(dto.getProdTypeName());
-            repository.save(vo);
-            return convertToDTO(vo);
-        } else {
-            return null;
-        }
-    }
+	// 修改商品類型
+	public ProdTypeDTO updateType(ProdTypeDTO dto) {
+		Optional<ProdTypeVO> optional = repository.findById(dto.getProdTypeId());
+		if (optional.isPresent()) {
+			ProdTypeVO vo = optional.get();
+			vo.setProdTypeName(dto.getProdTypeName());
+			repository.save(vo);
+			return convertToDTO(vo);
+		} else {
+			return null;
+		}
+	}
 
-    // 刪除商品類型
+	// 刪除商品類型
 //    public boolean deleteById(Integer id) {
 //        if (repository.existsById(id)) {
 //            repository.deleteById(id);
@@ -61,13 +66,13 @@ public class ProdTypeService {
 //        }
 //    }
 
-    // VO ➜ DTO 轉換
-    private ProdTypeDTO convertToDTO(ProdTypeVO vo) {
-        return new ProdTypeDTO(vo.getProdTypeId(), vo.getProdTypeName());
-    }
+	// VO ➜ DTO 轉換
+	private ProdTypeDTO convertToDTO(ProdTypeVO vo) {
+		return new ProdTypeDTO(vo.getProdTypeId(), vo.getProdTypeName());
+	}
 
-    // DTO ➜ VO 轉換
-    private ProdTypeVO convertToVO(ProdTypeDTO dto) {
-        return new ProdTypeVO(dto.getProdTypeId(), dto.getProdTypeName());
-    }
+	// DTO ➜ VO 轉換
+	private ProdTypeVO convertToVO(ProdTypeDTO dto) {
+		return new ProdTypeVO(dto.getProdTypeId(), dto.getProdTypeName());
+	}
 }

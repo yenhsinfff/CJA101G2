@@ -28,7 +28,7 @@ public class ColorListController {
      */
     @GetMapping
     public List<ColorListDTO> getAllColors() {
-        return service.findAll();
+        return service.getAllColors();
     }
 
     /**
@@ -37,7 +37,7 @@ public class ColorListController {
      */
     @GetMapping("/{id}")
     public ColorListDTO getColorById(@PathVariable Integer id) {
-        return service.findById(id);
+        return service.getColorById(id);
     }
 
     /**
@@ -47,7 +47,7 @@ public class ColorListController {
      */
     @PostMapping
     public ColorListDTO addColor(@RequestBody ColorListDTO dto) {
-        return service.save(dto);
+        return service.saveOrUpdate(dto);
     }
 
     /**
@@ -57,7 +57,7 @@ public class ColorListController {
     @PutMapping("/{id}")
     public ColorListDTO updateColor(@PathVariable Integer id, @RequestBody ColorListDTO dto) {
         dto.setColorId(id); // 確保 ID 一致，避免修改錯誤資料
-        return service.save(dto);
+        return service.saveOrUpdate(dto);
     }
 
     /**

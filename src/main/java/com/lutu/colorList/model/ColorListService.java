@@ -13,39 +13,33 @@ public class ColorListService {
     @Autowired
     private ColorListRepository repository;
 
-    // 新增或修改
-    public ColorListDTO save(ColorListDTO dto) {
-        ColorListVO vo = toVO(dto);
-        ColorListVO savedVO = repository.save(vo);
-        return toDTO(savedVO);
-    }
-
-    // 查全部
-    public List<ColorListDTO> findAll() {
+    /** 查全部顏色 */
+    public List<ColorListDTO> getAllColors() {
         List<ColorListVO> voList = repository.findAll();
         List<ColorListDTO> dtoList = new ArrayList<>();
-
         for (ColorListVO vo : voList) {
             dtoList.add(toDTO(vo));
         }
-
         return dtoList;
     }
 
-    // 用 ID 查單筆
-    public ColorListDTO findById(Integer id) {
+    /** 查單筆顏色 by ID */
+    public ColorListDTO getColorById(Integer id) {
         Optional<ColorListVO> optional = repository.findById(id);
-        if (optional.isPresent()) {
-            ColorListVO vo = optional.get();
-            return toDTO(vo);
-        }
-        return null;
+        return optional.map(this::toDTO).orElse(null);
     }
 
-    // 刪除
-    public void deleteById(Integer id) {
-        repository.deleteById(id);
+    /** 新增或修改顏色 */
+    public ColorListDTO saveOrUpdate(ColorListDTO dto) {
+        ColorListVO vo = toVO(dto);
+        ColorListVO saved = repository.save(vo);
+        return toDTO(saved);
     }
+
+    /** 刪除顏色 */
+//    public void deleteColor(Integer id) {
+//        repository.deleteById(id);
+//    }
 
     // ========== DTO -> VO ==========
     private ColorListVO toVO(ColorListDTO dto) {

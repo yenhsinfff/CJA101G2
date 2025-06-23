@@ -31,8 +31,8 @@ public class ProdTypeController {
 
     // 查詢單筆商品類型 by ID
     @GetMapping("/api/product-types/{id}")
-    public ApiResponse<ProdTypeDTO> getById(@PathVariable Integer id) {
-        ProdTypeDTO dto = prodTypeService.getById(id);
+    public ApiResponse<ProdTypeDTO> getProdTypeById(@PathVariable Integer id) {
+        ProdTypeDTO dto = prodTypeService.getProdTypeById(id);
         return (dto != null)
             ? new ApiResponse<>("success", dto, "查詢成功")
             : new ApiResponse<>("fail", null, "查無此類別");

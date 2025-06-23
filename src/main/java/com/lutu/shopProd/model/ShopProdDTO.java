@@ -211,4 +211,5 @@ public class ShopProdDTO {
 		this.prodColorList = prodColorList;
 	}
 
+
 }

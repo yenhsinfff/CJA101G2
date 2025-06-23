@@ -1,7 +1,8 @@
 package com.lutu.specList.model;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,16 +13,21 @@ public class SpecListService {
     @Autowired
     private SpecListRepository repository;
 
-    public List<SpecListDTO> findAll() {
-        return repository.findAll().stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    public List<SpecListDTO> getAllSpecs() {
+        List<SpecListVO> voList = repository.findAll();
+        List<SpecListDTO> dtoList = new ArrayList<>();
+        for (SpecListVO vo : voList) {
+            dtoList.add(toDTO(vo));
+        }
+        return dtoList;
     }
 
-    public SpecListDTO findById(Integer id) {
-        return repository.findById(id)
-                .map(this::toDTO)
-                .orElse(null);
+    public SpecListDTO getSpecById(Integer id) {
+        Optional<SpecListVO> optional = repository.findById(id);
+        if (optional.isPresent()) {
+            return toDTO(optional.get());
+        }
+        return null;
     }
 
     public SpecListDTO saveOrUpdate(SpecListDTO dto) {
@@ -30,15 +36,23 @@ public class SpecListService {
         return toDTO(saved);
     }
 
-    public void delete(Integer id) {
-        repository.deleteById(id);
-    }
+//    public void delete(Integer id) {
+//        repository.deleteById(id);
+//    }
 
+    // ========== DTO -> VO ==========
     private SpecListDTO toDTO(SpecListVO vo) {
-        return new SpecListDTO(vo.getSpecId(), vo.getSpecName());
+        SpecListDTO dto = new SpecListDTO();
+        dto.setSpecId(vo.getSpecId());
+        dto.setSpecName(vo.getSpecName());
+        return dto;
     }
-
+    // ========== VO -> DTO ==========
     private SpecListVO toVO(SpecListDTO dto) {
-        return new SpecListVO(dto.getSpecId(), dto.getSpecName());
+        SpecListVO vo = new SpecListVO();
+        vo.setSpecId(dto.getSpecId());
+        vo.setSpecName(dto.getSpecName());
+        return vo;
     }
 }
+

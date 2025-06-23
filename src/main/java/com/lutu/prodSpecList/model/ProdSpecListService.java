@@ -17,19 +17,29 @@ public class ProdSpecListService {
     @Autowired
     private ProdSpecListRepository repository;
 
-    /* 新增 / 修改（同一支） */
-    public ProdSpecListDTO saveOrUpdate(ProdSpecListDTO dto) {
-        ProdSpecListVO vo = toVO(dto);
-        ProdSpecListVO saved = repository.save(vo);
-        return toDTO(saved);
+    /* 查所有規格 */
+    public List<ProdSpecListDTO> getAllProdSpecs() {
+        List<ProdSpecListVO> voList = repository.findAll();
+        List<ProdSpecListDTO> dtoList = new ArrayList<>();
+
+        for (ProdSpecListVO vo : voList) {
+            dtoList.add(toDTO(vo));
+        }
+        return dtoList;
     }
 
-    /* 刪除 */
-//    public void delete(Integer prodId, Integer specId) {
-//    	repository.deleteById(new CompositeDetail2(prodId, specId));
-//    }
+    /* 查某商品所有商品規格 */
+    public List<ProdSpecListDTO> getProdSpecsByProdId(Integer prodId) {
+        List<ProdSpecListVO> voList = repository.findByProdId(prodId);
+        List<ProdSpecListDTO> dtoList = new ArrayList<>();
 
-    /* 查單筆 */
+        for (ProdSpecListVO vo : voList) {
+            dtoList.add(toDTO(vo));
+        }
+        return dtoList;
+    }
+
+    /* 查單筆商品規格 */
     public ProdSpecListDTO getOne(Integer prodId, Integer specId) {
         Optional<ProdSpecListVO> opt = repository.findById(new CompositeDetail2(prodId, specId));
         if (opt.isPresent()) {
@@ -39,31 +49,19 @@ public class ProdSpecListService {
         }
     }
 
-    /* 查該商品全部規格 */
-    public List<ProdSpecListDTO> findByProd(Integer prodId) {
-        List<ProdSpecListVO> list = repository.findByProdId(prodId);
-        List<ProdSpecListDTO> dtoList = new ArrayList<>();
-
-        for (ProdSpecListVO vo : list) {
-            dtoList.add(toDTO(vo));
-        }
-
-        return dtoList;
+    /* 新增或修改商品規格（同一支） */
+    public ProdSpecListDTO saveOrUpdate(ProdSpecListDTO dto) {
+        ProdSpecListVO vo = toVO(dto);
+        ProdSpecListVO saved = repository.save(vo);
+        return toDTO(saved);
     }
+
+    /* 刪除 */
+//    public void delete(Integer prodId, Integer specId) {
+//        repository.deleteById(new CompositeDetail2(prodId, specId));
+//    }
+
     
-    /* 查該全部規格 */
-    public List<ProdSpecListDTO> findAll() {
-        List<ProdSpecListVO> list = repository.findAll();
-        List<ProdSpecListDTO> dtoList = new ArrayList<>();
-
-        for (ProdSpecListVO vo : list) {
-            dtoList.add(toDTO(vo));
-        }
-
-        return dtoList;
-    }
-
-
     /* ======== 轉換工具 ======== */
     private ProdSpecListDTO toDTO(ProdSpecListVO vo) {
         ProdSpecListDTO dto = new ProdSpecListDTO();

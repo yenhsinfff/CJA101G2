@@ -17,27 +17,27 @@ public class SpecListController {
     private SpecListService service;
 
     @GetMapping("")
-    public List<SpecListDTO> getAll() {
-        return service.findAll();
+    public List<SpecListDTO> getAllSpecs() {
+        return service.getAllSpecs();
     }
 
     @GetMapping("/{id}")
-    public SpecListDTO getOne(@PathVariable Integer id) {
-        return service.findById(id);
+    public SpecListDTO getSpecById(@PathVariable Integer id) {
+        return service.getSpecById(id);
     }
 
     @PostMapping("")
-    public SpecListDTO create(@RequestBody SpecListDTO dto) {
+    public SpecListDTO addSpec(@RequestBody SpecListDTO dto) {
         return service.saveOrUpdate(dto);
     }
 
     @PutMapping("")
-    public SpecListDTO update(@RequestBody SpecListDTO dto) {
+    public SpecListDTO updateSpec(@RequestBody SpecListDTO dto) {
         return service.saveOrUpdate(dto);
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
-        service.delete(id);
-    }
+//    @DeleteMapping("/{id}")
+//    public void delete(@PathVariable Integer id) {
+//        service.delete(id);
+//    }
 }
