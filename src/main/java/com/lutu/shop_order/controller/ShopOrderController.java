@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
+import com.lutu.discount_code.model.DiscountCodeService;
+import com.lutu.member.model.MemberService;
 import com.lutu.member.model.MemberVO;
 import com.lutu.shop_order.model.ShopOrderDTO_insert;
 import com.lutu.shop_order.model.ShopOrderDTO_res;
@@ -31,11 +33,11 @@ public class ShopOrderController {
 	@Autowired
 	ShopOrderService sos;
 
-//	@Autowired
-//	MemberService ms;
-//	
-//	@Autowired
-//	DiscountCodeService dcs;
+	@Autowired
+	MemberService ms;
+	
+	@Autowired
+	DiscountCodeService dcs;
 
 	// 取得所有商品訂單，回傳 JSON
 	@GetMapping("/api/getAllShopOrders")
@@ -61,7 +63,7 @@ public class ShopOrderController {
 	@PostMapping("/api/addShopOrder")
 	public ApiResponse<ShopOrderDTO_res> addShopOrder(@Valid @RequestBody ShopOrderDTO_insert dto) {
 
-		ShopOrderVO sovo = new ShopOrderVO();
+//		ShopOrderVO sovo = new ShopOrderVO();
 		try {
 			ShopOrderVO newSOVO = sos.addShopOrder(dto);
 
@@ -135,11 +137,5 @@ public class ShopOrderController {
 		return new ApiResponse<>("success", resList, "查詢成功");
 	}
 
-//	@GetMapping("/api/compositeQuery")
-//	public ApiResponse compositeQuery(@RequestParam Map<String, String[]> params) {
-//		List<ShopOrderVO> shopOrders2 = sos.getAll(params);	
-//		
-//		return new ApiResponse<>("success", shopOrders2 , "查詢成功");
-//	}
 
 }

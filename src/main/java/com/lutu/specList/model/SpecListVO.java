@@ -1,4 +1,4 @@
-package com.lutu.shop.model;
+package com.lutu.specList.model;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -15,6 +15,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "spec_list")
@@ -26,6 +28,8 @@ public class SpecListVO implements Serializable{
 	private Integer specId;       // 規格編號PK
     
 	@Column(name = "spec_name")
+	@NotEmpty(message="規格名稱: 請勿空白")
+	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,50}$", message = "規格名稱: 只能是中、英文字母、數字和_ , 且長度必需在2到50之間")
 	private String specName;      // 規格名稱 每項商品皆有規格(單一規格)
 	
 	@OneToMany(mappedBy = "specListVO", cascade = CascadeType.ALL)

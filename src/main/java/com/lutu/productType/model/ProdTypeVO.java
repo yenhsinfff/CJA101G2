@@ -1,4 +1,4 @@
-package com.lutu.product_type.model;
+package com.lutu.productType.model;
 
 import java.io.Serializable;
 import java.util.Set;

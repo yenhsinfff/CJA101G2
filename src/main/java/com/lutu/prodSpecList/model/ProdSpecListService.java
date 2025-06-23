@@ -18,7 +18,7 @@ public class ProdSpecListService {
     private ProdSpecListRepository repository;
 
     /* 新增 / 修改（同一支） */
-    public ProdSpecDTO saveOrUpdate(ProdSpecDTO dto) {
+    public ProdSpecListDTO saveOrUpdate(ProdSpecListDTO dto) {
         ProdSpecListVO vo = toVO(dto);
         ProdSpecListVO saved = repository.save(vo);
         return toDTO(saved);
@@ -30,7 +30,7 @@ public class ProdSpecListService {
 //    }
 
     /* 查單筆 */
-    public ProdSpecDTO getOne(Integer prodId, Integer specId) {
+    public ProdSpecListDTO getOne(Integer prodId, Integer specId) {
         Optional<ProdSpecListVO> opt = repository.findById(new CompositeDetail2(prodId, specId));
         if (opt.isPresent()) {
             return toDTO(opt.get());
@@ -40,9 +40,21 @@ public class ProdSpecListService {
     }
 
     /* 查該商品全部規格 */
-    public List<ProdSpecDTO> findByProd(Integer prodId) {
+    public List<ProdSpecListDTO> findByProd(Integer prodId) {
         List<ProdSpecListVO> list = repository.findByProdId(prodId);
-        List<ProdSpecDTO> dtoList = new ArrayList<>();
+        List<ProdSpecListDTO> dtoList = new ArrayList<>();
+
+        for (ProdSpecListVO vo : list) {
+            dtoList.add(toDTO(vo));
+        }
+
+        return dtoList;
+    }
+    
+    /* 查該全部規格 */
+    public List<ProdSpecListDTO> findAll() {
+        List<ProdSpecListVO> list = repository.findAll();
+        List<ProdSpecListDTO> dtoList = new ArrayList<>();
 
         for (ProdSpecListVO vo : list) {
             dtoList.add(toDTO(vo));
@@ -51,16 +63,17 @@ public class ProdSpecListService {
         return dtoList;
     }
 
+
     /* ======== 轉換工具 ======== */
-    private ProdSpecDTO toDTO(ProdSpecListVO vo) {
-        ProdSpecDTO dto = new ProdSpecDTO();
+    private ProdSpecListDTO toDTO(ProdSpecListVO vo) {
+        ProdSpecListDTO dto = new ProdSpecListDTO();
         dto.setProdId(vo.getProdId());
         dto.setProdSpecId(vo.getProdSpecId());
         dto.setProdSpecPrice(vo.getProdSpecPrice());
         return dto;
     }
 
-    private ProdSpecListVO toVO(ProdSpecDTO dto) {
+    private ProdSpecListVO toVO(ProdSpecListDTO dto) {
         ProdSpecListVO vo = new ProdSpecListVO();
         vo.setProdId(dto.getProdId());
         vo.setProdSpecId(dto.getProdSpecId());
