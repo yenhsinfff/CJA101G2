@@ -7,11 +7,14 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.lutu.camp.model.CampService;
-import com.lutu.camp.model.CampVO;
-import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
-import com.lutu.campsitetype.model.CampsiteTypeVO;
+import com.lutu.bundleitem.model.BundleItemService;
+import com.lutu.bundleitem.model.BundleItemVO;
+import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
+import com.lutu.campsite.model.CampsiteService;
 import com.lutu.camptracklist.model.CampTrackListService;
+import com.lutu.camptracklist.model.CampTrackListVO;
+import com.lutu.member.model.MemberService;
+import com.lutu.member.model.MemberVO;
 
 @SpringBootApplication
 //@ComponentScan(basePackages = "com.lutu")  // 掃描你的 Service 等 component
@@ -19,26 +22,95 @@ import com.lutu.camptracklist.model.CampTrackListService;
 //@EntityScan(basePackages = "com.lutu")  //掃描           table
 public class TestHibernate {
 
+
 	public static void main(String[] args) {
 		// 啟動 Spring Boot 並取得 ApplicationContext
 //        ConfigurableApplicationContext context = SpringApplication.run(TestHibernateCampsiteOrder.class, args);
 		SpringApplication app = new SpringApplication(TestHibernate.class);
 		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
 		ConfigurableApplicationContext context = app.run(args);
-
 		
-//========================== 測試關聯(camp & campsiteType)===========================================
+		
+
+// ================================ 營地房間明細=======================================
+		CampsiteService campsiteSvc = context.getBean(CampsiteService.class);
+
+//				List<CampsiteVO> list = campsiteSvc.getAll();
+//				for (CampsiteVO vo : list) {
+//					System.out.print(vo.getCampsiteId() + ",");
+//					System.out.print(vo.getCampsiteType().getId() + ",");
+//					System.out.print(vo.getCampsiteIdName() + ",");
+//					System.out.print(vo.getCamperName() + ",");
+//					System.out.println();
+//				}
+
+		// 查詢-findByPrimaryKey BundleItemVO_getOneBundleItem
+		// (多方emp2.hbm.xml必須設為lazy="false")(優!)
+//		        CampsiteVO vo = campsiteSvc.getOneCampsite(3007);
+//				System.out.print(vo.getCampsiteId() + ",");
+//				System.out.print(vo.getCampsiteType().getId() + ",");
+//				System.out.print(vo.getCampsiteIdName() + ",");
+//				System.out.print(vo.getCamperName());
+
+
+
+
+		// 刪除 --> 自訂的刪除方法
+//				campsiteSvc.deleteCampsite(3016);
+				
+		
+//========================== 測試關聯===========================================
 
 		// 透過營地查詢營地房型
 
-		CampService svc = context.getBean(CampService.class);
-		CampVO campVO = svc.getOneCamp(1006);
-		Set<CampsiteTypeVO> campsiteTypes = campVO.getCampsiteTypes();
-		for (CampsiteTypeVO campsiteType : campsiteTypes) {
-			System.out.println("營地房型編號+營地編號：" + campsiteType.getId() + ", 營地房型名稱：" + campsiteType.getCampsiteName() + ", 房型價格："
-					+ campsiteType.getCampsitePrice());
-		}
+//		CampService svc = context.getBean(CampService.class);
+//		CampVO campVO = svc.getOneCamp(1006);
+//		Set<CampsiteTypeVO> campsiteTypes = campVO.getCampsiteTypes();
+//		for (CampsiteTypeVO campsiteType : campsiteTypes) {
+//			System.out.println("營地房型編號+營地編號：" + campsiteType.getId() + ", 營地房型名稱：" + campsiteType.getCampsiteName() + ", 房型價格："
+//					+ campsiteType.getCampsitePrice());
+//		}
 		
+		// 透過營地房型查詢營地房間
+
+//		CampsiteTypeService svc = context.getBean(CampsiteTypeService.class);
+//		CampsiteTypeVO campsiteTypeVO = svc.getOneCampsiteType(2006, 1004);
+//		Set<CampsiteVO> campsites = campsiteTypeVO.getCampsites();
+//		for (CampsiteVO campsite : campsites) {
+//				System.out.println("營地房間編號：" + campsite.getCampsiteId() + ", 營地房間名稱：" + campsite.getCampsiteIdName() + ", 露營者姓名："
+//				+ campsite.getCamperName());
+//		}	
+		
+		// 透過營地收藏查詢營地資訊
+
+//		CampTrackListService svc = context.getBean(CampTrackListService.class);
+//		CampTrackListVO campTrackListVO = svc.getOneCampTrackList(1002, 10000001); // memId, campId
+//
+//		if (campTrackListVO != null) {
+//		    CampVO camp = campTrackListVO.getCamp();
+//		    System.out.println("營地編號：" + camp.getCampId());
+//		    System.out.println("營地名稱：" + camp.getCampName());
+//		    System.out.println("營地縣市：" + camp.getCampCity());
+//		}	
+		
+		
+		//透過會員查詢收藏營地
+//		MemberService svc = context.getBean(MemberService.class);
+//		MemberVO memberVO = svc.getOneMember(10000001);
+//		Set<CampTrackListVO> campTrackLists = memberVO.getCampTrackLists();
+//		for(CampTrackListVO campTrackList : campTrackLists) {
+//			System.out.println("營地編號：" + campTrackList.getId());
+//		}
+		
+		//透過加購項目查詢加購項目明細
+//		BundleItemService svc = context.getBean(BundleItemService.class);
+//		BundleItemVO bundleItemVO = svc.getOneBundleItem(3);
+//		Set<BundleItemDetailsVO> bundleItemDetailS = bundleItemVO.getBundleItemDetails();
+//		for(BundleItemDetailsVO bundleItemDetails : bundleItemDetailS) {
+//			System.out.println("加購項目明細編號：" + bundleItemDetails.getBundleDetailsId());
+//			System.out.println("訂單明細編號" + bundleItemDetails.getCampsiteDetailsId());
+//		}
+				
 		
 
 // ================================營地型別(複合主鍵)==========================================

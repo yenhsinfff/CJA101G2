@@ -54,7 +54,7 @@ public class BundleItemVO implements Serializable {
 	}
 
 	public void setBundleItemDetails(Set<BundleItemDetailsVO> bundleItemDetails) {
-		bundleItemDetails = bundleItemDetails;
+		this.bundleItemDetails = bundleItemDetails;
 	}
 
 //=======================================================	

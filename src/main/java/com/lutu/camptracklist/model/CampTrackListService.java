@@ -7,6 +7,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+
 @Service("campTrackListService") // 標記為 Spring 的服務元件，會被自動註冊進 Spring 容器
 public class CampTrackListService {
 
@@ -18,7 +20,7 @@ public class CampTrackListService {
 
 	public void  addCampTrackList(CampTrackListVO campTrackListVO) {
 		repository.save(campTrackListVO);
-		System.out.println("OKK");
+
 	}
 
 	// 收藏功能不寫修改功能
@@ -34,13 +36,18 @@ public class CampTrackListService {
 			repository.deleteByCampIdAndMemId(campId, memId);
 	}
 
+	@Transactional
 	public CampTrackListVO getOneCampTrackList(Integer campId, Integer memId) {
 		CampTrackListVO.CompositeDetail id = new CampTrackListVO.CompositeDetail();
 		id.setCampId(campId);
 		id.setMemId(memId);
-		Optional<CampTrackListVO> optional = repository.findById(id);
-//		return optional.get(); //如果沒值會丟例外，不建議使用
-		return optional.orElse(null); // public T orElse(T other) : 如果值存在就回傳其值，否則回傳other的值
+		CampTrackListVO vo = repository.findById(id).orElse(null);
+
+	    if (vo != null) {
+	        vo.getCamp().getCampName(); // 保證在 Session 存在時初始化
+	        vo.getCamp().getCampCity();
+	    }
+	    return vo;
 	}
 
 	public List<CampTrackListVO> getAll() {

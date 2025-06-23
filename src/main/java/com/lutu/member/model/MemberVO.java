@@ -3,14 +3,15 @@ package com.lutu.member.model;
 import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.lutu.camp_report.model.CampReportVO;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
+import com.lutu.camptracklist.model.CampTrackListVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -111,7 +112,8 @@ public class MemberVO implements Serializable{
 	@OneToMany(mappedBy = "memberVO")
 	private Set<CampReportVO> campReports = new HashSet<>();
 	
-	
+	@OneToMany(mappedBy = "member")
+	private Set<CampTrackListVO> campTrackLists;
 	
 	
 	
@@ -245,6 +247,14 @@ public class MemberVO implements Serializable{
 
     public void setCampReports(Set<CampReportVO> campReports) {
         this.campReports = campReports;
-    } 
+    }
+
+	public Set<CampTrackListVO> getCampTrackLists() {
+		return campTrackLists;
+	}
+
+	public void setCampTrackLists(Set<CampTrackListVO> campTrackLists) {
+		this.campTrackLists = campTrackLists;
+	} 
 	
 }

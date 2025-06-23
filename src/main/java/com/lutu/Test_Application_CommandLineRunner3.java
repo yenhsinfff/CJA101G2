@@ -1,12 +1,20 @@
 package com.lutu;
 
+
+import java.util.Set;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import com.lutu.camptracklist.model.CampTrackListVO;
+import com.lutu.member.model.MemberService;
+import com.lutu.member.model.MemberVO;
+import com.lutu.product_type.model.ProdTypeVO;
 import com.lutu.productType.model.ProdTypeVO;
 import com.lutu.shopProd.model.ShopProdRepository;
 
@@ -26,7 +34,29 @@ public class Test_Application_CommandLineRunner3 implements CommandLineRunner {
 	public static void main(String[] args) {
         SpringApplication.run(Test_Application_CommandLineRunner3.class);
     }
+	
 
+	
+//	@Bean
+//	CommandLineRunner runTest(CampTrackListService campTrackListService) {
+//	    return args -> {
+//	        CampTrackListVO vo = campTrackListService.getOneCampTrackList(1002, 10000001);
+//	        if (vo != null) {
+//	            System.out.println("營地名稱：" + vo.getCamp().getCampName());
+//	        } else {
+//	            System.out.println("找不到收藏紀錄！");
+//	        }
+//	    };
+//	}
+
+//	@Bean
+//	CommandLineRunner runTest(CampsiteService campsiteService) {
+//	    return args -> {
+//	        campsiteService.addCampsite(1004, 2006, "雙人小木屋B", "范晏新");
+//	    };
+//	}
+	
+	
     @Override
     public void run(String...args) throws Exception {
 
