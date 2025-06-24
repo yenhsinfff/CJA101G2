@@ -23,7 +23,11 @@ public class MemberService {
 	MemberRepository repository;
 	
 //	@Autowired
+<<<<<<< Upstream, based on branch 'master' of https://github.com/yenhsinfff/CJA101G2.git
 //    private SessionFactory sessionFactory;
+=======
+//   private SessionFactory sessionFactory;
+>>>>>>> f6e446f Modify Member Model And Member Controller
 
 	public void addMember(MemberVO memberVO) {
 		repository.save(memberVO);
