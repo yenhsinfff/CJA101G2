@@ -1,4 +1,4 @@
-package com.lutu.article_type.model;
+package com.lutu.article_type.controller;
 
 public class TestArticleType {
 	

@@ -100,4 +100,11 @@ class NiceArticleId implements Serializable {
     public int hashCode() {
         return acId.hashCode() + memId.hashCode();
     }
+
+	@Override
+	public String toString() {
+		return "NiceArticleId [acId=" + acId + ", memId=" + memId + "]";
+	}
+    
+    
 }

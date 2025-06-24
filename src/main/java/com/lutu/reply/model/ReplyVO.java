@@ -58,12 +58,12 @@ public class ReplyVO implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ac_id", nullable = false)
     @NotNull(message = "文章: 必須指定回覆的文章")
-    public ArticlesVO getArticleVO() {
+    public ArticlesVO getArticlesVO() {
         return articlesVO;
     }
 
-    public void setArticleVO(ArticlesVO articleVO) {
-        this.articlesVO = articleVO;
+    public void setArticlesVO(ArticlesVO articlesVO) {
+        this.articlesVO = articlesVO;
     }
 
     @Column(name = "reply_time", nullable = false)
@@ -109,7 +109,16 @@ public class ReplyVO implements Serializable {
         this.replyImages = replyImages;
     }
     
-    @OneToMany(mappedBy = "replyVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    
+    
+    @Override
+	public String toString() {
+		return "ReplyVO [replyId=" + replyId + ", memberVO=" + memberVO + ", articlesVO=" + articlesVO + ", replyTime="
+				+ replyTime + ", replyContext=" + replyContext + ", replyStatus=" + replyStatus + ", replyImages="
+				+ replyImages + ", replyReportVO=" + replyReportVO + "]";
+	}
+
+	@OneToMany(mappedBy = "replyVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     public Set<ReplyReportVO> getReplyReportVO() {
         return replyReportVO;
     }

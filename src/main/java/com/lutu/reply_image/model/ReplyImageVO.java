@@ -3,6 +3,7 @@ package com.lutu.reply_image.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import com.lutu.reply.model.ReplyVO;
 
@@ -50,5 +51,13 @@ public class ReplyImageVO implements Serializable {
     public void setReplyImg(byte[] replyImg) {
         this.replyImg = replyImg;
     }
+
+	@Override
+	public String toString() {
+		return "ReplyImageVO [replyImgId=" + replyImgId + ", replyVO=" + replyVO + ", replyImg="
+				+ Arrays.toString(replyImg) + "]";
+	}
+    
+    
 }
 
