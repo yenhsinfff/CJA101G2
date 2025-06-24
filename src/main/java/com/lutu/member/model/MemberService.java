@@ -21,21 +21,23 @@ public class MemberService {
 
 	@Autowired
 	MemberRepository repository;
-	
-//	@Autowired
-<<<<<<< Upstream, based on branch 'master' of https://github.com/yenhsinfff/CJA101G2.git
-//    private SessionFactory sessionFactory;
-=======
-//   private SessionFactory sessionFactory;
->>>>>>> f6e446f Modify Member Model And Member Controller
 
 	public void addMember(MemberVO memberVO) {
 		repository.save(memberVO);
 	}
 
+	@Transactional
 	public void updateMember(MemberVO memberVO) {
+	    MemberVO original = repository.findById(memberVO.getMemId())
+	            .orElseThrow(() -> new RuntimeException("找不到該會員"));
+
+	    // 若未提供 memRegDate，補上原本的
+	    if (memberVO.getMemRegDate() == null) {
+	        memberVO.setMemRegDate(original.getMemRegDate());
+	    }
 		repository.save(memberVO);
 	}
+
 
 	public void deleteMember(Integer memId) {
 		if (repository.existsById(memId))
