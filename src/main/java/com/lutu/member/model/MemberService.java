@@ -21,17 +21,23 @@ public class MemberService {
 
 	@Autowired
 	MemberRepository repository;
-	
-//	@Autowired
-//    private SessionFactory sessionFactory;
 
 	public void addMember(MemberVO memberVO) {
 		repository.save(memberVO);
 	}
 
+	@Transactional
 	public void updateMember(MemberVO memberVO) {
+	    MemberVO original = repository.findById(memberVO.getMemId())
+	            .orElseThrow(() -> new RuntimeException("找不到該會員"));
+
+	    // 若未提供 memRegDate，補上原本的
+	    if (memberVO.getMemRegDate() == null) {
+	        memberVO.setMemRegDate(original.getMemRegDate());
+	    }
 		repository.save(memberVO);
 	}
+
 
 	public void deleteMember(Integer memId) {
 		if (repository.existsById(memId))

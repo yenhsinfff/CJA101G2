@@ -16,6 +16,7 @@ public interface MemberRepository extends JpaRepository<MemberVO, Integer> {
 	void deleteByMemId(int memId);
 
 	//● (自訂)條件查詢
-	@Query(value = "from MemberVO where memId=?1 and memName like?2 order by memId")
+
+	@Query(value = "from MemberVO where memId=?1 and memName like ?2 order by memId")
 	List<MemberVO> findByOthers(int memId , String memName );
 }

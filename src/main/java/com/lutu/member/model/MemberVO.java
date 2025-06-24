@@ -1,7 +1,7 @@
 package com.lutu.member.model;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +30,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "member")
+@Table(name = "MEMBER")
 public class MemberVO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
@@ -42,7 +42,7 @@ public class MemberVO implements Serializable{
 	@Column(name = "mem_acc")
 	@NotEmpty(message="露營者帳號: 請勿空白。露營者帳號=信箱。")
 	@Email(message = "帳號格式不正確。露營者帳號=信箱。")
-	private String membAcc; //露營者帳號
+	private String memAcc; //露營者帳號
 	
 	@Column(name = "mem_pwd")
 	@NotEmpty(message="露營者密碼: 請勿空白")
@@ -101,9 +101,9 @@ public class MemberVO implements Serializable{
 	private byte[] memPic; //露營者照片
 	
 	@Column(name = "mem_birth")
-	@Past(message="日期必須是在今日(含)之前")
-	@DateTimeFormat(pattern="yyyy-MM-dd") 
-	private Date memBirth; //露營者生日
+	@Past(message = "日期必須是在今日(含)之前")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate memBirth;
 	
 	// ========物件關聯======//
 	@OneToMany(mappedBy = "memberVO")
@@ -129,12 +129,12 @@ public class MemberVO implements Serializable{
 		this.memId = memId;
 	}
 
-	public String getMembAcc() {
-		return membAcc;
+	public String getMemAcc() {
+		return memAcc;
 	}
 
-	public void setMembAcc(String membAcc) {
-		this.membAcc = membAcc;
+	public void setMemAcc(String memAcc) {
+		this.memAcc = memAcc;
 	}
 
 	public String getMemPwd() {
@@ -225,13 +225,15 @@ public class MemberVO implements Serializable{
 		this.memPic = memPic;
 	}
 
-	public Date getMemBirth() {
+	public LocalDate getMemBirth() {
 		return memBirth;
 	}
 
-	public void setMemBirth(Date memBirth) {
+	public void setMemBirth(LocalDate memBirth) {
 		this.memBirth = memBirth;
 	}
+
+	
 	// ========物件關聯 getter setter======//
 	public Set<CampSiteOrderVO> getCampsiteOrders() {
         return campsiteOrders;
@@ -256,5 +258,5 @@ public class MemberVO implements Serializable{
 	public void setCampTrackLists(Set<CampTrackListVO> campTrackLists) {
 		this.campTrackLists = campTrackLists;
 	} 
-	
+
 }

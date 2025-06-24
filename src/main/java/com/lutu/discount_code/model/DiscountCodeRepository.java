@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface DiscountCodeRepository extends JpaRepository<DiscountCodeVO, Integer>{
+public interface DiscountCodeRepository extends JpaRepository<DiscountCodeVO, String>{
 	
 	@Transactional
 	@Modifying
