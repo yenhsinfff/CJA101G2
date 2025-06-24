@@ -1,4 +1,4 @@
-package com.lutu.camp_controller;
+package com.lutu.camp.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;

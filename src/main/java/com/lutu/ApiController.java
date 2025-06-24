@@ -13,19 +13,24 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutu.camp.model.CampService;
 import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
+import com.lutu.campsite_order.model.NewCampsiteOrderDTO;
 import com.lutu.util.HmacUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
@@ -42,120 +47,121 @@ public class ApiController {
 	@Autowired
 	CampService campService;
 
-//	@GetMapping("/api/camps/linepay")
-//	public void doLinePay( HttpServletResponse response) throws IOException {
-//		final String channelId = "1656895462";
-//		final String CHANNEL_SECRET = "fd01e635b9ea97323acbe8d5c6b2fb71";
-//		final String API_URL = "https://sandbox-api-pay.line.me/v3/payments/request";
-//		final String CONFIRM_URL = "http://127.0.0.1:5501/linepay-success.html";
-//		final String CANCEL_URL = "http://127.0.0.1:5501/linepay-cancel.html";
-//		
-//		// 2. 組裝 LINE Pay 請求內容
-//        JSONObject body = new JSONObject();
-//        body.put("amount", 2000);
-//        body.put("currency", "TWD");
-//        body.put("orderId", UUID.randomUUID().toString());
-//        JSONArray packages = new JSONArray();
-//        JSONObject pkg = new JSONObject();
-//        pkg.put("id", "pkg-001");
-//        pkg.put("amount", 2000);
-//        JSONArray products = new JSONArray();
-//        JSONObject product = new JSONObject();
-//        product.put("name", "皮皮商品");
-//        product.put("quantity", 2);
-//        product.put("price", 1000);
-//        products.put(product);
-//        pkg.put("products", products);
-//        packages.put(pkg);
-//        body.put("packages", packages);
-//
-//        JSONObject redirectUrls = new JSONObject();
-//        redirectUrls.put("confirmUrl", CONFIRM_URL);
-//        redirectUrls.put("cancelUrl", CANCEL_URL);
-//        body.put("redirectUrls", redirectUrls);
-//
-//        // 3. 產生 HMAC 簽章
-//        String nonce = UUID.randomUUID().toString();
-//        String uri = "/v3/payments/request";
-//        String signatureRaw = CHANNEL_SECRET + uri + body.toString() + nonce;
-//        String signature = HmacUtil.hmacSHA256Base64(CHANNEL_SECRET, signatureRaw);
-//        System.out.println("nonce:"+nonce);
-//        System.out.println("signature:"+signature);
-//
-//        // 4. 發送 HTTP POST 請求到 LINE Pay
-//        HttpURLConnection conn = (HttpURLConnection) new URL(API_URL).openConnection();
-//        conn.setRequestMethod("POST");
-//        conn.setRequestProperty("Content-Type", "application/json");
-//        conn.setRequestProperty("X-LINE-ChannelId", channelId);
-//        conn.setRequestProperty("X-LINE-Authorization", signature);
-//        conn.setRequestProperty("X-LINE-Authorization-Nonce", nonce);
-//        conn.setDoOutput(true);
-//        try(OutputStream os = conn.getOutputStream()) {
-//            os.write(body.toString().getBytes("UTF-8"));
-//        }
-//     // 5. 取得回應
-//        StringBuilder responseLinePay = new StringBuilder();
-//        try(BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-//            String respLine;
-//            while((respLine = br.readLine()) != null) responseLinePay.append(respLine);
-//        }
-//        System.out.println("responseLinePay"+responseLinePay);
-//        JSONObject resJson = new JSONObject(responseLinePay.toString());
-//        JSONObject info = resJson.optJSONObject("info");
-//        String paymentUrl = (info != null && info.has("paymentUrl")) ? info.getJSONObject("paymentUrl").getString("web") : null;
-//        
-//        // 6. 回傳 paymentUrl 給前端
-//        response.setContentType("application/json");
-//        response.getWriter().write("{\"paymentUrl\":\"" + paymentUrl + "\"}");
-//	}
-	
-	@PostMapping("/api/linepay")
-	public ApiResponse<String> doLinePay(@RequestBody String jsonBody, HttpServletResponse response) throws IOException {
-        final String channelId = "1656895462";
-        final String CHANNEL_SECRET = "fd01e635b9ea97323acbe8d5c6b2fb71";
-        final String API_URL = "https://sandbox-api-pay.line.me/v3/payments/request";
-//        final String CONFIRM_URL = "http://127.0.0.1:5501/linepay-success.html";
-//        final String CANCEL_URL = "http://127.0.0.1:5501/linepay-cancel.html";
+	@PostMapping("/api/linepay/{isCamp}")
+	public ApiResponse<String> doLinePay(@PathVariable Boolean isCamp, @RequestBody String jsonBody,
+			HttpServletResponse response) throws IOException {
+		final String channelId = "1656895462";
+		final String CHANNEL_SECRET = "fd01e635b9ea97323acbe8d5c6b2fb71";
+		final String API_URL = "https://sandbox-api-pay.line.me/v3/payments/request";
 
-        // 解析原本的 JSON，補上 redirectUrls
-        JSONObject body = new JSONObject(jsonBody);
-//        JSONObject redirectUrls = new JSONObject();
-//        redirectUrls.put("confirmUrl", CONFIRM_URL);
-//        redirectUrls.put("cancelUrl", CANCEL_URL);
-//        body.put("redirectUrls", redirectUrls);
-        System.out.println("jsonBody:"+body);
+		// 解析原本的 JSON
+		JSONObject body = new JSONObject(jsonBody);
+		JSONObject linepayBody = body.optJSONObject("linepayBody");
+		JSONObject linepayOrder = body.optJSONObject("linepayOrder");
+		System.out.println("jsonBody:" + body);
+		System.out.println("linepayBody:" + linepayBody);
+		System.out.println("linepayOrder:" + linepayOrder);
 
-        // 產生 HMAC 簽章
-        String nonce = UUID.randomUUID().toString();
-        String uri = "/v3/payments/request";
-        String signatureRaw = CHANNEL_SECRET + uri + body.toString() + nonce;
-        String signature = HmacUtil.hmacSHA256Base64(CHANNEL_SECRET, signatureRaw);
+		// 產生 HMAC 簽章
+		String nonce = UUID.randomUUID().toString();
+		String uri = "/v3/payments/request";
+		String signatureRaw = CHANNEL_SECRET + uri + linepayBody.toString() + nonce;
+		String signature = HmacUtil.hmacSHA256Base64(CHANNEL_SECRET, signatureRaw);
 
-        // 發送 HTTP POST 請求到 LINE Pay
-        HttpURLConnection conn = (HttpURLConnection) new URL(API_URL).openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json");
-        conn.setRequestProperty("X-LINE-ChannelId", channelId);
-        conn.setRequestProperty("X-LINE-Authorization", signature);
-        conn.setRequestProperty("X-LINE-Authorization-Nonce", nonce);
-        conn.setDoOutput(true);
-        try(OutputStream os = conn.getOutputStream()) {
-            os.write(body.toString().getBytes("UTF-8"));
-        }
-        // 取得回應
-        StringBuilder responseLinePay = new StringBuilder();
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-            String respLine;
-            while((respLine = br.readLine()) != null) responseLinePay.append(respLine);
-        }
-        JSONObject resJson = new JSONObject(responseLinePay.toString());
-        System.out.println("resJson:"+resJson);
-        JSONObject info = resJson.optJSONObject("info");
-        String paymentUrl = (info != null && info.has("paymentUrl")) ? info.getJSONObject("paymentUrl").getString("web") : null;
+		// 發送 HTTP POST 請求到 LINE Pay
+		HttpURLConnection conn = (HttpURLConnection) new URL(API_URL).openConnection();
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Content-Type", "application/json");
+		conn.setRequestProperty("X-LINE-ChannelId", channelId);
+		conn.setRequestProperty("X-LINE-Authorization", signature);
+		conn.setRequestProperty("X-LINE-Authorization-Nonce", nonce);
+		conn.setDoOutput(true);
+		try (OutputStream os = conn.getOutputStream()) {
+			os.write(linepayBody.toString().getBytes("UTF-8"));
+		}
+		// 取得回應
+		StringBuilder responseLinePay = new StringBuilder();
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+			String respLine;
+			while ((respLine = br.readLine()) != null)
+				responseLinePay.append(respLine);
+		}
+		JSONObject resJson = new JSONObject(responseLinePay.toString());
+		System.out.println("resJson:" + resJson);
+		JSONObject info = resJson.optJSONObject("info");
+		String returnCode = resJson.getString("returnCode");
+		
+		if (returnCode.equals("0000")) {
+			// 付款網址請求成功，將訂單資料(未付款)塞入DB
+			if (isCamp) {
+				System.out.println("Camp");
+				campsiteOrdSvc.createOneCampOrderJson(linepayOrder);
+			} else {
+				System.out.println("Shop");
+			}
+			
+			System.out.println("aaaaaa");
+			String paymentUrl = (info != null && info.has("paymentUrl"))
+					? info.getJSONObject("paymentUrl").getString("web")
+					: null;
 
-        // 回傳 paymentUrl 給前端
-        return new ApiResponse<>("success", paymentUrl, "查詢成功");
-    }
+			// 回傳 paymentUrl 給前端
+			return new ApiResponse<>("success", paymentUrl, "查詢成功");
+		} else {
+			// 交易失敗
+			return new ApiResponse<>("fail", "fail", "查詢失敗");
+		}
+
+	}
+
+	// 確認LINEPAY付款狀態
+	@GetMapping("api/confirmpayment/{orderId}/{isCamp}")
+	public void checkLinePayStatus(@PathVariable String orderId, @PathVariable Boolean isCamp,HttpServletResponse responseServlet)
+			throws IOException, URISyntaxException {
+		final String channelId = "1656895462";
+		final String CHANNEL_SECRET = "fd01e635b9ea97323acbe8d5c6b2fb71";
+		final String API_URL = "https://sandbox-api-pay.line.me/v2/payments/orders/" + orderId + "/check";
+
+		// 發送 HTTP POST 請求到 LINE Pay
+		HttpURLConnection conn = (HttpURLConnection) new URL(API_URL).openConnection();
+		conn.setRequestMethod("GET");
+		conn.setRequestProperty("Content-Type", "application/json");
+		conn.setRequestProperty("X-LINE-ChannelId", channelId);
+		conn.setRequestProperty("X-LINE-ChannelSecret", CHANNEL_SECRET);
+
+		// 發送request
+		int responseCode = conn.getResponseCode();
+		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+		String inputLine;
+		StringBuilder response = new StringBuilder();
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+
+		// 解析 JSON 字串
+		JSONObject json = new JSONObject(response.toString());
+		String returnCode = json.getString("returnCode");
+		String returnMessage = json.getString("returnMessage");
+		System.out.println("LINEPAY交易(" + orderId + "): " + returnCode + "||" + returnMessage);
+		if (returnCode.equals("0000")) {
+			// 交易成功，將訂單狀態改成已付款塞入DB
+			if (isCamp) {
+				System.out.println("Camp");
+				campsiteOrdSvc.updatePaymentStatus(orderId, (byte)1);
+				responseServlet.sendRedirect("http://127.0.0.1:5501/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
+			} else {
+				System.out.println("Shop");
+				//這裡要改成商品的成功頁面
+				responseServlet.sendRedirect("http://127.0.0.1:5501/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
+			}
+            
+             
+		} else {
+			// 交易失敗
+			responseServlet.sendRedirect("http://127.0.0.1:5501/linepay-cancel.html?orderId=" + orderId + "&isCamp=" + isCamp);
+		}
+	}
 
 	// 取得所有營地訂單，回傳 JSON
 	@GetMapping("/api/getallcamps")

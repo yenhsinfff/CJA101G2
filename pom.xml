@@ -112,6 +112,13 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- websocker -->
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+   			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+
 
 		<!-- 0529以前的資料 -->
 		<dependency>
