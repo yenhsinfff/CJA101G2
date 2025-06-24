@@ -12,7 +12,6 @@ import com.lutu.article_type.model.ArticleTypeVO;
 import com.lutu.member.model.MemberVO;
 import com.lutu.nice_article.model.NiceArticleVO;
 import com.lutu.reply.model.ReplyVO;
-import com.lutu.user_discount.model.UserDiscountVO;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -121,7 +120,7 @@ public class ArticlesVO implements Serializable {
         this.acStatus = acStatus;
     }
 
-    @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     public Set<ArticleImageVO> getArticleImages() {
         return articleImages;
     }
@@ -143,6 +142,7 @@ public class ArticlesVO implements Serializable {
     public Set<NiceArticleVO> getNiceArticle() {
         return niceArticleVO;
     }
+    
 
     public void setNiceArticle(Set<NiceArticleVO> niceArticleVO) {
         this.niceArticleVO = niceArticleVO;
@@ -165,5 +165,26 @@ public class ArticlesVO implements Serializable {
     public void setAcFavRecord(Set<AcFavRecordVO> acFavRecord) {
         this.acFavRecord = acFavRecord;
     }
+
+
+    
+    @Override
+    public String toString() {
+        return "ArticlesVO{" +
+                "acId=" + acId +
+                ", acTitle='" + acTitle + '\'' +
+                ", memberVO=" + (memberVO != null ? "MemberVO@" + memberVO.hashCode() : null) +
+                ", articleTypeVO=" + (articleTypeVO != null ? articleTypeVO.toString() : null) +
+                ", acTime=" + acTime +
+                ", acContext='" + (acContext != null && acContext.length() > 50 ? 
+                                   acContext.substring(0, 47) + "..." : acContext) + '\'' +
+                ", acStatus=" + acStatus +
+                '}';
+        // 重要提醒：絕對不要在 toString() 中包含延遲載入的集合
+        // 例如：不要使用 articleImages, replies, niceArticleVO 等
+    }
+
+    
+    
 }
 

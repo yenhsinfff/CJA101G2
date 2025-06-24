@@ -78,6 +78,16 @@ public class ArticleTypeVO implements Serializable {
         ArticleTypeVO other = (ArticleTypeVO) obj;
         return Objects.equals(acTypeId, other.acTypeId);
     }
+
+    @Override
+    public String toString() {
+        return "ArticleTypeVO{" +
+                "acTypeId=" + acTypeId +
+                ", acTypeKind='" + acTypeKind + '\'' +
+                ", acTypeText='" + acTypeText + '\'' +
+                '}';
+    }
+    
     
     
 }

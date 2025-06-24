@@ -137,22 +137,40 @@ public class TestHibernate {
 		ArticlesService articlesSvc = context.getBean(ArticlesService.class);
 
 //				BundleItemVO_getAllBundleItem
-				List<ArticlesVO> list = articlesSvc.getAllArticles();
-				for (ArticlesVO VO : list) {
-					System.out.print(VO.getAcId() + ",");
-					System.out.print(VO.getAcTitle() + ",");
-					System.out.print(VO.getMemberVO()+ ",");
-					System.out.print(VO.getArticleTypeVO()+ ",");
-					System.out.print(VO.getAcTime()+ ",");
-					System.out.print(VO.getAcContext()+ ",");
-					System.out.print(VO.getAcStatus()+ ",");
-					System.out.print(VO.getArticleImages()+ ",");
-					System.out.print(VO.getReplies()+ ",");
-					System.out.print(VO.getNiceArticle()+ ",");
-					System.out.print(VO.getArticleReport()+ ",");
-					System.out.print(VO.getAcFavRecord()+ ",");
-					System.out.println();
-				}
+//				List<ArticlesVO> list = articlesSvc.getAll();
+//				for (ArticlesVO VO : list) {
+//					System.out.print(VO.getAcId() + ",");
+//					System.out.print(VO.getAcTitle() + ",");
+//					System.out.print(VO.getMemberVO()+ ",");
+//					System.out.print(VO.getArticleTypeVO()+ ",");
+//					System.out.print(VO.getAcTime()+ ",");
+//					System.out.print(VO.getAcContext()+ ",");
+//					System.out.print(VO.getAcStatus()+ ",");
+//					System.out.print(VO.getArticleImages()+ ",");
+//					System.out.print(VO.getReplies()+ ",");
+//					System.out.print(VO.getNiceArticle()+ ",");
+//					System.out.print(VO.getArticleReport()+ ",");
+//					System.out.print(VO.getAcFavRecord()+ ",");
+//					System.out.println();
+//				}
+
+				//-------------------------------------------------------------------------------		
+				
+			    // 只顯示基本資料（不包含延遲載入的集合）
+		        List<ArticlesVO> list = articlesSvc.getAll();
+		        for (ArticlesVO vo : list) {
+		            System.out.print(vo.getAcId() + ",");
+		            System.out.print(vo.getAcTitle() + ",");
+		            System.out.print(vo.getMemberVO() + ",");
+		            System.out.print(vo.getArticleTypeVO() + ",");
+		            System.out.print(vo.getAcTime() + ",");
+		            System.out.print(vo.getAcContext() + ",");
+		            System.out.print(vo.getAcStatus());
+		            System.out.println(); // 不包含延遲載入的集合
+		        }
+		        
+				//-------------------------------------------------------------------------------	
+		        
 				
 //				System.out.print(VO.()+ ",");
 
@@ -166,7 +184,7 @@ public class TestHibernate {
 //				System.out.print(bundleItemVO.getBundlePrice());
 
 				// 修改
-//				BundleItemVO bundleItemVO = bundleItemSvc.getOneBundleItem(13);
+//		        ArticlesVO VO = articlesSvc.getOneBundleItem(13);
 //				bundleItemVO.setCampId(1008);
 //				bundleItemVO.setBundleName("手作課程");
 //				bundleItemVO.setBundlePrice(3999);

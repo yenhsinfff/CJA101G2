@@ -3,6 +3,7 @@ package com.lutu.article_image.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import com.lutu.article.model.ArticlesVO;
 
@@ -48,4 +49,12 @@ public class ArticleImageVO implements Serializable {
     public void setAcImg(byte[] acImg) {
         this.acImg = acImg;
     }
+
+	@Override
+	public String toString() {
+		return "ArticleImageVO [acImgId=" + acImgId + ", articlesVO=" + articlesVO + ", acImg=" + Arrays.toString(acImg)
+				+ "]";
+	}
+    
+    
 }

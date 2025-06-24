@@ -132,6 +132,17 @@ public class AcFavRecordVO implements Serializable {
 			return acId.hashCode() + memId.hashCode();
 		}
 	}
+
+
+	@Override
+	public String toString() {
+		return "AcFavRecordVO [acId=" + acId + ", memId=" + memId + ", acFavTime=" + acFavTime + ", articlesVO="
+				+ articlesVO + "]";
+	}
+	
+	
+	
+	
 }
 
 

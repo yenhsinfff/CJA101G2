@@ -163,4 +163,15 @@ public class ReplyReportVO implements Serializable {
     public void setRpNote(String rpNote) {
         this.rpNote = rpNote;
     }
+
+	@Override
+	public String toString() {
+		return "ReplyReportVO [replyReportId=" + replyReportId + ", memberVO=" + memberVO + ", acId=" + acId
+				+ ", replyVO=" + replyVO + ", administratorVO=" + administratorVO + ", rpTime=" + rpTime
+				+ ", rpContent=" + rpContent + ", adminReply=" + adminReply + ", rpDoneTime=" + rpDoneTime
+				+ ", rpStatus=" + rpStatus + ", rpSresult=" + rpSresult + ", rpNote=" + rpNote + "]";
+	}
+    
+    
+    
 }

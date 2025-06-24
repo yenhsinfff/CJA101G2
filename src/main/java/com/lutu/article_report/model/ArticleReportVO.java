@@ -151,4 +151,14 @@ public class ArticleReportVO implements Serializable {
     public void setRpNote(String rpNote) {
         this.rpNote = rpNote;
     }
+
+	@Override
+	public String toString() {
+		return "ArticleReportVO [acReportId=" + acReportId + ", memberVO=" + memberVO + ", articlesVO=" + articlesVO
+				+ ", rpTime=" + rpTime + ", rpContent=" + rpContent + ", adminId=" + adminId + ", adminMemCustomer="
+				+ adminMemCustomer + ", rpDoneTime=" + rpDoneTime + ", rpStatus=" + rpStatus + ", rpResult=" + rpResult
+				+ ", rpNote=" + rpNote + "]";
+	}
+    
+    
 }
