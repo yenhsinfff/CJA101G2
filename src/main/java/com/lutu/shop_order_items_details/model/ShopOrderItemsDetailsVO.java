@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lutu.prodColorList.model.ProdColorListVO;
 import com.lutu.prodSpecList.model.ProdSpecListVO;
 import com.lutu.shopProd.model.ShopProdVO;
@@ -49,7 +50,8 @@ public class ShopOrderItemsDetailsVO implements Serializable {
 	private String commentContent; // 評價內容
 
 	@Column(name = "comment_date")
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")	// 從前端取得資料交由spring
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Taipei")	//回傳到前端json格式
 	private LocalDateTime commentDate; // 評價日期
 
 	@Id
@@ -181,7 +183,7 @@ public class ShopOrderItemsDetailsVO implements Serializable {
 		this.prodSpecId = prodSpecId;
 	}
 
-	static class CompositeDetail implements Serializable {
+	public static class CompositeDetail implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private Integer shopOrderId; // 訂單編號

@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+
 @Service("bundleItemService")
 public class BundleItemService {
 
@@ -25,9 +27,15 @@ public class BundleItemService {
 			repository.deleteById(bundleId);
 	}
 	
+	@Transactional
 	public BundleItemVO getOneBundleItem(Integer bundleId) {
 		Optional<BundleItemVO> optional = repository.findById(bundleId);
-		return optional.orElse(null);  // public T orElse(T other) : 如果值存在就回傳其值，否則回傳other的值
+		if (optional.isPresent()) {
+	        BundleItemVO vo = optional.get();	        
+	        vo.getBundleItemDetails().size(); 
+	        return vo;
+	    }
+	    return null;
 	}
 
 

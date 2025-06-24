@@ -2,22 +2,35 @@ package com.lutu;
 
 
 import java.util.List;
+import java.util.Set;
+
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+
 import com.lutu.article.model.ArticlesService;
 import com.lutu.article.model.ArticlesVO;
 import com.lutu.campsitetype.model.CampsiteTypeService;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
+import com.lutu.bundleitem.model.BundleItemService;
+import com.lutu.bundleitem.model.BundleItemVO;
+import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
+import com.lutu.campsite.model.CampsiteService;
+import com.lutu.camptracklist.model.CampTrackListService;
+import com.lutu.camptracklist.model.CampTrackListVO;
+import com.lutu.member.model.MemberService;
+import com.lutu.member.model.MemberVO;
+
 
 @SpringBootApplication
 //@ComponentScan(basePackages = "com.lutu")  // 掃描你的 Service 等 component
 //@EnableJpaRepositories(basePackages = "com.lutu")  // 掃描 Repository
 //@EntityScan(basePackages = "com.lutu")  //掃描           table
 public class TestHibernate {
+
 
 	public static void main(String[] args) {
 		// 啟動 Spring Boot 並取得 ApplicationContext
@@ -27,13 +40,95 @@ public class TestHibernate {
 		ConfigurableApplicationContext context = app.run(args);
 		
 
-		//================================ 營地型別項目明細 =======================================
-//		CampsiteTypeService campsiteTypeSvc = context.getBean(CampsiteTypeService.class);
+
+// ================================ 營地房間明細=======================================
+		CampsiteService campsiteSvc = context.getBean(CampsiteService.class);
+
+//				List<CampsiteVO> list = campsiteSvc.getAll();
+//				for (CampsiteVO vo : list) {
+//					System.out.print(vo.getCampsiteId() + ",");
+//					System.out.print(vo.getCampsiteType().getId() + ",");
+//					System.out.print(vo.getCampsiteIdName() + ",");
+//					System.out.print(vo.getCamperName() + ",");
+//					System.out.println();
+//				}
+
+		// 查詢-findByPrimaryKey BundleItemVO_getOneBundleItem
+		// (多方emp2.hbm.xml必須設為lazy="false")(優!)
+//		        CampsiteVO vo = campsiteSvc.getOneCampsite(3007);
+//				System.out.print(vo.getCampsiteId() + ",");
+//				System.out.print(vo.getCampsiteType().getId() + ",");
+//				System.out.print(vo.getCampsiteIdName() + ",");
+//				System.out.print(vo.getCamperName());
+
+
+
+
+		// 刪除 --> 自訂的刪除方法
+//				campsiteSvc.deleteCampsite(3016);
+				
+		
+//========================== 測試關聯===========================================
+
+		// 透過營地查詢營地房型
+
+//		CampService svc = context.getBean(CampService.class);
+//		CampVO campVO = svc.getOneCamp(1006);
+//		Set<CampsiteTypeVO> campsiteTypes = campVO.getCampsiteTypes();
+//		for (CampsiteTypeVO campsiteType : campsiteTypes) {
+//			System.out.println("營地房型編號+營地編號：" + campsiteType.getId() + ", 營地房型名稱：" + campsiteType.getCampsiteName() + ", 房型價格："
+//					+ campsiteType.getCampsitePrice());
+//		}
+		
+		// 透過營地房型查詢營地房間
+
+//		CampsiteTypeService svc = context.getBean(CampsiteTypeService.class);
+//		CampsiteTypeVO campsiteTypeVO = svc.getOneCampsiteType(2006, 1004);
+//		Set<CampsiteVO> campsites = campsiteTypeVO.getCampsites();
+//		for (CampsiteVO campsite : campsites) {
+//				System.out.println("營地房間編號：" + campsite.getCampsiteId() + ", 營地房間名稱：" + campsite.getCampsiteIdName() + ", 露營者姓名："
+//				+ campsite.getCamperName());
+//		}	
+		
+		// 透過營地收藏查詢營地資訊
+
+//		CampTrackListService svc = context.getBean(CampTrackListService.class);
+//		CampTrackListVO campTrackListVO = svc.getOneCampTrackList(1002, 10000001); // memId, campId
 //
-////				CampsiteTypeVO_getAllCampsiteType
+//		if (campTrackListVO != null) {
+//		    CampVO camp = campTrackListVO.getCamp();
+//		    System.out.println("營地編號：" + camp.getCampId());
+//		    System.out.println("營地名稱：" + camp.getCampName());
+//		    System.out.println("營地縣市：" + camp.getCampCity());
+//		}	
+		
+		
+		//透過會員查詢收藏營地
+//		MemberService svc = context.getBean(MemberService.class);
+//		MemberVO memberVO = svc.getOneMember(10000001);
+//		Set<CampTrackListVO> campTrackLists = memberVO.getCampTrackLists();
+//		for(CampTrackListVO campTrackList : campTrackLists) {
+//			System.out.println("營地編號：" + campTrackList.getId());
+//		}
+		
+		//透過加購項目查詢加購項目明細
+//		BundleItemService svc = context.getBean(BundleItemService.class);
+//		BundleItemVO bundleItemVO = svc.getOneBundleItem(3);
+//		Set<BundleItemDetailsVO> bundleItemDetailS = bundleItemVO.getBundleItemDetails();
+//		for(BundleItemDetailsVO bundleItemDetails : bundleItemDetailS) {
+//			System.out.println("加購項目明細編號：" + bundleItemDetails.getBundleDetailsId());
+//			System.out.println("訂單明細編號" + bundleItemDetails.getCampsiteDetailsId());
+//		}
+				
+		
+
+// ================================營地型別(複合主鍵)==========================================
+
+//		CampsiteTypeService campsiteTypeSvc = context.getBean(CampsiteTypeService.class);
+
 //				List<CampsiteTypeVO> list = campsiteTypeSvc.getAll();
 //				for (CampsiteTypeVO vo : list) {
-//					System.out.print(vo.getCompositeKey() + ",");
+//					System.out.print(vo.getId() + ",");
 //					System.out.print(vo.getCampsiteName() + ",");
 //					System.out.print(vo.getCampsitePeople() + ",");
 //					System.out.print(vo.getCampsiteNum() + ",");
@@ -45,45 +140,52 @@ public class TestHibernate {
 //					System.out.println();
 //				}
 
-				// 查詢-findByPrimaryKey BundleItemVO_getOneBundleItem
-				// (多方emp2.hbm.xml必須設為lazy="false")(優!)
-//				BundleItemDetailsVO vo = bundleItemDetailsSvc.getOneBundleItemDetails(8001);
-//				System.out.print(vo.getBundleDetailsId() + ",");
-//				System.out.print(vo.getCampsiteDetailsId() + ",");
-//				System.out.print(vo.getBundleId()+ ",");
-//				System.out.print(vo.getBundleBuyNum()+ ",");
-//				System.out.print(vo.getBundleBuyAmount());
+		// 查詢-findByPrimaryKey
+		// (多方emp2.hbm.xml必須設為lazy="false")(優!)
+//		        CampsiteTypeVO vo = campsiteTypeSvc.getOneCampsiteType(2001, 1001);
+//		        System.out.print(vo.getCampsiteName() + ",");
+//				System.out.print(vo.getCampsitePeople() + ",");
+//				System.out.print(vo.getCampsiteNum() + ",");
+//				System.out.print(vo.getCampsitePrice() + ",");
+//				System.out.print(vo.getCampsitePic1() + ",");
+//				System.out.print(vo.getCampsitePic2() + ",");
+//				System.out.print(vo.getCampsitePic3() + ",");
+//				System.out.print(vo.getCampsitePic4());	
+//				System.out.println();
 
-				// 修改
-//				BundleItemDetailsVO vo = bundleItemDetailsSvc.getOneBundleItemDetails(8003);
-//				vo.setBundleDetailsId(8004);
-//				vo.setCampsiteDetailsId(1000000007);
-//				vo.setBundleId(3999);
-//				vo.setBundleBuyNum(3);
-//				vo.setBundleBuyAmount(6000);
-//				bundleItemDetailsSvc.addBundleItemDetails(vo);
-				
-				// 新增
-//				BundleItemDetailsVO vo = new BundleItemDetailsVO();
-//				vo.setCampsiteDetailsId(1000000010);
-//				vo.setBundleId(3999);
-//				vo.setBundleBuyNum(3);
-//				vo.setBundleBuyAmount(6000);
-//				bundleItemDetailsSvc.addBundleItemDetails(vo);
+		// 修改
+//		        CampsiteTypeVO vo = campsiteTypeSvc.getOneCampsiteType(2013,1008);
+//		        vo.setCampsiteName("非常豪華帳棚");
+//		        vo.setCampsitePeople(88);
+//		        vo.setCampsiteNum((byte)3);
+//		        vo.setCampsitePrice(6666);
+////		        vo.setCampsitePic1(null);
+//				campsiteTypeSvc.updateCampsiteType(vo);
 
-				//刪除   --> 自訂的刪除方法
-//				bundleItemSvc.deleteBundleItem(8);
-				
-				//● 刪除   //XXX --> Repository內建的刪除方法目前無法使用，因為有@ManyToOne
-				//System.out.println("--------------------------------");
-				//repository.deleteById(7001);      
-				//System.out.println("--------------------------------");
-	
-		
-				
-		
-		
-		//================================ 營地加購項目明細 =======================================
+		// 新增
+//		CampsiteTypeVO vo = new CampsiteTypeVO();
+//		CampsiteTypeVO.CompositeDetail id = new CampsiteTypeVO.CompositeDetail();
+//		
+//		// 設定關聯的 camp（重點）
+//		CampVO camp = new CampVO();
+//		camp.setCampId(1009);
+//		vo.setCamp(camp);	
+//		id.setCampsiteTypeId(2015); //複合主鍵無法自動遞增，務必手動設定
+//		vo.setId(id);
+//		
+//        vo.setCampsiteName("非常豪華帳棚");
+//        vo.setCampsitePeople(88);
+//        vo.setCampsiteNum((byte)3);
+//        vo.setCampsitePrice(6666);
+//        vo.setCampsitePic1("fake-image-data".getBytes());
+//        campsiteTypeSvc.addCampsiteType(vo);
+
+		// 刪除 --> 自訂的刪除方法
+//		CampsiteTypeVO.CompositeDetail id = new CampsiteTypeVO.CompositeDetail(2014, 1006);
+//		campsiteTypeSvc.deleteCampsiteType(id);
+
+
+		// ================================ 營地加購項目明細=======================================
 //		BundleItemDetailsService bundleItemDetailsSvc = context.getBean(BundleItemDetailsService.class);
 
 //				BundleItemDetailsVO_getAllBundleItemDetails
@@ -97,8 +199,8 @@ public class TestHibernate {
 //					System.out.println();
 //				}
 
-				// 查詢-findByPrimaryKey BundleItemVO_getOneBundleItem
-				// (多方emp2.hbm.xml必須設為lazy="false")(優!)
+		// 查詢-findByPrimaryKey BundleItemVO_getOneBundleItem
+		// (多方emp2.hbm.xml必須設為lazy="false")(優!)
 //				BundleItemDetailsVO vo = bundleItemDetailsSvc.getOneBundleItemDetails(8001);
 //				System.out.print(vo.getBundleDetailsId() + ",");
 //				System.out.print(vo.getCampsiteDetailsId() + ",");
@@ -106,7 +208,7 @@ public class TestHibernate {
 //				System.out.print(vo.getBundleBuyNum()+ ",");
 //				System.out.print(vo.getBundleBuyAmount());
 
-				// 修改
+		// 修改
 //				BundleItemDetailsVO vo = bundleItemDetailsSvc.getOneBundleItemDetails(8003);
 //				vo.setBundleDetailsId(8004);
 //				vo.setCampsiteDetailsId(1000000007);
@@ -114,8 +216,8 @@ public class TestHibernate {
 //				vo.setBundleBuyNum(3);
 //				vo.setBundleBuyAmount(6000);
 //				bundleItemDetailsSvc.addBundleItemDetails(vo);
-				
-				// 新增
+
+		// 新增
 //				BundleItemDetailsVO vo = new BundleItemDetailsVO();
 //				vo.setCampsiteDetailsId(1000000010);
 //				vo.setBundleId(3999);
@@ -123,15 +225,9 @@ public class TestHibernate {
 //				vo.setBundleBuyAmount(6000);
 //				bundleItemDetailsSvc.addBundleItemDetails(vo);
 
-				//刪除   --> 自訂的刪除方法
+		// 刪除 --> 自訂的刪除方法
 //				bundleItemSvc.deleteBundleItem(8);
-				
-				//● 刪除   //XXX --> Repository內建的刪除方法目前無法使用，因為有@ManyToOne
-				//System.out.println("--------------------------------");
-				//repository.deleteById(7001);      
-				//System.out.println("--------------------------------");
-	
-		
+
 		
 		//================================ 文章 =======================================
 		ArticlesService articlesSvc = context.getBean(ArticlesService.class);
@@ -254,16 +350,18 @@ public class TestHibernate {
 //		bundleItemVO.setBundleAddDate(sqlDate);
 //		bundleItemSvc.addBundleItem(bundleItemVO);
 
-		//刪除   --> 自訂的刪除方法
+		// 刪除 --> 自訂的刪除方法
 //		bundleItemSvc.deleteBundleItem(8);
-		
-		//● 刪除   //XXX --> Repository內建的刪除方法目前無法使用，因為有@ManyToOne
-		//System.out.println("--------------------------------");
-		//repository.deleteById(7001);      
-		//System.out.println("--------------------------------");
+
+		// ● 刪除 //XXX --> Repository內建的刪除方法目前無法使用，因為有@ManyToOne
+		// System.out.println("--------------------------------");
+		// repository.deleteById(7001);
+		// System.out.println("--------------------------------");
 
 //================================ 營地收藏 =======================================
+
 //				CampTrackListService campTrackListSvc = context.getBean(CampTrackListService.class);		
+
 
 		// CampTrackListVO _ getAllCampTrackList
 //		      		List<CampTrackListVO> list = campTrackListSvc.getAll();
@@ -291,6 +389,9 @@ public class TestHibernate {
 //				java.sql.Date sqlDate = java.sql.Date.valueOf(dateStr);
 //				campTrackListVO.setMemTrackDate(sqlDate);
 //				campTrackListSvc.addCampTrackList(campTrackListVO);
+
+//===================================================================================================				
+
 //        CampSiteOrderService campsiteOrdSvc = context.getBean(CampSiteOrderService.class);
 //
 //        	//CampSiteOrderVO _ getAllCampsiteOrder
@@ -329,8 +430,7 @@ public class TestHibernate {
 //					+ order.getCampVO().getCampContent());
 //		}
 
-		
-		//透過訂單查詢
+		// 透過訂單查詢
 //		CampSiteOrderService campSiteOrderService = context.getBean(CampSiteOrderService.class);
 //		CampSiteOrderVO campSiteOrderVO = campSiteOrderService.getOneCampsiteOrder("ORD20250124001");
 //		Set<CampSiteOrderDetailsVO> campsiteOrderDetails = campSiteOrderVO.getCampSiteOrderDetails();
@@ -339,16 +439,13 @@ public class TestHibernate {
 //					+ detail.getcampSiteOrderVO().getCommentContent());
 //		}
 
-		
-				//測試取消訂單
+		// 測試取消訂單
 // 				CampsiteCancellationService campsiteCancellationSvc = context.getBean(CampsiteCancellationService.class);
 // 				List<CampsiteCancellationVO> campsiteCancellationList = campsiteCancellationSvc.getAllCampsiteCancellation();
 // 				for (CampsiteCancellationVO campsiteCancellationVO : campsiteCancellationList) {
 // 				System.out.println("營地訂單明細：" + campsiteCancellationVO.getCampsiteCancelId() + ", 明細總價：" + campsiteCancellationVO.getCampsiteCancelReason() + ", content："
 // 						+ campsiteCancellationVO.getCampsiteCancelStatus());
 // 			}
-		
-	
 
 		context.close();
 	}

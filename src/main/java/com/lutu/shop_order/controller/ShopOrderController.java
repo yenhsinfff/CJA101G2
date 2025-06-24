@@ -1,8 +1,9 @@
 package com.lutu.shop_order.controller;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,94 +14,128 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
+import com.lutu.discount_code.model.DiscountCodeService;
+import com.lutu.member.model.MemberService;
+import com.lutu.member.model.MemberVO;
 import com.lutu.shop_order.model.ShopOrderDTO_insert;
-import com.lutu.shop_order.model.ShopOrderDTO_update;
+import com.lutu.shop_order.model.ShopOrderDTO_res;
+import com.lutu.shop_order.model.ShopOrderDTO_update_req;
 import com.lutu.shop_order.model.ShopOrderService;
 import com.lutu.shop_order.model.ShopOrderVO;
 
 import jakarta.validation.Valid;
 
-
 @RestController
 @Validated
 @CrossOrigin(origins = "*")
 public class ShopOrderController {
-	
+
 	@Autowired
 	ShopOrderService sos;
+
+	@Autowired
+	MemberService ms;
 	
-//	@Autowired
-//	MemberService ms;
-//	
-//	@Autowired
-//	DiscountCodeService dcs;
-	
-	
+	@Autowired
+	DiscountCodeService dcs;
+
 	// 取得所有商品訂單，回傳 JSON
 	@GetMapping("/api/getAllShopOrders")
-	public ApiResponse<List<ShopOrderVO>> getAllShopOrders() {
+	public ApiResponse<List<ShopOrderDTO_res>> getAllShopOrders() {
 		List<ShopOrderVO> shopOrders = sos.getAll();
-		
-		return new ApiResponse<>("success", shopOrders, "查詢成功");	
+
+		// 使用dto回傳至前端
+		List<ShopOrderDTO_res> resList = new ArrayList<>();
+		for (ShopOrderVO sovo : shopOrders) {
+			ShopOrderDTO_res res = new ShopOrderDTO_res();
+			BeanUtils.copyProperties(sovo, res);
+			res.setMemId(sovo.getMemId().getMemId()); // 將會員編號轉為Integer推到前端
+			res.setDiscountCodeId(
+					sovo.getDiscountCodeId() != null ? sovo.getDiscountCodeId().getDiscountCodeId() : null);// 將折扣碼編號轉為String推到前端
+
+			resList.add(res);
+		}
+
+		return new ApiResponse<>("success", resList, "查詢成功");
 	}
 
-	
-	
-	//新增
-//	@PostMapping("/api/addShopOrder")								
-//	public ApiResponse<ShopOrderVO> addShopOrder(@Valid @RequestBody ShopOrderDTO_insert dto) {
-//		
+	// 新增
+	@PostMapping("/api/addShopOrder")
+	public ApiResponse<ShopOrderDTO_res> addShopOrder(@Valid @RequestBody ShopOrderDTO_insert dto) {
+
 //		ShopOrderVO sovo = new ShopOrderVO();
-//		try {
-////			System.out.println("aaaaaa");
-//			
-//			ShopOrderVO newSOVO = sos.addShopOrder(dto);
-//			return new ApiResponse<>("success", newSOVO, "新增成功");
-//			
-//		} catch (Exception e) {
-//			return new ApiResponse<>("fail", sovo, "新增失敗");
-//		}
-//	}
-	
-	
-	@PostMapping("/api/updateShopOrder")
-	public ApiResponse updateShopOrder(@Valid @RequestBody ShopOrderDTO_update dtoUpdate) {
-		
-		ShopOrderVO sovo = new ShopOrderVO();
 		try {
-			
-			ShopOrderVO newSOVO = sos.updateShopOrder(dtoUpdate);
-			return new ApiResponse<>("success", newSOVO, "修改成功");
-			
+			ShopOrderVO newSOVO = sos.addShopOrder(dto);
+
+			// 將 VO 轉成DTO_res
+			ShopOrderDTO_res res = new ShopOrderDTO_res();
+			BeanUtils.copyProperties(newSOVO, res);
+			res.setMemId(newSOVO.getMemId().getMemId()); // 將會員編號轉為Integer推到前端
+			res.setDiscountCodeId(
+					newSOVO.getDiscountCodeId() != null ? newSOVO.getDiscountCodeId().getDiscountCodeId() : null);// 將折扣碼編號轉為String推到前端
+
+			return new ApiResponse<>("success", res, "新增成功");
+
 		} catch (Exception e) {
-			 return new ApiResponse<>("fail", sovo, "修改失敗");
+			return new ApiResponse<>("fail", null, "新增失敗");
 		}
-		
 	}
-	
-	
+
+	@PostMapping("/api/updateShopOrder")
+	public ApiResponse<ShopOrderDTO_res> updateShopOrder(@Valid @RequestBody ShopOrderDTO_update_req dtoUpdate) {
+
+		try {
+
+			ShopOrderVO updateSOVO = sos.updateShopOrder(dtoUpdate);
+
+			// 將 VO 轉成DTO_res
+			ShopOrderDTO_res res = new ShopOrderDTO_res();
+			BeanUtils.copyProperties(updateSOVO, res);
+			res.setMemId(updateSOVO.getMemId().getMemId()); // 將會員編號轉為Integer推到前端
+			res.setDiscountCodeId(
+					updateSOVO.getDiscountCodeId() != null ? updateSOVO.getDiscountCodeId().getDiscountCodeId() : null);// 將折扣碼編號轉為String推到前端
+
+			return new ApiResponse<>("success", res, "修改成功");
+
+		} catch (Exception e) {
+			return new ApiResponse<>("fail", null, "修改失敗");
+		}
+
+	}
+
 	// 依訂單編號單筆查詢
 	@GetMapping("/api/getOneById")
-	public ApiResponse getOneById(@RequestParam("shopOrderId") Integer shopOrderId) {
+	public ApiResponse<ShopOrderDTO_res> getOneById(@RequestParam("shopOrderId") Integer shopOrderId) {
 		ShopOrderVO sovo = sos.getOneShopOrder(shopOrderId);
-		
-		return new ApiResponse<>("success", sovo, "查詢成功");
+
+		// 將 VO 轉成DTO_res
+		ShopOrderDTO_res res = new ShopOrderDTO_res();
+		BeanUtils.copyProperties(sovo, res);
+		res.setMemId(sovo.getMemId().getMemId()); // 將會員編號轉為Integer推到前端
+		res.setDiscountCodeId(sovo.getDiscountCodeId() != null ? sovo.getDiscountCodeId().getDiscountCodeId() : null);// 將折扣碼編號轉為String推到前端
+
+		return new ApiResponse<>("success", res, "查詢成功");
 	}
-	
+
 	// 依訂單編號單筆查詢
 	@GetMapping("/api/getOneByMemId")
-	public ApiResponse getOneByMemId(@RequestParam("memId") Integer memId) {
+	public ApiResponse getOneByMemId(@RequestParam("memId") MemberVO memId) {
 		List<ShopOrderVO> memOrders = sos.getAll(memId);
-		
-		return new ApiResponse<>("success", memOrders , "查詢成功");
+
+		// 使用dto回傳至前端
+		List<ShopOrderDTO_res> resList = new ArrayList<>();
+		for (ShopOrderVO sovo : memOrders) {
+			ShopOrderDTO_res res = new ShopOrderDTO_res();
+			BeanUtils.copyProperties(sovo, res);
+			res.setMemId(sovo.getMemId().getMemId()); // 將會員編號轉為Integer推到前端
+			res.setDiscountCodeId(
+					sovo.getDiscountCodeId() != null ? sovo.getDiscountCodeId().getDiscountCodeId() : null);// 將折扣碼編號轉為String推到前端
+
+			resList.add(res);
+		}
+
+		return new ApiResponse<>("success", resList, "查詢成功");
 	}
-	
-	
-//	@GetMapping("/api/compositeQuery")
-//	public ApiResponse compositeQuery(@RequestParam Map<String, String[]> params) {
-//		List<ShopOrderVO> shopOrders2 = sos.getAll(params);	
-//		
-//		return new ApiResponse<>("success", shopOrders2 , "查詢成功");
-//	}
+
 
 }

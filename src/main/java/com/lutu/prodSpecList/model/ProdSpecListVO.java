@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import com.lutu.prodSpecList.model.ProdSpecListVO.CompositeDetail2;
-import com.lutu.shop.model.SpecListVO;
 import com.lutu.shopProd.model.ShopProdVO;
+import com.lutu.specList.model.SpecListVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -128,7 +128,7 @@ public class ProdSpecListVO implements Serializable {
 	}
 
 	// 需要宣告一個有包含複合主鍵屬性的類別，並一定要實作 java.io.Serializable 介面
-	static class CompositeDetail2 implements Serializable {
+	public static class CompositeDetail2 implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private Integer prodId;

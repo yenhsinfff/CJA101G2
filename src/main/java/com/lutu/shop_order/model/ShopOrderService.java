@@ -2,9 +2,9 @@ package com.lutu.shop_order.model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import java.util.List;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +21,11 @@ import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_insert_r
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsRepository;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsVO;
 
-import javassist.NotFoundException;
-
 @Service
 public class ShopOrderService {
 
 	@Autowired
 	ShopOrderRepository sor;
-
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	@Autowired
 	ProdColorListRepository pclr;
@@ -51,22 +46,25 @@ public class ShopOrderService {
 	MemberRepository mr;
 
 	@Transactional
-	public ShopOrderVO addShopOrder(ShopOrderDTO_insert dto, List<ShopOrderItemsDetailsDTO_insert_req> dtoDetails) {
+	public ShopOrderVO addShopOrder(ShopOrderDTO_insert dto) {
 
 		// 1. 新增訂單
 		ShopOrderVO sovo = new ShopOrderVO();
 
 		// 查出完整會員VO
-		MemberVO mvo = mr.findById(dto.getMemId()).orElseThrow(() -> new NotFoundException("找不到會員資料"));
+		MemberVO mvo = mr.findById(dto.getMemId()).orElseThrow(() -> new RuntimeException("查無該筆會員編號"));
 		sovo.setMemId(mvo);
 
 		sovo.setShopOrderShipment(dto.getShopOrderShipment());
 		sovo.setShopOrderShipFee(dto.getShopOrderShipFee());
+
 		// 於明細建立完成後取得折扣前總金額，先預設為BigDecimal 0，方便後續計算
 		BigDecimal beforeDiscountAmount = BigDecimal.ZERO;
+		sovo.setBeforeDiscountAmount(beforeDiscountAmount.intValue());
 
 		// 將實付金額預設為 BigDecimal 0，方便後續計算
 		BigDecimal afterDiscountAmount = BigDecimal.ZERO;
+		sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
 
 		sovo.setShopOrderPayment(dto.getShopOrderPayment());
 		sovo.setOrderName(dto.getOrderName());
@@ -75,19 +73,22 @@ public class ShopOrderService {
 		sovo.setOrderShippingAddress(dto.getOrderShippingAddress());
 		sovo.setShopOrderNote(dto.getShopOrderNote());
 		sovo.setShopOrderShipDate(dto.getShopOrderShipDate());
-
 		sovo.setShopOrderStatus(dto.getShopOrderStatus() == null ? (byte) 0 : dto.getShopOrderStatus());
 		sovo.setShopReturnApply(dto.getShopReturnApply() == null ? (byte) 0 : dto.getShopReturnApply());
 
-		sor.save(sovo);
+		sor.save(sovo); // 存主表，產生訂單ID
+
+		sovo = sor.findById(sovo.getShopOrderId()).orElseThrow(() -> new RuntimeException("查無訂單"));
 
 		// 2. 新增所有明細
-		for (ShopOrderItemsDetailsDTO_insert_req detailsDTO : dtoDetails) {
+		List<ShopOrderItemsDetailsDTO_insert_req> dtoDetails = dto.getDetailsDto();
 
-			// 判斷商品編號是否存在商品表格中
-			if (!spr.existsById(detailsDTO.getProdId())) {
-				throw new RuntimeException("商品編號 " + detailsDTO.getProdId() + " 不存在，請確認商品資訊");
-			} else {
+		if (dtoDetails == null || dtoDetails.isEmpty()) {
+			throw new IllegalArgumentException("訂單明細不得為空");
+		} else {
+
+			for (ShopOrderItemsDetailsDTO_insert_req detailsDTO : dtoDetails) {
+
 				ShopOrderItemsDetailsVO soidVO = new ShopOrderItemsDetailsVO();
 
 				soidVO.setShopOrderId(sovo.getShopOrderId());
@@ -98,8 +99,9 @@ public class ShopOrderService {
 				soidVO.setShopOrderQty(qty.intValue());
 
 				// 取得價格，先轉為BigDecimal方便計算
-				ProdSpecListVO spec = pslr.findById(detailsDTO.getProdSpecId())
-						.orElseThrow(() -> new RuntimeException("查無該種規格"));
+				ProdSpecListVO.CompositeDetail2 key = new ProdSpecListVO.CompositeDetail2(detailsDTO.getProdId(),
+						detailsDTO.getProdSpecId());
+				ProdSpecListVO spec = pslr.findById(key).orElseThrow(() -> new RuntimeException("查無該種規格"));
 				BigDecimal price = new BigDecimal(spec.getProdSpecPrice());
 
 				// 將價格存入訂單明細
@@ -121,15 +123,16 @@ public class ShopOrderService {
 		// 設定折扣前總金額
 		sovo.setBeforeDiscountAmount(beforeDiscountAmount.intValue());
 
-		// 加入運費
-		BigDecimal shipFee = new BigDecimal(dto.getShopOrderShipFee());
+		// 加入運費，預設是60
+		BigDecimal shipFee = dto.getShopOrderShipFee() != null ? new BigDecimal(dto.getShopOrderShipFee())
+				: new BigDecimal(60);
 
 		// 如果有折扣碼需要扣除折扣碼金額來計算總金額
 		if (dto.getDiscountCodeId() != null) {
 
 			// 存入DiscountCodeId
 			DiscountCodeVO dcVO = dcr.findById(dto.getDiscountCodeId())
-					.orElseThrow(() -> new RuntimeException("查無該種規格"));
+					.orElseThrow(() -> new RuntimeException("查無該種折扣碼"));
 			sovo.setDiscountCodeId(dcVO);
 
 			// 取得discountCodeType
@@ -169,68 +172,139 @@ public class ShopOrderService {
 			}
 
 		} else {
+
 			// 沒有折扣碼，直接加運費
 			afterDiscountAmount = beforeDiscountAmount.add(shipFee);
+			System.out.println("afterDiscountAmount:" + afterDiscountAmount);
 			sovo.setDiscountCodeId(null);
-			sovo.setDiscountAmount(0);
+			sovo.setDiscountAmount(null);
 			sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
+
 		}
 
 		sor.save(sovo); // 再存一次，更新金額
-
 		ShopOrderVO sovo2 = getOneShopOrder(sovo.getShopOrderId());
 		return sovo2;
 	}
 
-	public ShopOrderVO updateShopOrder(ShopOrderDTO_update dtoUpdate) {
+	@Transactional
+	public ShopOrderVO updateShopOrder(ShopOrderDTO_update_req dtoUpdate) {
 
+		ShopOrderVO sovo;
 		// 1. 先查出原本的VO
-		ShopOrderVO sovo = getOneShopOrder(dtoUpdate.getShopOrderId());
+		if (sor.existsById(dtoUpdate.getShopOrderId())) {
+			sovo = getOneShopOrder(dtoUpdate.getShopOrderId());
+		} else {
+			throw new RuntimeException("找不到id");
+		}
 
 		// 2. 只更新有傳值的欄位（可用if判斷，避免null覆蓋）
-		if (dtoUpdate.getMemId() != null) {
-			// 取得Member Repository後
-			MemberVO mvo = mr.findById(dtoUpdate.getMemId()).orElseThrow(() -> new IllegalArgumentException("找不到會員資料"));
 
-			sovo.setMemId(dtoUpdate.getMemId());
-		}
+		// memId不可變動
+		sovo.setMemId(sovo.getMemId());
 
 		if (dtoUpdate.getShopOrderShipment() != null) {
 			sovo.setShopOrderShipment(dtoUpdate.getShopOrderShipment());
 		}
+
 		if (dtoUpdate.getShopOrderShipFee() != null) {
 			sovo.setShopOrderShipFee(dtoUpdate.getShopOrderShipFee());
 		}
-		if (dtoUpdate.getBeforeDiscountAmount() != null) {
-			sovo.setBeforeDiscountAmount(dtoUpdate.getBeforeDiscountAmount());
+
+//		sovo.setBeforeDiscountAmount(sovo.getBeforeDiscountAmount());
+
+		// 先預設為BigDecimal 0，方便後續計算
+		BigDecimal beforeDiscountAmount = new BigDecimal(sovo.getBeforeDiscountAmount());
+
+		// 將實付金額預設為 BigDecimal 0，方便後續計算
+		BigDecimal afterDiscountAmount = new BigDecimal(sovo.getAfterDiscountAmount());
+
+		// 運費轉為BigDecimal
+		BigDecimal shipFee = new BigDecimal(sovo.getShopOrderShipFee());
+
+		// 檢查是否傳入 discountCodeId 欄位
+		if (dtoUpdate.hasDiscountCodeId()) {
+			if (dtoUpdate.getDiscountCodeId() != null) {
+				// 新增或更新折扣碼
+				DiscountCodeVO dcVO = dcr.findById(dtoUpdate.getDiscountCodeId())
+						.orElseThrow(() -> new RuntimeException("查無折扣碼"));
+				sovo.setDiscountCodeId(dcVO);
+
+				// 取得discountCodeType
+				Byte type = dcVO.getDiscountType();
+				// 取得discountValue
+				BigDecimal value = dcVO.getDiscountValue();
+
+				if (type == 0) { // 固定金額折扣
+					sovo.setDiscountAmount(value.intValue());
+					// 計算實付金額 = 折扣前金額 - 折扣金額 + 運費 
+					afterDiscountAmount = beforeDiscountAmount.subtract(value).add(shipFee);
+				} else if (type == 1) { // 百分比折扣
+					// 折扣前金額*(1 - discountValue(%))並四捨五入
+					BigDecimal discountAmount = beforeDiscountAmount.multiply(BigDecimal.ONE.subtract(value))
+							.setScale(0, RoundingMode.HALF_UP);
+					sovo.setDiscountAmount(discountAmount.intValue());
+					// 計算實付金額 = 折扣前金額 - 折扣金額 + 運費 
+					afterDiscountAmount = beforeDiscountAmount.subtract(discountAmount).add(shipFee);
+				} else {
+					throw new RuntimeException("無效的折扣類型");
+				}
+				sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
+			} else {
+				// 刪除折扣碼
+				sovo.setDiscountCodeId(null);
+				sovo.setDiscountAmount(null);
+				afterDiscountAmount = beforeDiscountAmount.add(shipFee);
+				sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
+			}
+		} else {
+			// 未傳入 discountCodeId，保持原有折扣碼不變
+			if (sovo.getDiscountCodeId() != null) {
+				DiscountCodeVO dcVO = sovo.getDiscountCodeId();
+				Byte type = dcVO.getDiscountType();
+				BigDecimal value = dcVO.getDiscountValue();
+
+				if (type == 0) {
+					sovo.setDiscountAmount(value.intValue());
+					afterDiscountAmount = beforeDiscountAmount.subtract(value).add(shipFee);
+				} else if (type == 1) {
+					BigDecimal discountAmount = beforeDiscountAmount.multiply(BigDecimal.ONE.subtract(value))
+							.setScale(0, RoundingMode.HALF_UP);
+					sovo.setDiscountAmount(discountAmount.intValue());
+					afterDiscountAmount = beforeDiscountAmount.subtract(discountAmount).add(shipFee);
+				}
+				sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
+			} else {
+				sovo.setDiscountAmount(null);
+				afterDiscountAmount = beforeDiscountAmount.add(shipFee);
+				sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
+			}
 		}
-		if (dtoUpdate.getDiscountCodeId() != null) {
-			sovo.setDiscountCodeId(dtoUpdate.getDiscountCodeId());
-		}
-		if (dtoUpdate.getDiscountAmount() != null) {
-			sovo.setDiscountAmount(dtoUpdate.getDiscountAmount());
-		}
-		if (dtoUpdate.getAfterDiscountAmount() != null) {
-			sovo.setAfterDiscountAmount(dtoUpdate.getAfterDiscountAmount());
-		}
+
 		if (dtoUpdate.getShopOrderPayment() != null) {
 			sovo.setShopOrderPayment(dtoUpdate.getShopOrderPayment());
 		}
+
 		if (dtoUpdate.getOrderName() != null) {
 			sovo.setOrderName(dtoUpdate.getOrderName());
 		}
+
 		if (dtoUpdate.getOrderEmail() != null) {
 			sovo.setOrderEmail(dtoUpdate.getOrderEmail());
 		}
+
 		if (dtoUpdate.getOrderPhone() != null) {
 			sovo.setOrderPhone(dtoUpdate.getOrderPhone());
 		}
+
 		if (dtoUpdate.getOrderShippingAddress() != null) {
 			sovo.setOrderShippingAddress(dtoUpdate.getOrderShippingAddress());
 		}
+
 		if (dtoUpdate.getShopOrderNote() != null) {
 			sovo.setShopOrderNote(dtoUpdate.getShopOrderNote());
 		}
+
 		if (dtoUpdate.getShopOrderShipDate() != null) {
 			sovo.setShopOrderShipDate(dtoUpdate.getShopOrderShipDate());
 		}
@@ -278,13 +352,8 @@ public class ShopOrderService {
 		return sor.findAll();
 	}
 
-	public List<ShopOrderVO> getAll(Integer memId) {
+	public List<ShopOrderVO> getAll(MemberVO memId) {
 		return sor.findByMember(memId);
 	}
-
-	// 複合查詢
-//	public List<ShopOrderVO> getAll(Map<String, String[]> map) {
-//		return HibernateUtil_CompositeQuery_ShopOrder.getAllC(map, sessionFactory.openSession());
-//	}
 
 }

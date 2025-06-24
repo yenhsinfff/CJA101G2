@@ -1,8 +1,10 @@
 package com.lutu.shop_order.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_insert_req;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,23 +15,15 @@ import jakarta.validation.constraints.Size;
 public class ShopOrderDTO_insert {
 
 	// private MemberVO memId;
-	@NotNull(message = "請輸入露營者編號")	
+	@NotNull(message = "請輸入露營者編號")
 	private Integer memId; // 露營者編號
-	
-	@NotNull(message = "請選擇出貨方式")	
+
+	@NotNull(message = "請選擇出貨方式")
 	private Byte shopOrderShipment; // 出貨方式
-	
+
 	private Integer shopOrderShipFee = 60; // 運費，預設60
 
-	@NotNull(message = "折價錢總金額不為0")
-	private Integer beforeDiscountAmount; // 折價前總金額
-
 	private String discountCodeId; // 折價券編號
-
-	private Integer discountAmount; // 折價金額
-
-	@NotNull(message = "請確認實付金額")
-	private Integer afterDiscountAmount; // 實付金額
 
 	@NotNull(message = "請確認付款方式")
 	private Byte shopOrderPayment; // 付款方式
@@ -60,6 +54,8 @@ public class ShopOrderDTO_insert {
 
 	private Byte shopReturnApply; // 退貨申請
 
+	private List<ShopOrderItemsDetailsDTO_insert_req> detailsDto; // 訂單明細
+
 	public ShopOrderDTO_insert() {
 	}
 
@@ -89,36 +85,13 @@ public class ShopOrderDTO_insert {
 		this.shopOrderShipFee = shopOrderShipFee;
 	}
 
-	public Integer getBeforeDiscountAmount() {
-		return beforeDiscountAmount;
-	}
-
-	public void setBeforeDiscountAmount(Integer beforeDiscountAmount) {
-		this.beforeDiscountAmount = beforeDiscountAmount;
-	}
-
+	
 	public String getDiscountCodeId() {
 		return discountCodeId;
 	}
 
 	public void setDiscountCodeId(String discountCodeId) {
 		this.discountCodeId = discountCodeId;
-	}
-
-	public Integer getDiscountAmount() {
-		return discountAmount;
-	}
-
-	public void setDiscountAmount(Integer discountAmount) {
-		this.discountAmount = discountAmount;
-	}
-
-	public Integer getAfterDiscountAmount() {
-		return afterDiscountAmount;
-	}
-
-	public void setAfterDiscountAmount(Integer afterDiscountAmount) {
-		this.afterDiscountAmount = afterDiscountAmount;
 	}
 
 	public Byte getShopOrderPayment() {
@@ -192,4 +165,15 @@ public class ShopOrderDTO_insert {
 	public void setShopReturnApply(Byte shopReturnApply) {
 		this.shopReturnApply = shopReturnApply;
 	}
+
+	public List<ShopOrderItemsDetailsDTO_insert_req> getDetailsDto() {
+		return detailsDto;
+	}
+
+	public void setDetailsDto(List<ShopOrderItemsDetailsDTO_insert_req> detailsDto) {
+		this.detailsDto = detailsDto;
+	}
+	
+	
+
 }

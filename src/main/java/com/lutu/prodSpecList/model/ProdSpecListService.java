@@ -17,20 +17,30 @@ public class ProdSpecListService {
     @Autowired
     private ProdSpecListRepository repository;
 
-    /* 新增 / 修改（同一支） */
-    public ProdSpecDTO saveOrUpdate(ProdSpecDTO dto) {
-        ProdSpecListVO vo = toVO(dto);
-        ProdSpecListVO saved = repository.save(vo);
-        return toDTO(saved);
+    /* 查所有規格 */
+    public List<ProdSpecListDTO> getAllProdSpecs() {
+        List<ProdSpecListVO> voList = repository.findAll();
+        List<ProdSpecListDTO> dtoList = new ArrayList<>();
+
+        for (ProdSpecListVO vo : voList) {
+            dtoList.add(toDTO(vo));
+        }
+        return dtoList;
     }
 
-    /* 刪除 */
-//    public void delete(Integer prodId, Integer specId) {
-//    	repository.deleteById(new CompositeDetail2(prodId, specId));
-//    }
+    /* 查某商品所有商品規格 */
+    public List<ProdSpecListDTO> getProdSpecsByProdId(Integer prodId) {
+        List<ProdSpecListVO> voList = repository.findByProdId(prodId);
+        List<ProdSpecListDTO> dtoList = new ArrayList<>();
 
-    /* 查單筆 */
-    public ProdSpecDTO getOne(Integer prodId, Integer specId) {
+        for (ProdSpecListVO vo : voList) {
+            dtoList.add(toDTO(vo));
+        }
+        return dtoList;
+    }
+
+    /* 查單筆商品規格 */
+    public ProdSpecListDTO getOne(Integer prodId, Integer specId) {
         Optional<ProdSpecListVO> opt = repository.findById(new CompositeDetail2(prodId, specId));
         if (opt.isPresent()) {
             return toDTO(opt.get());
@@ -39,28 +49,29 @@ public class ProdSpecListService {
         }
     }
 
-    /* 查該商品全部規格 */
-    public List<ProdSpecDTO> findByProd(Integer prodId) {
-        List<ProdSpecListVO> list = repository.findByProdId(prodId);
-        List<ProdSpecDTO> dtoList = new ArrayList<>();
-
-        for (ProdSpecListVO vo : list) {
-            dtoList.add(toDTO(vo));
-        }
-
-        return dtoList;
+    /* 新增或修改商品規格（同一支） */
+    public ProdSpecListDTO saveOrUpdate(ProdSpecListDTO dto) {
+        ProdSpecListVO vo = toVO(dto);
+        ProdSpecListVO saved = repository.save(vo);
+        return toDTO(saved);
     }
 
+    /* 刪除 */
+//    public void delete(Integer prodId, Integer specId) {
+//        repository.deleteById(new CompositeDetail2(prodId, specId));
+//    }
+
+    
     /* ======== 轉換工具 ======== */
-    private ProdSpecDTO toDTO(ProdSpecListVO vo) {
-        ProdSpecDTO dto = new ProdSpecDTO();
+    private ProdSpecListDTO toDTO(ProdSpecListVO vo) {
+        ProdSpecListDTO dto = new ProdSpecListDTO();
         dto.setProdId(vo.getProdId());
         dto.setProdSpecId(vo.getProdSpecId());
         dto.setProdSpecPrice(vo.getProdSpecPrice());
         return dto;
     }
 
-    private ProdSpecListVO toVO(ProdSpecDTO dto) {
+    private ProdSpecListVO toVO(ProdSpecListDTO dto) {
         ProdSpecListVO vo = new ProdSpecListVO();
         vo.setProdId(dto.getProdId());
         vo.setProdSpecId(dto.getProdSpecId());

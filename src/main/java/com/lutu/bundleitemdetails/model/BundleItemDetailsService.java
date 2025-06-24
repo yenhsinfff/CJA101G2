@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lutu.bundleitem.model.BundleItemVO;
+import jakarta.transaction.Transactional;
 
 @Service("bundleItemDetailsService")
 public class BundleItemDetailsService {
@@ -27,6 +27,7 @@ public class BundleItemDetailsService {
 			repository.deleteById(bundleDetailsId);
 	}
 	
+	@Transactional
 	public BundleItemDetailsVO getOneBundleItemDetails(Integer bundleDetailsId) {
 		Optional<BundleItemDetailsVO> optional = repository.findById(bundleDetailsId);
 		return optional.orElse(null);  // public T orElse(T other) : 如果值存在就回傳其值，否則回傳other的值

@@ -14,7 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class ShopOrderDTO_update {
+public class ShopOrderDTO_res {
 	
 	@NotNull(message = "訂單編號必填")
 	private Integer shopOrderId; // 商品訂單編號
@@ -22,11 +22,14 @@ public class ShopOrderDTO_update {
 	// private MemberVO memId;
 	private Integer memId; // 露營者編號
 	
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Taipei")
+	private LocalDateTime shopOrderDate; 
+	
 	private Byte shopOrderShipment; // 出貨方式
 	
 	private Integer shopOrderShipFee; // 運費
-
-	private Integer beforeDiscountAmount; // 折價前總金額
+	
+	private Integer beforeDiscountAmount; // 折扣前金額
 
 	private String discountCodeId; // 折價券編號
 
@@ -51,14 +54,14 @@ public class ShopOrderDTO_update {
 	@Size(max = 30, message = "備註不得超過30字")
 	private String shopOrderNote; // 訂單備註
 
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Taipei")
 	private LocalDateTime shopOrderShipDate; // 出貨日期
 
 	private Byte shopOrderStatus; // 訂單狀態
 
 	private Byte shopReturnApply; // 退貨申請
 
-	public ShopOrderDTO_update() {
+	public ShopOrderDTO_res() {
 	}
 
 	// --- Getters and Setters ---
@@ -78,6 +81,15 @@ public class ShopOrderDTO_update {
 
 	public void setMemId(Integer memId) {
 		this.memId = memId;
+	}
+
+	
+	public LocalDateTime getShopOrderDate() {
+		return shopOrderDate;
+	}
+
+	public void setShopOrderDate(LocalDateTime shopOrderDate) {
+		this.shopOrderDate = shopOrderDate;
 	}
 
 	public Byte getShopOrderShipment() {

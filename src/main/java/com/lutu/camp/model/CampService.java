@@ -23,14 +23,20 @@ public class CampService {
 		return campRepository.findAll();
 		
 	}
+	
+
+	
     
-//    @Transactional
+    @Transactional
     public CampVO getOneCamp(Integer campId) {
     	CampVO camp = campRepository.findById(campId).orElse(null);
 //    	byte[] img = (camp != null) ? camp.getCampPic1() : null;
 //    	if (camp != null) {
 //            camp.getCampsiteOrders().size(); // 強制初始化
 //        }
+        if (camp != null) {
+            camp.getCampsiteTypes().size(); // 觸發初始化
+        }
     	return camp;
     	
     }
@@ -40,4 +46,19 @@ public class CampService {
     	CampVO campVO2 = getOneCamp(campVO.getCampId());
     	return campVO2;
 	}
+    
+	public void addCamp(CampVO campVO) {
+		campRepository.save(campVO);
+	}
+	
+	public void updateCamp(CampVO campVO) {
+		campRepository.save(campVO);
+	}
+	
+	public void deleteCamp(Integer campId) {
+		if (campRepository.existsById(campId))
+			campRepository.deleteById(campId);
+	}
+	
+	
 }

@@ -10,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.lutu.prodColorList.model.ProdColorListVO;
 import com.lutu.prodSpecList.model.ProdSpecListVO;
-import com.lutu.product_type.model.ProdTypeVO;
+import com.lutu.productType.model.ProdTypeVO;
 import com.lutu.shop.model.ProdFavListVO;
 import com.lutu.shop.model.ProdPicVO;
 
