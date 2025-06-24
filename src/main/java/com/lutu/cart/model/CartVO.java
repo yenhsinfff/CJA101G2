@@ -1,22 +1,20 @@
 package com.lutu.cart.model;
 
 import java.io.Serializable;
+
 import java.util.Objects;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
- 
 
-
-@RedisHash("cart")
+@RedisHash("cartItem")
 public class CartVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
 
 	@Id
-	private CartKey CartKey;	// 唯一主鍵
-	
+	private CartKey CartKey; // 唯一主鍵
+
 	private Integer memId; // 露營者編號
 	private Integer prodId; // 商品編號
 	private Integer prodColorId; // 顏色編號
@@ -24,7 +22,7 @@ public class CartVO implements Serializable {
 	private Integer cartProdQty; // 商品數量
 
 	public CartKey getCartKey() {
-		return  CartKey;
+		return CartKey;
 	}
 
 	public void setCartKey(CartKey CartKey) {
@@ -85,7 +83,7 @@ public class CartVO implements Serializable {
 		this.cartProdQty = cartProdQty;
 	}
 
-	static class CartKey implements Serializable {
+	public static class CartKey implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private Integer memId;
