@@ -112,11 +112,11 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- websocker -->
 		<dependency>
-    		<groupId>org.springframework.boot</groupId>
-   			<artifactId>spring-boot-starter-websocket</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 
 
@@ -171,28 +171,45 @@
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
-    		<artifactId>jackson-datatype-jsr310</artifactId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
 			<version>2.17.0</version>
 		</dependency>
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>4.3.1</version>
-		</dependency>
+		<!--		<dependency>-->
+		<!--			<groupId>redis.clients</groupId>-->
+		<!--			<artifactId>jedis</artifactId>-->
+		<!--			<version>4.4.3</version>-->
+		<!--		</dependency>-->
 
-	<!--		Spring data Redis 		-->
+		<!--		Spring data Redis 		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
-			<version>3.5.0</version>
+<!--			<version>3.5.0</version>-->
 		</dependency>
-	<!--		 Redis連線池 		-->	
+		<!--		 Redis連線池 		-->
+		<!--		<dependency>-->
+		<!--    		<groupId>org.apache.commons</groupId>-->
+		<!--    		<artifactId>commons-pool2</artifactId>-->
+		<!--    		<version>2.12.0</version>-->
+		<!--			</dependency>-->
+
 		<dependency>
-    		<groupId>org.apache.commons</groupId>
-    		<artifactId>commons-pool2</artifactId>
-    		<version>2.12.0</version>
-			</dependency>
-		</dependencies>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-data-redis</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+
+			<!--			test			-->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20240303</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<finalName>CJA101G02</finalName>
