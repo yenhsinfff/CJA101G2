@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.lutu.cart.model.CartVO.CartKey;
 
+
 public interface CartRepository extends CrudRepository<CartVO, CartVO.CartKey>{
 	
 

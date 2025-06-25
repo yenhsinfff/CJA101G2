@@ -50,7 +50,7 @@ public class CartController {
 
 			return new ApiResponse<>("success", cartList, "查詢成功");
 		} catch (Exception e) {
-			return new ApiResponse<>("fail", null, "新增失敗");
+			return new ApiResponse<>("fail", null, "查詢失敗");
 		}
 
 	}

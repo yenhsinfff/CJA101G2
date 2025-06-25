@@ -1,23 +1,32 @@
 package com.lutu.cart.model;
 
 import java.io.Serializable;
-
 import java.util.Objects;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 
-@RedisHash("cartItem")
+//@RedisHash("cartItem")
+@Entity
 public class CartVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
+	@EmbeddedId
 	private CartKey CartKey; // 唯一主鍵
 
+	@Transient
 	private Integer memId; // 露營者編號
+
+	@Transient
 	private Integer prodId; // 商品編號
+
+	@Transient
 	private Integer prodColorId; // 顏色編號
+
+	@Transient
 	private Integer prodSpecId; // 規格編號
 	private Integer cartProdQty; // 商品數量
 
@@ -44,7 +53,8 @@ public class CartVO implements Serializable {
 	}
 
 	public Integer getMemId() {
-		return memId;
+//		return memId;
+		return CartKey != null ? CartKey.getMemId() : null;
 	}
 
 	public void setMemId(Integer memId) {
@@ -52,7 +62,8 @@ public class CartVO implements Serializable {
 	}
 
 	public Integer getProdId() {
-		return prodId;
+//		return prodId;
+		return CartKey != null ? CartKey.getProdId() : null;
 	}
 
 	public void setProdId(Integer prodId) {
@@ -60,7 +71,8 @@ public class CartVO implements Serializable {
 	}
 
 	public Integer getProdColorId() {
-		return prodColorId;
+//		return prodColorId;
+		return CartKey != null ? CartKey.getProdColorId() : null;
 	}
 
 	public void setProdColorId(Integer prodColorId) {
@@ -68,7 +80,8 @@ public class CartVO implements Serializable {
 	}
 
 	public Integer getProdSpecId() {
-		return prodSpecId;
+//		return prodSpecId;
+		return CartKey != null ? CartKey.getProdSpecId() : null;
 	}
 
 	public void setProdSpecId(Integer prodSpecId) {
@@ -83,6 +96,7 @@ public class CartVO implements Serializable {
 		this.cartProdQty = cartProdQty;
 	}
 
+	@Embeddable
 	public static class CartKey implements Serializable {
 		private static final long serialVersionUID = 1L;
 

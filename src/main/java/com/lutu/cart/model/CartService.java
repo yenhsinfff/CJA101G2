@@ -20,6 +20,7 @@ import com.lutu.shopProd.model.ShopProdVO;
 import com.lutu.specList.model.SpecListRepository;
 import com.lutu.specList.model.SpecListVO;
 
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
 
 
@@ -31,7 +32,7 @@ public class CartService implements CartService_Interface {
 	@Autowired
 	CartRepository cr;
 
-	@Autowired
+	@Resource(name = "redisTemplateCamp")
 	RedisTemplate<String, Object> redisTemplate;
 
 	@Autowired
