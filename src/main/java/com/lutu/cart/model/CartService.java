@@ -23,8 +23,6 @@ import com.lutu.specList.model.SpecListVO;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
 
-
-
 @Transactional
 @Service
 public class CartService implements CartService_Interface {
@@ -32,7 +30,7 @@ public class CartService implements CartService_Interface {
 	@Autowired
 	CartRepository cr;
 
-	@Resource(name = "redisTemplateCamp")
+	@Resource(name = "redisTemplate")
 	RedisTemplate<String, Object> redisTemplate;
 
 	@Autowired
@@ -129,16 +127,11 @@ public class CartService implements CartService_Interface {
 
 		try {// 檢查購物車有無相同商品
 			Object existItem = redisTemplate.opsForHash().get(redisKey, hashKey);
-			if (existItem != null && existItem instanceof String) {
-				String existJson = (String) existItem;
-				// 用objectMapper把json字串轉回CartVO物件
-				CartVO exist = objectMapper.readValue(existJson, CartVO.class);
+			if (existItem instanceof CartVO exist) {
 				item.setCartProdQty(item.getCartProdQty() + exist.getCartProdQty());
 			}
-			// 把item（CartVO物件）轉成json字串，方便存進Redis
-			String itemJson = objectMapper.writeValueAsString(item);
-			// 用redisKey和hashKey，把最新的itemJson存進Redis
-			redisTemplate.opsForHash().put(redisKey, hashKey, itemJson);
+			// 直接存 CartVO 物件
+			redisTemplate.opsForHash().put(redisKey, hashKey, item);
 
 		} catch (Exception e) {
 			throw new RuntimeException("新增購物車時發生錯誤：" + e.getMessage(), e);
@@ -171,30 +164,31 @@ public class CartService implements CartService_Interface {
 		} else {
 			String redisKey = REDIS_KEY_PREFIX + memId; // Redis的key
 
-			// 從Redis Hash取得所有field-value
-			Map<Object, Object> entries = redisTemplate.opsForHash().entries(redisKey);
+			try {
+				// 從Redis Hash取得所有field-value
+				Map<Object, Object> entries = redisTemplate.opsForHash().entries(redisKey);
 
-			if (entries != null && !entries.isEmpty()) {
+				if (entries != null && !entries.isEmpty()) {
 
-				ObjectMapper map = new ObjectMapper();
+					for (Object value : entries.values()) {
 
-				for (Object value : entries.values()) {
+						if (value instanceof CartVO cartVO) {
+							if (cartVO.getMemId() == null) {
+								cartVO.setMemId(memId); // 補充 memId
+							}
 
-					try {
-						// value是JSON字串，反序列化成CartVO
-						CartVO cartVO = objectMapper.readValue(value.toString(), CartVO.class);
+							dtoList.add(toCartDTO(cartVO));
 
-						if (cartVO.getMemId() == null) {
-							cartVO.setMemId(memId); // 補充 memId
+						} else {
+							System.out.println("資料格式錯誤，非CartVO：" + value);
 						}
 
-						dtoList.add(toCartDTO(cartVO));
-
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
-
 				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("redis error!");
 			}
 
 		}
@@ -210,7 +204,7 @@ public class CartService implements CartService_Interface {
 	}
 
 	@Override
-	public void removeCart(HttpSession session, Integer memId, CartKey key) {
+	public void removeCart(HttpSession session, Integer memId	, CartKey key) {
 		// TODO Auto-generated method stub
 
 	}
