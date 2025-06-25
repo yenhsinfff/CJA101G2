@@ -32,7 +32,7 @@ public class CartService implements CartService_Interface {
 	@Autowired
 	CartRepository cr;
 
-	@Resource(name = "redisTemplateCamp")
+	@Resource(name = "redisTemplate")
 	RedisTemplate<String, Object> redisTemplate;
 
 	@Autowired
