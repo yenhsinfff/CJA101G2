@@ -106,18 +106,8 @@ public class CampSiteOrderVO implements java.io.Serializable {
 	@OneToMany(mappedBy = "campSiteOrderVO", cascade = CascadeType.ALL)
 	private Set<CampSiteOrderDetailsVO> campsiteOrderDetails = new HashSet<>();
 
-	public String getCampsiteOrderId() {
-		return campsiteOrderId;
-	}
-
-	public void setCampsiteOrderId(String campsiteOrderId) {
-		this.campsiteOrderId = campsiteOrderId;
-	}
-
-	public Set<CampSiteOrderDetailsVO> getCampSiteOrderDetails() {
-		return campsiteOrderDetails;
-	}
-
+	
+	//=====================ManyToOne=====================//
 	public void setCampSiteOrderDetails(Set<CampSiteOrderDetailsVO> campsiteOrders) {
 		this.campsiteOrderDetails = campsiteOrders;
 	}
@@ -130,7 +120,7 @@ public class CampSiteOrderVO implements java.io.Serializable {
 		this.memberVO = memberVO;
 	}
 
-	// FK的關聯欄位
+	
 	public CampVO getCampVO() {
 		return campVO;
 	}
@@ -138,6 +128,21 @@ public class CampSiteOrderVO implements java.io.Serializable {
 	public void setCampVO(CampVO campVO) {
 		this.campVO = campVO;
 	}
+	//=====================OneToMany=====================//
+	public void setCampsiteOrderId(String campsiteOrderId) {
+		this.campsiteOrderId = campsiteOrderId;
+	}
+
+	public Set<CampSiteOrderDetailsVO> getCampSiteOrderDetails() {
+		return campsiteOrderDetails;
+	}
+	
+	//=====================OneToMany=====================//
+	public String getCampsiteOrderId() {
+		return campsiteOrderId;
+	}
+
+	
 
 	public String getDiscountCodeId() {
 		return discountCodeId;
