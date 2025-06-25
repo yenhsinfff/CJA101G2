@@ -1,20 +1,13 @@
 package com.lutu;
 
 
-import java.util.Set;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import com.lutu.camptracklist.model.CampTrackListVO;
-import com.lutu.member.model.MemberService;
-import com.lutu.member.model.MemberVO;
-import com.lutu.product_type.model.ProdTypeVO;
 import com.lutu.productType.model.ProdTypeVO;
 import com.lutu.shopProd.model.ShopProdRepository;
 

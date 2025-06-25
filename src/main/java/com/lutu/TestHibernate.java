@@ -11,10 +11,10 @@ import com.lutu.bundleitem.model.BundleItemService;
 import com.lutu.bundleitem.model.BundleItemVO;
 import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
 import com.lutu.campsite.model.CampsiteService;
+import com.lutu.campsite.model.CampsiteVO;
+import com.lutu.campsitetype.model.CampsiteTypeService;
+import com.lutu.campsitetype.model.CampsiteTypeVO;
 import com.lutu.camptracklist.model.CampTrackListService;
-import com.lutu.camptracklist.model.CampTrackListVO;
-import com.lutu.member.model.MemberService;
-import com.lutu.member.model.MemberVO;
 
 @SpringBootApplication
 //@ComponentScan(basePackages = "com.lutu")  // 掃描你的 Service 等 component

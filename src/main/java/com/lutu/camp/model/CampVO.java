@@ -16,6 +16,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -77,7 +78,8 @@ public class CampVO implements java.io.Serializable {
     @JsonManagedReference
     private Set<CampSiteOrderVO> campsiteOrders = new HashSet<>();  
 
-    @OneToMany(mappedBy = "camp", cascade = CascadeType.ALL)
+    @OneToMany( cascade = CascadeType.ALL)
+    @JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
     private Set<CampsiteTypeVO> campsiteTypes;
     
     @OneToMany(mappedBy = "camp", cascade = CascadeType.ALL)
