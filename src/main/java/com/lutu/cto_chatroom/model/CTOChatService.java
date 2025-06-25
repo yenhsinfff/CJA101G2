@@ -19,9 +19,6 @@ public class CTOChatService {
 	@Autowired
 	CTORedisRepository ctoRedisRepository;
 
-	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
-
 	public void createMsg(int memId, int ownerId,CTOChatRoomVO vo) {
 //		CTOChatRoomVO vo = new CTOChatRoomVO();
 //		
