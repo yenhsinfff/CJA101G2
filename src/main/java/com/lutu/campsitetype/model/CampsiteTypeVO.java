@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 
-import com.lutu.camp.model.CampVO;
 import com.lutu.campsite.model.CampsiteVO;
 
 import jakarta.persistence.CascadeType;
@@ -13,14 +12,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "campsite_type")
@@ -65,20 +64,25 @@ public class CampsiteTypeVO implements Serializable {
 
 //=======================Association==================================	
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@MapsId("campId") // 映射為外鍵
-	@JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
-	private CampVO camp;
-
-	public CampVO getCamp() {
-		return camp;
-	}
-
-	public void setCamp(CampVO camp) {
-		this.camp = camp;
-	}
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@MapsId("campId") // 映射為外鍵
+//	@JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
+//	private CampVO camp;
+//
+//	public CampVO getCamp() {
+//		return camp;
+//	}
+//
+//	public void setCamp(CampVO camp) {
+//		this.camp = camp;
+//	}
 	
-	@OneToMany(mappedBy = "campsiteType", cascade =CascadeType.ALL)
+//	@OneToMany(mappedBy = "campsiteType", cascade =CascadeType.ALL)
+	@OneToMany(cascade =CascadeType.ALL)
+	@JoinColumns({
+	    @JoinColumn(name = "camp_id", referencedColumnName = "camp_id"),
+	    @JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id")
+	})
 	private Set<CampsiteVO> campsites;
 	
 	
@@ -185,9 +189,11 @@ public class CampsiteTypeVO implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Column(name = "campsite_type_id")
+		@Min(value = 2001, message = "房型編號起始值為2001")
 		private Integer campsiteTypeId; // 營地房型編號
 
 		@Column(name = "camp_id")
+		@Min(value = 1001, message = "營地編號起始值為1001")
 		private Integer campId; // 營地編號
 
 		// 一定要有無參數建構子

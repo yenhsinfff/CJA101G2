@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lutu.ApiResponse;
 import com.lutu.member.model.MemberService;
+import com.lutu.member.model.MemberVO;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -57,5 +59,13 @@ public class MemberApiController {
 		        }
 		    }
 		  }
+	
+	//取得會員
+	
+	@GetMapping("/getallmembers")
+	public List <MemberVO> getAllMembers() {
+		List <MemberVO> memberList =  memberSvc.getAll();
+		return memberList;
+	}
 
 }

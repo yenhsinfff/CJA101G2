@@ -51,7 +51,9 @@ public class CampsiteService {
 	    if (campsiteTypeVO == null) throw new RuntimeException("查無對應營位類型");
 
 	    CampsiteVO campsiteVO = new CampsiteVO();
-	    campsiteVO.setCampsiteType(campsiteTypeVO);
+//	    campsiteVO.setCampsiteType(campsiteTypeVO);
+	    campsiteVO.setCampId(campId);
+	    campsiteVO.setCampsiteTypeId(campsiteTypeId);
 	    campsiteVO.setCampsiteIdName(name);
 	    campsiteVO.setCamperName(camper);
 	    repository.save(campsiteVO);

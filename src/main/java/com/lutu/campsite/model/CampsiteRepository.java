@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CampsiteRepository extends JpaRepository<CampsiteVO, Integer>{
 
-	List<CampsiteVO> findByCampsiteType_Id_CampId(Integer campId);
+//	List<CampsiteVO> findByCampsiteType_Id_CampId(Integer campId);
 	
 	
 	

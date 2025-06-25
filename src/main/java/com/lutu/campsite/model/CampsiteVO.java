@@ -2,6 +2,7 @@ package com.lutu.campsite.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
 
 import jakarta.persistence.Column;
@@ -33,27 +34,49 @@ public class CampsiteVO implements Serializable {
 	@Column(name = "camper_name")
 	private String camperName; // 露營者姓名
 	
+	@Column(name="camp_id")
+	private Integer campId;
+	
+	@Column(name="campsite_type_id")
+	private Integer campsiteTypeId;
+	
 	
 	
 	//=======================Association==================================		
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumns({
-		@JoinColumn(name = "camp_id", referencedColumnName = "camp_id"),
-		@JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id")   
-	    })
-	private CampsiteTypeVO campsiteType;
-	
-	public CampsiteTypeVO getCampsiteType() {
-		return campsiteType;
-	}
-
-	public void setCampsiteType(CampsiteTypeVO campsiteType) {
-		this.campsiteType = campsiteType;
-	}
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumns({
+//		@JoinColumn(name = "camp_id", referencedColumnName = "camp_id"),
+//		@JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id")   
+//	    })
+//	private CampsiteTypeVO campsiteType;
+//	
+//	public CampsiteTypeVO getCampsiteType() {
+//		return campsiteType;
+//	}
+//
+//	public void setCampsiteType(CampsiteTypeVO campsiteType) {
+//		this.campsiteType = campsiteType;
+//	}
 
 	//===================================================================	
 	
+	public Integer getCampId() {
+		return campId;
+	}
+
+	public void setCampId(Integer campId) {
+		this.campId = campId;
+	}
+
+	public Integer getCampsiteTypeId() {
+		return campsiteTypeId;
+	}
+
+	public void setCampsiteTypeId(Integer campsiteTypeId) {
+		this.campsiteTypeId = campsiteTypeId;
+	}
+
 	public CampsiteVO() {
 		
 	}
@@ -84,11 +107,11 @@ public class CampsiteVO implements Serializable {
 	}
 
 	//覆寫 toString() 後，可以顯示內容
-	@Override
-	public String toString() {
-		return "CampsiteVO [campsiteId=" + campsiteId + ", campsiteTypeId=" + (campsiteType != null ? campsiteType.getId() : "null") 
-				+ ", campsiteIdName=" + campsiteIdName + ", camperName=" + camperName + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "CampsiteVO [campsiteId=" + campsiteId + ", campsiteTypeId=" + (campsiteType != null ? campsiteType.getId() : "null") 
+//				+ ", campsiteIdName=" + campsiteIdName + ", camperName=" + camperName + "]";
+//	}
 
 	
 	
