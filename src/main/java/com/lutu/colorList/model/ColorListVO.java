@@ -33,7 +33,6 @@ public class ColorListVO implements Serializable{
 	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,50}$", message = "顏色名稱: 只能是中、英文字母、數字和_ , 且長度必需在2到50之間")
     private String colorName;     // 顏色名稱
 	
-
 	@OneToMany(mappedBy = "colorListVO", cascade = CascadeType.ALL)
 	@OrderBy("prodColorId asc")
 	private Set<ProdColorListVO> prodColors;

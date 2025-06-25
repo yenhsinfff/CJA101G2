@@ -12,6 +12,7 @@ public class CartDTO_res {
 	private Integer cartProdQty; // 商品數量
 	
 	
+	
 	public Integer getMemId() {
 		return memId;
 	}
