@@ -15,6 +15,8 @@ public interface CampsiteTypeRepository extends JpaRepository<CampsiteTypeVO, Co
 	
 	List<CampsiteTypeVO> findByIdCampId(Integer campId);
 	
+	
+	//新增營地房型時，找出最大的CampsiteTypeId
 	@Query("SELECT MAX(c.id.campsiteTypeId) FROM CampsiteTypeVO c")
 	Integer findAllMaxCampsiteTypeId();
 	

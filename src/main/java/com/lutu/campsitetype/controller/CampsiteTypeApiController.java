@@ -33,35 +33,22 @@ public class CampsiteTypeApiController {
 
 
 	// 取得所有營地房型
-	@GetMapping("/getCampsiteTypes")
+//	@GetMapping("/getCampsiteTypes")
+//	public ApiResponse<List<CampsiteTypeVO>> getCampsiteTypeList(@PathVariable Integer campId) {
+//	    List<CampsiteTypeVO> campsiteTypeList = campsiteTypeSvc.getByCampId(campId);
+//	    return new ApiResponse<>("success", campsiteTypeList, "查詢成功");
+//	}
+	
+	//http://localhost:8081/CJA101G02/campsitetype/1001/getCampsiteTypes
+	//http://localhost:8081/CJA101G02/campsitetype/{campId}/getCampsiteTypes
+	// 查詢特定營地的房型
+	@GetMapping("/{campId}/getCampsiteTypes")
 	public ApiResponse<List<CampsiteTypeVO>> getCampsiteTypeList(@PathVariable Integer campId) {
 	    List<CampsiteTypeVO> campsiteTypeList = campsiteTypeSvc.getByCampId(campId);
 	    return new ApiResponse<>("success", campsiteTypeList, "查詢成功");
 	}
-	
-	// 查詢特定營地的房型
-	@GetMapping("/{campId}/getCampsiteTypes")
-	public ApiResponse<List<CampsiteTypeVO>> getCampsiteTypeList() {
-	    List<CampsiteTypeVO> campsiteTypeList = campsiteTypeSvc.getAll();
-	    return new ApiResponse<>("success", campsiteTypeList, "查詢成功");
-	}
 
 	
-	//查詢房型的房間List
-	@GetMapping("/getCampsites")
-	public ApiResponse<Set<CampsiteVO>> getCampsitesList(
-	        @RequestParam Integer campId,
-	        @RequestParam Integer campsiteTypeId) {
-
-	    CampsiteTypeVO campsiteTypeVO = campsiteTypeSvc.getOneCampsiteType(campsiteTypeId, campId);
-
-	    if (campsiteTypeVO == null) {
-	        return new ApiResponse<>("fail", null, "查無此房型");
-	    }
-
-	    Set<CampsiteVO> campsites = campsiteTypeVO.getCampsites();
-	    return new ApiResponse<>("success", campsites, "查詢成功");
-	}
 	
 	// 新增營地房型(可自動抓取營地主ID，會員session設置後再開啟此版本)
 //	@PostMapping("/addCampsiteType")
@@ -72,7 +59,8 @@ public class CampsiteTypeApiController {
 //	    return new ApiResponse<>("success", campsiteType, "新增成功");
 //	}
 	
-	// 新增營地房型(測試使用)
+	//http://localhost:8081/CJA101G02/campsitetype/addCampsiteType
+	// 新增營地房型，campsiteTypeId可自動遞增(測試使用)
 	@PostMapping("/addCampsiteType")
 	public ApiResponse<CampsiteTypeVO> addCampsiteType(@RequestBody CampsiteTypeVO campsiteTypeVO) {
 	    // 從 VO 中取出 campId
@@ -83,7 +71,7 @@ public class CampsiteTypeApiController {
 	
 
 	
-	
+	//http://localhost:8081/CJA101G02/campsitetype/updateCampsiteType
 	// 修改營地房型
 	@PostMapping("/updateCampsiteType")
 	public ApiResponse<CampsiteTypeVO> updateCampsiteType(@RequestBody @Valid CampsiteTypeVO campsiteTypeVO) {
@@ -95,14 +83,11 @@ public class CampsiteTypeApiController {
 	    }
 	}
 	
-
+	//http://localhost:8081/CJA101G02/campsitetype/deleteCampsiteType
 	// 刪除營地房型
 	@PostMapping("/deleteCampsiteType")
-	public ApiResponse<String> deleteCampsiteType(
-	        @RequestParam Integer campId,
-	        @RequestParam Integer campsiteTypeId) {
+	public ApiResponse<String> deleteCampsiteType(@RequestBody CampsiteTypeVO.CompositeDetail id) {
 	    try {
-	        CampsiteTypeVO.CompositeDetail id = new CampsiteTypeVO.CompositeDetail(campsiteTypeId, campId);
 	        campsiteTypeSvc.deleteCampsiteType(id);
 	        return new ApiResponse<>("success", null, "刪除成功");
 	    } catch (EntityNotFoundException e) {
@@ -110,6 +95,23 @@ public class CampsiteTypeApiController {
 	    } catch (Exception e) {
 	        return new ApiResponse<>("fail", null, "刪除失敗：" + e.getMessage());
 	    }
+	}
+	
+	//http://localhost:8081/CJA101G02/campsitetype/2003/1002/getcampsites
+	//http://localhost:8081/CJA101G02/campsitetype/{campsiteTypeId}/{campId}/getcampsites
+	//取得特定營地房型下所有的房間
+	@GetMapping("/{campsiteTypeId}/{campId}/getcampsites")
+	public ApiResponse<Set<CampsiteVO>> getCampsitesByType(
+			 @PathVariable Integer campsiteTypeId,
+			@PathVariable Integer campId) {
+
+	    CampsiteTypeVO campsiteType = campsiteTypeSvc.getOneCampsiteType(campsiteTypeId, campId);
+	    if (campsiteType == null) {
+	        return new ApiResponse<>("fail", null, "查無此房型");
+	    }
+
+	    Set<CampsiteVO> campsiteList = campsiteType.getCampsites();
+	    return new ApiResponse<>("success", campsiteList, "查詢成功");
 	}
 	
 	
