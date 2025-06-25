@@ -1,6 +1,7 @@
 package com.lutu;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -49,7 +50,7 @@ public class ApiController {
 
 	@PostMapping("/api/linepay/{isCamp}")
 	public ApiResponse<String> doLinePay(@PathVariable Boolean isCamp, @RequestBody String jsonBody,
-			HttpServletResponse response) throws IOException {
+			HttpServletResponse response) throws IOException, JSONException {
 		final String channelId = "1656895462";
 		final String CHANNEL_SECRET = "fd01e635b9ea97323acbe8d5c6b2fb71";
 		final String API_URL = "https://sandbox-api-pay.line.me/v3/payments/request";
@@ -117,7 +118,7 @@ public class ApiController {
 	// 確認LINEPAY付款狀態
 	@GetMapping("api/confirmpayment/{orderId}/{isCamp}")
 	public void checkLinePayStatus(@PathVariable String orderId, @PathVariable Boolean isCamp,HttpServletResponse responseServlet)
-			throws IOException, URISyntaxException {
+			throws IOException, URISyntaxException, JSONException {
 		final String channelId = "1656895462";
 		final String CHANNEL_SECRET = "fd01e635b9ea97323acbe8d5c6b2fb71";
 		final String API_URL = "https://sandbox-api-pay.line.me/v2/payments/orders/" + orderId + "/check";

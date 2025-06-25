@@ -25,8 +25,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import redis.clients.jedis.Jedis;
-
 @SpringBootApplication
 //@ComponentScan("com.lutu") // 手動指定掃描範圍
 public class TestRedisChatRoom {
