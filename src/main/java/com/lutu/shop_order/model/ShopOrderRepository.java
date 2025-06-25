@@ -44,8 +44,6 @@ public interface ShopOrderRepository extends JpaRepository<ShopOrderVO, Integer>
 	@Query(value = "from ShopOrderVO o where o.memId = :memId")
 	List<ShopOrderVO> findByMember(MemberVO memId);
 	
-	 @Query(value = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'lutudb' AND TABLE_NAME = 'shop_order'", nativeQuery = true)
-	    Long findNextAutoIncrement();
 	
 //	//訂單資料單筆查詢
 //	@Query(value = "from ShopOrderVO o where o.shopOrderId = :shopOrderId")
