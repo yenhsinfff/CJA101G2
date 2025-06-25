@@ -241,7 +241,7 @@ public class ShopOrderService {
 					afterDiscountAmount = beforeDiscountAmount.subtract(value).add(shipFee);
 				} else if (type == 1) { // 百分比折扣
 					// 折扣前金額*(1 - discountValue(%))並四捨五入
-					BigDecimal discountAmount = beforeDiscountAmount.multiply(BigDecimal.ONE.subtract(value))
+					BigDecimal discountAmount = beforeDiscountAmount.multiply(value)
 							.setScale(0, RoundingMode.HALF_UP);
 					sovo.setDiscountAmount(discountAmount.intValue());
 					// 計算實付金額 = 折扣前金額 - 折扣金額 + 運費 

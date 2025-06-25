@@ -1,5 +1,9 @@
 package com.lutu.cart.model;
 
+import java.util.List;
+
+import com.lutu.cart.model.dto.CartDTO_res;
+
 import jakarta.servlet.http.HttpSession;
 
 public interface CartService_Interface {
@@ -7,10 +11,10 @@ public interface CartService_Interface {
 	// 定義購物車可以提供哪些服務
 	
 	// 加入購物車
-	void addCart(HttpSession session, Integer memId, CartList list);
+	CartDTO_res addCart(HttpSession session, Integer memId, Integer prodId, Integer prodColorId, Integer prodSpecId, Integer cartProdQty);
 	
 	// 查詢購物車
-	CartList getCart(HttpSession session, Integer memId);
+	List<CartDTO_res> getCart(HttpSession session, Integer memId);
 
 	// 修改購物車內容
 	void updateCart(HttpSession session, Integer memId, CartVO item);

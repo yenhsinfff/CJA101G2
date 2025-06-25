@@ -6,11 +6,13 @@ import java.util.Set;
 
 import com.lutu.prodColorList.model.ProdColorListVO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
@@ -31,7 +33,8 @@ public class ColorListVO implements Serializable{
 	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,50}$", message = "顏色名稱: 只能是中、英文字母、數字和_ , 且長度必需在2到50之間")
     private String colorName;     // 顏色名稱
 	
-//	@OneToMany(mappedBy = "colorListVO", cascade = CascadeType.ALL)
+
+	@OneToMany(mappedBy = "colorListVO", cascade = CascadeType.ALL)
 	@OrderBy("prodColorId asc")
 	private Set<ProdColorListVO> prodColors;
   
