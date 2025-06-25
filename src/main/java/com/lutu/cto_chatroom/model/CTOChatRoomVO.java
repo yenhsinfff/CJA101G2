@@ -1,25 +1,25 @@
-package com.lutu.camp_chatroom.model;
+package com.lutu.cto_chatroom.model;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
-public class CampChatRoomVO {
+public class CTOChatRoomVO {
 
-	private Integer chatroomMsgId; // 聊天室編號
+	//private Integer chatroomMsgId; // 聊天室編號
     private Integer memId; // 露營者編號
     private Integer ownerId; // 營地主編號
     private Byte chatMsgDirect; // 訊息發送方向 "0: 露營者會員對營地主會員 1: 營地主會員對露營者會員"
-    private Timestamp chatMsgTime; // 訊息發送時間
+    private Long chatMsgTime; // 訊息發送時間
     private String chatMsgContent; // 訊息內容
     private Integer status; // 0=已讀, 1=未讀
-    private Long timestamp;
 
-    public Integer getChatroomMsgId() {
-        return chatroomMsgId;
-    }
-
-    public void setChatroomMsgId(Integer chatroomMsgId) {
-        this.chatroomMsgId = chatroomMsgId;
-    }
+//    public Integer getChatroomMsgId() {
+//        return chatroomMsgId;
+//    }
+//
+//    public void setChatroomMsgId(Integer chatroomMsgId) {
+//        this.chatroomMsgId = chatroomMsgId;
+//    }
 
     public Integer getMemId() {
         return memId;
@@ -45,11 +45,11 @@ public class CampChatRoomVO {
         this.chatMsgDirect = chatMsgDirect;
     }
 
-    public Timestamp getChatMsgTime() {
+    public Long getChatMsgTime() {
         return chatMsgTime;
     }
 
-    public void setChatMsgTime(Timestamp chatMsgTime) {
+    public void setChatMsgTime(Long chatMsgTime) {
         this.chatMsgTime = chatMsgTime;
     }
 
@@ -67,14 +67,6 @@ public class CampChatRoomVO {
 
 	public void setStatus(Integer status) {
 		this.status = status;
-	}
-
-	public Long getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Long timestamp) {
-		this.timestamp = timestamp;
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.lutu.camp_chatroom.model;
+package com.lutu.cto_chatroom.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -6,17 +6,17 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class ChatRedisRepository {
+public class CTORedisRepository {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     private String getRoomKey(Integer memId, Integer ownerId) {
         // 用戶ID排序確保唯一性
-        return "room:" + Math.min(memId, ownerId) + ":" + Math.max(memId, ownerId);
+        return "CTOROOM:" + Math.min(memId, ownerId) + ":" + Math.max(memId, ownerId);
     }
 
     // 儲存訊息
-    public void saveMessage(Integer memId, Integer ownerId, CampChatRoomVO message) {
+    public void saveMessage(Integer memId, Integer ownerId, CTOChatRoomVO message) {
         String key = getRoomKey(memId, ownerId);
         redisTemplate.opsForList().rightPush(key, message);
     }
