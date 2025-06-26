@@ -128,15 +128,19 @@ public class CampSiteOrderService {
             vo.setCommentDate(Timestamp.valueOf(orderJson.getString("date")));
         }
         // 關聯 CampVO
-        CampVO camp = new CampVO();
-        camp.setCampId(Integer.parseInt(orderJson.getString("campId")));
-        camp.setCampName(orderJson.getString("campName"));
-        vo.setCampVO(camp);
+//        CampVO camp = new CampVO();
+//        camp.setCampId(Integer.parseInt(orderJson.getString("campId")));
+//        camp.setCampName(orderJson.getString("campName"));
+//        vo.setCampVO(camp);
+        
+        vo.setCampId(Integer.parseInt(orderJson.getString("campId")));
         
         // 關聯 MemberVO
-        MemberVO member = new MemberVO();
-        member.setMemId(orderJson.getInt("memId"));
-        vo.setMemberVO(member);
+//        MemberVO member = new MemberVO();
+//        member.setMemId(orderJson.getInt("memId"));
+//        vo.setMemberVO(member);
+        
+        vo.setMemId(orderJson.getInt("memId"));
         // 折價券
         vo.setDiscountCodeId(orderJson.getString("discountCodeId"));
         // 訂單明細

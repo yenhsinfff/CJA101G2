@@ -31,7 +31,7 @@ public class DiscountCodeVO implements Serializable{
 	
 	@Id  
 	@Column(name = "discount_code_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String discountCodeId; //折價券編號
 	
 	@Column(name = "discount_code")

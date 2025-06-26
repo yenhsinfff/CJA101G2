@@ -1,8 +1,12 @@
-package com.lutu.campsite_order.controller;
 
+package com.lutu.discount_code.controller;
+
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.boot.SpringApplication;
@@ -13,80 +17,66 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import com.lutu.administrator.model.AdministratorVO;
 import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
+import com.lutu.discount_code.model.DiscountCodeService;
+import com.lutu.discount_code.model.DiscountCodeVO;
 import com.lutu.member.model.MemberVO;
+import com.lutu.owner.model.OwnerVO;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.lutu") // 掃描你的 Service 等 component
 //@EnableJpaRepositories(basePackages = "com.lutu")  // 掃描 Repository
 @EntityScan(basePackages = "com.lutu") // 掃描 table
-public class TestCampsiteOrder {
+public class TestDiscountCode {
 
 	public static void main(String[] args) {
 		// 啟動 Spring Boot 並取得 ApplicationContext
 //        ConfigurableApplicationContext context = SpringApplication.run(TestHibernateCampsiteOrder.class, args);
-		SpringApplication app = new SpringApplication(TestCampsiteOrder.class);
+		SpringApplication app = new SpringApplication(TestDiscountCode.class);
 		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
 		ConfigurableApplicationContext context = app.run(args);
 
-		// ================================ 營地訂單 =======================================
-		CampSiteOrderService svc = context.getBean(CampSiteOrderService.class);
-		String orderIdString = svc.generateCampsiteOrderId();
-		System.out.println("orderIdString:" + orderIdString);
-
-		// 新增訂單
-		CampSiteOrderVO order = new CampSiteOrderVO();
-
-		// 基本訂單資訊
-		order.setCampsiteOrderId("ORD20250624001");
-		order.setOrderDate(Timestamp.valueOf("2025-06-24 14:30:00"));
-		order.setCampsiteOrderStatus((byte) 3); // 訂單狀態: 0=露營者為付款 3=訂單結案
-		order.setPayMethod((byte) 2); // 支付方式: 1=信用卡
-
-		// 金額相關
-		order.setBundleAmount(1200); // 加購項目總金額
-		order.setCampsiteAmount(8600); // 營地總金額
-		order.setBefAmount(9800); // 折價前總金額
-		order.setDisAmount(200); // 折價金額
-		order.setAftAmount(9600); // 實付金額
-
-		// 日期相關
-		order.setCheckIn(Date.valueOf("2025-07-15"));
-		order.setCheckOut(Date.valueOf("2025-07-17"));
-
-		// 評價資訊（可選）
-		order.setCommentSatisfaction(5);
-		order.setCommentContent("營地設施完善，服務周到");
-		order.setCommentDate(Timestamp.valueOf("2025-07-20 10:00:00"));
-
-		// 關聯營地物件
-//		CampVO camp = new CampVO();
-//		camp.setCampId(1001); // 對應 camp 表的 camp_id
-//		camp.setCampName("山林秘境");
-//		order.setCampVO(camp);
-		order.setCampId(1001);
-
-		// 關聯會員物件
-//		MemberVO memberVO = new MemberVO();
-//		memberVO.setMemId(10000001);
-//		order.setMemberVO(memberVO);
 		
-		order.setMemId(10000001);
+		DiscountCodeService svc = context.getBean(DiscountCodeService.class);
 
-		// 折價券資訊
-		order.setDiscountCodeId("C00001"); // 對應 discount_code 表
+		
+		// ================================ 折價券(產生新折價券Id) =======================================//
+//		String newCodeString= svc.getNextDiscountCodeId("S");
+//		System.out.println("newcode:"+newCodeString);
+		
+		// ================================ 折價券(產生新折價券) =======================================//
+		DiscountCodeVO a1 = new DiscountCodeVO();
+      
+        a1.setDiscountCode("帶媽媽去露營");
+        a1.setDiscountType((byte) 1);
+        a1.setDiscountValue(new BigDecimal("0.10"));
+        a1.setDiscountExplain("歡慶爸爸節8月份全館優惠活動！全平台露營商品或訂房折扣10%OFF");
+        a1.setMinOrderAmount(new BigDecimal("3000"));
+        a1.setStartDate(LocalDateTime.of(2025, 8, 1, 0, 0));
+        a1.setEndDate(LocalDateTime.of(2025, 8, 31, 0, 0));
+        a1.setCreated(LocalDateTime.of(2025, 6, 27, 11, 14, 3));
+        a1.setUpdate(null);
+        
+        OwnerVO ownerVO= new OwnerVO();
+        ownerVO.setOwnerId(null);
+        AdministratorVO administratorVO= new AdministratorVO();
+        administratorVO.setAdminId(30000002);
+        
+        
+        svc.addDiscountCode("A", a1);
+        
+		// ================================ 折價券(GetALL) =======================================//
+		List<DiscountCodeVO> discountCodeVOList = svc.getAll();
 
-		// 訂單明細
-		Set<CampSiteOrderDetailsVO> details = new HashSet<>();
-		details.add(createOrderDetail(2001, 2, 10400, order)); // 小木屋四人房 x2
-		details.add(createOrderDetail(2002, 1, 3400, order)); // 小木屋雙人房 x1
-		order.setCampSiteOrderDetails(details);
-
-		svc.createOneCampOrder(order);
-		System.out.println("FINISH");
+		for(DiscountCodeVO vo:discountCodeVOList) {
+			System.out.println("Id:"+vo.getDiscountCodeId());
+			System.out.println("DISCOUNT_CODE:"+vo.getDiscountCode());
+		}
+       
 
 		// 測試取消訂單
 //				CampsiteCancellationService campsiteCancellationSvc = context.getBean(CampsiteCancellationService.class);
