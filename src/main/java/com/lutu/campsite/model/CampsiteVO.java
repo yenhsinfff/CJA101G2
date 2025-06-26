@@ -34,30 +34,30 @@ public class CampsiteVO implements Serializable {
 	@Column(name = "camper_name")
 	private String camperName; // 露營者姓名
 	
-	@Column(name="camp_id")
+	@Column(name="camp_id", insertable = false, updatable = false)
 	private Integer campId;
 	
-	@Column(name="campsite_type_id")
+	@Column(name="campsite_type_id", insertable = false, updatable = false)
 	private Integer campsiteTypeId;
 	
 	
 	
 	//=======================Association==================================		
 	
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumns({
-//		@JoinColumn(name = "camp_id", referencedColumnName = "camp_id"),
-//		@JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id")   
-//	    })
-//	private CampsiteTypeVO campsiteType;
-//	
-//	public CampsiteTypeVO getCampsiteType() {
-//		return campsiteType;
-//	}
-//
-//	public void setCampsiteType(CampsiteTypeVO campsiteType) {
-//		this.campsiteType = campsiteType;
-//	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumns({
+		@JoinColumn(name = "camp_id", referencedColumnName = "camp_id"),
+		@JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id")   
+	    })
+	private CampsiteTypeVO campsiteType;
+	
+	public CampsiteTypeVO getCampsiteType() {
+		return campsiteType;
+	}
+
+	public void setCampsiteType(CampsiteTypeVO campsiteType) {
+		this.campsiteType = campsiteType;
+	}
 
 	//===================================================================	
 	
