@@ -1,28 +1,19 @@
 package com.lutu;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
-
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-
 import com.lutu.article.model.ArticlesService;
 import com.lutu.article.model.ArticlesVO;
-import com.lutu.campsitetype.model.CampsiteTypeService;
-import com.lutu.campsitetype.model.CampsiteTypeVO;
-import com.lutu.bundleitem.model.BundleItemService;
 import com.lutu.bundleitem.model.BundleItemVO;
-import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
 import com.lutu.campsite.model.CampsiteService;
-import com.lutu.camptracklist.model.CampTrackListService;
-import com.lutu.camptracklist.model.CampTrackListVO;
-import com.lutu.member.model.MemberService;
-import com.lutu.member.model.MemberVO;
 
 
 @SpringBootApplication
@@ -229,9 +220,27 @@ public class TestHibernate {
 //				bundleItemSvc.deleteBundleItem(8);
 
 		
-		//================================ 文章 =======================================
-		ArticlesService articlesSvc = context.getBean(ArticlesService.class);
+		//================================ 討論區文章 =======================================
+		ArticlesService svc = context.getBean(ArticlesService.class);
+		
+			    // 只顯示基本資料（不包含延遲載入的集合）
+		        List<ArticlesVO> list = svc.getAll();
+		        
+		        for (ArticlesVO vo : list) {
+		            System.out.print(vo.getAcId() + ",");
+		            System.out.print(vo.getAcTitle() + ",");
+		            System.out.print(vo.getMemberVO() + ",");
+		            System.out.print(vo.getArticleTypeVO() + ",");
+		            System.out.print(vo.getAcTime() + ",");
+		            System.out.print(vo.getAcContext() + ",");
+		            System.out.print(vo.getAcStatus());
+		            System.out.println(); // 不包含延遲載入的集合
+		            
+		        }
+		        
 
+		        //這是包含有延遲載入資訊的版本-----------------------------------------------------------------------------
+		        
 //				BundleItemVO_getAllBundleItem
 //				List<ArticlesVO> list = articlesSvc.getAll();
 //				for (ArticlesVO VO : list) {
@@ -250,21 +259,7 @@ public class TestHibernate {
 //					System.out.println();
 //				}
 
-				//-------------------------------------------------------------------------------		
-				
-			    // 只顯示基本資料（不包含延遲載入的集合）
-		        List<ArticlesVO> list = articlesSvc.getAll();
-		        for (ArticlesVO vo : list) {
-		            System.out.print(vo.getAcId() + ",");
-		            System.out.print(vo.getAcTitle() + ",");
-		            System.out.print(vo.getMemberVO() + ",");
-		            System.out.print(vo.getArticleTypeVO() + ",");
-		            System.out.print(vo.getAcTime() + ",");
-		            System.out.print(vo.getAcContext() + ",");
-		            System.out.print(vo.getAcStatus());
-		            System.out.println(); // 不包含延遲載入的集合
-		        }
-		        
+
 				//-------------------------------------------------------------------------------	
 		        
 				
@@ -278,15 +273,26 @@ public class TestHibernate {
 //				System.out.print(bundleItemVO.getBundleName()+ ",");
 //				System.out.print(bundleItemVO.getBundleAddDate()+ ",");
 //				System.out.print(bundleItemVO.getBundlePrice());
+//
+//				// 修改
+//		        ArticlesVO VO = svc.getOneArticles(30000001);
+//		        VO.setAcTitle("測試標題");
+//		        VO.setAcContext("測試文章內容");
+//		        LocalDateTime acTime = LocalDateTime.parse("2025-05-29T00:00:00");
+//		        VO.setAcTime(acTime);
+//				
+//		        for (ArticlesVO vo : list) {
+//		            System.out.print(vo.getAcId() + ",");
+//		            System.out.print(vo.getAcTitle() + ",");
+//		            System.out.print(vo.getMemberVO() + ",");
+//		            System.out.print(vo.getArticleTypeVO() + ",");
+//		            System.out.print(vo.getAcTime() + ",");
+//		            System.out.print(vo.getAcContext() + ",");
+//		            System.out.print(vo.getAcStatus());
+//		            System.out.println(); // 不包含延遲載入的集合
+		            
+//		        }
 
-				// 修改
-//		        ArticlesVO VO = articlesSvc.getOneBundleItem(13);
-//				bundleItemVO.setCampId(1008);
-//				bundleItemVO.setBundleName("手作課程");
-//				bundleItemVO.setBundlePrice(3999);
-//				LocalDate localDate = LocalDate.parse("2025-05-29");
-//				bundleItemVO.setBundleAddDate(localDate);
-//				bundleItemSvc.addBundleItem(bundleItemVO);
 				
 				// 新增
 //				BundleItemVO bundleItemVO = new BundleItemVO();

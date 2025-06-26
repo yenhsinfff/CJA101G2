@@ -1,4 +1,6 @@
-package com.lutu.article.model;
+package com.lutu.article_report.model;
+
+
 
 import java.util.Optional;
 
@@ -9,11 +11,8 @@ import org.springframework.stereotype.Repository;
 import io.lettuce.core.dynamic.annotation.Param;
 
 @Repository
-public interface ArticlesRepository extends JpaRepository<ArticlesVO, Integer>{
+public interface ArticleReportRepository extends JpaRepository<ArticleReportVO, Integer>{
 	
 	
 
 }
-
-
-
