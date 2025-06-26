@@ -8,9 +8,5 @@ import jakarta.transaction.Transactional;
 
 public interface ArticleTypeRepository extends JpaRepository<ArticleTypeVO, Integer> {
 
-	@Transactional
-	@Modifying
-	@Query(value = "delete from article_type where ac_type_id = ?1", nativeQuery = true)
-	void deleteByacTypeId(int ac_type_id);
 
 }

@@ -1,6 +1,5 @@
 package com.lutu.article.model;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,22 +21,22 @@ import java.util.Set;
 public class ArticlesVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Integer acId;								// 討論區文章編號(PK)
-    private String acTitle;								// 文章標題
-    private MemberVO memberVO; 							// 露營者編號(FK)
-    private ArticleTypeVO articleTypeVO;				// 文章類別編號(FK)
-    private LocalDateTime acTime;						// 文章發布時間
-    private String acContext;							// 文章內容
-    private Byte acStatus;							// 文章狀態 Not Null  0 : 顯示  1 : 不顯示
-   
-    private Set<ArticleImageVO> articleImages;			// 討論區圖片
-    private Set<ReplyVO> replies;						// 留言
-    private Set<NiceArticleVO> niceArticleVO;			// 這個文章★讚
-    private Set<ArticleReportVO> articleReport;			// 討論區文章檢舉	
-    private Set<AcFavRecordVO> acFavRecord;				// 文章收藏紀錄
-    
+    private Integer acId;                                   // 討論區文章編號(PK)
+    private String acTitle;                                 // 文章標題
+    private MemberVO memberVO;                              // 露營者編號(FK)
+    private ArticleTypeVO articleTypeVO;                    // 文章類別編號(FK)
+    private LocalDateTime acTime;                           // 文章發布時間
+    private String acContext;                               // 文章內容
+    private Byte acStatus;                                  // 文章狀態 Not Null 0 : 顯示 1 : 不顯示
+
+    private Set<ArticleImageVO> articleImages;             // 討論區圖片
+    private Set<ReplyVO> replies;                          // 留言
+    private Set<NiceArticleVO> niceArticleVO;              // 這個文章★讚
+    private Set<ArticleReportVO> articleReport;            // 討論區文章檢舉
+    private Set<AcFavRecordVO> acFavRecord;                // 文章收藏紀錄
+
     public ArticlesVO() {
-    	
+
     }
 
     @Id
@@ -62,14 +61,12 @@ public class ArticlesVO implements Serializable {
         this.acTitle = acTitle;
     }
 
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mem_id", nullable = false)
     @NotNull(message = "會員ID: 不能為空")
     public MemberVO getMemberVO() {
         return memberVO;
     }
-
 
     public void setMemberVO(MemberVO memberVO) {
         this.memberVO = memberVO;
@@ -137,17 +134,16 @@ public class ArticlesVO implements Serializable {
     public void setReplies(Set<ReplyVO> replies) {
         this.replies = replies;
     }
-    
+
     @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     public Set<NiceArticleVO> getNiceArticle() {
         return niceArticleVO;
     }
-    
 
     public void setNiceArticle(Set<NiceArticleVO> niceArticleVO) {
         this.niceArticleVO = niceArticleVO;
     }
-    
+
     @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     public Set<ArticleReportVO> getArticleReport() {
         return articleReport;
@@ -156,7 +152,7 @@ public class ArticlesVO implements Serializable {
     public void setArticleReport(Set<ArticleReportVO> articleReport) {
         this.articleReport = articleReport;
     }
-    
+
     @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     public Set<AcFavRecordVO> getAcFavRecord() {
         return acFavRecord;
@@ -166,8 +162,6 @@ public class ArticlesVO implements Serializable {
         this.acFavRecord = acFavRecord;
     }
 
-
-    
     @Override
     public String toString() {
         return "ArticlesVO{" +
@@ -176,15 +170,13 @@ public class ArticlesVO implements Serializable {
                 ", memberVO=" + (memberVO != null ? "MemberVO@" + memberVO.hashCode() : null) +
                 ", articleTypeVO=" + (articleTypeVO != null ? articleTypeVO.toString() : null) +
                 ", acTime=" + acTime +
-                ", acContext='" + (acContext != null && acContext.length() > 50 ? 
-                                   acContext.substring(0, 47) + "..." : acContext) + '\'' +
+                ", acContext='"
+                + (acContext != null && acContext.length() > 50 ? acContext.substring(0, 47) + "..." : acContext) + '\''
+                +
                 ", acStatus=" + acStatus +
                 '}';
         // 重要提醒：絕對不要在 toString() 中包含延遲載入的集合
         // 例如：不要使用 articleImages, replies, niceArticleVO 等
     }
 
-    
-    
 }
-

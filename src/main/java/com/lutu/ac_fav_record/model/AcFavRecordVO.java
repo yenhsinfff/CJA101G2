@@ -3,9 +3,7 @@ package com.lutu.ac_fav_record.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import com.lutu.article.model.ArticlesVO;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -13,137 +11,175 @@ import java.time.LocalDateTime;
 @Table(name = "ac_fav_record")
 @IdClass(com.lutu.ac_fav_record.model.AcFavRecordVO.AcFavRecordId.class)
 public class AcFavRecordVO implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
 
-	private Integer acId;
-	private Integer memId;
-	private LocalDateTime acFavTime;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ac_id", insertable = false, updatable = false)
-	private ArticlesVO articlesVO;
+    private static final long serialVersionUID = 1L;
+    
+    @Id
+    @Column(name = "ac_id")
+    @NotNull(message = "文章ID: 不能為空")
+    private Integer acId;
+    
+    @Id
+    @Column(name = "mem_id")
+    @NotNull(message = "會員ID: 不能為空")
+    private Integer memId;
+    
+    @Column(name = "ac_fav_time", nullable = false)
+    @NotNull(message = "收藏時間: 不能為空")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime acFavTime;
 
-	public AcFavRecordVO() {
-	}
+    // 修正關聯映射 - 移除 insertable 和 updatable 限制
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ac_id", referencedColumnName = "ac_id")
+    private ArticlesVO articlesVO;
 
-	// ========================================================
-	public ArticlesVO getArticlesVO() {
-	    return articlesVO;
-	}
+    // 無參數建構子
+    public AcFavRecordVO() {
+    }
 
-	public void setArticlesVO(ArticlesVO articlesVO) {
-	    this.articlesVO = articlesVO;
-	}
-	// 特別加上對複合主鍵物件的 getter / setter
-	public AcFavRecordId getCompositeKey() {
-		return new AcFavRecordId(acId, memId);
-	}
+    // 有參數建構子
+    public AcFavRecordVO(Integer acId, Integer memId, LocalDateTime acFavTime) {
+        this.acId = acId;
+        this.memId = memId;
+        this.acFavTime = acFavTime;
+    }
 
-	public void setCompositeKey(AcFavRecordId key) {
-		this.acId = key.getAcId();
-		this.memId = key.getMemId();
-	}
-	// ========================================================
+    // ========================================================
+    // ArticlesVO 的 getter 和 setter
+    public ArticlesVO getArticlesVO() {
+        return articlesVO;
+    }
 
-	@Id
-	@Column(name = "ac_id")
-	@NotNull(message = "文章ID: 不能為空")
-	public Integer getAcId() {
-		return acId;
-	}
+    public void setArticlesVO(ArticlesVO articlesVO) {
+        this.articlesVO = articlesVO;
+    }
 
-	public void setAcId(Integer acId) {
-		this.acId = acId;
-	}
+    // 特別加上對複合主鍵物件的 getter / setter
+    // 加上 @Transient 避免 JPA 將其當作持久化屬性
+    @Transient
+    public AcFavRecordId getCompositeKey() {
+        return new AcFavRecordId(acId, memId);
+    }
 
-	@Id
-	@Column(name = "mem_id")
-	@NotNull(message = "會員ID: 不能為空")
-	public Integer getMemId() {
-		return memId;
-	}
+    @Transient
+    public void setCompositeKey(AcFavRecordId key) {
+        this.acId = key.getAcId();
+        this.memId = key.getMemId();
+    }
 
-	public void setMemId(Integer memId) {
-		this.memId = memId;
-	}
+    // ========================================================
+    // 基本屬性的 getter 和 setter
+    public Integer getAcId() {
+        return acId;
+    }
 
-	@Column(name = "ac_fav_time", nullable = false)
-	@NotNull(message = "收藏時間: 不能為空")
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	public LocalDateTime getAcFavTime() {
-		return acFavTime;
-	}
+    public void setAcId(Integer acId) {
+        this.acId = acId;
+    }
 
-	public void setAcFavTime(LocalDateTime acFavTime) {
-		this.acFavTime = acFavTime;
-	}
-	
-	
-	//========================================================
-	// 需要宣告一個有包含複合主鍵屬性的類別，並一定要實作 java.io.Serializable 介面
-	
-	static class AcFavRecordId implements Serializable {
+    public Integer getMemId() {
+        return memId;
+    }
 
-		private static final long serialVersionUID = 1L;
+    public void setMemId(Integer memId) {
+        this.memId = memId;
+    }
 
-		private Integer acId;
-		private Integer memId;
+    public LocalDateTime getAcFavTime() {
+        return acFavTime;
+    }
 
-		// 一定要有無參數建構子
-		public AcFavRecordId() {
-		}
+    public void setAcFavTime(LocalDateTime acFavTime) {
+        this.acFavTime = acFavTime;
+    }
 
-		public AcFavRecordId(Integer acId, Integer memId) {
-			this.acId = acId;
-			this.memId = memId;
-		}
+    //========================================================
+    // 複合主鍵類別
+    public static class AcFavRecordId implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private Integer acId;
+        private Integer memId;
 
-		// getter, setter, equals, hashCode...
-		public Integer getAcId() {
-			return acId;
-		}
+        // 無參數建構子
+        public AcFavRecordId() {
+        }
 
-		public void setAcId(Integer acId) {
-			this.acId = acId;
-		}
+        // 有參數建構子
+        public AcFavRecordId(Integer acId, Integer memId) {
+            this.acId = acId;
+            this.memId = memId;
+        }
 
-		public Integer getMemId() {
-			return memId;
-		}
+        // getter 和 setter
+        public Integer getAcId() {
+            return acId;
+        }
 
-		public void setMemId(Integer memId) {
-			this.memId = memId;
-		}
+        public void setAcId(Integer acId) {
+            this.acId = acId;
+        }
 
-		// 一定要 override 此類別的 hashCode() 與 equals() 方法！
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null || getClass() != obj.getClass())
-				return false;
-			AcFavRecordId that = (AcFavRecordId) obj;
-			return acId.equals(that.acId) && memId.equals(that.memId);
-		}
+        public Integer getMemId() {
+            return memId;
+        }
 
-		@Override
-		public int hashCode() {
-			return acId.hashCode() + memId.hashCode();
-		}
-	}
+        public void setMemId(Integer memId) {
+            this.memId = memId;
+        }
 
+        // 必須 override equals() 和 hashCode()
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            AcFavRecordId that = (AcFavRecordId) obj;
+            return acId != null ? acId.equals(that.acId) : that.acId == null &&
+                   memId != null ? memId.equals(that.memId) : that.memId == null;
+        }
 
-	@Override
-	public String toString() {
-		return "AcFavRecordVO [acId=" + acId + ", memId=" + memId + ", acFavTime=" + acFavTime + ", articlesVO="
-				+ articlesVO + "]";
-	}
-	
-	
-	
-	
+        @Override
+        public int hashCode() {
+            int result = acId != null ? acId.hashCode() : 0;
+            result = 31 * result + (memId != null ? memId.hashCode() : 0);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "AcFavRecordId{" +
+                    "acId=" + acId +
+                    ", memId=" + memId +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "AcFavRecordVO{" +
+                "acId=" + acId +
+                ", memId=" + memId +
+                ", acFavTime=" + acFavTime +
+                ", articlesVO=" + (articlesVO != null ? articlesVO.getClass().getSimpleName() : "null") +
+                '}';
+    }
+
+    // 輔助方法
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        AcFavRecordVO that = (AcFavRecordVO) obj;
+        return acId != null ? acId.equals(that.acId) : that.acId == null &&
+               memId != null ? memId.equals(that.memId) : that.memId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = acId != null ? acId.hashCode() : 0;
+        result = 31 * result + (memId != null ? memId.hashCode() : 0);
+        return result;
+    }
 }
-
-
-

@@ -18,8 +18,7 @@ public class NiceArticleVO implements Serializable {
     private Integer acId;				// 討論區文章編號 (PK, FK)
     private Integer memId;				// 露營者編號     (PK, FK)
     private LocalDateTime likeTime;		// 按讚時間
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ac_id", insertable = false, updatable = false)
+
     private ArticlesVO articlesVO;
     
     public NiceArticleVO() {
@@ -59,6 +58,8 @@ public class NiceArticleVO implements Serializable {
         this.likeTime = likeTime;
     }
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ac_id", insertable = false, updatable = false)
     public ArticlesVO getArticlesVO() {
         return articlesVO;
     }
