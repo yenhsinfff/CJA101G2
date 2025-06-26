@@ -23,8 +23,6 @@ import com.lutu.specList.model.SpecListVO;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
 
-
-
 @Transactional
 @Service
 public class CartService implements CartService_Interface {
@@ -118,7 +116,7 @@ public class CartService implements CartService_Interface {
 		// 再 setAttribute確保 session 內容為最新
 		session.setAttribute(REDIS_KEY_PREFIX, cart1);
 
-		return toCartDTO(item);
+		return toCartDTO(exist.isPresent() ? exist.get() : item);
 	}
 
 	// 處理已登入（Redis）購物車
@@ -129,16 +127,11 @@ public class CartService implements CartService_Interface {
 
 		try {// 檢查購物車有無相同商品
 			Object existItem = redisTemplate.opsForHash().get(redisKey, hashKey);
-			if (existItem != null && existItem instanceof String) {
-				String existJson = (String) existItem;
-				// 用objectMapper把json字串轉回CartVO物件
-				CartVO exist = objectMapper.readValue(existJson, CartVO.class);
+			if (existItem instanceof CartVO exist) {
 				item.setCartProdQty(item.getCartProdQty() + exist.getCartProdQty());
 			}
-			// 把item（CartVO物件）轉成json字串，方便存進Redis
-			String itemJson = objectMapper.writeValueAsString(item);
-			// 用redisKey和hashKey，把最新的itemJson存進Redis
-			redisTemplate.opsForHash().put(redisKey, hashKey, itemJson);
+			// 直接存 CartVO 物件
+			redisTemplate.opsForHash().put(redisKey, hashKey, item);
 
 		} catch (Exception e) {
 			throw new RuntimeException("新增購物車時發生錯誤：" + e.getMessage(), e);
@@ -171,30 +164,31 @@ public class CartService implements CartService_Interface {
 		} else {
 			String redisKey = REDIS_KEY_PREFIX + memId; // Redis的key
 
-			// 從Redis Hash取得所有field-value
-			Map<Object, Object> entries = redisTemplate.opsForHash().entries(redisKey);
+			try {
+				// 從Redis Hash取得所有field-value
+				Map<Object, Object> entries = redisTemplate.opsForHash().entries(redisKey);
 
-			if (entries != null && !entries.isEmpty()) {
+				if (entries != null && !entries.isEmpty()) {
 
-				ObjectMapper map = new ObjectMapper();
+					for (Object value : entries.values()) {
 
-				for (Object value : entries.values()) {
+						if (value instanceof CartVO cartVO) {
+							if (cartVO.getMemId() == null) {
+								cartVO.setMemId(memId); // 補充 memId
+							}
 
-					try {
-						// value是JSON字串，反序列化成CartVO
-						CartVO cartVO = objectMapper.readValue(value.toString(), CartVO.class);
+							dtoList.add(toCartDTO(cartVO));
 
-						if (cartVO.getMemId() == null) {
-							cartVO.setMemId(memId); // 補充 memId
+						} else {
+							System.out.println("資料格式錯誤，非CartVO：" + value);
 						}
 
-						dtoList.add(toCartDTO(cartVO));
-
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
-
 				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("redis error!");
 			}
 
 		}
@@ -204,26 +198,206 @@ public class CartService implements CartService_Interface {
 	}
 
 	@Override
-	public void updateCart(HttpSession session, Integer memId, CartVO item) {
-		// TODO Auto-generated method stub
+	public CartDTO_res updateCart(HttpSession session, Integer memId, Integer prodId, Integer prodColorId,
+			Integer prodSpecId, Integer cartProdQty) {
+		// 確認數量> 0
+		checkQtyValid(cartProdQty);
+
+		// 組成cartKey和cartVO
+		CartVO.CartKey cartKey = new CartVO.CartKey(memId, prodId, prodColorId, prodSpecId);
+		CartVO item = new CartVO(memId, prodId, prodColorId, prodSpecId, cartProdQty);
+
+		item.setCartKey(cartKey);
+
+		// 新增購物車
+		if (memId == null) {
+
+			return updateCartForGuest(session, cartKey, item, cartProdQty);
+		} else {// 已登入
+			return updateCartForMember(memId, cartKey, item);
+		}
+
+	}
+
+	// 修改未登入（Session）購物車
+	private CartDTO_res updateCartForGuest(HttpSession session, CartVO.CartKey cartKey, CartVO item, int cartProdQty) {
+
+		// 從Session取得購物車清單
+		CartList cart1 = (CartList) session.getAttribute(REDIS_KEY_PREFIX);
+
+		if (cart1 == null) {
+			throw new IllegalArgumentException("購物車不存在");
+		}
+
+		// 在購物車清單中尋找是否有這個商品
+		// .findFirst()會回傳Optional<CartVO>，如果有找到就包在Optional裡
+		Optional<CartVO> exist = cart1.getCartList().stream().filter(vo -> vo.getCartKey().equals(cartKey)).findFirst();
+
+		// 判斷購物車裡面有沒有該商品
+		if (exist.isPresent()) {
+			exist.get().setCartProdQty(cartProdQty);
+		} else {// 沒有找到該商品，直接加入
+
+			cart1.getCartList().add(item);
+		}
+
+		// 再 setAttribute確保 session 內容為最新
+		session.setAttribute(REDIS_KEY_PREFIX, cart1);
+
+		return toCartDTO(exist.orElse(item));
+	}
+
+	// 會員（Redis）修改購物車
+	private CartDTO_res updateCartForMember(Integer memId, CartVO.CartKey cartKey, CartVO item) {
+		String redisKey = REDIS_KEY_PREFIX + memId; // Redis的key
+
+		String hashKey = item.getProdId() + ":" + item.getProdColorId() + ":" + item.getProdSpecId();
+
+		try {// 檢查購物車有無相同商品
+
+			// 直接把新數量覆蓋到Redis（等於修改購物車內容）
+			redisTemplate.opsForHash().put(redisKey, hashKey, item);
+
+		} catch (Exception e) {
+			throw new RuntimeException("修改購物車時發生錯誤: " + e.getMessage(), e);
+		}
+
+		return toCartDTO(item);
 
 	}
 
 	@Override
-	public void removeCart(HttpSession session, Integer memId, CartKey key) {
-		// TODO Auto-generated method stub
+	public List<CartDTO_res> removeCart(HttpSession session, Integer memId, Integer prodId, Integer prodColorId,
+			Integer prodSpecId) {
+		// 組成cartKey
+		CartVO.CartKey cartKey = new CartVO.CartKey(memId, prodId, prodColorId, prodSpecId);
+
+		// 判斷會員ID是否為空
+		if (memId == null) {
+			removeCartForGuest(session, cartKey);
+		} else {
+			removeCartForMember(memId, cartKey);
+		}
+
+		return getCart(session, memId);
+
+	}
+
+	// 移除未登入（Session）購物車
+	private CartDTO_res removeCartForGuest(HttpSession session, CartVO.CartKey cartKey) {
+
+		// 從Session取得購物車清單
+		CartList cart1 = (CartList) session.getAttribute(REDIS_KEY_PREFIX);
+
+		// 檢查購物車是否為空
+		if (cart1 == null || cart1.getCartList() == null || cart1.getCartList().isEmpty()) {
+			throw new IllegalArgumentException("購物車無商品");
+		}
+
+		// 在購物車清單中尋找對應的商品（用CartKey比對）
+		Optional<CartVO> exist = cart1.getCartList().stream().filter(vo -> vo.getCartKey().equals(cartKey)).findFirst();
+
+		// 若沒找到該商品，拋出異常
+		if (!exist.isPresent()) {
+			throw new IllegalArgumentException("購物車無該商品");
+		}
+
+		// 找到商品，從購物車清單中移除
+		CartVO removeItem = exist.get();
+		cart1.getCartList().remove(removeItem);
+
+		// 將更新後的購物車清單存回session
+		session.setAttribute(REDIS_KEY_PREFIX, cart1);
+
+		return toCartDTO(removeItem);
+	}
+
+	// 會員（Redis）購物車移除細項
+	private CartDTO_res removeCartForMember(Integer memId, CartVO.CartKey cartKey) {
+		String redisKey = REDIS_KEY_PREFIX + memId; // Redis的key
+
+		// 組合hashKey（商品唯一識別：商品ID:顏色ID:規格ID
+		String hashKey = cartKey.getProdId() + ":" + cartKey.getProdColorId() + ":" + cartKey.getProdSpecId();
+
+		// 從Redis取出對應的商品
+		CartVO existItem = (CartVO) redisTemplate.opsForHash().get(redisKey, hashKey);
+
+		// 若商品不存在，拋出異常
+		if (existItem == null) {
+			throw new IllegalArgumentException("購物車無該商品");
+		}
+
+		// 從Redis中刪除該商品
+		redisTemplate.opsForHash().delete(redisKey, hashKey);
+
+		return toCartDTO(existItem);
 
 	}
 
 	@Override
-	public void clearCart(HttpSession session, Integer memId) {
-		// TODO Auto-generated method stub
+	public List<CartDTO_res> clearCart(HttpSession session, Integer memId) {
+
+		if (memId == null) {
+			// 從Session取得購物車清單
+			CartList cart1 = (CartList) session.getAttribute(REDIS_KEY_PREFIX);
+			if (cart1 != null) {
+				cart1.getCartList().clear(); // 清空list
+				session.setAttribute(REDIS_KEY_PREFIX, cart1);
+			}
+		} else {// 有登入會員
+
+			String redisKey = REDIS_KEY_PREFIX + memId; // Redis的key
+
+			// 從Redis中刪除所有購物車內容
+			redisTemplate.delete(redisKey);
+		}
+
+		// 回傳一個新的空List代表購物車已空
+		return new ArrayList<>();
 
 	}
 
 	@Override
-	public void mergeCart(HttpSession session, Integer memId) {
-		// TODO Auto-generated method stub
+	public List<CartDTO_res> mergeCart(HttpSession session, Integer memId) {
+		// 取得未登入購物車
+		CartList guestCart = (CartList) session.getAttribute(REDIS_KEY_PREFIX);
+
+		try {
+			// 如果Session購物車是空的，直接回傳會員購物車DTO清單（已登入購物車）
+			if (guestCart == null || guestCart.getCartList().isEmpty()) {
+				return getCart(session, memId);
+			}
+
+			// 取得已登入會員的購物車（Redis）
+			String redisKey = REDIS_KEY_PREFIX + memId; // Redis的key
+
+			// 合併未登入購物車到已登入購物車
+			for (CartVO guestItem : guestCart.getCartList()) {
+
+				// 產生商品唯一key（商品ID:顏色ID:規格ID）
+				String hashKey = guestItem.getProdId() + ":" + guestItem.getProdColorId() + ":"
+						+ guestItem.getProdSpecId();
+
+				Object existItem = redisTemplate.opsForHash().get(redisKey, hashKey);
+				if (existItem instanceof CartVO exist) {
+					guestItem.setCartProdQty(guestItem.getCartProdQty() + exist.getCartProdQty());
+				}
+				// 直接存 CartVO 物件
+				redisTemplate.opsForHash().put(redisKey, hashKey, guestItem);
+
+			}
+		} catch (Exception e) {
+
+			throw new RuntimeException("新增購物車時發生錯誤：" + e.getMessage(), e);
+
+		} finally {
+
+			// 合併後，清空Session購物車避免重複
+			session.removeAttribute(REDIS_KEY_PREFIX);
+		}
+
+		// 回傳合併後的購物車DTO清單給前端
+		return getCart(session, memId);
 
 	}
 

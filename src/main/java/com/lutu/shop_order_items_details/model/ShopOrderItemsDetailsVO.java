@@ -29,12 +29,11 @@ public class ShopOrderItemsDetailsVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "shop_order_id")
+	@Column(name = "shop_order_id", updatable = false)
 	private Integer shopOrderId; // 訂單編號
-
 	
 	@Id
-	@Column(name = "prod_id")
+	@Column(name = "prod_id", updatable = false)
 	private Integer prodId; // 商品編號
 
 	@Column(name = "shop_order_qty")
@@ -63,21 +62,21 @@ public class ShopOrderItemsDetailsVO implements Serializable {
 	private Integer prodSpecId; // 商品規格編號
 	
 	// 關聯欄位（新增於原本欄位之下）
-	@ManyToOne
-	@JoinColumn(name = "shop_order_id", referencedColumnName = "shop_order_id", insertable = false, updatable = false)
-	private ShopOrderVO shopOrder;
-
-	@ManyToOne
-	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id", insertable = false, updatable = false)
-	private ShopProdVO prod;
-
-	@ManyToOne
-	@JoinColumn(name = "prod_color_id", referencedColumnName = "prod_color_id", insertable = false, updatable = false)
-	private ProdColorListVO prodColor;
-
-	@ManyToOne
-	@JoinColumn(name = "prod_spec_id", referencedColumnName = "prod_spec_id", insertable = false, updatable = false)
-	private ProdSpecListVO prodSpec;
+//	@ManyToOne
+//	@JoinColumn(name = "shop_order_id", referencedColumnName = "shop_order_id", insertable = false, updatable = false)
+//	private ShopOrderVO shopOrder;
+//
+//	@ManyToOne
+//	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id", insertable = false, updatable = false)
+//	private ShopProdVO prod;
+//
+//	@ManyToOne
+//	@JoinColumn(name = "prod_color_id", referencedColumnName = "prod_color_id", insertable = false, updatable = false)
+//	private ProdColorListVO prodColor;
+//
+//	@ManyToOne
+//	@JoinColumn(name = "prod_spec_id", referencedColumnName = "prod_spec_id", insertable = false, updatable = false)
+//	private ProdSpecListVO prodSpec;
 
 	public CompositeDetail getCompositeKey() {
 		return new CompositeDetail(shopOrderId, prodId, prodColorId, prodSpecId);
