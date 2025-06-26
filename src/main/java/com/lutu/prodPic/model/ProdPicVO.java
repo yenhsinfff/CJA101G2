@@ -1,4 +1,4 @@
-package com.lutu.shop.model;
+package com.lutu.prodPic.model;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -13,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -28,6 +29,7 @@ public class ProdPicVO implements Serializable{
 	@Column(name = "prod_id", insertable = false, updatable = false)
     private Integer prodId;       // 商品編號 FK
 	
+	@Lob
 	@Column(name = "prod_pic")
     private byte[] prodPic;       // 商品圖片
 	

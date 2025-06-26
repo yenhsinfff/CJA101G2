@@ -12,6 +12,8 @@ public class ProdSpecListDTO {
     @NotNull(message = "規格價格不可為空")
     @Min(value = 0, message = "規格價格不能為負數")
     private Integer prodSpecPrice;
+    
+    private String prodSpecName;
 
 	public Integer getProdId() {
 		return prodId;
@@ -35,6 +37,14 @@ public class ProdSpecListDTO {
 
 	public void setProdSpecPrice(Integer prodSpecPrice) {
 		this.prodSpecPrice = prodSpecPrice;
+	}
+
+	public String getProdSpecName() {
+		return prodSpecName;
+	}
+
+	public void setProdSpecName(String prodSpecName) {
+		this.prodSpecName = prodSpecName;
 	}
 
    

@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lutu.prodColorList.model.ProdColorListDTO;
 import com.lutu.prodColorList.model.ProdColorListService;
+import com.lutu.prodPic.model.ProdPicDTO;
+import com.lutu.prodPic.model.ProdPicService;
 import com.lutu.prodSpecList.model.ProdSpecListDTO;
 import com.lutu.prodSpecList.model.ProdSpecListService;
 import com.lutu.productType.model.ProdTypeVO;
@@ -26,6 +28,9 @@ public class ShopProdService {
 
     @Autowired
     private ProdColorListService prodColorListService;
+    
+    @Autowired
+    private ProdPicService prodPicService;
 
     // 查詢所有商品
     public List<ShopProdDTO> getAllProds() {
@@ -103,7 +108,7 @@ public class ShopProdService {
         ShopProdVO vo = convertToVO(dto);
         repository.save(vo);
 
-        // 🔁 新增每一筆商品規格資料
+        // 新增每一筆商品規格資料
         if (dto.getProdSpecList() != null) {
             for (ProdSpecListDTO specDTO : dto.getProdSpecList()) {
                 specDTO.setProdId(vo.getProdId());
@@ -111,7 +116,7 @@ public class ShopProdService {
             }
         }
 
-        // 🔁 新增每一筆商品顏色資料
+        // 新增每一筆商品顏色資料
         if (dto.getProdColorList() != null) {
             for (ProdColorListDTO colorDTO : dto.getProdColorList()) {
                 colorDTO.setProdId(vo.getProdId());
@@ -185,11 +190,16 @@ public class ShopProdService {
         dto.setProdStatus(vo.getProdStatus());
         dto.setProdColorOrNot(vo.getProdColorOrNot());
 
+        // 加入規格與顏色
         List<ProdSpecListDTO> specs = prodSpecListService.getProdSpecsByProdId(vo.getProdId());
         dto.setProdSpecList(specs);
 
         List<ProdColorListDTO> colors = prodColorListService.getProdColorsByProdId(vo.getProdId());
         dto.setProdColorList(colors);
+
+        // 加入圖片清單
+        List<ProdPicDTO> pics = prodPicService.getByProdId(vo.getProdId());
+        dto.setProdPicList(pics);
 
         return dto;
     }
