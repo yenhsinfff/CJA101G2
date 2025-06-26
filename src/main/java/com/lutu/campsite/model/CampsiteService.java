@@ -6,57 +6,79 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lutu.camp.model.CampVO;
+import com.lutu.campsitetype.model.CampsiteTypeRepository;
 import com.lutu.campsitetype.model.CampsiteTypeService;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service("campsiteService")
 public class CampsiteService {
 
+	
 	@Autowired
-	CampsiteRepository repository;
+	private CampsiteTypeRepository campsiteTypeRepo;
+
+	@Autowired
+	private CampsiteRepository campsiteRepo;
 	
 	@Autowired
 	private CampsiteTypeService campsiteTypeService;
 
-//	public void addCampsite(CampsiteVO campsiteVO) {
-//		repository.save(campsiteVO);
+//	public CampsiteVO addCampsite(CampsiteVO campsiteVO) {
+//	    return campsiteRepo.save(campsiteVO);
 //	}
 
-	public void updateCampsite(CampsiteVO campsiteVO) {
-		repository.save(campsiteVO);
+	public CampsiteVO updateCampsite(CampsiteVO campsiteVO) {
+	    if (campsiteVO.getCampsiteId() == null) {
+	        throw new IllegalArgumentException("房間 ID 不可為 null");
+	    }
+
+	    CampsiteVO existing = campsiteRepo.findById(campsiteVO.getCampsiteId())
+	        .orElseThrow(() -> new EntityNotFoundException("查無房間 ID：" + campsiteVO.getCampsiteId()));
+
+	    existing.setCampsiteIdName(campsiteVO.getCampsiteIdName());
+	    existing.setCamperName(campsiteVO.getCamperName());
+	    existing.setCampsiteType(campsiteVO.getCampsiteType());
+
+	    return campsiteRepo.save(existing);
 	}
 
 	public void deleteCampsite(Integer campsiteId) {
-		if (repository.existsById(campsiteId))
-			repository.deleteById(campsiteId);
+		 if (!campsiteRepo.existsById(campsiteId)) {
+		        throw new EntityNotFoundException("找不到要刪除的房間");
+		    }
+		 campsiteRepo.deleteById(campsiteId);
 	}
 
 	public CampsiteVO getOneCampsite(Integer campsiteId) {
-		Optional<CampsiteVO> optional = repository.findById(campsiteId);
+		Optional<CampsiteVO> optional = campsiteRepo.findById(campsiteId);
 		return optional.orElse(null); // public T orElse(T other) : 如果值存在就回傳其值，否則回傳other的值
 		
 
 	}
 
 	public List<CampsiteVO> getAll() {
-		return repository.findAll();
+		return campsiteRepo.findAll();
 
 	}
 
+	public CampsiteVO addCampsite(CampsiteVO campsiteVO) {
+	    CampsiteTypeVO.CompositeDetail typeId = campsiteVO.getCampsiteType().getId();
 
+	    // 驗證房型是否存在
+	    boolean exists = campsiteTypeRepo.existsById(typeId);
+	    if (!exists) {
+	        throw new EntityNotFoundException("房型不存在，無法新增房間");
+	    }
+
+	    // 不查詢房型完整內容，不需要放入關聯物件（或只設主鍵）
+	    campsiteVO.setCampsiteType(new CampsiteTypeVO()); // 避免關聯序列化出現全部空值
+	    campsiteVO.getCampsiteType().setId(typeId);
+
+	    return campsiteRepo.save(campsiteVO);
+	}
 	
-	public void addCampsite(Integer campId, Integer campsiteTypeId, String name, String camper) {
-	    CampsiteTypeVO campsiteTypeVO = campsiteTypeService.getOneCampsiteType(campsiteTypeId, campId);
-	    if (campsiteTypeVO == null) throw new RuntimeException("查無對應營位類型");
 
-	    CampsiteVO campsiteVO = new CampsiteVO();
-//	    campsiteVO.setCampsiteType(campsiteTypeVO);
-	    campsiteVO.setCampId(campId);
-	    campsiteVO.setCampsiteTypeId(campsiteTypeId);
-	    campsiteVO.setCampsiteIdName(name);
-	    campsiteVO.setCamperName(camper);
-	    repository.save(campsiteVO);
-	}
 
 }

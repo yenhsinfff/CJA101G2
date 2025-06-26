@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
-import com.lutu.campsite.controller.CampsiteDTO;
+import com.lutu.campsite.model.CampsiteDTO;
 import com.lutu.campsite.model.CampsiteVO;
 import com.lutu.campsitetype.model.CampsiteTypeDTO;
 import com.lutu.campsitetype.model.CampsiteTypeService;
