@@ -1,7 +1,9 @@
 package com.lutu.campsitetype.controller;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,11 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
+import com.lutu.campsite.controller.CampsiteDTO;
 import com.lutu.campsite.model.CampsiteVO;
+import com.lutu.campsitetype.model.CampsiteTypeDTO;
 import com.lutu.campsitetype.model.CampsiteTypeService;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
 
@@ -42,10 +45,27 @@ public class CampsiteTypeApiController {
 	//http://localhost:8081/CJA101G02/campsitetype/1001/getCampsiteTypes
 	//http://localhost:8081/CJA101G02/campsitetype/{campId}/getCampsiteTypes
 	// 查詢特定營地的房型
+
 	@GetMapping("/{campId}/getCampsiteTypes")
-	public ApiResponse<List<CampsiteTypeVO>> getCampsiteTypeList(@PathVariable Integer campId) {
+	public ApiResponse<List<CampsiteTypeDTO>> getCampsiteTypeList(@PathVariable Integer campId) {
 	    List<CampsiteTypeVO> campsiteTypeList = campsiteTypeSvc.getByCampId(campId);
-	    return new ApiResponse<>("success", campsiteTypeList, "查詢成功");
+
+	    List<CampsiteTypeDTO> dtoList = campsiteTypeList.stream()
+	        .map(vo -> new CampsiteTypeDTO(
+	            vo.getId().getCampsiteTypeId(),
+	            vo.getId().getCampId(),
+	            vo.getCampsiteName(),
+	            vo.getCampsitePeople(),
+	            vo.getCampsiteNum(),
+	            vo.getCampsitePrice(),
+	            vo.getCampsitePic1() != null ? Base64.getEncoder().encodeToString(vo.getCampsitePic1()) : null,
+	            vo.getCampsitePic2() != null ? Base64.getEncoder().encodeToString(vo.getCampsitePic2()) : null,
+	            vo.getCampsitePic3() != null ? Base64.getEncoder().encodeToString(vo.getCampsitePic3()) : null,
+	            vo.getCampsitePic4() != null ? Base64.getEncoder().encodeToString(vo.getCampsitePic4()) : null
+	        ))
+	        .collect(Collectors.toList());
+
+	    return new ApiResponse<>("success", dtoList, "查詢成功");
 	}
 
 	
@@ -100,10 +120,27 @@ public class CampsiteTypeApiController {
 	//http://localhost:8081/CJA101G02/campsitetype/2003/1002/getcampsites
 	//http://localhost:8081/CJA101G02/campsitetype/{campsiteTypeId}/{campId}/getcampsites
 	//取得特定營地房型下所有的房間
+//	@GetMapping("/{campsiteTypeId}/{campId}/getcampsites")
+//	public ApiResponse<Set<CampsiteVO>> getCampsitesByType(
+//			 @PathVariable Integer campsiteTypeId,
+//			@PathVariable Integer campId) {
+//
+//	    CampsiteTypeVO campsiteType = campsiteTypeSvc.getOneCampsiteType(campsiteTypeId, campId);
+//	    if (campsiteType == null) {
+//	        return new ApiResponse<>("fail", null, "查無此房型");
+//	    }
+//
+//	    Set<CampsiteVO> campsiteList = campsiteType.getCampsites();
+//	    return new ApiResponse<>("success", campsiteList, "查詢成功");
+//	}
+	
+	//http://localhost:8081/CJA101G02/campsitetype/2003/1002/getcampsites
+	//http://localhost:8081/CJA101G02/campsitetype/{campsiteTypeId}/{campId}/getcampsites
+	//使用DTO避免序列化問題(只取得房間資料，不會關聯到房型資料)
 	@GetMapping("/{campsiteTypeId}/{campId}/getcampsites")
-	public ApiResponse<Set<CampsiteVO>> getCampsitesByType(
-			 @PathVariable Integer campsiteTypeId,
-			@PathVariable Integer campId) {
+	public ApiResponse<List<CampsiteDTO>> getCampsitesByType(
+	        @PathVariable Integer campsiteTypeId,
+	        @PathVariable Integer campId) {
 
 	    CampsiteTypeVO campsiteType = campsiteTypeSvc.getOneCampsiteType(campsiteTypeId, campId);
 	    if (campsiteType == null) {
@@ -111,7 +148,18 @@ public class CampsiteTypeApiController {
 	    }
 
 	    Set<CampsiteVO> campsiteList = campsiteType.getCampsites();
-	    return new ApiResponse<>("success", campsiteList, "查詢成功");
+
+	    List<CampsiteDTO> dtoList = campsiteList.stream()
+	            .map(c -> new CampsiteDTO(
+	                    c.getCampsiteId(),
+	                    campId,
+	                    campsiteTypeId,
+	                    c.getCampsiteIdName(),
+	                    c.getCamperName()
+	            ))
+	            .collect(Collectors.toList());
+
+	    return new ApiResponse<>("success", dtoList, "查詢成功");
 	}
 	
 	
