@@ -2,6 +2,7 @@ package com.lutu.campsite.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
 
 import jakarta.persistence.Column;
@@ -33,6 +34,12 @@ public class CampsiteVO implements Serializable {
 	@Column(name = "camper_name")
 	private String camperName; // 露營者姓名
 	
+	@Column(name="camp_id", insertable = false, updatable = false)
+	private Integer campId;
+	
+	@Column(name="campsite_type_id", insertable = false, updatable = false)
+	private Integer campsiteTypeId;
+	
 	
 	
 	//=======================Association==================================		
@@ -54,6 +61,22 @@ public class CampsiteVO implements Serializable {
 
 	//===================================================================	
 	
+	public Integer getCampId() {
+		return campId;
+	}
+
+	public void setCampId(Integer campId) {
+		this.campId = campId;
+	}
+
+	public Integer getCampsiteTypeId() {
+		return campsiteTypeId;
+	}
+
+	public void setCampsiteTypeId(Integer campsiteTypeId) {
+		this.campsiteTypeId = campsiteTypeId;
+	}
+
 	public CampsiteVO() {
 		
 	}
@@ -84,11 +107,11 @@ public class CampsiteVO implements Serializable {
 	}
 
 	//覆寫 toString() 後，可以顯示內容
-	@Override
-	public String toString() {
-		return "CampsiteVO [campsiteId=" + campsiteId + ", campsiteTypeId=" + (campsiteType != null ? campsiteType.getId() : "null") 
-				+ ", campsiteIdName=" + campsiteIdName + ", camperName=" + camperName + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "CampsiteVO [campsiteId=" + campsiteId + ", campsiteTypeId=" + (campsiteType != null ? campsiteType.getId() : "null") 
+//				+ ", campsiteIdName=" + campsiteIdName + ", camperName=" + camperName + "]";
+//	}
 
 	
 	

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.lutu.campsitetype.model.CampsiteTypeVO.CompositeDetail;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service("campsiteTypeService")
@@ -15,21 +16,41 @@ public class CampsiteTypeService {
 	@Autowired
 	CampsiteTypeRepository repository;
 	
-
 	
-	public void addCampsiteType(CampsiteTypeVO campsiteTypeVO) {
-		repository.save(campsiteTypeVO);
+	//查詢特定營地下的房型
+	public List<CampsiteTypeVO> getByCampId(Integer campId) {
+	    return repository.findByIdCampId(campId);
 	}
 	
-	public void updateCampsiteType(CampsiteTypeVO campsiteTypeVO) {
-		repository.save(campsiteTypeVO);
+	public CampsiteTypeVO addCampsiteType(CampsiteTypeVO campsiteTypeVO, Integer campId) {
+	    // 查詢所有營地目前的最大房型 ID
+	    Integer maxCampsiteTypeId = repository.findAllMaxCampsiteTypeId();
+	    int nextCampsiteTypeId = (maxCampsiteTypeId == null) ? 1 : maxCampsiteTypeId + 1;
+
+	    // 設定主鍵（campsiteTypeId 為全域唯一，campId 為傳入值）
+	    CampsiteTypeVO.CompositeDetail id = new CampsiteTypeVO.CompositeDetail(nextCampsiteTypeId, campId);
+	    campsiteTypeVO.setId(id);
+
+	    return repository.save(campsiteTypeVO);
+	}
+	
+	public CampsiteTypeVO updateCampsiteType(CampsiteTypeVO campsiteTypeVO) {
+		CampsiteTypeVO.CompositeDetail id = campsiteTypeVO.getId();
+		
+		if (!repository.existsById(id)) {
+	        throw new EntityNotFoundException("找不到要修改的營地房型");
+	    }
+		
+		return repository.save(campsiteTypeVO);
 	}
 	
 	public void deleteCampsiteType(CampsiteTypeVO.CompositeDetail id) {
-	    if (repository.existsById(id)) {
-	        repository.deleteById(id);
+	    if (!repository.existsById(id)) {
+	        throw new EntityNotFoundException("找不到要刪除的房型");
 	    }
+	    repository.deleteById(id);
 	}
+	
 	
 	@Transactional
 	public CampsiteTypeVO getOneCampsiteType(Integer campsiteTypeId, Integer campId) {
@@ -49,7 +70,18 @@ public class CampsiteTypeService {
 		return repository.findAll();
 	}
 	
-	
+//	//自動產生主鍵(會員session設置完成後開啟)
+//	public CampsiteTypeVO addCampsiteTypeAutoId(CampsiteTypeVO campsiteTypeVO, Integer campId) {
+//	    // 查出該營地最大編號
+//	    Integer maxId = repository.findMaxTypeIdByCampId(campId);
+//	    int nextId = (maxId == null) ? 1 : maxId + 1;
+//
+//	    // 組合主鍵
+//	    CampsiteTypeVO.CompositeDetail id = new CampsiteTypeVO.CompositeDetail(nextId, campId);
+//	    campsiteTypeVO.setId(id);
+//
+//	    return repository.save(campsiteTypeVO);
+//	}
 	
 	
 	
