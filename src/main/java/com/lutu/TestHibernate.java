@@ -13,6 +13,7 @@ import com.lutu.article.model.ArticlesVO;
 import com.lutu.campsite.model.CampsiteService;
 
 
+
 @SpringBootApplication
 //@ComponentScan(basePackages = "com.lutu")  // 掃描你的 Service 等 component
 //@EnableJpaRepositories(basePackages = "com.lutu")  // 掃描 Repository
