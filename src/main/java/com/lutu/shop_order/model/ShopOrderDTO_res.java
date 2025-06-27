@@ -15,20 +15,20 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class ShopOrderDTO_res {
-	
+
 	@NotNull(message = "訂單編號必填")
 	private Integer shopOrderId; // 商品訂單編號
 
 	// private MemberVO memId;
 	private Integer memId; // 露營者編號
-	
+
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Taipei")
-	private LocalDateTime shopOrderDate; 
-	
+	private LocalDateTime shopOrderDate;
+
 	private Byte shopOrderShipment; // 出貨方式
-	
+
 	private Integer shopOrderShipFee; // 運費
-	
+
 	private Integer beforeDiscountAmount; // 折扣前金額
 
 	private String discountCodeId; // 折價券編號
@@ -65,7 +65,7 @@ public class ShopOrderDTO_res {
 	}
 
 	// --- Getters and Setters ---
-	
+
 	public Integer getShopOrderId() {
 		return shopOrderId;
 	}
@@ -73,7 +73,6 @@ public class ShopOrderDTO_res {
 	public void setShopOrderId(Integer shopOrderId) {
 		this.shopOrderId = shopOrderId;
 	}
-	
 
 	public Integer getMemId() {
 		return memId;
@@ -83,7 +82,6 @@ public class ShopOrderDTO_res {
 		this.memId = memId;
 	}
 
-	
 	public LocalDateTime getShopOrderDate() {
 		return shopOrderDate;
 	}
@@ -92,12 +90,23 @@ public class ShopOrderDTO_res {
 		this.shopOrderDate = shopOrderDate;
 	}
 
+	
 	public Byte getShopOrderShipment() {
 		return shopOrderShipment;
 	}
 
 	public void setShopOrderShipment(Byte shopOrderShipment) {
 		this.shopOrderShipment = shopOrderShipment;
+	}
+
+	public String getShopOrderShipmentStr() {
+		String result = switch (shopOrderShipment) {
+		case 1 -> "賣家宅配";
+		case 2 -> "超商取貨付款";
+		default -> "尚未選取";
+		};
+		return result;
+
 	}
 
 	public Integer getShopOrderShipFee() {
@@ -146,6 +155,17 @@ public class ShopOrderDTO_res {
 
 	public void setShopOrderPayment(Byte shopOrderPayment) {
 		this.shopOrderPayment = shopOrderPayment;
+	}
+
+	public String getShopOrderPaymentStr() {
+		String result = switch (shopOrderPayment) {
+		case 1 -> "LINEPAY";
+		case 2 -> "宅配取貨付款";
+		case 3 -> "超商取貨付款";
+		default -> "LINEPAY";
+		};
+		return result;
+
 	}
 
 	public String getOrderName() {
@@ -204,6 +224,21 @@ public class ShopOrderDTO_res {
 		this.shopOrderStatus = shopOrderStatus;
 	}
 
+	public String getShopOrderStatusStr() {
+		String result = switch (shopOrderStatus) {
+		case 0 -> "等待付款中";
+		case 1 -> "已取消";
+		case 2 -> "等待賣家確認中";
+		case 3 -> "準備出貨中";
+		case 4 -> "已出貨";
+		case 5 -> "已取貨，完成訂單";
+		case 6 -> "未取貨，退回賣家";
+		default -> "等待付款中";
+		};
+		return result;
+
+	}
+
 	public Byte getShopReturnApply() {
 		return shopReturnApply;
 	}
@@ -211,4 +246,16 @@ public class ShopOrderDTO_res {
 	public void setShopReturnApply(Byte shopReturnApply) {
 		this.shopReturnApply = shopReturnApply;
 	}
+
+	public String getShopReturnApplyStr() {
+		String result = switch (shopReturnApply) {
+		case 0 -> "未申請退貨";
+		case 1 -> "申請退貨";
+		case 2 -> "退貨成功";
+		case 3 -> "退貨失敗";
+		default -> "未申請退貨";
+		};
+		return result;
+	}
+
 }

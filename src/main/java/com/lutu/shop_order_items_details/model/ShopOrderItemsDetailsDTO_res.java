@@ -22,6 +22,8 @@ public class ShopOrderItemsDetailsDTO_res {
 
 	@NotNull(message = "請輸入數量")
 	private Integer shopOrderQty; // 購買數量
+	
+	private Integer prodOrderPrice; // 商品售價
 
 	// 商品訂單明細新增時不會填寫
 	private Byte commentSatis; // 評價滿意度
@@ -113,6 +115,14 @@ public class ShopOrderItemsDetailsDTO_res {
 
 	public void setCommentDate(LocalDateTime commentDate) {
 		this.commentDate = commentDate;
+	}
+
+	public Integer getProdOrderPrice() {
+		return prodOrderPrice;
+	}
+
+	public void setProdOrderPrice(Integer prodOrderPrice) {
+		this.prodOrderPrice = prodOrderPrice;
 	}
 
 	
