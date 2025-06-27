@@ -13,11 +13,13 @@ import com.lutu.camp_report.model.CampReportVO;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.camptracklist.model.CampTrackListVO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -106,7 +108,8 @@ public class MemberVO implements Serializable{
 	private LocalDate memBirth;
 	
 	// ========物件關聯======//
-	@OneToMany(mappedBy = "memberVO")
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "mem_id")
 	private Set<CampSiteOrderVO> campsiteOrders = new HashSet<>();
 	
 	@OneToMany(mappedBy = "memberVO")

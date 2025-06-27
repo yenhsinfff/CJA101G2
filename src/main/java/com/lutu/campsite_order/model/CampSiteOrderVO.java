@@ -41,10 +41,12 @@ public class CampSiteOrderVO implements java.io.Serializable {
 	private String campsiteOrderId; // 營地訂單編號
 
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "mem_id", referencedColumnName = "mem_id")
-	@JsonBackReference
-	private MemberVO memberVO;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "mem_id", referencedColumnName = "mem_id")
+//	@JsonBackReference
+//	private MemberVO memberVO;
+	@Column(name = "mem_id")
+	private Integer memId;
 
 	@Column(name = "discount_code_id")
 	private String discountCodeId;// 折價券編號
@@ -98,10 +100,12 @@ public class CampSiteOrderVO implements java.io.Serializable {
 	@Column(name = "comment_date")
 	private Timestamp commentDate; // 評價日期
 	// name:自己的欄位 ｜｜referencedColumnName是關聯的欄位
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
-	@JsonBackReference
-	private CampVO campVO;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
+//	@JsonBackReference
+//	private CampVO campVO;
+	@Column(name = "camp_id")
+	private Integer campId;
 
 	@OneToMany(mappedBy = "campSiteOrderVO", cascade = CascadeType.ALL)
 	private Set<CampSiteOrderDetailsVO> campsiteOrderDetails = new HashSet<>();
@@ -112,25 +116,41 @@ public class CampSiteOrderVO implements java.io.Serializable {
 		this.campsiteOrderDetails = campsiteOrders;
 	}
 
-	public MemberVO getMemberVO() {
-		return memberVO;
-	}
-
-	public void setMemberVO(MemberVO memberVO) {
-		this.memberVO = memberVO;
-	}
-
-	
-	public CampVO getCampVO() {
-		return campVO;
-	}
-
-	public void setCampVO(CampVO campVO) {
-		this.campVO = campVO;
-	}
+//	public MemberVO getMemberVO() {
+//		return memberVO;
+//	}
+//
+//	public void setMemberVO(MemberVO memberVO) {
+//		this.memberVO = memberVO;
+//	}
+//
+//	
+//	public CampVO getCampVO() {
+//		return campVO;
+//	}
+//
+//	public void setCampVO(CampVO campVO) {
+//		this.campVO = campVO;
+//	}
 	//=====================OneToMany=====================//
 	public void setCampsiteOrderId(String campsiteOrderId) {
 		this.campsiteOrderId = campsiteOrderId;
+	}
+
+	public Integer getMemId() {
+		return memId;
+	}
+
+	public void setMemId(Integer memId) {
+		this.memId = memId;
+	}
+
+	public Integer getCampId() {
+		return campId;
+	}
+
+	public void setCampId(Integer campId) {
+		this.campId = campId;
 	}
 
 	public Set<CampSiteOrderDetailsVO> getCampSiteOrderDetails() {

@@ -73,8 +73,8 @@ public class CampVO implements java.io.Serializable {
     @Column(name = "camp_reg_date", nullable = false)
     private Date campRegDate; // 加入日期
     
-    @OneToMany(mappedBy = "campVO", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany( cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+//    @JsonManagedReference
     private Set<CampSiteOrderVO> campsiteOrders = new HashSet<>();  
 
     @OneToMany(mappedBy = "camp", cascade = CascadeType.ALL)

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserDiscountRepository extends JpaRepository<UserDiscountVO, UserDiscountId> {
+public interface UserDiscountRepository extends JpaRepository<UserDiscountVO, UserDiscountVO.CompositeDetail> {
 
     // 根據複合主鍵查詢（單一筆）
     Optional<UserDiscountVO> findByIdMemIdAndIdDiscountCodeId(Integer memId, String discountCodeId);
