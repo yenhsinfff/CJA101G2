@@ -10,8 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lutu.colorList.model.ColorListRepository;
 import com.lutu.colorList.model.ColorListVO;
-import com.lutu.prodSpecList.model.ProdSpecListDTO;
-import com.lutu.prodSpecList.model.ProdSpecListVO;
+import com.lutu.prodColorList.model.ProdColorListVO.CompositeDetail;
 import com.lutu.shopProd.model.ShopProdRepository;
 import com.lutu.shopProd.model.ShopProdVO;
 
@@ -39,7 +38,7 @@ public class ProdColorListService {
         return dtoList;
     }
 
-	// ✅ 查詢某商品所有商品顏色
+	// 查詢某商品所有商品顏色
 	public List<ProdColorListDTO> getProdColorsByProdId(Integer prodId) {
 		List<ProdColorListVO> voList = repository.findByProdId(prodId);
 		List<ProdColorListDTO> dtoList = new ArrayList<>();
@@ -49,7 +48,7 @@ public class ProdColorListService {
 		return dtoList;
 	}
 
-	// ✅ 查單一筆商品顏色
+	// 查單一筆商品顏色
 	public ProdColorListDTO getOne(Integer prodId, Integer prodColorId) {
 		Optional<ProdColorListVO> optional = repository.findById(new ProdColorListVO.CompositeDetail(prodId, prodColorId));
 		if (optional.isPresent()) {
@@ -59,14 +58,20 @@ public class ProdColorListService {
 		}
 	}
 
-	// 🔁 新增或更新
+	// 新增或更新
 	public ProdColorListDTO saveOrUpdate(ProdColorListDTO dto) {
 		ProdColorListVO vo = toVO(dto);
 		ProdColorListVO saved = repository.save(vo);
 		return toDTO(saved);
 	}
 
-	// ✅ 刪除
+	// 查詢顏色圖片
+	public byte[] getPicByCompositeKey(Integer prodId, Integer colorId) {
+	    Optional<ProdColorListVO> opt = repository.findById(new CompositeDetail(prodId, colorId));
+	    return opt.map(ProdColorListVO::getProdColorPic).orElse(null);
+	}
+	
+	// 刪除
 //    public void delete(Integer prodId, Integer prodColorId) {
 //        repository.deleteById(new ProdColorListVO.CompositeDetail(prodId, prodColorId));
 //    }
@@ -76,7 +81,7 @@ public class ProdColorListService {
 		ProdColorListDTO dto = new ProdColorListDTO();
 		dto.setProdId(vo.getProdId());
 		dto.setProdColorId(vo.getProdColorId());
-		dto.setProdColorPic(vo.getProdColorPic());
+//		dto.setProdColorPic(vo.getProdColorPic());
 
 		if (vo.getColorListVO() != null) {
 			dto.setColorName(vo.getColorListVO().getColorName()); // 若 colorName 要顯示
@@ -90,7 +95,7 @@ public class ProdColorListService {
 		ProdColorListVO vo = new ProdColorListVO();
 		vo.setProdId(dto.getProdId());
 		vo.setProdColorId(dto.getProdColorId());
-		vo.setProdColorPic(dto.getProdColorPic());
+//		vo.setProdColorPic(dto.getProdColorPic());
 
 		// 補上關聯（如果需要）
 		if (dto.getProdColorId() != null) {

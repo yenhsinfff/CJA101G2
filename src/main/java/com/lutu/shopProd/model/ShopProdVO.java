@@ -9,10 +9,10 @@ import java.util.Set;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.lutu.prodColorList.model.ProdColorListVO;
+import com.lutu.prodPic.model.ProdPicVO;
 import com.lutu.prodSpecList.model.ProdSpecListVO;
 import com.lutu.productType.model.ProdTypeVO;
 import com.lutu.shop.model.ProdFavListVO;
-import com.lutu.shop.model.ProdPicVO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

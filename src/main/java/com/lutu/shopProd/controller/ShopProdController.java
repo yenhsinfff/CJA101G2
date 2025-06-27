@@ -1,7 +1,10 @@
 package com.lutu.shopProd.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,13 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
-import com.lutu.prodSpecList.model.ProdSpecListRepository;
-import com.lutu.productType.model.ProdTypeDTO;
+import com.lutu.prodPic.model.ProdPicService;
 import com.lutu.productType.model.ProdTypeRepository;
 import com.lutu.shopProd.model.ShopProdDTO;
 import com.lutu.shopProd.model.ShopProdService;
 
-//api格式 「http://localhost:8081/CJA101G02/api/campsite_orders」
+import jakarta.servlet.http.HttpServletResponse;
+
+//api格式 「http://web/CJA101G02/api/campsite_orders」
 
 @RestController
 @CrossOrigin(origins = "*") // 允許所有網域跨域存取
@@ -31,10 +35,16 @@ public class ShopProdController {
     ShopProdService shopProdService;
 
     @Autowired
+    ProdPicService prodPicService;
+    
+    @Autowired
     ProdTypeRepository prodTypeRepository;
 
-    @Autowired
-    ProdSpecListRepository prodSpecListRepository;
+//    @Autowired
+//	ProdSpecListRepository prodSpecListRepository;
+//    
+//    @Autowired
+//    ProdColorListRepository prodColorListRepository;
 
     /**
      * 查詢所有商品（DTO）
@@ -181,7 +191,26 @@ public class ShopProdController {
     } 
     */
     
-    
+    /**
+     * 商品圖片
+     * Get http://localhost:8081/CJA101G02/api/products/prodPic/{prodPicId}
+     */
+    @GetMapping("/api/products/prodpic/{prodPicId}")
+    public void getProdPic(@PathVariable Integer prodPicId, HttpServletResponse response) throws IOException {
+        byte[] img = prodPicService.getProdPicById(prodPicId); // 從 service 拿 byte[]
+
+        if (img != null && img.length > 0) {
+            try (InputStream is = new ByteArrayInputStream(img)) {
+                String mimeType = URLConnection.guessContentTypeFromStream(is);
+                if (mimeType == null) {
+                    mimeType = "application/octet-stream";
+                }
+                response.setContentType(mimeType);
+                response.getOutputStream().write(img);
+            }
+        }
+    }
+
 //	@GetMapping("/api/camps/{campId}/pic1")
 //	public void getCampPic1(@PathVariable Integer campId, HttpServletResponse response) throws IOException {
 //

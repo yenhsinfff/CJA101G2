@@ -68,6 +68,12 @@ public class ProdSpecListService {
         dto.setProdId(vo.getProdId());
         dto.setProdSpecId(vo.getProdSpecId());
         dto.setProdSpecPrice(vo.getProdSpecPrice());
+        
+        // 顯示規格名稱
+        if (vo.getSpecListVO() != null) {
+            dto.setProdSpecName(vo.getSpecListVO().getSpecName());
+        }
+        
         return dto;
     }
 
