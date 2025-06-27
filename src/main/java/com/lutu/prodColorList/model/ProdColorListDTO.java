@@ -7,7 +7,8 @@ public class ProdColorListDTO {
 //    private byte[] prodColorPic;    // 顏色對應的圖片（可為預覽圖或顏色小圖）
 
     private String colorName;       // 額外欄位：顏色名稱（ColorListVO.colorName）
-
+    private boolean hasPic;         // 額外欄位：是否有圖片
+    
     public ProdColorListDTO() {}
 
     public Integer getProdId() {
@@ -41,4 +42,15 @@ public class ProdColorListDTO {
     public void setColorName(String colorName) {
         this.colorName = colorName;
     }
+
+	public boolean isHasPic() {
+		return hasPic;
+	}
+
+	public void setHasPic(boolean hasPic) {
+		this.hasPic = hasPic;
+	}
+    
+    
+    
 }

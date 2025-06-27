@@ -76,7 +76,7 @@ public class ProdColorListService {
 //        repository.deleteById(new ProdColorListVO.CompositeDetail(prodId, prodColorId));
 //    }
 
-	// 🔁 VO ➜ DTO
+	// VO ➜ DTO
 	private ProdColorListDTO toDTO(ProdColorListVO vo) {
 		ProdColorListDTO dto = new ProdColorListDTO();
 		dto.setProdId(vo.getProdId());
@@ -86,11 +86,15 @@ public class ProdColorListService {
 		if (vo.getColorListVO() != null) {
 			dto.setColorName(vo.getColorListVO().getColorName()); // 若 colorName 要顯示
 		}
+		
+		//檢查是否有顏色圖片
+		dto.setHasPic(vo.getProdColorPic() != null && vo.getProdColorPic().length > 0);
+
 
 		return dto;
 	}
 
-	// 🔁 DTO ➜ VO
+	// DTO ➜ VO
 	private ProdColorListVO toVO(ProdColorListDTO dto) {
 		ProdColorListVO vo = new ProdColorListVO();
 		vo.setProdId(dto.getProdId());
