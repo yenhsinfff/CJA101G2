@@ -99,15 +99,15 @@ public class ShopOrderDTO_res {
 		this.shopOrderShipment = shopOrderShipment;
 	}
 
-//	public String getShopOrderShipmentStr() {
-//		String result = switch (shopOrderShipment) {
-//		case 1 -> "賣家宅配";
-//		case 2 -> "超商取貨付款";
-//		default -> "尚未選取";
-//		};
-//		return result;
-//
-//	}
+	public String getShopOrderShipmentStr() {
+		String result = switch (shopOrderShipment) {
+		case 1 -> "賣家宅配";
+		case 2 -> "超商取貨付款";
+		default -> "尚未選取";
+		};
+		return result;
+
+	}
 
 	public Integer getShopOrderShipFee() {
 		return shopOrderShipFee;
@@ -157,16 +157,16 @@ public class ShopOrderDTO_res {
 		this.shopOrderPayment = shopOrderPayment;
 	}
 
-//	public String getShopOrderPaymentStr() {
-//		String result = switch (shopOrderPayment) {
-//		case 1 -> "LINEPAY";
-//		case 2 -> "宅配取貨付款";
-//		case 3 -> "超商取貨付款";
-//		default -> "LINEPAY";
-//		};
-//		return result;
-//
-//	}
+	public String getShopOrderPaymentStr() {
+		String result = switch (shopOrderPayment) {
+		case 1 -> "LINEPAY";
+		case 2 -> "宅配取貨付款";
+		case 3 -> "超商取貨付款";
+		default -> "LINEPAY";
+		};
+		return result;
+
+	}
 
 	public String getOrderName() {
 		return orderName;
@@ -224,20 +224,20 @@ public class ShopOrderDTO_res {
 		this.shopOrderStatus = shopOrderStatus;
 	}
 
-//	public String getShopOrderStatusStr() {
-//		String result = switch (shopOrderStatus) {
-//		case 0 -> "等待付款中";
-//		case 1 -> "已取消";
-//		case 2 -> "等待賣家確認中";
-//		case 3 -> "準備出貨中";
-//		case 4 -> "已出貨";
-//		case 5 -> "已取貨，完成訂單";
-//		case 6 -> "未取貨，退回賣家";
-//		default -> "等待付款中";
-//		};
-//		return result;
-//
-//	}
+	public String getShopOrderStatusStr() {
+		String result = switch (shopOrderStatus) {
+		case 0 -> "等待付款中";
+		case 1 -> "已取消";
+		case 2 -> "等待賣家確認中";
+		case 3 -> "準備出貨中";
+		case 4 -> "已出貨";
+		case 5 -> "已取貨，完成訂單";
+		case 6 -> "未取貨，退回賣家";
+		default -> "等待付款中";
+		};
+		return result;
+
+	}
 
 	public Byte getShopReturnApply() {
 		return shopReturnApply;
@@ -247,15 +247,15 @@ public class ShopOrderDTO_res {
 		this.shopReturnApply = shopReturnApply;
 	}
 
-//	public String getShopReturnApplyStr() {
-//		String result = switch (shopReturnApply) {
-//		case 0 -> "未申請退貨";
-//		case 1 -> "申請退貨";
-//		case 2 -> "退貨成功";
-//		case 3 -> "退貨失敗";
-//		default -> "未申請退貨";
-//		};
-//		return result;
-//	}
+	public String getShopReturnApplyStr() {
+		String result = switch (shopReturnApply) {
+		case 0 -> "未申請退貨";
+		case 1 -> "申請退貨";
+		case 2 -> "退貨成功";
+		case 3 -> "退貨失敗";
+		default -> "未申請退貨";
+		};
+		return result;
+	}
 
 }
