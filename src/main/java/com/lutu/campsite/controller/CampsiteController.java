@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/campsite")
-public class CampsiteApiController {
+public class CampsiteController {
 	
 	@Autowired
 	CampsiteService campsiteSvc;
