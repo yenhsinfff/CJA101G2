@@ -155,8 +155,8 @@ public class ShopOrderService {
 					// 將afterDiscountAmount存入商品訂單
 					sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
 				} else if (type == 1) {
-					// 折扣前金額*(1 - discountValue(%))並四捨五入
-					BigDecimal discountAmount = beforeDiscountAmount.multiply(BigDecimal.ONE.subtract(value))
+					// 折扣前金額*(discountValue(%))並四捨五入
+					BigDecimal discountAmount = beforeDiscountAmount.multiply(value)
 							.setScale(0, RoundingMode.HALF_UP);
 
 					// 計算折扣後金額，先以BigDecimal計算
@@ -240,7 +240,7 @@ public class ShopOrderService {
 					// 計算實付金額 = 折扣前金額 - 折扣金額 + 運費 
 					afterDiscountAmount = beforeDiscountAmount.subtract(value).add(shipFee);
 				} else if (type == 1) { // 百分比折扣
-					// 折扣前金額*(1 - discountValue(%))並四捨五入
+					// 折扣前金額*(discountValue(%))並四捨五入
 					BigDecimal discountAmount = beforeDiscountAmount.multiply(value)
 							.setScale(0, RoundingMode.HALF_UP);
 					sovo.setDiscountAmount(discountAmount.intValue());
@@ -316,7 +316,7 @@ public class ShopOrderService {
 				if (dtoUpdate.getShopOrderStatus() >= 0 && dtoUpdate.getShopOrderStatus() <= 6) {
 					sovo.setShopOrderStatus(dtoUpdate.getShopOrderStatus());
 				} else {
-					throw new IllegalArgumentException("0: 等待付款中 1: 已取消 2: 等待賣家確認中 3: 準備出貨中 4: 已出貨 5: 未取貨，退回賣家 ");
+					throw new IllegalArgumentException("0: 等待付款中 1: 已取消 2: 等待賣家確認中 3: 準備出貨中 4: 已出貨 5: 已取貨，完成訂單 6: 未取貨，退回賣家");
 				}
 			} else {
 				throw new IllegalArgumentException("商品訂單已進行退貨申請流程");

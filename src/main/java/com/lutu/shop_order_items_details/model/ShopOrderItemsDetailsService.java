@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.lutu.colorList.model.ColorListRepository;
 import com.lutu.colorList.model.ColorListVO;
+import com.lutu.prodSpecList.model.ProdSpecListRepository;
+import com.lutu.prodSpecList.model.ProdSpecListVO;
 import com.lutu.shopProd.model.ShopProdRepository;
 import com.lutu.shopProd.model.ShopProdVO;
 import com.lutu.shop_order.model.ShopOrderService;
@@ -32,6 +34,10 @@ public class ShopOrderItemsDetailsService {
 
 	@Autowired
 	SpecListRepository slr;
+	
+	@Autowired
+	ProdSpecListRepository psr;
+	
 
 	// 商品訂單新增時同步新增訂單明細，故寫在ShopOrderService
 
@@ -50,6 +56,10 @@ public class ShopOrderItemsDetailsService {
 		dto.setProdName(spr.findById(vo.getProdId()).map(ShopProdVO::getProdName).orElse("未知的商品"));
 		dto.setProdColorName(clr.findById(vo.getProdColorId()).map(ColorListVO::getColorName).orElse("未知的顏色"));
 		dto.setProdSpecName(slr.findById(vo.getProdSpecId()).map(SpecListVO::getSpecName).orElse("未知的規格"));
+		
+		ProdSpecListVO.CompositeDetail2 key = new ProdSpecListVO.CompositeDetail2(vo.getProdId(), vo.getProdSpecId());
+		// 價格
+		dto.setProdOrderPrice(psr.findById(key).map(ProdSpecListVO::getProdSpecPrice).orElse(0));
 
 		return dto;
 	}
