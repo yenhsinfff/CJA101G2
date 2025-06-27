@@ -23,8 +23,8 @@ public interface ShopProdRepository extends JpaRepository<ShopProdVO, Integer> {
 		@Query("SELECT p FROM ShopProdVO p ORDER BY p.prodReleaseDate DESC")
 		List<ShopProdVO> findByReleaseDateDesc();
 
-		// 折扣查詢（折扣不為空且大於 0）
-		@Query("SELECT p FROM ShopProdVO p WHERE p.prodDiscount IS NOT NULL AND p.prodDiscount > 0")
+		// 折扣查詢（折扣小於1 即為有折扣商品）
+		@Query("SELECT p FROM ShopProdVO p WHERE p.prodDiscount < 1")
 		List<ShopProdVO> findByDiscounted();
 
 		// 隨機推薦（隨機取 N 筆，這個用 Native SQL 效率較佳）
