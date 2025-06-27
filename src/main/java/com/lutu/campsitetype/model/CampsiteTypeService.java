@@ -15,61 +15,94 @@ public class CampsiteTypeService {
 
 	@Autowired
 	CampsiteTypeRepository repository;
-	
-	
-	//查詢特定營地下的房型
+
+	// 查詢特定營地下的房型
 	public List<CampsiteTypeVO> getByCampId(Integer campId) {
-	    return repository.findByIdCampId(campId);
+		return repository.findByIdCampId(campId);
 	}
 	
-	public CampsiteTypeVO addCampsiteType(CampsiteTypeVO campsiteTypeVO, Integer campId) {
-	    // 查詢所有營地目前的最大房型 ID
-	    Integer maxCampsiteTypeId = repository.findAllMaxCampsiteTypeId();
-	    int nextCampsiteTypeId = (maxCampsiteTypeId == null) ? 1 : maxCampsiteTypeId + 1;
-
-	    // 設定主鍵（campsiteTypeId 為全域唯一，campId 為傳入值）
-	    CampsiteTypeVO.CompositeDetail id = new CampsiteTypeVO.CompositeDetail(nextCampsiteTypeId, campId);
-	    campsiteTypeVO.setId(id);
-
-	    return repository.save(campsiteTypeVO);
-	}
-	
-	public CampsiteTypeVO updateCampsiteType(CampsiteTypeVO campsiteTypeVO) {
-		CampsiteTypeVO.CompositeDetail id = campsiteTypeVO.getId();
-		
-		if (!repository.existsById(id)) {
-	        throw new EntityNotFoundException("找不到要修改的營地房型");
+	//複合主鍵查詢
+	 public CampsiteTypeVO getById(CampsiteTypeVO.CompositeDetail id) {
+	        return repository.findById(id)
+	                .orElse(null); // 找不到就回傳 null
 	    }
-		
+
+
+	public CampsiteTypeVO addCampsiteType(CampsiteTypeVO campsiteTypeVO, Integer campId) {
+		// 查詢所有營地目前的最大房型 ID
+		Integer maxCampsiteTypeId = repository.findAllMaxCampsiteTypeId();
+		int nextCampsiteTypeId = (maxCampsiteTypeId == null) ? 1 : maxCampsiteTypeId + 1;
+
+		// 設定主鍵（campsiteTypeId 為全域唯一，campId 為傳入值）
+		CampsiteTypeVO.CompositeDetail id = new CampsiteTypeVO.CompositeDetail(nextCampsiteTypeId, campId);
+		campsiteTypeVO.setId(id);
+
 		return repository.save(campsiteTypeVO);
 	}
-	
-	public void deleteCampsiteType(CampsiteTypeVO.CompositeDetail id) {
-	    if (!repository.existsById(id)) {
-	        throw new EntityNotFoundException("找不到要刪除的房型");
-	    }
-	    repository.deleteById(id);
+
+	public CampsiteTypeVO updateCampsiteType(CampsiteTypeVO campsiteTypeVO) {
+		CampsiteTypeVO.CompositeDetail id = campsiteTypeVO.getId();
+
+		if (!repository.existsById(id)) {
+			throw new EntityNotFoundException("找不到要修改的營地房型");
+		}
+
+		return repository.save(campsiteTypeVO);
 	}
-	
-	
+
+	public void deleteCampsiteType(CampsiteTypeVO.CompositeDetail id) {
+		if (!repository.existsById(id)) {
+			throw new EntityNotFoundException("找不到要刪除的房型");
+		}
+		repository.deleteById(id);
+	}
+
 	@Transactional
 	public CampsiteTypeVO getOneCampsiteType(Integer campsiteTypeId, Integer campId) {
-	    CompositeDetail id = new CompositeDetail();
-	    id.setCampId(campId);
-	    id.setCampsiteTypeId(campsiteTypeId);
-	    CampsiteTypeVO vo = repository.findById(id).orElse(null);
-	    
-		if (vo != null) 
+		CompositeDetail id = new CompositeDetail();
+		id.setCampId(campId);
+		id.setCampsiteTypeId(campsiteTypeId);
+		CampsiteTypeVO vo = repository.findById(id).orElse(null);
+
+		if (vo != null)
 			vo.getCampsites().size();
-	    return vo;
-	    
+		return vo;
+
 	}
-	
-	
+
 	public List<CampsiteTypeVO> getAll() {
 		return repository.findAll();
 	}
+
 	
+	//圖片上傳至資料庫
+//	@Transactional
+//	public void saveImages(Integer campsiteTypeId, Integer campId, MultipartFile pic1, MultipartFile pic2,
+//	        MultipartFile pic3, MultipartFile pic4) throws IOException {
+//
+//	    CompositeDetail id = new CompositeDetail();
+//	    id.setCampsiteTypeId(campsiteTypeId);
+//	    id.setCampId(campId);
+//
+//	    boolean exists = repository.existsById(id);
+//	    System.out.println("是否找到房型資料？ " + exists);
+//	    if (!exists) {
+//	        throw new RuntimeException("找不到指定房型：" + id);
+//	    }
+//
+//	    CampsiteTypeVO entity = repository.findById(id).orElseThrow(() -> new RuntimeException("找不到指定房型：" + id));
+//
+//	    entity.setCampsitePic1(pic1.getBytes());
+//	    entity.setCampsitePic2(pic2 != null && !pic2.isEmpty() ? pic2.getBytes() : null);
+//	    entity.setCampsitePic3(pic3 != null && !pic3.isEmpty() ? pic3.getBytes() : null);
+//	    entity.setCampsitePic4(pic4 != null && !pic4.isEmpty() ? pic4.getBytes() : null);
+//
+//	    repository.save(entity);
+//	}
+	
+	
+
+
 //	//自動產生主鍵(會員session設置完成後開啟)
 //	public CampsiteTypeVO addCampsiteTypeAutoId(CampsiteTypeVO campsiteTypeVO, Integer campId) {
 //	    // 查出該營地最大編號
@@ -82,9 +115,7 @@ public class CampsiteTypeService {
 //
 //	    return repository.save(campsiteTypeVO);
 //	}
-	
-	
-	
+
 //	private CampsiteTypeDAO_interface dao;
 //	
 //	

@@ -33,15 +33,26 @@ public class CampsiteTypeDTO {
     
     
     // Getters and Setters
+    
+	public CampsiteTypeDTO() {
+
+	}
+
+
+	public CampsiteTypeDTO(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
+			Byte campsiteNum, Integer campsitePrice) {
+		super();
+		this.campsiteTypeId = campsiteTypeId;
+		this.campId = campId;
+		this.campsiteName = campsiteName;
+		this.campsitePeople = campsitePeople;
+		this.campsiteNum = campsiteNum;
+		this.campsitePrice = campsitePrice;
+	}
+
     public Integer getCampsiteTypeId() {
         return campsiteTypeId;
     }
-
-    
-
-	
-
-
 
 	public void setCampsiteTypeId(Integer campsiteTypeId) {
         this.campsiteTypeId = campsiteTypeId;

@@ -14,12 +14,12 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "campsite_type")
@@ -45,16 +45,20 @@ public class CampsiteTypeVO implements Serializable {
 	@NotNull(message = "房間價格: 請勿空白")
 	private Integer campsitePrice; // 房間價格
 
+	@Lob
 	@Column(name = "campsite_pic1")
-	@NotEmpty(message = "房間照片: 至少上傳1張")
+	@NotNull(message = "房間照片: 至少上傳1張")
 	private byte[] campsitePic1; // 房間照片1
 
+	@Lob
 	@Column(name = "campsite_pic2")
 	private byte[] campsitePic2; // 房間照片2
 
+	@Lob
 	@Column(name = "campsite_pic3")
 	private byte[] campsitePic3; // 房間照片3
 
+	@Lob
 	@Column(name = "campsite_pic4")
 	private byte[] campsitePic4; // 房間照片4
 
