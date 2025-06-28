@@ -26,10 +26,10 @@ public class CartController {
 
 	// 新增購物車
 	@PostMapping("/api/addCart")
-	public ApiResponse<CartDTO_res> addCart(HttpSession session, @RequestBody CartDTO_req cartData) {
+	public ApiResponse<CartDTO_res> addCart(@RequestBody CartDTO_req cartData) {
 		try {
-			CartDTO_res result = cs.addCart(session, cartData.getMemId(), cartData.getProdId(),
-					cartData.getProdColorId(), cartData.getProdSpecId(), cartData.getCartProdQty());
+			CartDTO_res result = cs.addCart(cartData.getMemId(), cartData.getProdId(), cartData.getProdColorId(),
+					cartData.getProdSpecId(), cartData.getCartProdQty());
 
 			return new ApiResponse<CartDTO_res>("success", result, "新增成功");
 		} catch (Exception e) {
@@ -40,10 +40,10 @@ public class CartController {
 
 	// 查詢購物車內容
 	@GetMapping("/api/getCart")
-	public ApiResponse<List<CartDTO_res>> getCart(HttpSession session, @RequestParam(required = false) Integer memId) {
+	public ApiResponse<List<CartDTO_res>> getCart(@RequestParam(required = false) Integer memId) {
 
 		try {
-			List<CartDTO_res> cartList = cs.getCart(session, memId);
+			List<CartDTO_res> cartList = cs.getCart(memId);
 
 			return new ApiResponse<>("success", cartList, "查詢成功");
 		} catch (Exception e) {
@@ -54,11 +54,10 @@ public class CartController {
 
 	// 修改購物車
 	@PostMapping("/api/updateCart")
-	public ApiResponse<CartDTO_res> updateCart(HttpSession session, @RequestParam(required = false) Integer memId,
-			@RequestParam Integer prodId, @RequestParam Integer prodColorId, @RequestParam Integer prodSpecId,
-			@RequestParam Integer cartProdQty) {
+	public ApiResponse<CartDTO_res> updateCart(@RequestBody CartDTO_req cartData) {
 		try {
-			CartDTO_res result = cs.updateCart(session, memId, prodId, prodColorId, prodSpecId, cartProdQty);
+			CartDTO_res result = cs.updateCart(cartData.getMemId(), cartData.getProdId(), cartData.getProdColorId(),
+					cartData.getProdSpecId(), cartData.getCartProdQty());
 
 			return new ApiResponse<CartDTO_res>("success", result, "修改成功");
 		} catch (Exception e) {
@@ -69,10 +68,9 @@ public class CartController {
 
 	// 移除購物車細項
 	@PostMapping("/api/removeCart")
-	public ApiResponse<List<CartDTO_res>> removeCart(HttpSession session, @RequestParam(required = false) Integer memId,
-			@RequestParam Integer prodId, @RequestParam Integer prodColorId, @RequestParam Integer prodSpecId) {
+	public ApiResponse<List<CartDTO_res>> removeCart(@RequestBody CartDTO_req cartData) {
 		try {
-			List<CartDTO_res> newList = cs.removeCart(session, memId, prodId, prodColorId, prodSpecId);
+			List<CartDTO_res> newList = cs.removeCart(cartData.getMemId(), cartData.getProdId(), cartData.getProdColorId(), cartData.getProdSpecId());
 
 			return new ApiResponse<>("success", newList, "移除成功");
 		} catch (Exception e) {
@@ -83,10 +81,9 @@ public class CartController {
 
 	// 清空物車
 	@PostMapping("/api/clearCart")
-	public ApiResponse<List<CartDTO_res>> clearCart(HttpSession session,
-			@RequestParam(required = false) Integer memId) {
+	public ApiResponse<List<CartDTO_res>> clearCart(@RequestParam(required = false) Integer memId) {
 		try {
-			List<CartDTO_res> clearList = cs.clearCart(session, memId);
+			List<CartDTO_res> clearList = cs.clearCart(memId);
 
 			return new ApiResponse<>("success", clearList, "清空成功");
 		} catch (Exception e) {
@@ -109,5 +106,4 @@ public class CartController {
 
 	}
 
-	
 }

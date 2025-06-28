@@ -11,20 +11,20 @@ public interface CartService_Interface {
 	// 定義購物車可以提供哪些服務
 	
 	// 加入購物車
-	CartDTO_res addCart(HttpSession session, Integer memId, Integer prodId, Integer prodColorId, Integer prodSpecId, Integer cartProdQty);
+	CartDTO_res addCart(Integer memId, Integer prodId, Integer prodColorId, Integer prodSpecId, Integer cartProdQty);
 	
 	
 	// 查詢購物車
-	List<CartDTO_res> getCart(HttpSession session, Integer memId);
+	List<CartDTO_res> getCart(Integer memId);
 
 	// 修改購物車內容
-	CartDTO_res updateCart(HttpSession session, Integer memId, Integer prodId, Integer prodColorId, Integer prodSpecId, Integer cartProdQty);
+	CartDTO_res updateCart(Integer memId, Integer prodId, Integer prodColorId, Integer prodSpecId, Integer cartProdQty);
 	
 	// 移除購物車內容
-	List<CartDTO_res> removeCart(HttpSession session, Integer memId, Integer prodId, Integer prodColorId, Integer prodSpecId);
+	List<CartDTO_res> removeCart(Integer memId, Integer prodId, Integer prodColorId, Integer prodSpecId);
 	
 	// 清空購物車
-	List<CartDTO_res> clearCart(HttpSession session, Integer memId); 
+	List<CartDTO_res> clearCart(Integer memId); 
 	
 	// 合併購物車
 	List<CartDTO_res> mergeCart(HttpSession session, Integer memId);
