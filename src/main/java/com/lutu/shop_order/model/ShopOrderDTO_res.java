@@ -226,14 +226,13 @@ public class ShopOrderDTO_res {
 
 	public String getShopOrderStatusStr() {
 		String result = switch (shopOrderStatus) {
-		case 0 -> "等待付款中";
-		case 1 -> "已取消";
-		case 2 -> "等待賣家確認中";
-		case 3 -> "準備出貨中";
-		case 4 -> "已出貨";
-		case 5 -> "已取貨，完成訂單";
-		case 6 -> "未取貨，退回賣家";
-		default -> "等待付款中";
+		case 0 -> "等待賣家確認中";
+		case 1 -> "準備出貨中";
+		case 2 -> "已出貨";
+		case 3 -> "已取貨，完成訂單";
+		case 4 -> "未取貨，退回賣家";
+		case 5 -> "已取消";
+		default -> "等待賣家確認中";
 		};
 		return result;
 

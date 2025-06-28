@@ -14,6 +14,7 @@ import com.lutu.prodSpecList.model.ProdSpecListVO;
 import com.lutu.shopProd.model.ShopProdRepository;
 import com.lutu.shopProd.model.ShopProdVO;
 import com.lutu.shop_order.model.ShopOrderService;
+import com.lutu.shop_order.model.ShopOrderVO;
 import com.lutu.specList.model.SpecListRepository;
 import com.lutu.specList.model.SpecListVO;
 
@@ -34,19 +35,20 @@ public class ShopOrderItemsDetailsService {
 
 	@Autowired
 	SpecListRepository slr;
-	
+
 	@Autowired
 	ProdSpecListRepository psr;
-	
 
 	// 商品訂單新增時同步新增訂單明細，故寫在ShopOrderService
 
 	// vo轉dto
 	public ShopOrderItemsDetailsDTO_res voToDto(ShopOrderItemsDetailsVO vo) {
 		ShopOrderItemsDetailsDTO_res dto = new ShopOrderItemsDetailsDTO_res();
-		
+
 		dto.setShopOrderId(vo.getShopOrderId());
 		dto.setProdId(vo.getProdId());
+		dto.setProdColorId(vo.getProdColorId());
+		dto.setProdSpecId(vo.getProdSpecId());
 		dto.setShopOrderQty(vo.getShopOrderQty());
 		dto.setCommentSatis(vo.getCommentSatis());
 		dto.setCommentContent(vo.getCommentContent());
@@ -56,7 +58,7 @@ public class ShopOrderItemsDetailsService {
 		dto.setProdName(spr.findById(vo.getProdId()).map(ShopProdVO::getProdName).orElse("未知的商品"));
 		dto.setProdColorName(clr.findById(vo.getProdColorId()).map(ColorListVO::getColorName).orElse("未知的顏色"));
 		dto.setProdSpecName(slr.findById(vo.getProdSpecId()).map(SpecListVO::getSpecName).orElse("未知的規格"));
-		
+
 		ProdSpecListVO.CompositeDetail2 key = new ProdSpecListVO.CompositeDetail2(vo.getProdId(), vo.getProdSpecId());
 		// 價格
 		dto.setProdOrderPrice(psr.findById(key).map(ProdSpecListVO::getProdSpecPrice).orElse(0));
@@ -104,16 +106,25 @@ public class ShopOrderItemsDetailsService {
 	// 修改評論
 	public ShopOrderItemsDetailsDTO_res updateDetails(ShopOrderItemsDetailsDTO_update dtoUpdate) {
 
-		// 1. 先查出原本的VO
+		// 1. 先查出原本的明細VO
 		// 找到PK
 		ShopOrderItemsDetailsVO.CompositeDetail key = new ShopOrderItemsDetailsVO.CompositeDetail(
 				dtoUpdate.getShopOrderId(), dtoUpdate.getProdId(), dtoUpdate.getProdColorId(),
 				dtoUpdate.getProdSpecId());
 
-		// 2. 找到該筆訂單vo
+		// 2. 找到該筆訂單明細vo
 		ShopOrderItemsDetailsVO detailsVO = soidr.findById(key).orElseThrow(() -> new RuntimeException("查無此筆明細資料"));
 
-		// 3. 用dto_update的其他欄位更新vo
+		// 3. 判斷訂單狀態
+		ShopOrderVO order = sos.getOneShopOrder(dtoUpdate.getShopOrderId());
+		
+		final int ORDER_STATUS_COMPLETED = 3;	//設定訂單完成的狀態為常數，3: 已取貨，完成訂單
+
+		if (order.getShopOrderStatus() != ORDER_STATUS_COMPLETED) { // 訂單狀態還沒取貨無法修改
+			throw new RuntimeException("訂單未完成，無法評論或修改評價");
+		}
+
+		// 4. 用dto_update的其他欄位更新vo
 		if (dtoUpdate.getCommentSatis() != null && dtoUpdate.getCommentSatis() >= 0
 				&& dtoUpdate.getCommentSatis() <= 5) {
 
@@ -139,5 +150,4 @@ public class ShopOrderItemsDetailsService {
 
 	}
 
-	
 }
