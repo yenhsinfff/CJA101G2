@@ -35,7 +35,11 @@ public class ShopOrderItemsDetailsDTO_res {
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private LocalDateTime commentDate; // 評價日期
 	
+	private Integer prodColorId; // 商品顏色編號
+	
 	private String prodColorName; // 商品顏色名稱
+	
+	private Integer prodSpecId; // 商品規格編號
 
 	private String prodSpecName; // 商品規格名稱
 
@@ -76,12 +80,28 @@ public class ShopOrderItemsDetailsDTO_res {
 		this.prodName = prodName;
 	}
 
+	public Integer getProdColorId() {
+		return prodColorId;
+	}
+
+	public void setProdColorId(Integer prodColorId) {
+		this.prodColorId = prodColorId;
+	}
+
 	public String getProdColorName() {
 		return prodColorName;
 	}
 
 	public void setProdColorName(String prodColorName) {
 		this.prodColorName = prodColorName;
+	}
+
+	public Integer getProdSpecId() {
+		return prodSpecId;
+	}
+
+	public void setProdSpecId(Integer prodSpecId) {
+		this.prodSpecId = prodSpecId;
 	}
 
 	public String getProdSpecName() {

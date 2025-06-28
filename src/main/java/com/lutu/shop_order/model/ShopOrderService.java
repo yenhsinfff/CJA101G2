@@ -2,7 +2,6 @@ package com.lutu.shop_order.model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,8 +155,7 @@ public class ShopOrderService {
 					sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
 				} else if (type == 1) {
 					// 折扣前金額*(discountValue(%))並四捨五入
-					BigDecimal discountAmount = beforeDiscountAmount.multiply(value)
-							.setScale(0, RoundingMode.HALF_UP);
+					BigDecimal discountAmount = beforeDiscountAmount.multiply(value).setScale(0, RoundingMode.HALF_UP);
 
 					// 計算折扣後金額，先以BigDecimal計算
 					BigDecimal totalAmount = beforeDiscountAmount.subtract(discountAmount);
@@ -199,143 +197,161 @@ public class ShopOrderService {
 		}
 
 		// 2. 只更新有傳值的欄位（可用if判斷，避免null覆蓋）
+		if (dtoUpdate.getShopOrderStatus() != null
+				&& !sovo.getShopOrderStatus().equals(dtoUpdate.getShopOrderStatus())) {
 
-		// memId不可變動
-		sovo.setMemId(sovo.getMemId());
-
-		if (dtoUpdate.getShopOrderShipment() != null) {
-			sovo.setShopOrderShipment(dtoUpdate.getShopOrderShipment());
-		}
-
-		if (dtoUpdate.getShopOrderShipFee() != null) {
-			sovo.setShopOrderShipFee(dtoUpdate.getShopOrderShipFee());
-		}
-
-//		sovo.setBeforeDiscountAmount(sovo.getBeforeDiscountAmount());
-
-		// 先預設為BigDecimal 0，方便後續計算
-		BigDecimal beforeDiscountAmount = new BigDecimal(sovo.getBeforeDiscountAmount());
-
-		// 將實付金額預設為 BigDecimal 0，方便後續計算
-		BigDecimal afterDiscountAmount = new BigDecimal(sovo.getAfterDiscountAmount());
-
-		// 運費轉為BigDecimal
-		BigDecimal shipFee = new BigDecimal(sovo.getShopOrderShipFee());
-
-		// 檢查是否傳入 discountCodeId 欄位
-		if (dtoUpdate.hasDiscountCodeId()) {
-			if (dtoUpdate.getDiscountCodeId() != null) {
-				// 新增或更新折扣碼
-				DiscountCodeVO dcVO = dcr.findById(dtoUpdate.getDiscountCodeId())
-						.orElseThrow(() -> new RuntimeException("查無折扣碼"));
-				sovo.setDiscountCodeId(dcVO);
-
-				// 取得discountCodeType
-				Byte type = dcVO.getDiscountType();
-				// 取得discountValue
-				BigDecimal value = dcVO.getDiscountValue();
-
-				if (type == 0) { // 固定金額折扣
-					sovo.setDiscountAmount(value.intValue());
-					// 計算實付金額 = 折扣前金額 - 折扣金額 + 運費 
-					afterDiscountAmount = beforeDiscountAmount.subtract(value).add(shipFee);
-				} else if (type == 1) { // 百分比折扣
-					// 折扣前金額*(discountValue(%))並四捨五入
-					BigDecimal discountAmount = beforeDiscountAmount.multiply(value)
-							.setScale(0, RoundingMode.HALF_UP);
-					sovo.setDiscountAmount(discountAmount.intValue());
-					// 計算實付金額 = 折扣前金額 - 折扣金額 + 運費 
-					afterDiscountAmount = beforeDiscountAmount.subtract(discountAmount).add(shipFee);
-				} else {
-					throw new RuntimeException("無效的折扣類型");
-				}
-				sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
-			} else {
-				// 刪除折扣碼
-				sovo.setDiscountCodeId(null);
-				sovo.setDiscountAmount(null);
-				afterDiscountAmount = beforeDiscountAmount.add(shipFee);
-				sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
-			}
-		} else {
-			// 未傳入 discountCodeId，保持原有折扣碼不變
-			if (sovo.getDiscountCodeId() != null) {
-				DiscountCodeVO dcVO = sovo.getDiscountCodeId();
-				Byte type = dcVO.getDiscountType();
-				BigDecimal value = dcVO.getDiscountValue();
-
-				if (type == 0) {
-					sovo.setDiscountAmount(value.intValue());
-					afterDiscountAmount = beforeDiscountAmount.subtract(value).add(shipFee);
-				} else if (type == 1) {
-					BigDecimal discountAmount = beforeDiscountAmount.multiply(BigDecimal.ONE.subtract(value))
-							.setScale(0, RoundingMode.HALF_UP);
-					sovo.setDiscountAmount(discountAmount.intValue());
-					afterDiscountAmount = beforeDiscountAmount.subtract(discountAmount).add(shipFee);
-				}
-				sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
-			} else {
-				sovo.setDiscountAmount(null);
-				afterDiscountAmount = beforeDiscountAmount.add(shipFee);
-				sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
-			}
-		}
-
-		if (dtoUpdate.getShopOrderPayment() != null) {
-			sovo.setShopOrderPayment(dtoUpdate.getShopOrderPayment());
-		}
-
-		if (dtoUpdate.getOrderName() != null) {
-			sovo.setOrderName(dtoUpdate.getOrderName());
-		}
-
-		if (dtoUpdate.getOrderEmail() != null) {
-			sovo.setOrderEmail(dtoUpdate.getOrderEmail());
-		}
-
-		if (dtoUpdate.getOrderPhone() != null) {
-			sovo.setOrderPhone(dtoUpdate.getOrderPhone());
-		}
-
-		if (dtoUpdate.getOrderShippingAddress() != null) {
-			sovo.setOrderShippingAddress(dtoUpdate.getOrderShippingAddress());
-		}
-
-		if (dtoUpdate.getShopOrderNote() != null) {
-			sovo.setShopOrderNote(dtoUpdate.getShopOrderNote());
-		}
-
-		if (dtoUpdate.getShopOrderShipDate() != null) {
-			sovo.setShopOrderShipDate(dtoUpdate.getShopOrderShipDate());
-		}
-
-		if (dtoUpdate.getShopOrderStatus() != null) {
 			// 如果ShopReturnApply不是未申請退貨(0)就不能進行修改
 			if (sovo.getShopReturnApply() == 0) {
-				// 判斷ShopOrderStatus輸入範圍
-				if (dtoUpdate.getShopOrderStatus() >= 0 && dtoUpdate.getShopOrderStatus() <= 6) {
-					sovo.setShopOrderStatus(dtoUpdate.getShopOrderStatus());
-				} else {
-					throw new IllegalArgumentException("0: 等待付款中 1: 已取消 2: 等待賣家確認中 3: 準備出貨中 4: 已出貨 5: 已取貨，完成訂單 6: 未取貨，退回賣家");
-				}
+				sovo.setShopOrderStatus(dtoUpdate.getShopOrderStatus());
+
 			} else {
 				throw new IllegalArgumentException("商品訂單已進行退貨申請流程");
 			}
+
 		}
 
 		if (dtoUpdate.getShopReturnApply() != null) {
-			// ShopOrderStatus要在5(已取貨)才有資格申請退貨
-			if (sovo.getShopOrderStatus() != null && sovo.getShopOrderStatus() == 5) {
+			// ShopOrderStatus要在3(已取貨)才有資格申請退貨
+			if (sovo.getShopOrderStatus() != null && sovo.getShopOrderStatus() == 3) {
 
-				// ReturnApply介於0~3之間
-				if (dtoUpdate.getShopReturnApply() >= 0 && dtoUpdate.getShopReturnApply() <= 3) {
-					sovo.setShopReturnApply(dtoUpdate.getShopReturnApply());
-				} else {
-					throw new IllegalArgumentException("0: 未申請退貨 1: 申請退貨 2: 退貨成功 3: 退貨失敗");
-				}
+				sovo.setShopReturnApply(dtoUpdate.getShopReturnApply());
+
 			} else {
 				throw new IllegalArgumentException("確認商品訂單是否為已出貨狀態");
 			}
+
+		}
+
+		if (sovo.getShopOrderStatus() == 0) {// 訂單狀態為0時才可以進行update
+			if (dtoUpdate.getShopOrderShipment() != null) {
+				sovo.setShopOrderShipment(dtoUpdate.getShopOrderShipment());
+			}
+
+			if (dtoUpdate.getShopOrderShipFee() != null) {
+				sovo.setShopOrderShipFee(dtoUpdate.getShopOrderShipFee());
+			}
+
+			// 先預設為BigDecimal 0，方便後續計算
+			BigDecimal beforeDiscountAmount = new BigDecimal(sovo.getBeforeDiscountAmount());
+
+			// 將實付金額預設為 BigDecimal 0，方便後續計算
+			BigDecimal afterDiscountAmount = new BigDecimal(sovo.getAfterDiscountAmount());
+
+			// 運費轉為BigDecimal
+			BigDecimal shipFee = new BigDecimal(sovo.getShopOrderShipFee());
+
+			// 檢查是否傳入 discountCodeId 欄位
+			if (dtoUpdate.hasDiscountCodeId()) {
+				if (dtoUpdate.getDiscountCodeId() != null) {
+					// 新增或更新折扣碼
+					DiscountCodeVO dcVO = dcr.findById(dtoUpdate.getDiscountCodeId())
+							.orElseThrow(() -> new RuntimeException("查無折扣碼"));
+					sovo.setDiscountCodeId(dcVO);
+
+					// 取得discountCodeType
+					Byte type = dcVO.getDiscountType();
+					// 取得discountValue
+					BigDecimal value = dcVO.getDiscountValue();
+
+					if (type == 0) { // 固定金額折扣
+						sovo.setDiscountAmount(value.intValue());
+						// 計算實付金額 = 折扣前金額 - 折扣金額 + 運費
+						afterDiscountAmount = beforeDiscountAmount.subtract(value).add(shipFee);
+					} else if (type == 1) { // 百分比折扣
+						// 折扣前金額*(discountValue(%))並四捨五入
+						BigDecimal discountAmount = beforeDiscountAmount.multiply(value).setScale(0,
+								RoundingMode.HALF_UP);
+						sovo.setDiscountAmount(discountAmount.intValue());
+						// 計算實付金額 = 折扣前金額 - 折扣金額 + 運費
+						afterDiscountAmount = beforeDiscountAmount.subtract(discountAmount).add(shipFee);
+					} else {
+						throw new RuntimeException("無效的折扣類型");
+					}
+					sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
+				} else {
+					// 刪除折扣碼
+					sovo.setDiscountCodeId(null);
+					sovo.setDiscountAmount(null);
+					afterDiscountAmount = beforeDiscountAmount.add(shipFee);
+					sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
+				}
+			} else {
+				// 未傳入 discountCodeId，保持原有折扣碼不變
+				if (sovo.getDiscountCodeId() != null) {
+					DiscountCodeVO dcVO = sovo.getDiscountCodeId();
+					Byte type = dcVO.getDiscountType();
+					BigDecimal value = dcVO.getDiscountValue();
+
+					if (type == 0) {
+						sovo.setDiscountAmount(value.intValue());
+						afterDiscountAmount = beforeDiscountAmount.subtract(value).add(shipFee);
+					} else if (type == 1) {
+						BigDecimal discountAmount = beforeDiscountAmount.multiply(BigDecimal.ONE.subtract(value))
+								.setScale(0, RoundingMode.HALF_UP);
+						sovo.setDiscountAmount(discountAmount.intValue());
+						afterDiscountAmount = beforeDiscountAmount.subtract(discountAmount).add(shipFee);
+					}
+					sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
+				} else {
+					sovo.setDiscountAmount(null);
+					afterDiscountAmount = beforeDiscountAmount.add(shipFee);
+					sovo.setAfterDiscountAmount(afterDiscountAmount.intValue());
+				}
+			}
+
+			if (dtoUpdate.getShopOrderPayment() != null) {
+				sovo.setShopOrderPayment(dtoUpdate.getShopOrderPayment());
+			}
+
+			if (dtoUpdate.getOrderName() != null) {
+				sovo.setOrderName(dtoUpdate.getOrderName());
+			}
+
+			if (dtoUpdate.getOrderEmail() != null) {
+				sovo.setOrderEmail(dtoUpdate.getOrderEmail());
+			}
+
+			if (dtoUpdate.getOrderPhone() != null) {
+				sovo.setOrderPhone(dtoUpdate.getOrderPhone());
+			}
+
+			if (dtoUpdate.getOrderShippingAddress() != null) {
+				sovo.setOrderShippingAddress(dtoUpdate.getOrderShippingAddress());
+			}
+
+			if (dtoUpdate.getShopOrderNote() != null) {
+				sovo.setShopOrderNote(dtoUpdate.getShopOrderNote());
+			}
+
+			if (dtoUpdate.getShopOrderShipDate() != null) {
+				sovo.setShopOrderShipDate(dtoUpdate.getShopOrderShipDate());
+			}
+
+		}
+
+		sor.save(sovo);
+		ShopOrderVO sovo2 = getOneShopOrder(sovo.getShopOrderId());
+		return sovo2;
+	}
+
+	@Transactional
+	// 僅提供會員申請取消訂單及申請退貨
+	public ShopOrderVO updateShopOrderByMember(ShopOrderDTO_update_req dtoUpdate) {
+		ShopOrderVO sovo = sor.findById(dtoUpdate.getShopOrderId()).orElseThrow(() -> new RuntimeException("查無此筆訂單資料"));
+
+		// 只允許會員在未出貨前申請取消訂單
+		if (dtoUpdate.getShopOrderStatus() != null) {
+			if ((sovo.getShopOrderStatus() == 0 || sovo.getShopOrderStatus() == 1)
+					&& dtoUpdate.getShopOrderStatus() == 5) {
+				sovo.setShopOrderStatus((byte) 5);
+			} else {
+				throw new IllegalArgumentException("只有未出貨前可取消訂單");
+			}
+		}
+
+		// 只允許會員在取貨後能申請退貨
+		if (sovo.getShopOrderStatus() == 3 && dtoUpdate.getShopReturnApply() == 1) {
+			sovo.setShopReturnApply((byte) 1);
 		}
 
 		sor.save(sovo);

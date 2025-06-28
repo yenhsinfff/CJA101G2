@@ -35,7 +35,7 @@ public class ShopOrderController {
 
 	@Autowired
 	MemberService ms;
-	
+
 	@Autowired
 	DiscountCodeService dcs;
 
@@ -77,7 +77,7 @@ public class ShopOrderController {
 			return new ApiResponse<>("success", res, "新增成功");
 
 		} catch (Exception e) {
-			return new ApiResponse<>("fail", null, "新增失敗");
+			return new ApiResponse<>("fail", null, "新增失敗" + e.getMessage());
 		}
 	}
 
@@ -98,11 +98,31 @@ public class ShopOrderController {
 			return new ApiResponse<>("success", res, "修改成功");
 
 		} catch (Exception e) {
-			return new ApiResponse<>("fail", null, "修改失敗");
+			return new ApiResponse<>("fail", null, "修改失敗" + e.getMessage());
 		}
 
 	}
-	
+
+	@PostMapping("/api/updateShopOrderByMember")
+	public ApiResponse<ShopOrderDTO_res> updateShopOrderByMember(
+			@Valid @RequestBody ShopOrderDTO_update_req dtoUpdate) {
+
+		try {
+
+			ShopOrderVO updateSOVO = sos.updateShopOrderByMember(dtoUpdate);
+
+			// 將vo轉dto_res
+			ShopOrderDTO_res dto_res = new ShopOrderDTO_res();
+			BeanUtils.copyProperties(updateSOVO, dto_res);
+			dto_res.setMemId(updateSOVO.getMemId().getMemId()); // 將會員編號轉為Integer推到前端
+
+			return new ApiResponse<>("success", dto_res, "修改成功");
+
+		} catch (Exception e) {
+			return new ApiResponse<>("fail", null, "修改失敗" + e.getMessage());
+		}
+
+	}
 
 	// 依訂單編號單筆查詢
 	@GetMapping("/api/getOneById")
@@ -137,6 +157,5 @@ public class ShopOrderController {
 
 		return new ApiResponse<>("success", resList, "查詢成功");
 	}
-
 
 }
