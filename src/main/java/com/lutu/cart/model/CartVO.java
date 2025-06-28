@@ -28,6 +28,9 @@ public class CartVO implements Serializable {
 
 	@Transient
 	private Integer prodSpecId; // 規格編號
+	
+	private Integer prodPrice;	// 商品價格
+	
 	private Integer cartProdQty; // 商品數量
 
 	public CartKey getCartKey() {
@@ -86,6 +89,14 @@ public class CartVO implements Serializable {
 
 	public void setProdSpecId(Integer prodSpecId) {
 		this.prodSpecId = prodSpecId;
+	}
+
+	public Integer getProdPrice() {
+		return prodPrice;
+	}
+
+	public void setProdPrice(Integer prodPrice) {
+		this.prodPrice = prodPrice;
 	}
 
 	public Integer getCartProdQty() {
