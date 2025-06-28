@@ -1,5 +1,9 @@
 package com.lutu.campsitetype.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
 import java.util.Base64;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,10 +26,13 @@ import com.lutu.ApiResponse;
 import com.lutu.campsite.model.CampsiteDTO;
 import com.lutu.campsite.model.CampsiteVO;
 import com.lutu.campsitetype.model.CampsiteTypeDTO;
+import com.lutu.campsitetype.model.CampsiteTypeDTO_Info;
 import com.lutu.campsitetype.model.CampsiteTypeService;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
+import com.lutu.campsitetype.model.CampsiteTypeVO.CompositeDetail;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -151,8 +157,8 @@ public class CampsiteTypeApiController {
 	// 更新房型(圖片以外)，前端先呼叫
 	// http://localhost:8081/CJA101G02/campsitetype/updateCampsiteType
 	@PostMapping("/updateCampsiteType")
-	public ResponseEntity<ApiResponse<CampsiteTypeDTO>> updateCampsiteTypeInfo(
-	        @RequestBody @Valid CampsiteTypeDTO dto) {
+	public ResponseEntity<ApiResponse<CampsiteTypeDTO_Info>> updateCampsiteTypeInfo(
+	        @RequestBody @Valid CampsiteTypeDTO_Info dto) {
 	    try {
 	        CampsiteTypeVO.CompositeDetail id = new CampsiteTypeVO.CompositeDetail(dto.getCampsiteTypeId(), dto.getCampId());
 	        CampsiteTypeVO existing = campsiteTypeSvc.getById(id);
@@ -168,7 +174,7 @@ public class CampsiteTypeApiController {
 
 	        CampsiteTypeVO updated = campsiteTypeSvc.updateCampsiteType(existing);
 
-	        CampsiteTypeDTO responseDTO = new CampsiteTypeDTO(
+	        CampsiteTypeDTO_Info responseDTO = new CampsiteTypeDTO_Info(
 	                updated.getId().getCampsiteTypeId(),
 	                updated.getId().getCampId(),
 	                updated.getCampsiteName(),
@@ -185,10 +191,10 @@ public class CampsiteTypeApiController {
 	    }
 	}
 	
-	//更新房型(只有圖片)，前端後呼叫
+	//更新房型
 	// http://localhost:8081/CJA101G02/campsitetype/updateCampsiteTypePic
 	@PostMapping("/updateCampsiteTypePic")
-	public ResponseEntity<ApiResponse<String>> updateCampsiteTypeImages(
+	public ResponseEntity<ApiResponse<String>> updateCampsiteTypePics(
 	        @RequestParam("campsiteTypeId") Integer campsiteTypeId,
 	        @RequestParam("campId") Integer campId,
 	        @RequestParam(value = "pic1", required = false) MultipartFile pic1,
@@ -225,7 +231,81 @@ public class CampsiteTypeApiController {
 	                .body(new ApiResponse<>("fail", null, "圖片更新失敗：" + e.getMessage()));
 	    }
 	}
+	
+	
+	// http://localhost:8081/CJA101G02/campsitetype/updateCampsiteTypePic
+//	//接收房型照片
+//	@PostMapping("/{CampsiteTypeId}/{CampId}/picture")
+//	public ApiResponse<String> getNewAvatar(@PathVariable Integer CampsiteTypeId, 
+//			@PathVariable Integer CampId,
+//	        @RequestParam("file") MultipartFile file) {
+//		Boolean response = campsiteTypeSvc.updateMemberPicture(memId,file);
+//		if(response) {
+//			return new ApiResponse<>("success", "ok", "更新成功");
+//		}else {
+//			return new ApiResponse<>("fail", "fail", "更新失敗");
+//		}
 
+//===============================圖片處理=================================================
+	// http://localhost:8081/CJA101G02/campsitetype/2025/1001/update-images
+	// http://localhost:8081/CJA101G02/campsitetype/{campsiteTypeId}/{campId}/update-images
+	//接收上傳的房型照片
+	@PostMapping("/{campsiteTypeId}/{campId}/update-images")
+	public ResponseEntity<ApiResponse<String>> updatePics(
+			@PathVariable Integer campsiteTypeId,
+			@PathVariable Integer campId,	    
+	        @RequestParam(value = "pic1", required = false) MultipartFile pic1,
+	        @RequestParam(value = "pic2", required = false) MultipartFile pic2,
+	        @RequestParam(value = "pic3", required = false) MultipartFile pic3,
+	        @RequestParam(value = "pic4", required = false) MultipartFile pic4
+	) {
+	    CompositeDetail id = new CompositeDetail(campsiteTypeId, campId);
+	    Boolean success = campsiteTypeSvc.updatePics(id, pic1, pic2, pic3, pic4);
+
+	    if (success) {
+	        return ResponseEntity.ok(new ApiResponse<>("success", null, "圖片更新成功"));
+	    } else {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body(new ApiResponse<>("fail", null, "圖片更新失敗"));
+	    }
+	}
+	
+	//取得房型照片，根據index回傳第幾張圖片
+	//http://localhost:8081/CJA101G02/campsitetype/2025/1001/images/1
+	//http://localhost:8081/CJA101G02/campsitetype/{campsiteTypeId}/{campId}/images/{index}
+	@GetMapping("/{campsiteTypeId}/{campId}/images/{index}")
+	public void getCampsiteTypePic(@PathVariable Integer campsiteTypeId,
+	                               @PathVariable Integer campId,
+	                               @PathVariable Integer index,
+	                               HttpServletResponse response) throws IOException {
+
+	    CampsiteTypeVO campsiteType = campsiteTypeSvc.getOneCampsiteType(campsiteTypeId, campId);
+	    byte[] imageData = null;
+
+	    switch (index) {
+	        case 1 -> imageData = campsiteType.getCampsitePic1();
+	        case 2 -> imageData = campsiteType.getCampsitePic2();
+	        case 3 -> imageData = campsiteType.getCampsitePic3();
+	        case 4 -> imageData = campsiteType.getCampsitePic4();
+	        default -> {
+	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	            return;
+	        }
+	    }
+
+	    if (imageData != null && imageData.length > 0) {
+	        try (InputStream is = new ByteArrayInputStream(imageData)) {
+	            String mimeType = URLConnection.guessContentTypeFromStream(is);
+	            if (mimeType == null) {
+	                mimeType = "application/octet-stream";
+	            }
+	            response.setContentType(mimeType);
+	            response.getOutputStream().write(imageData);
+	        }
+	    } else {
+	        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	    }
+	}
 	// ======================================Postman測試用登入=========================
 	@PostMapping("/mockLogin")
 	public ApiResponse<String> mockLogin(HttpSession session) {

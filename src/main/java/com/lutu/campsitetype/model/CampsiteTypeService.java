@@ -1,11 +1,15 @@
 package com.lutu.campsitetype.model;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.lutu.campsitetype.model.CampsiteTypeVO.CompositeDetail;
+import com.lutu.member.model.MemberVO;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -99,6 +103,35 @@ public class CampsiteTypeService {
 //
 //	    repository.save(entity);
 //	}
+	
+	@Transactional
+	public Boolean updatePics(CompositeDetail id, 
+			MultipartFile pic1, MultipartFile pic2, MultipartFile pic3, MultipartFile pic4) {
+	    CampsiteTypeVO campsiteType = repository.findById(id)
+	        .orElseThrow(() -> new RuntimeException("房型不存在"));
+	    
+	    // 使用者可能只想更新某一張圖片，沒傳的就保留原圖
+	    try {
+	        if (pic1 != null && !pic1.isEmpty()) {
+	            campsiteType.setCampsitePic1(pic1.getBytes());
+	        }
+	        if (pic2 != null && !pic2.isEmpty()) {
+	            campsiteType.setCampsitePic2(pic2.getBytes());
+	        }
+	        if (pic3 != null && !pic3.isEmpty()) {
+	            campsiteType.setCampsitePic3(pic3.getBytes());
+	        }
+	        if (pic4 != null && !pic4.isEmpty()) {
+	            campsiteType.setCampsitePic4(pic4.getBytes());
+	        }
+			repository.save(campsiteType);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	    
+	}
 	
 	
 
