@@ -6,18 +6,19 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import com.lutu.reply.model.ReplyVO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "reply_image")
 public class ReplyImageVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Integer replyImgId;	 // 留言圖片編號(PK)
-    private ReplyVO replyVO;	 // 留言編號(FK) 
-    private byte[] replyImg;	 // 圖片訊息
+    private Integer replyImgId; // 留言圖片編號(PK)
+    private ReplyVO replyVO; // 留言編號(FK)
+    private byte[] replyImg; // 圖片訊息
 
     public ReplyImageVO() {
-    	
+
     }
 
     @Id
@@ -34,6 +35,7 @@ public class ReplyImageVO implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reply_id", nullable = false)
     @NotNull(message = "留言: 必須指定所屬留言")
+    @JsonIgnore
     public ReplyVO getReplyVO() {
         return replyVO;
     }
@@ -52,12 +54,10 @@ public class ReplyImageVO implements Serializable {
         this.replyImg = replyImg;
     }
 
-	@Override
-	public String toString() {
-		return "ReplyImageVO [replyImgId=" + replyImgId + ", replyVO=" + replyVO + ", replyImg="
-				+ Arrays.toString(replyImg) + "]";
-	}
-    
-    
-}
+    @Override
+    public String toString() {
+        return "ReplyImageVO [replyImgId=" + replyImgId + ", replyVO=" + replyVO + ", replyImg="
+                + Arrays.toString(replyImg) + "]";
+    }
 
+}

@@ -3,6 +3,7 @@ package com.lutu.nice_article.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.lutu.article.model.ArticlesVO;
 
@@ -15,14 +16,14 @@ import java.time.LocalDateTime;
 public class NiceArticleVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Integer acId;				// 討論區文章編號 (PK, FK)
-    private Integer memId;				// 露營者編號     (PK, FK)
-    private LocalDateTime likeTime;		// 按讚時間
+    private Integer acId; // 討論區文章編號 (PK, FK)
+    private Integer memId; // 露營者編號 (PK, FK)
+    private LocalDateTime likeTime; // 按讚時間
 
     private ArticlesVO articlesVO;
-    
+
     public NiceArticleVO() {
-    	
+
     }
 
     @Id
@@ -57,9 +58,10 @@ public class NiceArticleVO implements Serializable {
     public void setLikeTime(LocalDateTime likeTime) {
         this.likeTime = likeTime;
     }
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ac_id", insertable = false, updatable = false)
+    @JsonIgnore
     public ArticlesVO getArticlesVO() {
         return articlesVO;
     }
@@ -75,7 +77,7 @@ class NiceArticleId implements Serializable {
     private Integer memId;
 
     public NiceArticleId() {
-    	
+
     }
 
     public NiceArticleId(Integer acId, Integer memId) {
@@ -84,15 +86,28 @@ class NiceArticleId implements Serializable {
     }
 
     // getter, setter, equals, hashCode...
-    public Integer getAcId() { return acId; }
-    public void setAcId(Integer acId) { this.acId = acId; }
-    public Integer getMemId() { return memId; }
-    public void setMemId(Integer memId) { this.memId = memId; }
+    public Integer getAcId() {
+        return acId;
+    }
+
+    public void setAcId(Integer acId) {
+        this.acId = acId;
+    }
+
+    public Integer getMemId() {
+        return memId;
+    }
+
+    public void setMemId(Integer memId) {
+        this.memId = memId;
+    }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         NiceArticleId that = (NiceArticleId) obj;
         return acId.equals(that.acId) && memId.equals(that.memId);
     }
@@ -102,10 +117,9 @@ class NiceArticleId implements Serializable {
         return acId.hashCode() + memId.hashCode();
     }
 
-	@Override
-	public String toString() {
-		return "NiceArticleId [acId=" + acId + ", memId=" + memId + "]";
-	}
-    
-    
+    @Override
+    public String toString() {
+        return "NiceArticleId [acId=" + acId + ", memId=" + memId + "]";
+    }
+
 }
