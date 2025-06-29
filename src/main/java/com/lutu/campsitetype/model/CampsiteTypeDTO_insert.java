@@ -1,9 +1,11 @@
 package com.lutu.campsitetype.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-public class CampsiteTypeDTO {
+public class CampsiteTypeDTO_insert {
 
 	
     private Integer campsiteTypeId;
@@ -22,16 +24,16 @@ public class CampsiteTypeDTO {
     private Integer campsitePrice;
     
 
-    private String campsitePic1; // Base64 字串（或 URL）
-    private String campsitePic2;
-    private String campsitePic3;
-    private String campsitePic4;
+    private MultipartFile campsitePic1;
+    private MultipartFile campsitePic2;
+    private MultipartFile campsitePic3;
+    private MultipartFile campsitePic4;
 
     // Constructor
   
-    public CampsiteTypeDTO(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
-			Byte campsiteNum, Integer campsitePrice, String campsitePic1, String campsitePic2, String campsitePic3,
-			String campsitePic4) {
+    public CampsiteTypeDTO_insert(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
+			Byte campsiteNum, Integer campsitePrice, @NotNull(message = "房間照片: 至少上傳1張") MultipartFile campsitePic1, MultipartFile campsitePic2, MultipartFile campsitePic3,
+			MultipartFile campsitePic4) {
 		super();
 		this.campsiteTypeId = campsiteTypeId;
 		this.campId = campId;
@@ -48,12 +50,12 @@ public class CampsiteTypeDTO {
     
     // Getters and Setters
     
-	public CampsiteTypeDTO() {
+	public CampsiteTypeDTO_insert() {
 
 	}
 
 
-	public CampsiteTypeDTO(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
+	public CampsiteTypeDTO_insert(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
 			Byte campsiteNum, Integer campsitePrice) {
 		super();
 		this.campsiteTypeId = campsiteTypeId;
@@ -112,35 +114,35 @@ public class CampsiteTypeDTO {
         this.campsitePrice = campsitePrice;
     }
 
-    public String getCampsitePic1() {
+    public @NotNull(message = "房間照片: 至少上傳1張") MultipartFile getCampsitePic1() {
         return campsitePic1;
     }
 
-    public void setCampsitePic1(String campsitePic1) {
+    public void setCampsitePic1(@NotNull(message = "房間照片: 至少上傳1張") MultipartFile campsitePic1) {
         this.campsitePic1 = campsitePic1;
     }
 
-    public String getCampsitePic2() {
+    public MultipartFile getCampsitePic2() {
         return campsitePic2;
     }
 
-    public void setCampsitePic2(String campsitePic2) {
+    public void setCampsitePic2(MultipartFile campsitePic2) {
         this.campsitePic2 = campsitePic2;
     }
 
-    public String getCampsitePic3() {
+    public MultipartFile getCampsitePic3() {
         return campsitePic3;
     }
 
-    public void setCampsitePic3(String campsitePic3) {
+    public void setCampsitePic3(MultipartFile campsitePic3) {
         this.campsitePic3 = campsitePic3;
     }
 
-    public String getCampsitePic4() {
+    public MultipartFile getCampsitePic4() {
         return campsitePic4;
     }
 
-    public void setCampsitePic4(String campsitePic4) {
+    public void setCampsitePic4(MultipartFile campsitePic4) {
         this.campsitePic4 = campsitePic4;
     }
 }

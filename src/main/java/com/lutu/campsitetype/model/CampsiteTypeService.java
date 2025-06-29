@@ -33,7 +33,7 @@ public class CampsiteTypeService {
 
 
 	public CampsiteTypeVO addCampsiteType(CampsiteTypeVO campsiteTypeVO, Integer campId) {
-		// 查詢所有營地目前的最大房型 ID
+		// 查詢所有營地目前的最大房型 ID，讓campsiteType可以自動遞增
 		Integer maxCampsiteTypeId = repository.findAllMaxCampsiteTypeId();
 		int nextCampsiteTypeId = (maxCampsiteTypeId == null) ? 1 : maxCampsiteTypeId + 1;
 
