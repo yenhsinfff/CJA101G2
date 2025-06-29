@@ -103,6 +103,61 @@ public class ShopProdService {
         return dtoList;
     }
 
+    //價格由低到高排序
+    public List<ShopProdDTO> getProductsByPriceAsc() {
+        List<ShopProdVO> voList = repository.findAllByPriceAsc();
+        List<ShopProdDTO> dtoList = new ArrayList<>();
+
+        for (ShopProdVO vo : voList) {
+            ShopProdDTO dto = convertToDTO(vo);
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+    }
+
+    //價格由高到低排序
+    public List<ShopProdDTO> getProductsByPriceDesc() {
+        List<ShopProdVO> voList = repository.findAllByPriceDesc();
+        List<ShopProdDTO> dtoList = new ArrayList<>();
+
+        for (ShopProdVO vo : voList) {
+            ShopProdDTO dto = convertToDTO(vo);
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+    }
+    
+    //價格區間查詢
+    public List<ShopProdDTO> getByPriceRange(String range) {
+        List<ShopProdVO> voList = new ArrayList<>();
+
+        switch (range) {
+            case "0-1000":
+                voList = repository.findByPriceBetween(0, 1000);
+                break;
+            case "1000-3000":
+                voList = repository.findByPriceBetween(1000, 3000);
+                break;
+            case "3000-5000":
+                voList = repository.findByPriceBetween(3000, 5000);
+                break;
+            case "5000+":
+                voList = repository.findByPriceMoreThan(5000);
+                break;
+            default:
+                voList = repository.findAll(); // 不限價格
+                break;
+        }
+
+        List<ShopProdDTO> dtoList = new ArrayList<>();
+        for (ShopProdVO vo : voList) {
+            dtoList.add(convertToDTO(vo)); 
+        }
+        return dtoList;
+    }
+
     // 新增 
     public ShopProdDTO addProd(ShopProdDTO dto) {
         ShopProdVO vo = convertToVO(dto);

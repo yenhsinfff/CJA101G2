@@ -58,7 +58,7 @@ public class ShopProdController {
     }
 
     /**
-     * 查詢單一商品（DTO）by 商品 ID
+     * 查詢單一商品by 商品 ID
      * @param id 商品主鍵 ID
      * @return 對應商品資料（含詳細資訊）
      * GET http://localhost:8081/CJA101G02/api/products/{id}
@@ -116,16 +116,35 @@ public class ShopProdController {
 
     /**
      * 查詢隨機商品推薦
-     * @param limit 限制筆數，預設為 6 筆
+     * @param limit 限制筆數，預設為5筆
      * @return 隨機商品清單
-     * @RequestParam(defaultValue = "6") int limit : 代表 URL 可以帶入參數 limit
+     * @RequestParam(defaultValue = "5") int limit : 代表 URL 可以帶入參數 limit
      * /api/products/random?limit=3 → 取得 3 筆商品
      * GET http://localhost:8081/CJA101G02/api/products/random → 取得 6 筆商品（使用預設值）
      */
     @GetMapping("/api/products/random")
-    public ApiResponse<List<ShopProdDTO>> getRandom(@RequestParam(defaultValue = "6") int limit) {
+    public ApiResponse<List<ShopProdDTO>> getRandom(@RequestParam(defaultValue = "5") int limit) {
         return new ApiResponse<>("success", shopProdService.getRandomProds(limit), "推薦成功");
     }
+    //價格由低到高
+    @GetMapping("/api/products/price-asc")
+    public ApiResponse<List<ShopProdDTO>> getProductsByPriceAsc() {
+        List<ShopProdDTO> products = shopProdService.getProductsByPriceAsc();
+        return new ApiResponse<>("success", products, "查詢成功（價格由低到高）");
+    }
+    //價格由高到低
+    @GetMapping("/api/products/price-desc")
+    public ApiResponse<List<ShopProdDTO>> getProductsByPriceDesc() {
+        List<ShopProdDTO> products = shopProdService.getProductsByPriceDesc();
+        return new ApiResponse<>("success", products, "查詢成功（價格由高到低）");
+    }
+    //價格區間查詢
+    @GetMapping("/api/products/price-range")
+    public ApiResponse<List<ShopProdDTO>> getByPriceRange(@RequestParam String range) {
+        List<ShopProdDTO> list = shopProdService.getByPriceRange(range);
+        return new ApiResponse<>("success", list, "價格區間查詢成功");
+    }
+
 
     /**
      * 新增商品（含規格與顏色資料）
