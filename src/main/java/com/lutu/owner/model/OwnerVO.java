@@ -145,6 +145,16 @@ public class OwnerVO implements Serializable{
 	public void setOwnerPwd(String ownerPwd) {
 		this.ownerPwd = ownerPwd;
 	}
+	
+	
+	public void setPassword(String password) {
+	    this.ownerPwd = password;
+	}
+
+	public String getPassword() {
+	    return this.ownerPwd;
+	}
+	
 
 	public byte getAccStatus() {
 		return accStatus;

@@ -86,6 +86,16 @@ public class AdministratorVO implements java.io.Serializable {
 	public void setAdminPwd(String adminPwd) {
 		this.adminPwd = adminPwd;
 	}
+	
+	
+	public void setPassword(String password) {
+	    this.adminPwd = password;
+	}
+
+	public String getPassword() {
+	    return this.adminPwd;
+	}
+	
 
 	public String getAdminPwdHash() {
 		return adminPwdHash;

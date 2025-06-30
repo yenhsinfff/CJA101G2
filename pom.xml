@@ -210,6 +210,13 @@
 			<artifactId>json</artifactId>
 			<version>20240303</version>
 		</dependency>
+		
+			<!--			發email要有的			-->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
