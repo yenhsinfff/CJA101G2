@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lutu.ApiResponse;
+import com.lutu.campsite_order.model.CampsiteOrderDTO;
 import com.lutu.member.model.MemberService;
 import com.lutu.member.model.MemberVO;
 
@@ -67,5 +68,14 @@ public class MemberApiController {
 		List <MemberVO> memberList =  memberSvc.getAll();
 		return memberList;
 	}
+	
+	//取得會員訂單
+	@GetMapping("/{memId}/orders")
+	public ApiResponse<List<CampsiteOrderDTO>> getMemberOrders(
+	        @PathVariable Integer memId) {
+	        
+	        List<CampsiteOrderDTO> orders = memberSvc.getMemberOrders(memId);
+	        return new ApiResponse<>("success", orders, "查詢成功");
+	    }
 
 }

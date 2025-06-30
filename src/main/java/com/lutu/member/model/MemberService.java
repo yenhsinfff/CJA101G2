@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.lutu.campsite_order.model.CampsiteOrderDTO;
 
 import jakarta.transaction.Transactional;
 
@@ -76,5 +79,13 @@ public class MemberService {
 		}
 	    
 	}
+	
+	public List<CampsiteOrderDTO> getMemberOrders(Integer memId) {
+        MemberVO member = repository.findById(memId).orElseThrow();
+        
+        return member.getCampsiteOrders().stream()
+            .map(CampsiteOrderDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
 
 }

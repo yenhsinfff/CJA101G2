@@ -19,7 +19,7 @@ import com.lutu.camp.model.CampService;
 import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
-import com.lutu.campsite_order.model.NewCampsiteOrderDTO;
+import com.lutu.campsite_order.model.CampsiteOrderDTO;
 import com.lutu.util.HmacUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -165,11 +165,11 @@ public class ApiController {
 	}
 
 	// 取得所有營地訂單，回傳 JSON
-	@GetMapping("/api/getallcamps")
-	public ApiResponse<List<CampVO>> getAllCamps() {
-		List<CampVO> camps = campService.getAllCamp();
-		return new ApiResponse<>("success", camps, "查詢成功");
-	}
+//	@GetMapping("/api/getallcamps")
+//	public ApiResponse<List<CampVO>> getAllCamps() {
+//		List<CampVO> camps = campService.getAllCamp();
+//		return new ApiResponse<>("success", camps, "查詢成功");
+//	}
 
 	@PostMapping("/api/createonecamp")
 	public ApiResponse<CampVO> createOneCamp(@RequestParam("ownerId") Integer ownerId,
