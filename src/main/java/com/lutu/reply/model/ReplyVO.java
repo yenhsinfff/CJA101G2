@@ -19,6 +19,7 @@ import java.util.Set;
 public class ReplyVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    
     private Integer replyId;					// 留言編號(PK)
     private MemberVO memberVO;  	         	// 露營者編號(FK)
     private ArticlesVO articlesVO;				// 討論區文章編號(FK)

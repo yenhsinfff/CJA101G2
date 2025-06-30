@@ -7,21 +7,23 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.lutu.article.model.ArticlesVO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "article_type")
 public class ArticleTypeVO implements Serializable {
 
-	//serialVersionUID 是一個 唯一的版本識別碼，用來判斷序列化（Serialization）與反序列化（Deserialization）時，Java 是否可以正確還原物件。
+    // serialVersionUID 是一個
+    // 唯一的版本識別碼，用來判斷序列化（Serialization）與反序列化（Deserialization）時，Java 是否可以正確還原物件。
     private static final long serialVersionUID = 1L;
-    
-    private Integer acTypeId;			//文章類別編號 (PK)
-    private String acTypeKind;			//文章類別名稱
-    private String acTypeText;			//文章類別敘述
+
+    private Integer acTypeId; // 文章類別編號 (PK)
+    private String acTypeKind; // 文章類別名稱
+    private String acTypeText; // 文章類別敘述
     private Set<ArticlesVO> articles;
 
     public ArticleTypeVO() {
-    	
+
     }
 
     @Id
@@ -57,6 +59,7 @@ public class ArticleTypeVO implements Serializable {
     }
 
     @OneToMany(mappedBy = "articleTypeVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     public Set<ArticlesVO> getArticles() {
         return articles;
     }
@@ -65,16 +68,17 @@ public class ArticleTypeVO implements Serializable {
         this.articles = articles;
     }
 
-    
     @Override
     public int hashCode() {
-        return Objects.hash(acTypeId);  // 通常只用主鍵
+        return Objects.hash(acTypeId); // 通常只用主鍵
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         ArticleTypeVO other = (ArticleTypeVO) obj;
         return Objects.equals(acTypeId, other.acTypeId);
     }
@@ -87,7 +91,5 @@ public class ArticleTypeVO implements Serializable {
                 ", acTypeText='" + acTypeText + '\'' +
                 '}';
     }
-    
-    
-    
+
 }

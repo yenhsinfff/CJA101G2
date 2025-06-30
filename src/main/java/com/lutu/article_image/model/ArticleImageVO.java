@@ -6,17 +6,19 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import com.lutu.article.model.ArticlesVO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "article_image")
 public class ArticleImageVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Integer acImgId;			// 討論區圖片編號(PK)
-    private ArticlesVO articlesVO;		// 討論區文章編號(FK) 
-    private byte[] acImg;				// 圖片訊息
+    private Integer acImgId; // 討論區圖片編號(PK)
+    private ArticlesVO articlesVO; // 討論區文章編號(FK)
+    private byte[] acImg; // 圖片訊息
 
-    public ArticleImageVO() {}
+    public ArticleImageVO() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +34,7 @@ public class ArticleImageVO implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ac_id", nullable = false)
     @NotNull(message = "文章: 必須指定所屬文章")
+    @JsonIgnore
     public ArticlesVO getArticlesVO() {
         return articlesVO;
     }
@@ -50,11 +53,10 @@ public class ArticleImageVO implements Serializable {
         this.acImg = acImg;
     }
 
-	@Override
-	public String toString() {
-		return "ArticleImageVO [acImgId=" + acImgId + ", articlesVO=" + articlesVO + ", acImg=" + Arrays.toString(acImg)
-				+ "]";
-	}
-    
-    
+    @Override
+    public String toString() {
+        return "ArticleImageVO [acImgId=" + acImgId + ", articlesVO=" + articlesVO + ", acImg=" + Arrays.toString(acImg)
+                + "]";
+    }
+
 }
