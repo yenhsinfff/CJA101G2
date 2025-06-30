@@ -323,10 +323,13 @@ public class ShopOrderService {
 				sovo.setShopOrderNote(dtoUpdate.getShopOrderNote());
 			}
 
+		}
+
+		if (sovo.getShopOrderStatus() != 3 || sovo.getShopOrderStatus() != 4 || sovo.getShopOrderStatus() != 5) {
+			
 			if (dtoUpdate.getShopOrderShipDate() != null) {
 				sovo.setShopOrderShipDate(dtoUpdate.getShopOrderShipDate());
 			}
-
 		}
 
 		sor.save(sovo);
