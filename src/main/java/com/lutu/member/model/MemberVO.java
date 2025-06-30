@@ -44,11 +44,26 @@ public class MemberVO implements Serializable{
 	@Column(name = "mem_acc")
 	@NotEmpty(message="露營者帳號: 請勿空白。露營者帳號=信箱。")
 	@Email(message = "帳號格式不正確。露營者帳號=信箱。")
-	private String memAcc; //露營者帳號
+	private String memAcc; // 露營者帳號
 	
 	@Column(name = "mem_pwd")
 	@NotEmpty(message="露營者密碼: 請勿空白")
 	private String memPwd; //露營者密碼
+	
+	@Column(name = "verification_token")
+	private String verificationToken;
+	
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public String getVerificationToken() {
+		return verificationToken;
+	}
+
+	public void setVerificationToken(String verificationToken) {
+		this.verificationToken = verificationToken;
+	}
 	
 	@Column(name = "acc_status")
 	@NotNull(message = "帳號狀態: 請勿空白")
@@ -146,6 +161,14 @@ public class MemberVO implements Serializable{
 
 	public void setMemPwd(String memPwd) {
 		this.memPwd = memPwd;
+	}
+	
+	public void setPassword(String password) {
+	    this.memPwd = password;
+	}
+
+	public String getPassword() {
+	    return this.memPwd;
 	}
 
 	public byte getAccStatus() {

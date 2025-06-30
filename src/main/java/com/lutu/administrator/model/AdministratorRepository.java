@@ -3,6 +3,8 @@ package com.lutu.administrator.model;
 
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +20,8 @@ public interface AdministratorRepository extends JpaRepository<AdministratorVO, 
 	//● (自訂)條件查詢
 	@Query(value = "from AdministratorVO where adminId=?1 and adminName like?2 order by adminId")
 	List<AdministratorVO> findByOthers(int adminId , String adminName );
+	
+	
+    boolean existsByAdminAcc(String adminAcc);
+    Optional<AdministratorVO> findByAdminAcc(String adminAcc);
 }

@@ -1,27 +1,32 @@
 package com.lutu.member.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.lutu.member.model.MemberService;
+import com.lutu.member.dto.ChangePasswordRequest;
+import com.lutu.member.model.MemberAuthService;
+import com.lutu.member.model.MemberCrudService;
 import com.lutu.member.model.MemberVO;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 
 
@@ -32,13 +37,13 @@ import com.lutu.member.model.MemberVO;
 public class MemberController {
 
 	@Autowired
-	private MemberService memSvc;
+	private MemberCrudService memberCrudService;
 	
 	
     // 新增：處理 select_page 頁面
     @GetMapping("/select_page")
     public String selectPage(Model model) {
-        List<MemberVO> list = memSvc.getAll();
+        List<MemberVO> list = memberCrudService.getAll();
         model.addAttribute("memListData", list);
         return "back-end/mem/select_page";
     }
@@ -47,7 +52,7 @@ public class MemberController {
     // 新增：列出所有會員
     @GetMapping("/listAllMem")
     public String listAllMem(Model model) {
-        List<MemberVO> list = memSvc.getAll();
+        List<MemberVO> list = memberCrudService.getAll();
         model.addAttribute("memListData", list);
         return "back-end/mem/listAllMem";
     }
@@ -56,11 +61,11 @@ public class MemberController {
     // 新增：處理查詢單一會員的顯示
     @PostMapping("/getOne_For_Display")
     public String getOneForDisplay(@RequestParam("memId") String memId, Model model) {
-        MemberVO memberVO = memSvc.getOneMember(Integer.valueOf(memId));
+        MemberVO memberVO = memberCrudService.getOneMember(Integer.valueOf(memId));
         model.addAttribute("memberVO", memberVO);
         
         // 載入所有會員資料供下拉選單使用
-        List<MemberVO> list = memSvc.getAll();
+        List<MemberVO> list = memberCrudService.getAll();
         model.addAttribute("memListData", list);
         
         return "back-end/mem/select_page";
@@ -94,9 +99,9 @@ public class MemberController {
 	        return "back-end/mem/addMem";
 	    }
 		/*************************** 2.開始新增資料 *****************************************/
-		memSvc.addMember(memberVO);
+	    memberCrudService.addMember(memberVO);
 		/*************************** 3.新增完成,準備轉交(Send the Success view) **************/
-		List<MemberVO> list = memSvc.getAll();
+		List<MemberVO> list = memberCrudService.getAll();
 		model.addAttribute("memListData", list);
 		model.addAttribute("success", "- (新增成功)");
 		return "redirect:/mem/listAllMem";
@@ -108,7 +113,7 @@ public class MemberController {
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 ************************/
 		/*************************** 2.開始查詢資料 *****************************************/
 
-		MemberVO memberVO = memSvc.getOneMember(Integer.valueOf(memId));
+		MemberVO memberVO = memberCrudService.getOneMember(Integer.valueOf(memId));
 
 		/*************************** 3.查詢完成,準備轉交(Send the Success view) **************/
 		model.addAttribute("memberVO", memberVO);
@@ -132,10 +137,10 @@ public class MemberController {
 			return "back-end/mem/update_mem_input";
 		}
 		/*************************** 2.開始修改資料 *****************************************/
-		memSvc.updateMember(memberVO);
+		memberCrudService.updateMember(memberVO);
 		/*************************** 3.修改完成,準備轉交(Send the Success view) **************/
 		model.addAttribute("success", "- (修改成功)");
-		memberVO = memSvc.getOneMember(Integer.valueOf(memberVO.getMemId()));
+		memberVO = memberCrudService.getOneMember(Integer.valueOf(memberVO.getMemId()));
 		model.addAttribute("memberVO", memberVO);
 		return "back-end/mem/listOneMem"; // 修改成功後轉交listOneMem.html
 	}
@@ -146,12 +151,12 @@ public class MemberController {
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 ************************/
 		/*************************** 2.開始刪除資料 *****************************************/
 		
-		memSvc.deleteMember(Integer.valueOf(memId));
+		memberCrudService.deleteMember(Integer.valueOf(memId));
 		/*************************** 3.刪除完成,準備轉交(Send the Success view) **************/
-		List<MemberVO> list = memSvc.getAll();
+		List<MemberVO> list = memberCrudService.getAll();
 		model.addAttribute("memListData", list);
 		model.addAttribute("success", "- (刪除成功)");
-		return "back-end/mem/listAllMem"; // 刪除完成後轉交listAllMem.html
+		return "back-end/mem/listAllMem"; //刪除完成後轉交listAllMem.html
 	}
 	
 	
@@ -167,6 +172,24 @@ public class MemberController {
 		}
 		return result;
 	}
+	
+	
+	
+	
+	
+	@Autowired
+	private MemberAuthService memberAuthService;
+	
+	public MemberAuthService getMemberAuthService() {
+		return memberAuthService;
+	}
+
+	public void setMemberAuthService(MemberAuthService memberAuthService) {
+		this.memberAuthService = memberAuthService;
+	}
+	
 
 
+	
+    
 }

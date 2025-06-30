@@ -3,6 +3,8 @@ package com.lutu.owner.model;
 
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +20,10 @@ public interface OwnerRepository extends JpaRepository<OwnerVO, Integer>{
 	//● (自訂)條件查詢
 	@Query(value = "from OwnerVO where ownerId=?1 and ownerName like?2 order by ownerId")
 	List<OwnerVO> findByOthers(int ownerId , String ownerName );
+	
+	
+    boolean existsByOwnerEmail(String ownerEmail);
+    Optional<OwnerVO> findByOwnerEmail(String ownerEmail);
 }
 	
 
