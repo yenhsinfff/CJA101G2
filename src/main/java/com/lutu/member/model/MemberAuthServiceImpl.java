@@ -29,7 +29,7 @@ public class MemberAuthServiceImpl implements MemberAuthService {
         Optional<MemberVO> optional = memberRepository.findByMemAcc(memAcc);
         if (optional.isPresent()) {
             MemberVO member = optional.get();
-            // 明文密碼比對
+            //明文密碼比對
             if (member.getMemPwd().equals(memPwd)) {
                 return member;
             }

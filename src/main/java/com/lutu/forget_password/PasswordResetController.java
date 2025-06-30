@@ -110,6 +110,6 @@ public class PasswordResetController {
 
         tokenRepo.delete(optional.get());
 
-        return updated ? "密碼已成功重設，請重新登入" : "重設失敗：找不到對應帳號";
+        return updated ? "密碼已成功重設，請重新登入" : "重設失敗：找不到對應帳號";//
     }
 }

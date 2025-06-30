@@ -27,7 +27,7 @@ public interface MemberCrudService {
 	
 	MemberVO updateMemberSelective(Integer memId, UpdateMemberRequest dto, MultipartFile memPic) throws IOException;
 
-	void deleteMember(Integer memId);
+	void deleteMember(Integer memId);//
 	
 
 }

@@ -14,7 +14,7 @@ public class MemberLoginInterceptor implements HandlerInterceptor {
             throws Exception {
         Object mem = request.getSession().getAttribute("loggedInMember");
         if (mem == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath()+ "/login");
             return false;
         }
         return true;

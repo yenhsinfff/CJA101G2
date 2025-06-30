@@ -11,6 +11,5 @@ public interface MemberAuthService {
     
     MemberVO register(RegisterRequest dto);
     
-
     
 }

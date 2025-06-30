@@ -14,7 +14,7 @@ public class AdminLoginInterceptor implements HandlerInterceptor {
             throws Exception {
         Object admin = request.getSession().getAttribute("loggedInAdmin");
         if (admin == null) {
-            response.sendRedirect(request.getContextPath() + "/admin/login");
+            response.sendRedirect(request.getContextPath()+ "/admin/login");
             return false;
         }
         return true;

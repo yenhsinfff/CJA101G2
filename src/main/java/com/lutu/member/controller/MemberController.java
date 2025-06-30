@@ -156,7 +156,7 @@ public class MemberController {
 		List<MemberVO> list = memberCrudService.getAll();
 		model.addAttribute("memListData", list);
 		model.addAttribute("success", "- (刪除成功)");
-		return "back-end/mem/listAllMem"; // 刪除完成後轉交listAllMem.html
+		return "back-end/mem/listAllMem"; //刪除完成後轉交listAllMem.html
 	}
 	
 	

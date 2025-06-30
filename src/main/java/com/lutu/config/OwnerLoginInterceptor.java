@@ -14,7 +14,7 @@ public class OwnerLoginInterceptor implements HandlerInterceptor {
             throws Exception {
         Object owner = request.getSession().getAttribute("loggedInOwner");
         if (owner == null) {
-            response.sendRedirect(request.getContextPath() + "/owner/login");
+            response.sendRedirect(request.getContextPath()+ "/owner/login");
             return false;
         }
         return true;

@@ -14,6 +14,6 @@ public interface MemberRepository extends JpaRepository<MemberVO, Integer> {
     Optional<MemberVO> findByVerificationToken(String token);
     
     boolean existsByMemEmail(String memEmail);
-    Optional<MemberVO> findByMemEmail(String memEmail);
+    Optional<MemberVO> findByMemEmail(String memEmail);//
     
 }

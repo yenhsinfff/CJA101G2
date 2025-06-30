@@ -44,7 +44,7 @@ public class MemberVO implements Serializable{
 	@Column(name = "mem_acc")
 	@NotEmpty(message="露營者帳號: 請勿空白。露營者帳號=信箱。")
 	@Email(message = "帳號格式不正確。露營者帳號=信箱。")
-	private String memAcc; //露營者帳號
+	private String memAcc; // 露營者帳號
 	
 	@Column(name = "mem_pwd")
 	@NotEmpty(message="露營者密碼: 請勿空白")

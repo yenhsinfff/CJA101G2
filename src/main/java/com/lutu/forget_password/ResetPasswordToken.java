@@ -37,7 +37,7 @@ public class ResetPasswordToken {
 	public void setExpiry(LocalDateTime expiry) {
 		this.expiry = expiry;
 	}
-	private LocalDateTime expiry;
+	private LocalDateTime expiry;//
 
 
 }

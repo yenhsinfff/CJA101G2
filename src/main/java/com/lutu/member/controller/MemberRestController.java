@@ -177,7 +177,7 @@ public class MemberRestController {
             return ResponseEntity.badRequest().body("舊密碼錯誤");
         }
 
-        // 更新密碼並存入資料庫
+        //更新密碼並存入資料庫
         member.setMemPwd(request.getNewPassword());
         memberRepository.save(member);
 

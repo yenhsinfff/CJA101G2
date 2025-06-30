@@ -26,7 +26,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     @Override
     @Transactional
     public MemberVO updateMember(MemberVO updatedMember) {
-        // 確認會員存在
+        //確認會員存在
         MemberVO member = memberRepository.findById(updatedMember.getMemId())
                 .orElseThrow(() -> new RuntimeException("會員不存在"));
 
