@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
 import com.lutu.cart.model.CartService;
+import com.lutu.cart.model.dto.CartDTO_merge_req;
 import com.lutu.cart.model.dto.CartDTO_req;
 import com.lutu.cart.model.dto.CartDTO_res;
-
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -47,7 +46,7 @@ public class CartController {
 
 			return new ApiResponse<>("success", cartList, "查詢成功");
 		} catch (Exception e) {
-			return new ApiResponse<>("fail", null, "查詢失敗");
+			return new ApiResponse<>("fail", null, "查詢失敗" + e.getMessage());
 		}
 
 	}
@@ -61,20 +60,20 @@ public class CartController {
 
 			return new ApiResponse<CartDTO_res>("success", result, "修改成功");
 		} catch (Exception e) {
-			return new ApiResponse<CartDTO_res>("fail", null, "修改失敗");
+			return new ApiResponse<CartDTO_res>("fail", null, "修改失敗" + e.getMessage());
 		}
 
 	}
 
 	// 移除購物車細項
-	@PostMapping("/api/removeCart")
+	@PostMapping("/api/removeCart")	
 	public ApiResponse<List<CartDTO_res>> removeCart(@RequestBody CartDTO_req cartData) {
 		try {
 			List<CartDTO_res> newList = cs.removeCart(cartData.getMemId(), cartData.getProdId(), cartData.getProdColorId(), cartData.getProdSpecId());
 
 			return new ApiResponse<>("success", newList, "移除成功");
 		} catch (Exception e) {
-			return new ApiResponse<>("fail", null, "移除失敗");
+			return new ApiResponse<>("fail", null, "移除失敗" + e.getMessage());
 		}
 
 	}
@@ -87,21 +86,21 @@ public class CartController {
 
 			return new ApiResponse<>("success", clearList, "清空成功");
 		} catch (Exception e) {
-			return new ApiResponse<>("fail", null, "清空失敗");
+			return new ApiResponse<>("fail", null, "清空失敗" + e.getMessage());
 		}
 
 	}
 
 	// 合併購物車
 	@PostMapping("/api/mergeCart")
-	public ApiResponse<List<CartDTO_res>> mergeCart(HttpSession session, Integer memId) {
+	public ApiResponse<List<CartDTO_res>> mergeCart(@RequestBody CartDTO_merge_req MergeCartReq) {
 
 		try {
-			List<CartDTO_res> mergeCart = cs.mergeCart(session, memId);
+			List<CartDTO_res> mergeCart = cs.mergeCart(MergeCartReq.getMemId(), MergeCartReq.getCartList());
 
 			return new ApiResponse<>("success", mergeCart, "合併成功");
 		} catch (Exception e) {
-			return new ApiResponse<>("fail", null, "合併失敗");
+			return new ApiResponse<>("fail", null, "合併失敗" + e.getMessage());
 		}
 
 	}
