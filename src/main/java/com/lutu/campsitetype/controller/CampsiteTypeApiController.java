@@ -83,15 +83,6 @@ public class CampsiteTypeApiController {
 //	    return new ApiResponse<>("success", campsiteType, "新增成功");
 //	}
 
-	// http://localhost:8081/CJA101G02/campsitetype/addCampsiteType
-	// 新增營地房型，campsiteTypeId可自動遞增(測試使用)
-//	@PostMapping("/addCampsiteType")
-//	public ApiResponse<CampsiteTypeVO> addCampsiteType(@RequestBody CampsiteTypeVO campsiteTypeVO) {
-//	    // 從 VO 中取出 campId
-//	    Integer campId = campsiteTypeVO.getId() != null ? campsiteTypeVO.getId().getCampId() : null;
-//	    CampsiteTypeVO campsiteType = campsiteTypeSvc.addCampsiteType(campsiteTypeVO, campId);
-//	    return new ApiResponse<>("success", campsiteType, "新增成功");
-//	}
 
 	// http://localhost:8081/CJA101G02/campsitetype/1001/addCampsiteType
 	// http://localhost:8081/CJA101G02/campsitetype/{campId}/addCampsiteType
