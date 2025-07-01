@@ -50,6 +50,7 @@ public class TestUserDiscount {
 		// ================================ 會員折價券(getall) =======================================//
 //		List<UserDiscountVO> voList= svc.getByMemId(10000001);
 //		for(UserDiscountVO vo:voList) {
+//			System.out.println("vo:"+vo);
 //			System.out.println("Id:"+vo.getDiscountCodeType());
 //			System.out.println("DISCOUNT_CODE:"+vo.getDiscountCodeVO().getDiscountCodeId());
 //		}
@@ -71,17 +72,17 @@ public class TestUserDiscount {
 //		svc.addUserDiscount(vo);
 		
 		 // 1. 複合主鍵
-	    UserDiscountVO.CompositeDetail id = new UserDiscountVO.CompositeDetail();
-	    id.setDiscountCodeId("A00001");
-	    id.setMemId(10000005);
-
-	    // 2. 主物件
-	    UserDiscountVO userDiscountVO = new UserDiscountVO();
-	    userDiscountVO.setId(id);
-	    userDiscountVO.setDiscountCodeType((byte) 0);
-	    userDiscountVO.setUsedAt(null);
-	    
-	    svc.addUserDiscount(userDiscountVO);
+//	    UserDiscountVO.CompositeDetail id = new UserDiscountVO.CompositeDetail();
+//	    id.setDiscountCodeId("A00001");
+//	    id.setMemId(10000005);
+//
+//	    // 2. 主物件
+//	    UserDiscountVO userDiscountVO = new UserDiscountVO();
+//	    userDiscountVO.setId(id);
+//	    userDiscountVO.setDiscountCodeType((byte) 0);
+//	    userDiscountVO.setUsedAt(null);
+//	    
+//	    svc.addUserDiscount(userDiscountVO);
         
 		// ================================ 折價券(GetALL) =======================================//
 //		List<DiscountCodeVO> discountCodeVOList = svc.getAll();

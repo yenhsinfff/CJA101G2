@@ -171,43 +171,44 @@ public class ApiController {
 //		return new ApiResponse<>("success", camps, "查詢成功");
 //	}
 
-	@PostMapping("/api/createonecamp")
-	public ApiResponse<CampVO> createOneCamp(@RequestParam("ownerId") Integer ownerId,
-			@RequestParam("campName") String campName, @RequestParam("campContent") String campContent,
-			@RequestParam("campCity") String campCity, @RequestParam("campDist") String campDist,
-			@RequestParam("campAddr") String campAddr, @RequestParam("campReleaseStatus") Byte campReleaseStatus,
-			@RequestParam("campCommentNumberCount") Integer campCommentNumberCount,
-			@RequestParam("campCommentSumScore") Integer campCommentSumScore,
-			@RequestParam("campRegDate") String campRegDate, // yyyy-MM-dd
-			@RequestPart("campPic1") MultipartFile campPic1, @RequestPart("campPic2") MultipartFile campPic2,
-			@RequestPart(value = "campPic3", required = false) MultipartFile campPic3,
-			@RequestPart(value = "campPic4", required = false) MultipartFile campPic4) {
-		CampVO camp = new CampVO();
-		try {
-			camp.setOwnerId(ownerId);
-			camp.setCampName(campName);
-			camp.setCampContent(campContent);
-			camp.setCampCity(campCity);
-			camp.setCampDist(campDist);
-			camp.setCampAddr(campAddr);
-			camp.setCampReleaseStatus(campReleaseStatus);
-			camp.setCampCommentNumberCount(campCommentNumberCount);
-			camp.setCampCommentSumScore(campCommentSumScore);
-			camp.setCampRegDate(java.sql.Date.valueOf(campRegDate));
-			camp.setCampPic1(campPic1.getBytes());
-			camp.setCampPic2(campPic2.getBytes());
-			if (campPic3 != null)
-				camp.setCampPic3(campPic3.getBytes());
-			if (campPic4 != null)
-				camp.setCampPic4(campPic4.getBytes());
-
-			CampVO newCampVO = campService.createOneCamp(camp);
-			return new ApiResponse<>("success", newCampVO, "查詢成功");
-		} catch (Exception e) {
-			return new ApiResponse<>("fail", camp, "查詢失敗");
-		}
-
-	}
+//	@PostMapping("/api/createonecamp")
+//	public ApiResponse<Boolean> createOneCamp(@RequestParam("ownerId") Integer ownerId,
+//			@RequestParam("campName") String campName, @RequestParam("campContent") String campContent,
+//			@RequestParam("campCity") String campCity, @RequestParam("campDist") String campDist,
+//			@RequestParam("campAddr") String campAddr, @RequestParam("campReleaseStatus") Byte campReleaseStatus,
+//			@RequestParam("campCommentNumberCount") Integer campCommentNumberCount,
+//			@RequestParam("campCommentSumScore") Integer campCommentSumScore,
+//			@RequestParam("campRegDate") String campRegDate, // yyyy-MM-dd
+//			@RequestPart("campPic1") MultipartFile campPic1, @RequestPart("campPic2") MultipartFile campPic2,
+//			@RequestPart(value = "campPic3", required = false) MultipartFile campPic3,
+//			@RequestPart(value = "campPic4", required = false) MultipartFile campPic4) {
+//		CampVO camp = new CampVO();
+//		try {
+//			camp.setOwnerId(ownerId);
+//			camp.setCampName(campName);
+//			camp.setCampContent(campContent);
+//			camp.setCampCity(campCity);
+//			camp.setCampDist(campDist);
+//			camp.setCampAddr(campAddr);
+//			camp.setCampReleaseStatus(campReleaseStatus);
+//			camp.setCampCommentNumberCount(campCommentNumberCount);
+//			camp.setCampCommentSumScore(campCommentSumScore);
+//			camp.setCampRegDate(java.sql.Date.valueOf(campRegDate));
+//			camp.setCampPic1(campPic1.getBytes());
+//			camp.setCampPic2(campPic2.getBytes());
+//			if (campPic3 != null)
+//				camp.setCampPic3(campPic3.getBytes());
+//			if (campPic4 != null)
+//				camp.setCampPic4(campPic4.getBytes());
+//
+//			CampVO newCampVO = campService.createOneCamp(camp);
+//			return new ApiResponse<>("success", true, "查詢成功");
+//		} catch (Exception e) {
+//			System.out.println("createOneCamp_err:"+e);
+//			return new ApiResponse<>("fail", false, "查詢失敗");
+//		}
+//
+//	}
 
 	// 取得所有營地訂單，回傳 JSON
 	@GetMapping("/api/campsite_orders")
