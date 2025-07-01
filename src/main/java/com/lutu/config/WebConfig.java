@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         // 露營者 
         registry.addInterceptor(memberLoginInterceptor)
-                .addPathPatterns("/mem/**")
+                .addPathPatterns("/api/member/**")
                 .excludePathPatterns("/", "/index","/login",
                     "/mem/login", "/mem/register", "/mem/forgot",
                     "/css/**", "/js/**", "/images/**"
@@ -30,7 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         // 營地主
         registry.addInterceptor(ownerLoginInterceptor) 
-                .addPathPatterns("/owner/**")
+                .addPathPatterns("api/owner/**")
                 .excludePathPatterns("/", "/index","/login",
                     "/owner/login", "/owner/register",
                     "/css/**", "/js/**", "/images/**"
@@ -38,7 +38,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         // 管理員
         registry.addInterceptor(adminLoginInterceptor)
-                .addPathPatterns("/admin/**")
+                .addPathPatterns("api/admin/**")
                 .excludePathPatterns("/", "/index","/login",
                     "/admin/login",
                     "/css/**", "/js/**", "/images/**"

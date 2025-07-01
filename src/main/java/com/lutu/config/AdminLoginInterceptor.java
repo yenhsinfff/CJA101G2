@@ -5,6 +5,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 
 @Component
@@ -12,11 +13,18 @@ public class AdminLoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        Object admin = request.getSession().getAttribute("loggedInAdmin");
-        if (admin == null) {
-            response.sendRedirect(request.getContextPath()+ "/admin/login");
-            return false;
-        }
-        return true;
+    	
+	    HttpSession session = request.getSession(false);
+	    Object administrator = session != null ? session.getAttribute("loggedInAdmin") : null;
+	
+	    System.out.println("[Interceptor] administrator session 檢查: " + (administrator != null));
+	
+	    if (administrator == null) {
+	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	        response.getWriter().write("Interceptor 攔截：請先登入");
+	        return false;
+	    }
+	
+	    return true;
     }
 }
