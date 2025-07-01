@@ -226,7 +226,5 @@ public class ApiController {
 		response.getOutputStream().write(img);
 	}
 
-	
-
 
 }
