@@ -2,9 +2,6 @@ package com.lutu.camp.model;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
 import com.lutu.camptracklist.model.CampTrackListVO;
@@ -22,7 +19,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "camp")
-@JsonFilter("campFilter")
+//@JsonFilter("campFilter")
 public class CampVO implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -75,15 +72,20 @@ public class CampVO implements java.io.Serializable {
     private Date campRegDate; // 加入日期
     
     @OneToMany( cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name = "camp_id")
 //    @JsonManagedReference
     private Set<CampSiteOrderVO> campsiteOrders = new HashSet<>();  
 
     @OneToMany( cascade = CascadeType.ALL)
-    @JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
+    @JoinColumn(name = "camp_id")
+//    @JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
     private Set<CampsiteTypeVO> campsiteTypes;
     
+
 //    @OneToMany(mappedBy = "camp", cascade = CascadeType.ALL)
 //    private Set<CampTrackListVO> campTrackLists;
+
+    
     
 
     // --- Getters and Setters ---

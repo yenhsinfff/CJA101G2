@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.lutu.campsite.model.CampsiteVO;
+import com.lutu.campsite_available.model.CampsiteAvailableVO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,7 +40,7 @@ public class CampsiteTypeVO implements Serializable {
 
 	@Column(name = "campsite_num")
 	@NotNull(message = "房間數量: 請勿空白")
-	private Byte campsiteNum; // 房間數量
+	private Integer campsiteNum; // 房間數量
 
 	@Column(name = "campsite_price")
 	@NotNull(message = "房間價格: 請勿空白")
@@ -80,18 +81,33 @@ public class CampsiteTypeVO implements Serializable {
 //	public void setCamp(CampVO camp) {
 //		this.camp = camp;
 //	}
-	
+//
 //	@OneToMany(mappedBy = "campsiteType", cascade =CascadeType.ALL)
-	@OneToMany(cascade =CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumns({ @JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id"),
+			@JoinColumn(name = "camp_id", referencedColumnName = "camp_id"),
+
+	})
+//	 @JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id")
+	private Set<CampsiteVO> campsites;
+
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumns({
 	    @JoinColumn(name = "camp_id", referencedColumnName = "camp_id"),
 	    @JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id")
 	})
-	private Set<CampsiteVO> campsites;
-	
-	
+//	@JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id")
+	private Set<CampsiteAvailableVO> availabilities;
 
-    public Set<CampsiteVO> getCampsites() {
+	public Set<CampsiteAvailableVO> getAvailabilities() {
+		return availabilities;
+	}
+
+	public void setAvailabilities(Set<CampsiteAvailableVO> availabilities) {
+		this.availabilities = availabilities;
+	}
+
+	public Set<CampsiteVO> getCampsites() {
 		return campsites;
 	}
 
@@ -99,7 +115,7 @@ public class CampsiteTypeVO implements Serializable {
 		this.campsites = campsites;
 	}
 
-	//=======================複合主鍵設定==================================
+	// =======================複合主鍵設定==================================
 	// 特別加上對複合主鍵物件的 getter / setter
 	public CompositeDetail getId() {
 		return id;
@@ -109,11 +125,8 @@ public class CampsiteTypeVO implements Serializable {
 		this.id = id;
 	}
 
-
-
 //==================================================================
 
-	
 	public String getCampsiteName() {
 		return campsiteName;
 	}
@@ -130,11 +143,11 @@ public class CampsiteTypeVO implements Serializable {
 		this.campsitePeople = campsitePeople;
 	}
 
-	public Byte getCampsiteNum() {
+	public Integer getCampsiteNum() {
 		return campsiteNum;
 	}
 
-	public void setCampsiteNum(Byte campsiteNum) {
+	public void setCampsiteNum(Integer campsiteNum) {
 		this.campsiteNum = campsiteNum;
 	}
 
@@ -177,12 +190,12 @@ public class CampsiteTypeVO implements Serializable {
 	public void setCampsitePic4(byte[] campsitePic4) {
 		this.campsitePic4 = campsitePic4;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "CampsiteTypeVO [id=" + id + ", campsiteName=" + campsiteName + ", campsitePeople="
-				+ campsitePeople + ", campsiteNum=" + campsiteNum + ", campsitePrice=" + campsitePrice
-				+ ", campsitePic1=" + Arrays.toString(campsitePic1);
+		return "CampsiteTypeVO [id=" + id + ", campsiteName=" + campsiteName + ", campsitePeople=" + campsitePeople
+				+ ", campsiteNum=" + campsiteNum + ", campsitePrice=" + campsitePrice + ", campsitePic1="
+				+ Arrays.toString(campsitePic1);
 	}
 
 //=======================複合主鍵設定==================================	
@@ -204,16 +217,12 @@ public class CampsiteTypeVO implements Serializable {
 		public CompositeDetail() {
 			super();
 		}
-		
-		
 
 		public CompositeDetail(Integer campsiteTypeId, Integer campId) {
 			super();
 			this.campsiteTypeId = campsiteTypeId;
 			this.campId = campId;
 		}
-
-
 
 		public Integer getCampsiteTypeId() {
 			return campsiteTypeId;

@@ -16,7 +16,7 @@ public class CampsiteTypeDTO {
     private Integer campsitePeople;
     
     @NotNull(message = "房間數量: 請勿空白")
-    private Byte campsiteNum;
+    private Integer campsiteNum;
     
     @NotNull(message = "房間價格: 請勿空白")
     private Integer campsitePrice;
@@ -30,7 +30,7 @@ public class CampsiteTypeDTO {
     // Constructor
   
     public CampsiteTypeDTO(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
-			Byte campsiteNum, Integer campsitePrice, String campsitePic1, String campsitePic2, String campsitePic3,
+    		Integer campsiteNum, Integer campsitePrice, String campsitePic1, String campsitePic2, String campsitePic3,
 			String campsitePic4) {
 		super();
 		this.campsiteTypeId = campsiteTypeId;
@@ -54,7 +54,7 @@ public class CampsiteTypeDTO {
 
 
 	public CampsiteTypeDTO(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
-			Byte campsiteNum, Integer campsitePrice) {
+			Integer campsiteNum, Integer campsitePrice) {
 		super();
 		this.campsiteTypeId = campsiteTypeId;
 		this.campId = campId;
@@ -96,11 +96,11 @@ public class CampsiteTypeDTO {
         this.campsitePeople = campsitePeople;
     }
 
-    public Byte getCampsiteNum() {
+    public Integer getCampsiteNum() {
         return campsiteNum;
     }
 
-    public void setCampsiteNum(Byte campsiteNum) {
+    public void setCampsiteNum(Integer campsiteNum) {
         this.campsiteNum = campsiteNum;
     }
 

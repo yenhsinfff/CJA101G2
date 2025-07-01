@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.lutu.article.model.ArticlesVO;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "ac_fav_record")
@@ -13,17 +14,17 @@ import java.time.LocalDateTime;
 public class AcFavRecordVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @Column(name = "ac_id")
     @NotNull(message = "文章ID: 不能為空")
     private Integer acId;
-    
+
     @Id
     @Column(name = "mem_id")
     @NotNull(message = "會員ID: 不能為空")
     private Integer memId;
-    
+
     @Column(name = "ac_fav_time", nullable = false)
     @NotNull(message = "收藏時間: 不能為空")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -32,6 +33,7 @@ public class AcFavRecordVO implements Serializable {
     // 修正關聯映射 - 移除 insertable 和 updatable 限制
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ac_id", referencedColumnName = "ac_id")
+    @JsonIgnore
     private ArticlesVO articlesVO;
 
     // 無參數建構子
@@ -94,7 +96,7 @@ public class AcFavRecordVO implements Serializable {
         this.acFavTime = acFavTime;
     }
 
-    //========================================================
+    // ========================================================
     // 複合主鍵類別
     public static class AcFavRecordId implements Serializable {
         private static final long serialVersionUID = 1L;
@@ -136,8 +138,9 @@ public class AcFavRecordVO implements Serializable {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             AcFavRecordId that = (AcFavRecordId) obj;
-            return acId != null ? acId.equals(that.acId) : that.acId == null &&
-                   memId != null ? memId.equals(that.memId) : that.memId == null;
+            return acId != null ? acId.equals(that.acId)
+                    : that.acId == null &&
+                            memId != null ? memId.equals(that.memId) : that.memId == null;
         }
 
         @Override
@@ -169,11 +172,14 @@ public class AcFavRecordVO implements Serializable {
     // 輔助方法
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         AcFavRecordVO that = (AcFavRecordVO) obj;
-        return acId != null ? acId.equals(that.acId) : that.acId == null &&
-               memId != null ? memId.equals(that.memId) : that.memId == null;
+        return acId != null ? acId.equals(that.acId)
+                : that.acId == null &&
+                        memId != null ? memId.equals(that.memId) : that.memId == null;
     }
 
     @Override

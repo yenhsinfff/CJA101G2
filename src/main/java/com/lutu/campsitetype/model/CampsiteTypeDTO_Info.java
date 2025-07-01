@@ -6,7 +6,7 @@ public class CampsiteTypeDTO_Info {
     private Integer campId;
     private String campsiteName;
     private Integer campsitePeople;
-    private Byte campsiteNum;
+    private Integer campsiteNum;
     private Integer campsitePrice;
 
 
@@ -17,7 +17,7 @@ public class CampsiteTypeDTO_Info {
 	}
     
     public CampsiteTypeDTO_Info(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
-			Byte campsiteNum, Integer campsitePrice) {
+			Integer campsiteNum, Integer campsitePrice) {
 		super();
 		this.campsiteTypeId = campsiteTypeId;
 		this.campId = campId;
@@ -61,11 +61,11 @@ public class CampsiteTypeDTO_Info {
 		this.campsitePeople = campsitePeople;
 	}
 
-	public Byte getCampsiteNum() {
+	public Integer getCampsiteNum() {
 		return campsiteNum;
 	}
 
-	public void setCampsiteNum(Byte campsiteNum) {
+	public void setCampsiteNum(Integer campsiteNum) {
 		this.campsiteNum = campsiteNum;
 	}
 

@@ -3,6 +3,7 @@ package com.lutu.article_report.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.lutu.article.model.ArticlesVO;
 import com.lutu.member.model.MemberVO;
@@ -16,20 +17,20 @@ import java.time.LocalDateTime;
 public class ArticleReportVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Integer acReportId;					// 文章案件編號 (PK)
-    private MemberVO memberVO;			 		// 露營者編號(FK)
-    private ArticlesVO articlesVO;				// 文章編號(FK)
-    private LocalDateTime rpTime;				// 檢舉時間
-    private String rpContent;					// 檢舉文字內容
-    private Integer adminId;					// 管理員編號(FK)
-    private String adminMemCustomer;			// 管理員回覆
-    private LocalDateTime rpDoneTime;			// 處理完成時間
-    private Byte rpStatus;					    // 處理狀態   Not Null   0: 未處理	1: 已處理
-    private Byte rpResult;					    // 處理結果   Not Null   0: 通過	    1: 未通過
-    private String rpNote;						// 處理註記
+    private Integer acReportId; // 文章案件編號 (PK)
+    private MemberVO memberVO; // 露營者編號(FK)
+    private ArticlesVO articlesVO; // 文章編號(FK)
+    private LocalDateTime rpTime; // 檢舉時間
+    private String rpContent; // 檢舉文字內容
+    private Integer adminId; // 管理員編號(FK)
+    private String adminMemCustomer; // 管理員回覆
+    private LocalDateTime rpDoneTime; // 處理完成時間
+    private Byte rpStatus; // 處理狀態 Not Null 0: 未處理 1: 已處理
+    private Byte rpResult; // 處理結果 Not Null 0: 通過 1: 未通過
+    private String rpNote; // 處理註記
 
     public ArticleReportVO() {
-    	
+
     }
 
     @Id
@@ -46,6 +47,7 @@ public class ArticleReportVO implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mem_id", nullable = false)
     @NotNull(message = "會員ID: 不能為空")
+    @JsonIgnore
     public MemberVO getMemberVO() {
         return memberVO;
     }
@@ -57,6 +59,7 @@ public class ArticleReportVO implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "acId", nullable = false)
     @NotNull(message = "被檢舉文章ID: 不能為空")
+    @JsonIgnore
     public ArticlesVO getArticlesVO() {
         return articlesVO;
     }
@@ -152,13 +155,12 @@ public class ArticleReportVO implements Serializable {
         this.rpNote = rpNote;
     }
 
-	@Override
-	public String toString() {
-		return "ArticleReportVO [acReportId=" + acReportId + ", memberVO=" + memberVO + ", articlesVO=" + articlesVO
-				+ ", rpTime=" + rpTime + ", rpContent=" + rpContent + ", adminId=" + adminId + ", adminMemCustomer="
-				+ adminMemCustomer + ", rpDoneTime=" + rpDoneTime + ", rpStatus=" + rpStatus + ", rpResult=" + rpResult
-				+ ", rpNote=" + rpNote + "]";
-	}
-    
-    
+    @Override
+    public String toString() {
+        return "ArticleReportVO [acReportId=" + acReportId + ", memberVO=" + memberVO + ", articlesVO=" + articlesVO
+                + ", rpTime=" + rpTime + ", rpContent=" + rpContent + ", adminId=" + adminId + ", adminMemCustomer="
+                + adminMemCustomer + ", rpDoneTime=" + rpDoneTime + ", rpStatus=" + rpStatus + ", rpResult=" + rpResult
+                + ", rpNote=" + rpNote + "]";
+    }
+
 }

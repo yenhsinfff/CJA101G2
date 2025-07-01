@@ -2,14 +2,14 @@ package com.lutu.campsitetype.controller;
 
 import java.util.List;
 
-import com.lutu.campsitetype.model.CampsiteTypeDAO;
-import com.lutu.campsitetype.model.CampsiteTypeDAO_interface;
+
 import com.lutu.campsitetype.model.CampsiteTypeVO;
 
 public class TestCampsiteType {
 
 	public static void main(String[] args) throws Exception {
-		CampsiteTypeDAO_interface dao = new CampsiteTypeDAO();
+//		CampsiteTypeDAO_interface dao = new CampsiteTypeDAO();
+		CampsiteTypeVO dao = new CampsiteTypeVO();
 
 		// 新增
 //		
@@ -63,8 +63,8 @@ public class TestCampsiteType {
 
 		List<CampsiteTypeVO> list = dao.getAll();
 		for(CampsiteTypeVO campsiteVO : list) {
-		System.out.print(campsiteVO.getCampsiteTypeId() + ",");
-		System.out.print(campsiteVO.getCampId() + ",");
+		System.out.print(campsiteVO.getId().getCampsiteTypeId() + ",");
+		System.out.print(campsiteVO.getId().getCampId() + ",");
 		System.out.print(campsiteVO.getCampsiteName() + ",");
 		System.out.print(campsiteVO.getCampsitePeople() + ",");
 		System.out.print(campsiteVO.getCampsiteNum() + ",");

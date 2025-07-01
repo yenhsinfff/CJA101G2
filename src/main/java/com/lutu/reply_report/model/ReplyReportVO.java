@@ -3,6 +3,7 @@ package com.lutu.reply_report.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.lutu.administrator.model.AdministratorVO;
 import com.lutu.article.model.ArticlesVO;
@@ -17,20 +18,21 @@ import java.time.LocalDateTime;
 public class ReplyReportVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Integer replyReportId;		 		// 留言案件編號 (PK)
-    private MemberVO memberVO;				 	// 露營者編號(FK)
-    private Integer acId;			         	// 文章編號(FK)
-    private ReplyVO replyVO;					// 留言編號(FK)
-    private AdministratorVO administratorVO;    // 管理員編號(FK)	
-    private LocalDateTime rpTime;		 		// 檢舉時間
-    private String rpContent;					// 檢舉文字內容
-    private String adminReply;			        // 管理員回覆
-    private LocalDateTime rpDoneTime;	        // 處理完成時間
-    private Byte rpStatus;				 		// 處理狀態
-    private Byte rpSresult;				 		// 處理結果
-    private String rpNote; 						// 處理註記
+    private Integer replyReportId; // 留言案件編號 (PK)
+    private MemberVO memberVO; // 露營者編號(FK)
+    private Integer acId; // 文章編號(FK)
+    private ReplyVO replyVO; // 留言編號(FK)
+    private AdministratorVO administratorVO; // 管理員編號(FK)
+    private LocalDateTime rpTime; // 檢舉時間
+    private String rpContent; // 檢舉文字內容
+    private String adminReply; // 管理員回覆
+    private LocalDateTime rpDoneTime; // 處理完成時間
+    private Byte rpStatus; // 處理狀態
+    private Byte rpSresult; // 處理結果
+    private String rpNote; // 處理註記
 
-    public ReplyReportVO() {}
+    public ReplyReportVO() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +48,7 @@ public class ReplyReportVO implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mem_id", nullable = false)
     @NotNull(message = "會員ID: 不能為空")
+    @JsonIgnore
     public MemberVO getMemberVO() {
         return memberVO;
     }
@@ -53,7 +56,6 @@ public class ReplyReportVO implements Serializable {
     public void setMemberVO(MemberVO memberVO) {
         this.memberVO = memberVO;
     }
-    
 
     @Column(name = "ac_id", nullable = false)
     @NotNull(message = "文章ID: 不能為空")
@@ -68,6 +70,7 @@ public class ReplyReportVO implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "replyId", nullable = false)
     @NotNull(message = "被檢舉留言ID: 不能為空")
+    @JsonIgnore
     public ReplyVO getReplyVO() {
         return replyVO;
     }
@@ -79,6 +82,7 @@ public class ReplyReportVO implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adminId", nullable = false)
     @NotNull(message = "管理員ID: 不能為空")
+    @JsonIgnore
     public AdministratorVO getAdministratorVO() {
         return administratorVO;
     }
@@ -164,14 +168,12 @@ public class ReplyReportVO implements Serializable {
         this.rpNote = rpNote;
     }
 
-	@Override
-	public String toString() {
-		return "ReplyReportVO [replyReportId=" + replyReportId + ", memberVO=" + memberVO + ", acId=" + acId
-				+ ", replyVO=" + replyVO + ", administratorVO=" + administratorVO + ", rpTime=" + rpTime
-				+ ", rpContent=" + rpContent + ", adminReply=" + adminReply + ", rpDoneTime=" + rpDoneTime
-				+ ", rpStatus=" + rpStatus + ", rpSresult=" + rpSresult + ", rpNote=" + rpNote + "]";
-	}
-    
-    
-    
+    @Override
+    public String toString() {
+        return "ReplyReportVO [replyReportId=" + replyReportId + ", memberVO=" + memberVO + ", acId=" + acId
+                + ", replyVO=" + replyVO + ", administratorVO=" + administratorVO + ", rpTime=" + rpTime
+                + ", rpContent=" + rpContent + ", adminReply=" + adminReply + ", rpDoneTime=" + rpDoneTime
+                + ", rpStatus=" + rpStatus + ", rpSresult=" + rpSresult + ", rpNote=" + rpNote + "]";
+    }
+
 }

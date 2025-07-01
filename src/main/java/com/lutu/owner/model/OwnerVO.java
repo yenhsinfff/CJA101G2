@@ -58,7 +58,7 @@ public class OwnerVO implements Serializable{
 	@Column(name = "owner_gui")
 	@NotEmpty(message = "統一編號: 請勿空白")
 	@Pattern(regexp = "^\\d{8}$", message = "統一編號必須為8位數字")
-	private String ownerGui;//統編
+	private String ownerGui;// 統編
 	
 	
 	@Column(name = "owner_rep")
@@ -145,6 +145,16 @@ public class OwnerVO implements Serializable{
 	public void setOwnerPwd(String ownerPwd) {
 		this.ownerPwd = ownerPwd;
 	}
+	
+	
+	public void setPassword(String password) {
+	    this.ownerPwd = password;
+	}
+
+	public String getPassword() {
+	    return this.ownerPwd;
+	}
+	
 
 	public byte getAccStatus() {
 		return accStatus;

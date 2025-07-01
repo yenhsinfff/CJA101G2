@@ -46,8 +46,8 @@ public class CampsiteVO implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumns({
+		@JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id"),
 		@JoinColumn(name = "camp_id", referencedColumnName = "camp_id"),
-		@JoinColumn(name = "campsite_type_id", referencedColumnName = "campsite_type_id")   
 	    })
 	private CampsiteTypeVO campsiteType;
 	

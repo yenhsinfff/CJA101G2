@@ -11,6 +11,7 @@ import com.lutu.article_type.model.ArticleTypeVO;
 import com.lutu.member.model.MemberVO;
 import com.lutu.nice_article.model.NiceArticleVO;
 import com.lutu.reply.model.ReplyVO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -21,19 +22,19 @@ import java.util.Set;
 public class ArticlesVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Integer acId;                                   // 討論區文章編號(PK)
-    private String acTitle;                                 // 文章標題
-    private MemberVO memberVO;                              // 露營者編號(FK)
-    private ArticleTypeVO articleTypeVO;                    // 文章類別編號(FK)
-    private LocalDateTime acTime;                           // 文章發布時間
-    private String acContext;                               // 文章內容
-    private Byte acStatus;                                  // 文章狀態 Not Null 0 : 顯示 1 : 不顯示
+    private Integer acId; // 討論區文章編號(PK)
+    private String acTitle; // 文章標題
+    private MemberVO memberVO; // 露營者編號(FK)
+    private ArticleTypeVO articleTypeVO; // 文章類別編號(FK)
+    private LocalDateTime acTime; // 文章發布時間
+    private String acContext; // 文章內容
+    private Byte acStatus; // 文章狀態 Not Null 0 : 顯示 1 : 不顯示
 
-    private Set<ArticleImageVO> articleImages;             // 討論區圖片
-    private Set<ReplyVO> replies;                          // 留言
-    private Set<NiceArticleVO> niceArticleVO;              // 這個文章★讚
-    private Set<ArticleReportVO> articleReport;            // 討論區文章檢舉
-    private Set<AcFavRecordVO> acFavRecord;                // 文章收藏紀錄
+    private Set<ArticleImageVO> articleImages; // 討論區圖片
+    private Set<ReplyVO> replies; // 留言
+    private Set<NiceArticleVO> niceArticleVO; // 這個文章★讚
+    private Set<ArticleReportVO> articleReport; // 討論區文章檢舉
+    private Set<AcFavRecordVO> acFavRecord; // 文章收藏紀錄
 
     public ArticlesVO() {
 
@@ -94,9 +95,9 @@ public class ArticlesVO implements Serializable {
         this.acTime = acTime;
     }
 
-    @Column(name = "ac_context", nullable = false, length = 800)
+    @Column(name = "ac_context", nullable = false, length = 4000)
     @NotEmpty(message = "文章內容: 請勿空白")
-    @Size(max = 800, message = "文章內容: 長度不能超過{max}個字元")
+    @Size(max = 4000, message = "文章內容: 長度不能超過{max}個字元")
     public String getAcContext() {
         return acContext;
     }
@@ -118,6 +119,7 @@ public class ArticlesVO implements Serializable {
     }
 
     @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     public Set<ArticleImageVO> getArticleImages() {
         return articleImages;
     }
@@ -127,6 +129,7 @@ public class ArticlesVO implements Serializable {
     }
 
     @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     public Set<ReplyVO> getReplies() {
         return replies;
     }
@@ -136,6 +139,7 @@ public class ArticlesVO implements Serializable {
     }
 
     @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     public Set<NiceArticleVO> getNiceArticle() {
         return niceArticleVO;
     }
@@ -145,6 +149,7 @@ public class ArticlesVO implements Serializable {
     }
 
     @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     public Set<ArticleReportVO> getArticleReport() {
         return articleReport;
     }
@@ -154,6 +159,7 @@ public class ArticlesVO implements Serializable {
     }
 
     @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     public Set<AcFavRecordVO> getAcFavRecord() {
         return acFavRecord;
     }
