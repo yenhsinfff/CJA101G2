@@ -1,9 +1,11 @@
 package com.lutu.campsite.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,11 +35,11 @@ public class CampsiteController {
 	
 
 	// 取得所有營地房間
-//	@GetMapping("/getAllCampsite")
-//	public ApiResponse<List<CampsiteVO>> getAllCampsite() {
-//	    List<CampsiteVO> campsiteList = campsiteSvc.getAll();
-//	    return new ApiResponse<>("success", campsiteList, "查詢成功");
-//	}
+	@GetMapping("/getAllCampsite")
+	public ApiResponse<List<CampsiteVO>> getAllCampsite() {
+	    List<CampsiteVO> campsiteList = campsiteSvc.getAll();
+	    return new ApiResponse<>("success", campsiteList, "查詢成功");
+	}
 	
 	//http://localhost:8081/CJA101G02/campsite/addCampsite
 	// 新增營地房間，關聯出現campsiteType資料，改傳至DTO

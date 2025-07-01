@@ -45,22 +45,24 @@ public class CampService {
 	
     
     @Transactional
-    public CampVO getOneCamp(Integer campId) {
+    public CampInsertDTO getOneCamp(Integer campId) {
     	CampVO camp = campRepository.findById(campId).orElse(null);
+    	CampInsertDTO dto = new CampInsertDTO(camp);
 //    	byte[] img = (camp != null) ? camp.getCampPic1() : null;
 //    	if (camp != null) {
 //            camp.getCampsiteOrders().size(); // 強制初始化
 //        }
-        if (camp != null) {
-            camp.getCampsiteTypes().size(); // 觸發初始化
-        }
-    	return camp;
+//        if (camp != null) {
+//            camp.getCampsiteTypes().size(); // 觸發初始化
+//        }
+    	return dto;
     	
     }
     
-    public CampVO createOneCamp(CampVO campVO) {
+    public CampInsertDTO createOneCamp(CampVO campVO) {
+//    	System.out.println("createOneCamp:"+campVO.getCampId());
     	campRepository.save(campVO);
-    	CampVO campVO2 = getOneCamp(campVO.getCampId());
+    	CampInsertDTO campVO2 = getOneCamp(campVO.getCampId());
     	return campVO2;
 	}
     
