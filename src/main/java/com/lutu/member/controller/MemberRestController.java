@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 
 import com.lutu.member.dto.ChangePasswordRequest;
 import com.lutu.member.dto.LoginRequest;
+import com.lutu.member.dto.MemberLoginDTO;
 import com.lutu.member.dto.RegisterRequest;
 import com.lutu.member.dto.UpdateMemberRequest;
 import com.lutu.member.model.MemberAuthService;
@@ -42,8 +43,10 @@ public class MemberRestController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
-        MemberVO member = authService.login(loginRequest.getMemAcc(), loginRequest.getMemPwd());
-
+    	System.out.println("login_MEM:"+loginRequest.getMemAcc());
+    	System.out.println("login_PWD:"+loginRequest.getMemPwd());
+    	MemberLoginDTO member = authService.loginDTO(loginRequest.getMemAcc(), loginRequest.getMemPwd());
+    
         if (member != null) {
             if (authService.checkAccountStatus(member)) {
                 session.setAttribute("loggedInMember", member);
