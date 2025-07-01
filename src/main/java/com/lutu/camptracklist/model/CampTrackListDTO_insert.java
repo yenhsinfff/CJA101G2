@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class CampTrackListDTO_insert {
 
 	
+	
 	private Integer campId;
 	private Integer memId;
 	private LocalDate memTrackDate;
