@@ -2,36 +2,22 @@ package com.lutu.camptracklist.model;
 
 import java.time.LocalDate;
 
-public class CampTrackListDTO {
+public class CampTrackListDTO_insert {
 
 	
 	private Integer campId;
 	private Integer memId;
-	private String campName;
 	private LocalDate memTrackDate;
 
-	public CampTrackListDTO() {
+	public CampTrackListDTO_insert() {
 		super();
 	}
 
-	
-
-	public CampTrackListDTO(Integer campId, Integer memId, String campName, LocalDate memTrackDate) {
+	public CampTrackListDTO_insert(Integer campId, Integer memId, LocalDate memTrackDate) {
 		super();
 		this.campId = campId;
 		this.memId = memId;
-		this.campName = campName;
 		this.memTrackDate = memTrackDate;
-	}
-
-
-
-	public Integer getMemId() {
-		return memId;
-	}
-
-	public void setMemId(Integer memId) {
-		this.memId = memId;
 	}
 
 	public Integer getCampId() {
@@ -42,14 +28,13 @@ public class CampTrackListDTO {
 		this.campId = campId;
 	}
 
-	public String getCampName() {
-		return campName;
+	public Integer getMemId() {
+		return memId;
 	}
 
-	public void setCampName(String campName) {
-		this.campName = campName;
+	public void setMemId(Integer memId) {
+		this.memId = memId;
 	}
-
 
 	public LocalDate getMemTrackDate() {
 		return memTrackDate;
@@ -58,7 +43,8 @@ public class CampTrackListDTO {
 	public void setMemTrackDate(LocalDate memTrackDate) {
 		this.memTrackDate = memTrackDate;
 	}
+
 	
-	
+
 
 }

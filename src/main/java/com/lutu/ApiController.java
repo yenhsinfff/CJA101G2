@@ -225,44 +225,7 @@ public class ApiController {
 		response.getOutputStream().write(img);
 	}
 
-	// 抓取資料庫的營地圖片，提供給前端
-	@GetMapping("/api/camps/{campId}/{num}")
-	public void getCampPic3(@PathVariable Integer campId, @PathVariable Integer num, HttpServletResponse response)
-			throws IOException {
-		byte[] img = null;
-		try {
-			switch (num) {
-			case 1:
+	
 
-				img = (campService.getOneCamp(campId)).getCampPic1();
-				break;
-
-			case 2:
-
-				img = (campService.getOneCamp(campId)).getCampPic2();
-				break;
-
-			case 3:
-
-				img = (campService.getOneCamp(campId)).getCampPic3();
-				break;
-
-			case 4:
-
-				img = (campService.getOneCamp(campId)).getCampPic4();
-				break;
-
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + num);
-			}
-			response.setContentType("image/jpeg");
-			response.getOutputStream().write(img);
-		} catch (Exception e) {
-			System.out.println("營地編號：" + campId + "||第" + num + "張圖片無法讀取");// TODO: handle exception
-			img = (campService.getOneCamp(campId)).getCampPic1();
-			response.setContentType("image/jpeg");
-			response.getOutputStream().write(img);
-		}
-	}
 
 }
