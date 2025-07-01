@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lutu.prodSpecList.model.ProdSpecListVO.CompositeDetail2;
+import com.lutu.specList.model.SpecListDTO;
+import com.lutu.specList.model.SpecListRepository;
+import com.lutu.specList.model.SpecListVO;
 
 @Service
 @Transactional
@@ -16,6 +19,9 @@ public class ProdSpecListService {
 
     @Autowired
     private ProdSpecListRepository repository;
+    
+    @Autowired
+    private SpecListRepository specListRepository;
 
     /* 查所有規格 */
     public List<ProdSpecListDTO> getAllProdSpecs() {
@@ -49,6 +55,19 @@ public class ProdSpecListService {
         }
     }
 
+    //取得規格名稱
+    public List<SpecListDTO> getAllSpecNames() {
+        List<SpecListVO> list = specListRepository.findAll();
+        List<SpecListDTO> result = new ArrayList<>();
+
+        for (SpecListVO vo : list) {
+            SpecListDTO dto = new SpecListDTO();
+            dto.setSpecId(vo.getSpecId());
+            dto.setSpecName(vo.getSpecName());
+            result.add(dto);
+        }
+        return result;
+    }
     /* 新增或修改商品規格（同一支） */
     public ProdSpecListDTO saveOrUpdate(ProdSpecListDTO dto) {
         ProdSpecListVO vo = toVO(dto);
@@ -63,6 +82,7 @@ public class ProdSpecListService {
 
     
     /* ======== 轉換工具 ======== */
+    // VO -> DTO
     private ProdSpecListDTO toDTO(ProdSpecListVO vo) {
         ProdSpecListDTO dto = new ProdSpecListDTO();
         dto.setProdId(vo.getProdId());
@@ -77,6 +97,7 @@ public class ProdSpecListService {
         return dto;
     }
 
+    // DTO -> VO
     private ProdSpecListVO toVO(ProdSpecListDTO dto) {
         ProdSpecListVO vo = new ProdSpecListVO();
         vo.setProdId(dto.getProdId());
