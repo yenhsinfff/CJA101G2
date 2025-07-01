@@ -42,7 +42,6 @@ public class BundleItemDTO {
 		
 	}
     
-    
 
 	public BundleItemDTO(Integer bundleId, @NotNull(message = "營地編號: 請勿空白") Integer campId,
 			@NotEmpty(message = "加購項目名稱: 請勿空白") String bundleName, LocalDate bundleAddDate,

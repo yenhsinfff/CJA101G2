@@ -21,6 +21,7 @@ import jakarta.persistence.Table;
 @Table(name = "camp_track_list") // 營地收藏
 public class CampTrackListVO{
 
+	
 	// 直接宣告複合識別類別的屬性，並加上 @EmbeddedId 標註
 	@EmbeddedId
 	private CompositeDetail id;
