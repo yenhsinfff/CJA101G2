@@ -52,6 +52,23 @@ public class ArticlesApiController {
         }
     }
 
+    // 根據會員ID查詢文章數量
+    @GetMapping("/api/articles/member/{memId}/count")
+    public ApiResponse<Long> getArticleCountByMember(@PathVariable Integer memId) {
+        try {
+            // 先確認會員是否存在
+            MemberVO member = memberRepository.findById(memId).orElse(null);
+            if (member == null) {
+                return new ApiResponse<>("fail", null, "查無此會員");
+            }
+
+            Long count = articlesService.getArticleCountByMember(memId);
+            return new ApiResponse<>("success", count, "查詢成功");
+        } catch (Exception e) {
+            return new ApiResponse<>("fail", 0L, "查詢失敗: " + e.getMessage());
+        }
+    }
+
     // 取得單一文章
     @GetMapping("/api/articles/{acId}")
     public ApiResponse<ArticlesDTO> getOneArticle(@PathVariable Integer acId) {

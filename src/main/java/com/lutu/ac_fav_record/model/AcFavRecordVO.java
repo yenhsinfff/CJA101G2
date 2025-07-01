@@ -30,9 +30,9 @@ public class AcFavRecordVO implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime acFavTime;
 
-    // 修正關聯映射 - 移除 insertable 和 updatable 限制
+    // 修正關聯映射 - 設定 insertable 和 updatable 為 false，避免重複欄位
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ac_id", referencedColumnName = "ac_id")
+    @JoinColumn(name = "ac_id", referencedColumnName = "ac_id", insertable = false, updatable = false)
     @JsonIgnore
     private ArticlesVO articlesVO;
 

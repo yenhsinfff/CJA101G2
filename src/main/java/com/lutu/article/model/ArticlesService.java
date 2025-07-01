@@ -116,4 +116,14 @@ public class ArticlesService {
         return repository.countByArticleTypeVOAcTypeId(acTypeId);
     }
 
+    /**
+     * 根據會員ID查詢文章數量
+     * 
+     * @param memId 會員ID
+     * @return 該會員的文章數量
+     */
+    public long getArticleCountByMember(Integer memId) {
+        return repository.countByMemberVOMemId(memId);
+    }
+
 }
