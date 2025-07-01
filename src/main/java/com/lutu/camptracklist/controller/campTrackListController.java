@@ -1,26 +1,26 @@
 package com.lutu.camptracklist.controller;
 
-import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-//import org.springframework.ui.ModelMap;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.lutu.ApiResponse;
 import com.lutu.camp.model.CampService;
+import com.lutu.campsitetype.model.CampsiteTypeDTO;
+import com.lutu.campsitetype.model.CampsiteTypeVO;
+import com.lutu.camptracklist.model.CampTrackListDTO;
 import com.lutu.camptracklist.model.CampTrackListService;
-import com.lutu.camptracklist.model.CampTrackListVO;
 
-import jakarta.validation.Valid;
-
-@Controller
-@RequestMapping("/campTrackList")
+@RestController
+@CrossOrigin(origins = "*")
+@RequestMapping("/camptracklist")
 public class campTrackListController {
 
 	@Autowired
@@ -32,75 +32,14 @@ public class campTrackListController {
 //	@Autowired
 //	MemService memSvc; //來自mem_id的關聯
 
-	/*
-	 * This method will serve as addCampTrackList.html handler.
-	 */
-	@GetMapping("addCampTrackList")
-	public String addCampTrackList(Model model) {
-		CampTrackListVO campTrackListVO = new CampTrackListVO();
-		model.addAttribute("campTrackListVO", campTrackListVO);
-		return "back-end/camptracklist/addCampTrackList";
-	}
 
-	/*
-	 * This method will be called on addCampTrackList.html form submission, handling POST request It also validates the user input
-	 */
-	@PostMapping("insert")
-	public String insert(
-			@Valid CampTrackListVO campTrackListVO, 
-			BindingResult result, 
-			Model model) throws IOException {
-
-		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 ************************/
-		if (result.hasErrors()) {
-			return "back-end/camptracklist/addCampTrackList";
-		}
-		/*************************** 2.開始新增資料 *****************************************/
-		campTrackListSvc.addCampTrackList(campTrackListVO);
-		/*************************** 3.新增完成,準備轉交(Send the Success view) **************/
-		List<CampTrackListVO> list = campTrackListSvc.getAll();
-		model.addAttribute("campTrackListData", list); // for listAllCampTrackList.html 第85行用
-		model.addAttribute("success", "- (新增成功)");
-		return "redirect:/camptracklist/listAllCampTrackList"; // 新增成功後重導至IndexController_inSpringBoot.java的第58行@GetMapping("/emp/listAllEmp")
-	}
-
-	@PostMapping("delete")
-	public String delete(@RequestParam("memId") Integer memId, @RequestParam("campId") Integer campId, Model model) {
-		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 ************************/
-		/*************************** 2.開始刪除資料 *****************************************/
-		
-		campTrackListSvc.deleteCampTrackList(memId, campId);
-		/*************************** 3.刪除完成,準備轉交(Send the Success view) **************/
-		List<CampTrackListVO> list = campTrackListSvc.getAll();
-		model.addAttribute("campTrackListData", list); // for listAllEmp.html 第85行用
-		model.addAttribute("success", "- (刪除成功)");
-		return "back-end/camptracklist/listAllCampTrackList"; // 刪除完成後轉交listAllEmp.html
-	}
-
-	/*
-	 * 第一種作法 Method used to populate the List Data in view. 如 : 
-	 * <form:select path="deptno" id="deptno" items="${deptListData}" itemValue="deptno" itemLabel="dname" />
-	 */
-//	@ModelAttribute("deptListData")
-//	protected List<DeptVO> referenceListData() {
-//		// DeptService deptSvc = new DeptService();
-//		List<DeptVO> list = deptSvc.getAll();
-//		return list;
-//	}
-
-	/*
-	 * 【 第二種作法 】 Method used to populate the Map Data in view. 如 : 
-	 * <form:select path="deptno" id="deptno" items="${depMapData}" />
-	 */
-//	@ModelAttribute("campMapData") //
-//	protected Map<Integer, String> referenceMapData() {
-//		Map<Integer, String> map = new LinkedHashMap<Integer, String>();
-//		map.put(10, "財務部");
-//		map.put(20, "研發部");
-//		map.put(30, "業務部");
-//		map.put(40, "生管部");
-//		return map;
-//	}
-	
+	// http://localhost:8081/CJA101G02/camptracklist/10000001/getCampTrackLists
+	// http://localhost:8081/CJA101G02/camptracklist/{memId}/getCampTrackLists
+	//查詢會員收藏的營地
+	@GetMapping("/{memId}/getCampTrackLists")
+	public ApiResponse<List<CampTrackListDTO>> getCampFavoritesByMember(@PathVariable Integer memId) {
+        List<CampTrackListDTO> result = campTrackListSvc.getCampTracksByMemberId(memId);
+        return new ApiResponse<>("success", result, "查詢成功");
+    }
 
 }

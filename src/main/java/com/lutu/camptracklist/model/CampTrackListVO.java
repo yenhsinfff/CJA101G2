@@ -26,7 +26,7 @@ public class CampTrackListVO{
 	private CompositeDetail id;
 	
 	@Column(name = "mem_track_date")
-	private LocalDate memTrackDate; // 收藏時間
+	private LocalDate memTrackDate; // 收藏日期
 	
 	public CampTrackListVO(){
 		
@@ -61,16 +61,16 @@ public class CampTrackListVO{
 		this.member = member;
 	}	
 	
-	//====================================================================
+//====================================================================
 	// 特別加上對複合主鍵物件的 getter / setter
 	public CompositeDetail getId() {
 		return id;
 	}
 
-	public void setId(CompositeDetail compositeKey) {
+	public void setId(CompositeDetail id) {
 		this.id = id;
 	}
-
+//=========================================================
 	public LocalDate getMemTrackDate() {
 		return memTrackDate;
 	}
