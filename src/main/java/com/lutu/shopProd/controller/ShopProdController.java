@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.lutu.ApiResponse;
 import com.lutu.prodPic.model.ProdPicService;
@@ -230,15 +231,18 @@ public class ShopProdController {
         }
     }
 
-//	@GetMapping("/api/camps/{campId}/pic1")
-//	public void getCampPic1(@PathVariable Integer campId, HttpServletResponse response) throws IOException {
-//
-//		byte[] img = (campService.getOneCamp(campId)).getCampPic1(); // 從資料庫取得
-//
-//		response.setContentType("image/jpeg");
-//		response.getOutputStream().write(img);
+	// 接收會員大頭照
+//	@PostMapping("/{memId}/picture")
+//	public ApiResponse<String> getNewAvatar(@PathVariable Integer memId,
+//	        @RequestParam("file") MultipartFile file) {
+//		Boolean response = memberSvc.updateMemberPicture(memId,file);
+//		if(response) {
+//			return new ApiResponse<>("success", "ok", "更新成功");
+//		}else {
+//			return new ApiResponse<>("fail", "fail", "更新失敗");
+//		}
+//		
 //	}
-//
 //	// 抓取資料庫的營地圖片，提供給前端
 //	@GetMapping("/api/camps/{campId}/{num}")
 //	public void getCampPic3(@PathVariable Integer campId, @PathVariable Integer num, HttpServletResponse response)

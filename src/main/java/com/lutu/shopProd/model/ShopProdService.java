@@ -1,8 +1,10 @@
 package com.lutu.shopProd.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -244,17 +246,24 @@ public class ShopProdService {
 
         dto.setProdStatus(vo.getProdStatus());
         dto.setProdColorOrNot(vo.getProdColorOrNot());
-
+/*
         // 加入規格與顏色
         List<ProdSpecListDTO> specs = prodSpecListService.getProdSpecsByProdId(vo.getProdId());
         dto.setProdSpecList(specs);
-
         List<ProdColorListDTO> colors = prodColorListService.getProdColorsByProdId(vo.getProdId());
         dto.setProdColorList(colors);
-
         // 加入圖片清單
         List<ProdPicDTO> pics = prodPicService.getByProdId(vo.getProdId());
         dto.setProdPicList(pics);
+*/
+        dto.setProdSpecList(prodSpecListService.getProdSpecsByProdId(vo.getProdId()));
+        dto.setProdColorList(prodColorListService.getProdColorsByProdId(vo.getProdId()));
+        //取得規格顏色名稱
+        dto.setSpecList(prodSpecListService.getAllSpecNames());
+        dto.setColorList(prodColorListService.getAllColorNames());
+        //取得商品圖片
+        dto.setProdPicList(prodPicService.getByProdId(vo.getProdId()));
+        
 
         return dto;
     }

@@ -15,8 +15,7 @@ public class ColorListDTO {
 	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,50}$", message = "顏色名稱: 只能是中、英文字母、數字和_ , 且長度必需在2到50之間")
     private String colorName; // 顏色名稱
 
-    private List<ProdColorListDTO> prodColors;
-
+    
     public ColorListDTO() {
         super();
     }
@@ -24,7 +23,6 @@ public class ColorListDTO {
     public ColorListDTO(Integer colorId, String colorName, List<ProdColorListDTO> prodColors) {
         this.colorId = colorId;
         this.colorName = colorName;
-        this.prodColors = prodColors;
     }
 
     public Integer getColorId() {
@@ -43,16 +41,9 @@ public class ColorListDTO {
         this.colorName = colorName;
     }
 
-    public List<ProdColorListDTO> getProdColors() {
-        return prodColors;
-    }
-
-    public void setProdColors(List<ProdColorListDTO> prodColors) {
-        this.prodColors = prodColors;
-    }
 
     @Override
     public String toString() {
-        return "ColorListDTO [colorId=" + colorId + ", colorName=" + colorName + ", prodColors=" + prodColors + "]";
+        return "ColorListDTO [colorId=" + colorId + ", colorName=" + colorName + "]";
     }
 }

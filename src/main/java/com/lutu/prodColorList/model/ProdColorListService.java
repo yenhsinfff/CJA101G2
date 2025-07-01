@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lutu.colorList.model.ColorListDTO;
 import com.lutu.colorList.model.ColorListRepository;
 import com.lutu.colorList.model.ColorListVO;
 import com.lutu.prodColorList.model.ProdColorListVO.CompositeDetail;
@@ -69,6 +70,19 @@ public class ProdColorListService {
 	public byte[] getPicByCompositeKey(Integer prodId, Integer colorId) {
 	    Optional<ProdColorListVO> opt = repository.findById(new CompositeDetail(prodId, colorId));
 	    return opt.map(ProdColorListVO::getProdColorPic).orElse(null);
+	}
+	
+	public List<ColorListDTO> getAllColorNames() {
+	    List<ColorListVO> list = colorListRepository.findAll();
+	    List<ColorListDTO> result = new ArrayList<>();
+
+	    for (ColorListVO vo : list) {
+	        ColorListDTO dto = new ColorListDTO();
+	        dto.setColorId(vo.getColorId());
+	        dto.setColorName(vo.getColorName());
+	        result.add(dto);
+	    }
+	    return result;
 	}
 	
 	// 刪除
