@@ -1,6 +1,5 @@
 package com.lutu.ac_fav_record.controller;
 
-
 import com.lutu.ApiResponse;
 import com.lutu.ac_fav_record.model.AcFavRecordService;
 import com.lutu.ac_fav_record.model.AcFavRecordVO;
@@ -149,6 +148,8 @@ public class AcFavRecordApiController {
     // 新增收藏
     @PostMapping("/api/favorites")
     public ApiResponse<AcFavRecordDTO> addFavorite(@Valid @RequestBody AcFavRecordDTO dto) {
+        // 記錄請求資料，方便除錯
+        System.out.println("收到新增收藏請求: " + dto.toString());
         try {
             // 先檢查是否已經收藏
             boolean alreadyFavorited = acFavRecordService.isFavorited(dto.getAcId(), dto.getMemId());
@@ -172,7 +173,7 @@ public class AcFavRecordApiController {
             AcFavRecordVO vo = new AcFavRecordVO();
             vo.setAcId(dto.getAcId());
             vo.setMemId(dto.getMemId());
-            vo.setArticlesVO(article);
+            // 不設定 articlesVO，避免關聯映射問題
 
             // 設定收藏時間為當前時間
             if (dto.getAcFavTime() == null) {
@@ -187,15 +188,49 @@ public class AcFavRecordApiController {
             AcFavRecordDTO favoriteDTO = new AcFavRecordDTO(vo);
             return new ApiResponse<>("success", favoriteDTO, "收藏成功");
         } catch (Exception e) {
+            // 記錄詳細錯誤訊息，方便除錯
+            System.err.println("新增收藏失敗: " + e.getMessage());
+            e.printStackTrace();
             return new ApiResponse<>("fail", null, "收藏失敗: " + e.getMessage());
         }
     }
 
-    // 取消收藏
+    // 取消收藏 - 支援兩種格式
     @DeleteMapping("/api/favorites")
     public ApiResponse<Void> removeFavorite(
             @RequestParam("acId") Integer acId,
             @RequestParam("memId") Integer memId) {
+        try {
+            // 先檢查是否已經收藏
+            boolean isFavorited = acFavRecordService.isFavorited(acId, memId);
+            if (!isFavorited) {
+                return new ApiResponse<>("fail", null, "尚未收藏此文章");
+            }
+
+            // 確認會員存在
+            MemberVO member = memberRepository.findById(memId).orElse(null);
+            if (member == null) {
+                return new ApiResponse<>("fail", null, "查無此會員");
+            }
+
+            // 確認文章存在
+            ArticlesVO article = articlesRepository.findById(acId).orElse(null);
+            if (article == null) {
+                return new ApiResponse<>("fail", null, "查無此文章");
+            }
+
+            acFavRecordService.deleteAcFavRecord(acId, memId);
+            return new ApiResponse<>("success", null, "取消收藏成功");
+        } catch (Exception e) {
+            return new ApiResponse<>("fail", null, "取消收藏失敗: " + e.getMessage());
+        }
+    }
+
+    // 取消收藏 - 路徑參數格式 (支援前端呼叫)
+    @DeleteMapping("/api/favorites/{memId}/{acId}")
+    public ApiResponse<Void> removeFavoriteByPath(
+            @PathVariable Integer memId,
+            @PathVariable Integer acId) {
         try {
             // 先檢查是否已經收藏
             boolean isFavorited = acFavRecordService.isFavorited(acId, memId);
@@ -249,7 +284,7 @@ public class AcFavRecordApiController {
                 AcFavRecordVO vo = new AcFavRecordVO();
                 vo.setAcId(dto.getAcId());
                 vo.setMemId(dto.getMemId());
-                vo.setArticlesVO(article);
+                // 不設定 articlesVO，避免關聯映射問題
                 vo.setAcFavTime(java.time.LocalDateTime.now());
 
                 acFavRecordService.addAcFavRecord(vo);

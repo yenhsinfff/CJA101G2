@@ -63,4 +63,12 @@ public interface ArticlesRepository extends JpaRepository<ArticlesVO, Integer> {
      * @return 該類別的文章數量
      */
     long countByArticleTypeVOAcTypeId(Integer acTypeId);
+
+    /**
+     * 根據會員ID查詢文章數量
+     * 
+     * @param memId 會員ID
+     * @return 該會員的文章數量
+     */
+    long countByMemberVOMemId(Integer memId);
 }
