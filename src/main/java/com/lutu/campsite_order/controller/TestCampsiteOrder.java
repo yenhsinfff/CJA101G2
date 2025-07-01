@@ -2,7 +2,9 @@ package com.lutu.campsite_order.controller;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.boot.SpringApplication;
@@ -14,9 +16,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import com.lutu.camp.model.CampVO;
+import com.lutu.campsite_available.model.CampsiteAvailableService;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
+import com.lutu.campsitetype.model.CampsiteTypeVO;
 import com.lutu.member.model.MemberVO;
 
 @SpringBootApplication
@@ -31,6 +35,17 @@ public class TestCampsiteOrder {
 		SpringApplication app = new SpringApplication(TestCampsiteOrder.class);
 		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
 		ConfigurableApplicationContext context = app.run(args);
+		
+		// ================================ 建立剩餘房型 =======================================
+//		CampsiteAvailableService svc = context.getBean(CampsiteAvailableService.class);
+//		List<Integer> campIds = Arrays.asList(1001, 1002, 1003);
+//		List<CampsiteTypeVO> campsiteTypeVOList = svc.ensureAndQuery(campIds,3, Date.valueOf("2025-08-02"), Date.valueOf("2025-08-05"));
+//		System.out.println("開啟");
+//		for(CampsiteTypeVO vo:campsiteTypeVOList) {
+//			System.out.println(vo.getCampsiteName());
+//			System.out.println(vo.getCampsiteNum());
+//			System.out.println("=================");
+//		}
 
 		// ================================ 營地訂單 =======================================
 		CampSiteOrderService svc = context.getBean(CampSiteOrderService.class);
@@ -61,19 +76,7 @@ public class TestCampsiteOrder {
 		order.setCommentSatisfaction(5);
 		order.setCommentContent("營地設施完善，服務周到");
 		order.setCommentDate(Timestamp.valueOf("2025-07-20 10:00:00"));
-
-		// 關聯營地物件
-//		CampVO camp = new CampVO();
-//		camp.setCampId(1001); // 對應 camp 表的 camp_id
-//		camp.setCampName("山林秘境");
-//		order.setCampVO(camp);
 		order.setCampId(1001);
-
-		// 關聯會員物件
-//		MemberVO memberVO = new MemberVO();
-//		memberVO.setMemId(10000001);
-//		order.setMemberVO(memberVO);
-		
 		order.setMemId(10000001);
 
 		// 折價券資訊
@@ -88,7 +91,7 @@ public class TestCampsiteOrder {
 		svc.createOneCampOrder(order);
 		System.out.println("FINISH");
 
-		// 測試取消訂單
+		// ================================ 取消營地訂單 =======================================
 //				CampsiteCancellationService campsiteCancellationSvc = context.getBean(CampsiteCancellationService.class);
 //				List<CampsiteCancellationVO> campsiteCancellationList = campsiteCancellationSvc.getAllCampsiteCancellation();
 //				for (CampsiteCancellationVO campsiteCancellationVO : campsiteCancellationList) {

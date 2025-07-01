@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.SessionFactory;
 import org.json.JSONArray;
@@ -25,6 +26,7 @@ public class CampSiteOrderService {
 
 	@Autowired
 	CampSiteOrderRepository campSiteOrderRepository;
+	
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -86,9 +88,6 @@ public class CampSiteOrderService {
 	public CampSiteOrderVO getOneCampsiteOrder(String campSiteOrderId) {
 
 		CampSiteOrderVO campSiteOrderVO = campSiteOrderRepository.findByCampSiteOrderId(campSiteOrderId);
-//		if (campSiteOrderVO != null) {
-//			campSiteOrderVO.getCampSiteOrderDetails().size(); // 強制初始化
-//		}
 		return campSiteOrderVO;
 
 	}
@@ -178,6 +177,24 @@ public class CampSiteOrderService {
 			System.out.println("updatePaymentStatus_err"+e);
 			return false;
 		}
+	}
+    
+    public List<CampsiteOrderDTO> getAllDTOOrders() {
+        List<CampSiteOrderVO> orders = campSiteOrderRepository.findAll();
+        
+        return orders.stream()
+            .map(CampsiteOrderDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+    
+    public CampsiteOrderDTO getOneDTOCampsiteOrder(String campSiteOrderId) {
+
+		CampSiteOrderVO campSiteOrderVO = campSiteOrderRepository.findByCampSiteOrderId(campSiteOrderId);
+		System.out.println("campsiteOrderId:"+campSiteOrderVO.getCampsiteOrderId());
+		System.out.println("befAmount:"+campSiteOrderVO.getBefAmount());
+		CampsiteOrderDTO dto = CampsiteOrderDTO.fromEntity(campSiteOrderVO);
+		return dto;
+
 	}
 
 }

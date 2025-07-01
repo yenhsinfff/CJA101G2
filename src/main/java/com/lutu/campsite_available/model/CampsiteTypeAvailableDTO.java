@@ -1,41 +1,25 @@
-package com.lutu.campsitetype.model;
+package com.lutu.campsite_available.model;
 
-public class CampsiteTypeDTO_Info {
-
-    private Integer campsiteTypeId;
+public class CampsiteTypeAvailableDTO {
     private Integer campId;
+    private Integer campsiteTypeId;
     private String campsiteName;
     private Integer campsitePeople;
     private Integer campsiteNum;
     private Integer campsitePrice;
+    private Integer remaining; // 新增剩餘房量
 
-
-    // Constructor
-  
-    public CampsiteTypeDTO_Info() {
-
-	}
-    
-    public CampsiteTypeDTO_Info(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
-			Integer campsiteNum, Integer campsitePrice) {
-		super();
-		this.campsiteTypeId = campsiteTypeId;
-		this.campId = campId;
-		this.campsiteName = campsiteName;
-		this.campsitePeople = campsitePeople;
-		this.campsiteNum = campsiteNum;
-		this.campsitePrice = campsitePrice;
-	}
-    
-    // Getters and Setters
-
-	public Integer getCampsiteTypeId() {
-		return campsiteTypeId;
-	}
-
-	public void setCampsiteTypeId(Integer campsiteTypeId) {
-		this.campsiteTypeId = campsiteTypeId;
-	}
+    // 建構子
+    public CampsiteTypeAvailableDTO(Integer campId, Integer campsiteTypeId, String campsiteName, Integer campsitePeople,
+                                   Integer campsiteNum, Integer campsitePrice, Integer remaining) {
+        this.campId = campId;
+        this.campsiteTypeId = campsiteTypeId;
+        this.campsiteName = campsiteName;
+        this.campsitePeople = campsitePeople;
+        this.campsiteNum = campsiteNum;
+        this.campsitePrice = campsitePrice;
+        this.remaining = remaining;
+    }
 
 	public Integer getCampId() {
 		return campId;
@@ -43,6 +27,14 @@ public class CampsiteTypeDTO_Info {
 
 	public void setCampId(Integer campId) {
 		this.campId = campId;
+	}
+
+	public Integer getCampsiteTypeId() {
+		return campsiteTypeId;
+	}
+
+	public void setCampsiteTypeId(Integer campsiteTypeId) {
+		this.campsiteTypeId = campsiteTypeId;
 	}
 
 	public String getCampsiteName() {
@@ -76,9 +68,15 @@ public class CampsiteTypeDTO_Info {
 	public void setCampsitePrice(Integer campsitePrice) {
 		this.campsitePrice = campsitePrice;
 	}
-    
-    
 
-    
-	
+	public Integer getRemaining() {
+		return remaining;
+	}
+
+	public void setRemaining(Integer remaining) {
+		this.remaining = remaining;
+	}
+
+    // Getter/Setter ...
 }
+

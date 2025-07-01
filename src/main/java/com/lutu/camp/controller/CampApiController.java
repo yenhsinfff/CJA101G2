@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.lutu.ApiResponse;
+import com.lutu.camp.model.CampDTO;
 import com.lutu.camp.model.CampService;
 import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_order.model.CampSiteOrderService;
@@ -53,29 +54,29 @@ public class CampApiController {
 	}
 
 	// 取得所有營地訂單，回傳 JSON
-	@GetMapping("/api/getallcamps1")
-	public ResponseEntity<String> getAllCamps1(@RequestParam boolean withOrders) throws Exception {
+	@GetMapping("/api/getallcamps")
+	public ApiResponse<List<CampDTO>> getAllCamps() throws Exception {
 
 		// 1. 獲取資料
-		List<CampVO> camps = campService.getAllCamp();
+		List<CampDTO> camps = campService.getAllCampDTO();
 
-		// 2. 設定動態過濾器
-		ObjectMapper mapper = new ObjectMapper();
-		SimpleFilterProvider filters = new SimpleFilterProvider();
-
-		if (withOrders) {
-			filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAll());
-		} else {
-			filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAllExcept("campsiteOrders"));
-		}
-		mapper.setFilterProvider(filters);
-
-		// 3. 包裝回應並序列化
-		ApiResponse<List<CampVO>> response = new ApiResponse<>("success", camps, "查詢成功");
-		String json = mapper.writeValueAsString(response);
+//		// 2. 設定動態過濾器
+//		ObjectMapper mapper = new ObjectMapper();
+//		SimpleFilterProvider filters = new SimpleFilterProvider();
+//
+//		if (withOrders) {
+//			filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAll());
+//		} else {
+//			filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAllExcept("campsiteOrders"));
+//		}
+//		mapper.setFilterProvider(filters);
+//
+//		// 3. 包裝回應並序列化
+//		ApiResponse<List<CampVO>> response = new ApiResponse<>("success", camps, "查詢成功");
+//		String json = mapper.writeValueAsString(response);
 
 		// 4. 回傳 JSON 回應
-		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
+		return new ApiResponse<>("success", camps, "查詢成功");
 	}
 
 	@PostMapping("/api/camps/createonecamp")
