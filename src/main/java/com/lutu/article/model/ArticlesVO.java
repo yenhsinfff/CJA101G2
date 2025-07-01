@@ -95,9 +95,9 @@ public class ArticlesVO implements Serializable {
         this.acTime = acTime;
     }
 
-    @Column(name = "ac_context", nullable = false, length = 800)
+    @Column(name = "ac_context", nullable = false, length = 4000)
     @NotEmpty(message = "文章內容: 請勿空白")
-    @Size(max = 800, message = "文章內容: 長度不能超過{max}個字元")
+    @Size(max = 4000, message = "文章內容: 長度不能超過{max}個字元")
     public String getAcContext() {
         return acContext;
     }

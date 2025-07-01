@@ -76,4 +76,44 @@ public class ArticlesService {
         return repository.findAll();
     }
 
+    public List<ArticlesVO> findByAcTitleContaining(String acTitle) {
+        return repository.findByAcTitleContaining(acTitle);
+    }
+
+    public List<ArticlesVO> findByAcTitleAndOptionalType(String acTitle, Integer acTypeId) {
+        if (acTypeId == null) {
+            return repository.findByAcTitleContaining(acTitle);
+        } else {
+            return repository.findByAcTitleContainingAndArticleTypeVO_AcTypeId(acTitle, acTypeId);
+        }
+    }
+
+    public List<ArticlesVO> findByAcContextContaining(String acContext) {
+        return repository.findByAcContextContaining(acContext);
+    }
+
+    public List<ArticlesVO> findByAcTitleOrContextContaining(String keyword) {
+        return repository.findByAcTitleContainingOrAcContextContaining(keyword, keyword);
+    }
+
+    public List<ArticlesVO> findByAcTitleOrContextAndOptionalType(String keyword, Integer acTypeId) {
+        if (acTypeId == null) {
+            return repository.findByAcTitleContainingOrAcContextContaining(keyword, keyword);
+        } else {
+            return repository
+                    .findByAcTitleContainingAndArticleTypeVO_AcTypeIdOrAcContextContainingAndArticleTypeVO_AcTypeId(
+                            keyword, acTypeId, keyword, acTypeId);
+        }
+    }
+
+    /**
+     * 根據文章類別查詢文章數量
+     * 
+     * @param acTypeId 文章類別ID
+     * @return 該類別的文章數量
+     */
+    public long getArticleCountByType(Integer acTypeId) {
+        return repository.countByArticleTypeVOAcTypeId(acTypeId);
+    }
+
 }

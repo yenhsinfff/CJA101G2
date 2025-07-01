@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,8 +61,8 @@ public class ArticleImageApiController {
     // 上傳文章圖片檔案
     @PostMapping("/api/article-images/upload")
     public ApiResponse<ArticleImageVO> uploadArticleImage(
-            @RequestPart("acImg") MultipartFile acImg,
-            @RequestPart("acId") Integer acId) {
+            @RequestParam("acImg") MultipartFile acImg,
+            @RequestParam("acId") Integer acId) {
         try {
             ArticleImageVO articleImageVO = new ArticleImageVO();
             articleImageVO.setAcImg(acImg.getBytes());
@@ -74,7 +75,7 @@ public class ArticleImageApiController {
             articleImageService.addArticleImage(articleImageVO);
             return new ApiResponse<>("success", articleImageVO, "上傳成功");
         } catch (Exception e) {
-            return new ApiResponse<>("fail", null, "上傳失敗");
+            return new ApiResponse<>("fail", null, "上傳失敗: " + e.getMessage());
         }
     }
 

@@ -14,24 +14,25 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "reply")
 public class ReplyVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    
-    private Integer replyId;					// 留言編號(PK)
-    private MemberVO memberVO;  	         	// 露營者編號(FK)
-    private ArticlesVO articlesVO;				// 討論區文章編號(FK)
-    private LocalDateTime replyTime;			// 回覆時間
-    private String replyContext;				// 回覆內容
-    private Byte replyStatus;				    // 留言狀態		Not Null / 0: 顯示 / 1: 不顯示
-    
-    private Set<ReplyImageVO> replyImages;		// 留言圖片
-    private Set<ReplyReportVO> replyReportVO;	// 討論區留言檢舉
-    
+    private Integer replyId; // 留言編號(PK)
+    private MemberVO memberVO; // 露營者編號(FK)
+    private ArticlesVO articlesVO; // 討論區文章編號(FK)
+    private LocalDateTime replyTime; // 回覆時間
+    private String replyContext; // 回覆內容
+    private Byte replyStatus; // 留言狀態 Not Null / 0: 顯示 / 1: 不顯示
+
+    private Set<ReplyImageVO> replyImages; // 留言圖片
+    private Set<ReplyReportVO> replyReportVO; // 討論區留言檢舉
+
     public ReplyVO() {
-    	
+
     }
 
     @Id
@@ -102,6 +103,7 @@ public class ReplyVO implements Serializable {
     }
 
     @OneToMany(mappedBy = "replyVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     public Set<ReplyImageVO> getReplyImages() {
         return replyImages;
     }
@@ -109,17 +111,16 @@ public class ReplyVO implements Serializable {
     public void setReplyImages(Set<ReplyImageVO> replyImages) {
         this.replyImages = replyImages;
     }
-    
-    
-    
-    @Override
-	public String toString() {
-		return "ReplyVO [replyId=" + replyId + ", memberVO=" + memberVO + ", articlesVO=" + articlesVO + ", replyTime="
-				+ replyTime + ", replyContext=" + replyContext + ", replyStatus=" + replyStatus + ", replyImages="
-				+ replyImages + ", replyReportVO=" + replyReportVO + "]";
-	}
 
-	@OneToMany(mappedBy = "replyVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Override
+    public String toString() {
+        return "ReplyVO [replyId=" + replyId + ", memberVO=" + memberVO + ", articlesVO=" + articlesVO + ", replyTime="
+                + replyTime + ", replyContext=" + replyContext + ", replyStatus=" + replyStatus + ", replyImages="
+                + replyImages + ", replyReportVO=" + replyReportVO + "]";
+    }
+
+    @OneToMany(mappedBy = "replyVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     public Set<ReplyReportVO> getReplyReportVO() {
         return replyReportVO;
     }
@@ -127,5 +128,5 @@ public class ReplyVO implements Serializable {
     public void setReplyReportVO(Set<ReplyReportVO> replyReportVO) {
         this.replyReportVO = replyReportVO;
     }
-    
+
 }
