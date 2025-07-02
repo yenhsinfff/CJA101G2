@@ -3,6 +3,7 @@ package com.lutu.shop_order.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import com.lutu.prodColorList.model.ProdColorListRepository;
 import com.lutu.prodSpecList.model.ProdSpecListRepository;
 import com.lutu.prodSpecList.model.ProdSpecListVO;
 import com.lutu.shopProd.model.ShopProdRepository;
+import com.lutu.shopProd.model.ShopProdVO;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_insert_req;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsRepository;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsVO;
@@ -101,7 +103,12 @@ public class ShopOrderService {
 				ProdSpecListVO.CompositeDetail2 key = new ProdSpecListVO.CompositeDetail2(detailsDTO.getProdId(),
 						detailsDTO.getProdSpecId());
 				ProdSpecListVO spec = pslr.findById(key).orElseThrow(() -> new RuntimeException("查無該種規格"));
-				BigDecimal price = new BigDecimal(spec.getProdSpecPrice());
+				
+				// 商品折扣
+				ShopProdVO prod = spr.findById(detailsDTO.getProdId()).orElseThrow(() -> new RuntimeException("查無該種商品"));;
+				BigDecimal prodDiscount = prod.getProdDiscount();
+				
+				BigDecimal price = new BigDecimal(spec.getProdSpecPrice()).multiply(prodDiscount).setScale(0, RoundingMode.HALF_UP);;
 
 				// 將價格存入訂單明細
 				soidVO.setProdOrderPrice(price.intValue());

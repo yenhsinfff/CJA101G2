@@ -1,5 +1,7 @@
 package com.lutu.cart.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +76,14 @@ public class CartService {
 		ProdSpecListVO.CompositeDetail2 key = new ProdSpecListVO.CompositeDetail2(cartVO.getProdId(),
 				cartVO.getProdSpecId());
 		// 價格
-		dto.setProdPrice(psr.findById(key).map(ProdSpecListVO::getProdSpecPrice).orElse(0));
+		// 商品折扣
+		ShopProdVO prod = spr.findById(cartVO.getProdId()).orElseThrow(() -> new RuntimeException("查無該種商品"));;
+		BigDecimal prodDiscount = prod.getProdDiscount();
+		
+		BigDecimal price = new BigDecimal(psr.findById(key).map(ProdSpecListVO::getProdSpecPrice).orElse(0))
+				.multiply(prodDiscount).setScale(0, RoundingMode.HALF_UP);;
+
+		dto.setProdPrice(price.intValue());
 
 		return dto;
 	}
