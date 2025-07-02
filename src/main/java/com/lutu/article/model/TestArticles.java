@@ -12,10 +12,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import com.lutu.article.model.ArticlesService;
 import com.lutu.article.model.ArticlesVO;
 
-//@SpringBootApplication
-@ComponentScan(basePackages = "com.lutu") // 掃描你的 Service 等 component
-//@EnableJpaRepositories(basePackages = "com.lutu") // 掃描 Repository
-@EntityScan(basePackages = "com.lutu") // 掃描 table
+////@SpringBootApplication
+//@ComponentScan(basePackages = "com.lutu") // 掃描你的 Service 等 component
+////@EnableJpaRepositories(basePackages = "com.lutu") // 掃描 Repository
+//@EntityScan(basePackages = "com.lutu") // 掃描 table
 public class TestArticles {
 	public static void main(String[] args) {
 		System.out.println("開始啟動 Spring Boot 應用程式...");

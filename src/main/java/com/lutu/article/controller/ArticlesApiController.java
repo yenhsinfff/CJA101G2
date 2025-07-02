@@ -267,4 +267,17 @@ public class ArticlesApiController {
             return new ApiResponse<>("fail", null, "新增失敗: " + e.getMessage());
         }
     }
+
+    /**
+     * API: GET /api/articles/by-reply-member?memName={memName}
+     * 根據留言者姓名查詢所有有該留言者留言的文章
+     */
+    @GetMapping("/api/articles/by-reply-member")
+    public ApiResponse<List<ArticlesDTO>> getArticlesByReplyMemberName(@RequestParam("memName") String memName) {
+        List<ArticlesVO> articles = articlesService.findArticlesByReplyMemberName(memName);
+        List<ArticlesDTO> articlesDTOs = articles.stream()
+                .map(ArticlesDTO::new)
+                .collect(Collectors.toList());
+        return new ApiResponse<>("success", articlesDTOs, "查詢成功");
+    }
 }
