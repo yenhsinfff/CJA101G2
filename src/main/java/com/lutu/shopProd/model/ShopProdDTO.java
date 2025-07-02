@@ -50,7 +50,8 @@ public class ShopProdDTO {
 	@Min(value = 0, message = "評價總分數不能為負數")
 	private Integer prodCommentSumScore; // 評價總分數
 
-	@Min(value = 0, message = "評價總分數不能為負數")
+	@NotNull(message = "商品類型不得為空")
+	@Min(value = 0, message = "商品類型編號不能為負數")
 	private Integer prodTypeId; // 商品類型編號
 
 	private String prodTypeName; // 商品類別

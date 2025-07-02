@@ -1,18 +1,17 @@
 package com.lutu.shopProd.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lutu.colorList.model.ColorListDTO;
+import com.lutu.colorList.model.ColorListService;
 import com.lutu.prodColorList.model.ProdColorListDTO;
 import com.lutu.prodColorList.model.ProdColorListService;
-import com.lutu.prodPic.model.ProdPicDTO;
 import com.lutu.prodPic.model.ProdPicService;
 import com.lutu.prodSpecList.model.ProdSpecListDTO;
 import com.lutu.prodSpecList.model.ProdSpecListService;
@@ -33,6 +32,9 @@ public class ShopProdService {
     
     @Autowired
     private ProdPicService prodPicService;
+    
+    @Autowired
+    private ColorListService colorListService;
 
     // 查詢所有商品
     public List<ShopProdDTO> getAllProds() {
@@ -176,7 +178,23 @@ public class ShopProdService {
         // 新增每一筆商品顏色資料
         if (dto.getProdColorList() != null) {
             for (ProdColorListDTO colorDTO : dto.getProdColorList()) {
+
+                // 若 colorId 為 null 或 0，表示為新顏色，先存 color_list
+                if (colorDTO.getProdColorId() == null || colorDTO.getProdColorId() == 0) {
+	            	// 傳入前端送來的新顏色名稱
+	            	ColorListDTO newColorDTO = new ColorListDTO();
+	            	newColorDTO.setColorName(colorDTO.getColorName()); //從DTO取名稱
+	
+	            	// 新增顏色到 color_list 表
+	            	ColorListDTO savedColor = colorListService.saveOrUpdate(newColorDTO);
+	
+	            	// 回填 colorId 給後續 prodColorList 用
+	            	colorDTO.setProdColorId(savedColor.getColorId());
+	            	colorDTO.setColorName(savedColor.getColorName());
+                }
+                
                 colorDTO.setProdId(vo.getProdId());
+                
                 prodColorListService.saveOrUpdate(colorDTO);
             }
         }

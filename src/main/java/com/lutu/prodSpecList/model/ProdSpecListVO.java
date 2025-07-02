@@ -24,11 +24,11 @@ import jakarta.validation.constraints.NotNull;
 public class ProdSpecListVO implements Serializable {
 
 	@Id
-	@Column(name = "prod_id", insertable = false, updatable = false)
+	@Column(name = "prod_id")
 	private Integer prodId; // 商品編號 PK
 
 	@Id
-	@Column(name = "prod_spec_id", insertable = false, updatable = false)
+	@Column(name = "prod_spec_id")
 	private Integer prodSpecId; // 商品規格編號 PK
 
 	@Column(name = "prod_spec_price")
@@ -37,11 +37,11 @@ public class ProdSpecListVO implements Serializable {
 	private Integer prodSpecPrice; // 規格價格
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "prod_spec_id", referencedColumnName = "spec_id")
+	@JoinColumn(name = "prod_spec_id", referencedColumnName = "spec_id", insertable = false, updatable = false)
 	private SpecListVO specListVO;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id")
+	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id", insertable = false, updatable = false)
 	private ShopProdVO shopProdVO;
 	
 	// 特別加上對複合主鍵物件的 getter / setter

@@ -3,13 +3,13 @@ package com.lutu.productType.model;
 import java.io.Serializable;
 import java.util.Set;
 
-
 import com.lutu.shopProd.model.ShopProdVO;
-
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
@@ -21,6 +21,7 @@ import jakarta.validation.constraints.Pattern;
 @Table(name = "prod_type")
 public class ProdTypeVO implements Serializable {
 	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
 	@Column(name = "prod_type_id", updatable = false)
 	private Integer prodTypeId; // 商品類型編號
 	
