@@ -232,6 +232,7 @@ public class ShopOrderDTO_res {
 		case 3 -> "已取貨，完成訂單";
 		case 4 -> "未取貨，退回賣家";
 		case 5 -> "已取消";
+		case 6 -> "付款失敗";
 		default -> "等待賣家確認中";
 		};
 		return result;
