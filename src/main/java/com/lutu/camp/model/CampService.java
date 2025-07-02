@@ -1,6 +1,7 @@
 package com.lutu.camp.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,27 +24,45 @@ public class CampService {
 		return campRepository.findAll();
 		
 	}
+	
+	@Transactional
+	public List<CampDTO> getAllCampDTO() {
+		
+		List<CampVO> camps = campRepository.findAll();
+	    return camps.stream()
+	        .map(CampDTO::fromEntity)
+	        .collect(Collectors.toList());
+		
+	}
+	
+	public CampDTO getCampDTOById(Integer campId) {
+	    CampVO campVO = campRepository.findById(campId).orElseThrow();
+	    return CampDTO.fromEntity(campVO);
+	}
+
 
 	
 	
     
     @Transactional
-    public CampVO getOneCamp(Integer campId) {
+    public CampInsertDTO getOneCamp(Integer campId) {
     	CampVO camp = campRepository.findById(campId).orElse(null);
+    	CampInsertDTO dto = new CampInsertDTO(camp);
 //    	byte[] img = (camp != null) ? camp.getCampPic1() : null;
 //    	if (camp != null) {
 //            camp.getCampsiteOrders().size(); // 強制初始化
 //        }
-        if (camp != null) {
-            camp.getCampsiteTypes().size(); // 觸發初始化
-        }
-    	return camp;
+//        if (camp != null) {
+//            camp.getCampsiteTypes().size(); // 觸發初始化
+//        }
+    	return dto;
     	
     }
     
-    public CampVO createOneCamp(CampVO campVO) {
+    public CampInsertDTO createOneCamp(CampVO campVO) {
+//    	System.out.println("createOneCamp:"+campVO.getCampId());
     	campRepository.save(campVO);
-    	CampVO campVO2 = getOneCamp(campVO.getCampId());
+    	CampInsertDTO campVO2 = getOneCamp(campVO.getCampId());
     	return campVO2;
 	}
     

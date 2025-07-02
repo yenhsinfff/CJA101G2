@@ -21,12 +21,13 @@ import jakarta.persistence.Table;
 @Table(name = "camp_track_list") // 營地收藏
 public class CampTrackListVO{
 
+	
 	// 直接宣告複合識別類別的屬性，並加上 @EmbeddedId 標註
 	@EmbeddedId
 	private CompositeDetail id;
 	
 	@Column(name = "mem_track_date")
-	private LocalDate memTrackDate; // 收藏時間
+	private LocalDate memTrackDate; // 收藏日期
 	
 	public CampTrackListVO(){
 		
@@ -61,16 +62,16 @@ public class CampTrackListVO{
 		this.member = member;
 	}	
 	
-	//====================================================================
+//====================================================================
 	// 特別加上對複合主鍵物件的 getter / setter
 	public CompositeDetail getId() {
 		return id;
 	}
 
-	public void setId(CompositeDetail compositeKey) {
+	public void setId(CompositeDetail id) {
 		this.id = id;
 	}
-
+//=========================================================
 	public LocalDate getMemTrackDate() {
 		return memTrackDate;
 	}

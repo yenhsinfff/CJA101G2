@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 
 import com.lutu.member.dto.ChangePasswordRequest;
 import com.lutu.member.dto.LoginRequest;
+import com.lutu.member.dto.MemberLoginDTO;
 import com.lutu.member.dto.RegisterRequest;
 import com.lutu.member.dto.UpdateMemberRequest;
 import com.lutu.member.model.MemberAuthService;
@@ -42,8 +43,10 @@ public class MemberRestController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
-        MemberVO member = authService.login(loginRequest.getMemAcc(), loginRequest.getMemPwd());
-
+    	System.out.println("login_MEM:"+loginRequest.getMemAcc());
+    	System.out.println("login_PWD:"+loginRequest.getMemPwd());
+    	MemberLoginDTO member = authService.loginDTO(loginRequest.getMemAcc(), loginRequest.getMemPwd());
+    
         if (member != null) {
             if (authService.checkAccountStatus(member)) {
                 session.setAttribute("loggedInMember", member);
@@ -104,7 +107,7 @@ public class MemberRestController {
             @RequestPart(name = "memPic", required = false) MultipartFile memPic,
             HttpSession session) {
 
-        MemberVO loggedInMember = (MemberVO) session.getAttribute("loggedInMember");
+    	MemberLoginDTO loggedInMember = (MemberLoginDTO) session.getAttribute("loggedInMember");
         if (loggedInMember == null) {
             return ResponseEntity.status(401).body("未登入");
         }
@@ -167,10 +170,18 @@ public class MemberRestController {
             @RequestBody ChangePasswordRequest request,
             HttpSession session) {
 
-        MemberVO member = (MemberVO) session.getAttribute("loggedInMember");
-        if (member == null) {
+        // === 修改處：改成 MemberLoginDTO 來接 session 物件
+        MemberLoginDTO memberDTO = (MemberLoginDTO) session.getAttribute("loggedInMember");
+        if (memberDTO == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("請先登入");
         }
+
+        // === 修改處：用 memberDTO.getMemId() 從資料庫查 MemberVO
+        Optional<MemberVO> optionalMember = memberRepository.findById(memberDTO.getMemId());
+        if (optionalMember.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("找不到會員資料");
+        }
+        MemberVO member = optionalMember.get();
 
         // 確認舊密碼是否正確
         if (!member.getMemPwd().equals(request.getOldPassword())) {

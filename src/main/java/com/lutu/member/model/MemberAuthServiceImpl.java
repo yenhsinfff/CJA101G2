@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.lutu.member.dto.MemberLoginDTO;
 import com.lutu.member.dto.RegisterRequest;
 
 @Service
@@ -21,12 +22,14 @@ public class MemberAuthServiceImpl implements MemberAuthService {
 
     @Autowired
     private JavaMailSender mailSender;
+   
     
     
     
     @Override
     public MemberVO login(String memAcc, String memPwd) {
         Optional<MemberVO> optional = memberRepository.findByMemAcc(memAcc);
+        System.out.println("MEMBER:"+memAcc);
         if (optional.isPresent()) {
             MemberVO member = optional.get();
             //明文密碼比對
@@ -36,10 +39,36 @@ public class MemberAuthServiceImpl implements MemberAuthService {
         }
         return null;
     }
+    
+//    @Override
+//    public MemberLoginDTO loginDTO(String memAcc,String memPwd) {
+//    	Optional<MemberLoginDTO> optional =memberRepository.findDtoByMemAcc(memAcc);
+//    	
+//    	if (optional.isPresent()) {
+//    		MemberLoginDTO member = optional.get();
+//            //明文密碼比對
+//            if (member.getMemPwd().equals(memPwd)) {
+//                return member;
+//            }
+//        }
+//        return null;
+//    }
+    
+    @Override
+    public MemberLoginDTO loginDTO (String memAcc, String memPwd) {
+        Optional<MemberVO> optional = memberRepository.findByMemAcc(memAcc);
+        if (optional.isPresent()) {
+            MemberVO member = optional.get();
+            if (member.getMemPwd().equals(memPwd)) {
+                return new MemberLoginDTO(member); // 轉換為DTO
+            }
+        }
+        return null;
+    }
 
     
     @Override
-    public boolean checkAccountStatus(MemberVO member) {
+    public boolean checkAccountStatus(MemberLoginDTO member) {
         // 假設accStatus=1表示啟用
         return member.getAccStatus() == 1;
     }

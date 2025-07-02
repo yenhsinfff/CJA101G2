@@ -43,6 +43,19 @@ public class OwnerVO implements Serializable{
 	private String ownerPwd; //營地主密碼
 	
 	
+	@Column(name = "verification_token")
+	private String verificationToken; //token
+	
+	
+	public String getVerificationToken() {
+	    return verificationToken;
+	}
+
+	public void setVerificationToken(String verificationToken) {
+	    this.verificationToken = verificationToken;
+	}
+	
+	
 	@Column(name = "acc_status")
 	@NotNull(message = "帳號狀態: 請勿空白")
 	@Min(value = 0, message = "帳號狀態只能是 0:未啟用、1:已啟用、2:停權")

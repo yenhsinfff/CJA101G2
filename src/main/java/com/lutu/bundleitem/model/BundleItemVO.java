@@ -23,6 +23,7 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "bundle_item")
 public class BundleItemVO implements Serializable {
 
+	
 	@Id
 	@Column(name = "bundle_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

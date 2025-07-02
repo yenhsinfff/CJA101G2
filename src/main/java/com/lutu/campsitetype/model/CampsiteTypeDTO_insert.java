@@ -18,7 +18,7 @@ public class CampsiteTypeDTO_insert {
     private Integer campsitePeople;
     
     @NotNull(message = "房間數量: 請勿空白")
-    private Byte campsiteNum;
+    private Integer campsiteNum;
     
     @NotNull(message = "房間價格: 請勿空白")
     private Integer campsitePrice;
@@ -32,7 +32,7 @@ public class CampsiteTypeDTO_insert {
     // Constructor
   
     public CampsiteTypeDTO_insert(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
-			Byte campsiteNum, Integer campsitePrice, @NotNull(message = "房間照片: 至少上傳1張") MultipartFile campsitePic1, MultipartFile campsitePic2, MultipartFile campsitePic3,
+    		Integer campsiteNum, Integer campsitePrice, @NotNull(message = "房間照片: 至少上傳1張") MultipartFile campsitePic1, MultipartFile campsitePic2, MultipartFile campsitePic3,
 			MultipartFile campsitePic4) {
 		super();
 		this.campsiteTypeId = campsiteTypeId;
@@ -56,7 +56,7 @@ public class CampsiteTypeDTO_insert {
 
 
 	public CampsiteTypeDTO_insert(Integer campsiteTypeId, Integer campId, String campsiteName, Integer campsitePeople,
-			Byte campsiteNum, Integer campsitePrice) {
+			Integer campsiteNum, Integer campsitePrice) {
 		super();
 		this.campsiteTypeId = campsiteTypeId;
 		this.campId = campId;
@@ -98,11 +98,11 @@ public class CampsiteTypeDTO_insert {
         this.campsitePeople = campsitePeople;
     }
 
-    public Byte getCampsiteNum() {
+    public Integer getCampsiteNum() {
         return campsiteNum;
     }
 
-    public void setCampsiteNum(Byte campsiteNum) {
+    public void setCampsiteNum(Integer campsiteNum) {
         this.campsiteNum = campsiteNum;
     }
 
