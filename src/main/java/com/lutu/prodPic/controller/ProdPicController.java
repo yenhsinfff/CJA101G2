@@ -37,6 +37,25 @@ public class ProdPicController {
     }
     
     /**
+     * 取得商品圖片 (依照 prodPicId)
+     * GET /api/prodpics/{prodPicId}
+     */
+    @GetMapping("/{prodPicId}")
+    public void getProductImage(@PathVariable Integer prodPicId, HttpServletResponse response) throws IOException {
+        byte[] img = prodPicService.getProdPicById(prodPicId); // 從 service 拿 byte[]
+        if (img != null && img.length > 0) {
+            try (InputStream is = new ByteArrayInputStream(img)) {
+                String mimeType = URLConnection.guessContentTypeFromStream(is);
+                if (mimeType == null) {
+                    mimeType = "application/octet-stream";
+                }
+                response.setContentType(mimeType);
+                response.getOutputStream().write(img);
+            }
+        }
+    }
+    
+    /**
      * 上傳商品圖片（指定商品 ID）
      * POST /api/prodpics/upload/{prodId}
      */
@@ -60,24 +79,4 @@ public class ProdPicController {
             return new ApiResponse<>("fail", null, "上傳發生錯誤：" + e.getMessage());
         }
     }
-
-    /**
-     * 取得商品圖片 (依照 prodPicId)
-     * GET /api/prodpics/{prodPicId}
-     */
-    @GetMapping("/{prodPicId}")
-    public void getProductImage(@PathVariable Integer prodPicId, HttpServletResponse response) throws IOException {
-        byte[] img = prodPicService.getProdPicById(prodPicId); // 從 service 拿 byte[]
-        if (img != null && img.length > 0) {
-            try (InputStream is = new ByteArrayInputStream(img)) {
-                String mimeType = URLConnection.guessContentTypeFromStream(is);
-                if (mimeType == null) {
-                    mimeType = "application/octet-stream";
-                }
-                response.setContentType(mimeType);
-                response.getOutputStream().write(img);
-            }
-        }
-    }
-    
 }

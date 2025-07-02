@@ -56,6 +56,7 @@ public class ProdPicService {
 	private ProdPicDTO toDTO(ProdPicVO vo) {
 		ProdPicDTO dto = new ProdPicDTO();
 		dto.setProdPicId(vo.getProdPicId());
+	    dto.setProdId(vo.getProdId());
 		return dto;
 	}
 }

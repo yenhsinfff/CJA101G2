@@ -162,7 +162,7 @@ public class ShopProdService {
         return dtoList;
     }
 
-    // 新增 
+    // 新增商品
     public ShopProdDTO addProd(ShopProdDTO dto) {
         ShopProdVO vo = convertToVO(dto);
         repository.save(vo);
@@ -281,7 +281,7 @@ public class ShopProdService {
         dto.setColorList(prodColorListService.getAllColorNames());
         //取得商品圖片
         dto.setProdPicList(prodPicService.getByProdId(vo.getProdId()));
-        
+
 
         return dto;
     }
