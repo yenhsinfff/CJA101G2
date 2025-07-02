@@ -14,9 +14,9 @@ import com.lutu.nice_article.model.NiceArticleService;
 import com.lutu.nice_article.model.NiceArticleVO;
 import com.lutu.nice_article.model.NiceArticleId;
 
-//@SpringBootApplication
+////@SpringBootApplication
 //@ComponentScan(basePackages = "com.lutu")  // 掃描你的 Service 等 component
-//@EnableJpaRepositories(basePackages = "com.lutu")  // 掃描 Repository
+////@EnableJpaRepositories(basePackages = "com.lutu")  // 掃描 Repository
 //@EntityScan(basePackages = "com.lutu")  //掃描 table
 public class TestNiceArticle {
 	public static void main(String[] args) {
@@ -24,11 +24,31 @@ public class TestNiceArticle {
 		SpringApplication app = new SpringApplication(TestNiceArticle.class);
 		app.setWebApplicationType(WebApplicationType.NONE); // 🟢 禁用 Web 模式
 		ConfigurableApplicationContext context = app.run(args);
-		
-// ===================================================================================================
-// ================================ 文章按讚記錄=======================================
+
+		// ===================================================================================================
+		// ================================
+		// 文章按讚記錄=======================================
 		NiceArticleService niceArticleSvc = context.getBean(NiceArticleService.class);
+
+
+
+		// 新增一筆按讚記錄
+//		NiceArticleVO newLike = new NiceArticleVO();
+//		newLike.setAcId(30000068); // 請填入實際存在的文章ID
+//		newLike.setMemId(10000001); // 請填入實際存在的會員ID
+//		newLike.setLikeTime(LocalDateTime.now());
+//		try {
+//			niceArticleSvc.addNiceArticle(newLike);
+//			System.out.println("新增按讚成功: acId=" + newLike.getAcId() + ", memId=" + newLike.getMemId());
+//		} catch (Exception e) {
+//			System.out.println("新增按讚失敗: " + e.getMessage());
+//		}
 		
+		
+		// 刪除 --> 使用 acId 和 memId 的刪除方法
+		 niceArticleSvc.deleteNiceArticle(30000068, 10000001);
+		 
+		 
 		// 查詢全部按讚記錄
 		List<NiceArticleVO> list = niceArticleSvc.getAll();
 		for (NiceArticleVO vo : list) {
@@ -37,29 +57,28 @@ public class TestNiceArticle {
 			System.out.print(vo.getLikeTime() + ",");
 			System.out.println();
 		}
-		
+
 		// 查詢-findByPrimaryKey 根據複合主鍵查詢單一按讚記錄
 		// (多方必須設為lazy="false")(優!)
-//		NiceArticleId compositeKey = new NiceArticleId(1, 1001);
-//		NiceArticleVO vo = niceArticleSvc.getOneNiceArticle(compositeKey);
-//		System.out.print(vo.getAcId() + ",");
-//		System.out.print(vo.getMemId() + ",");
-//		System.out.print(vo.getLikeTime());
-		
+		// NiceArticleId compositeKey = new NiceArticleId(1, 1001);
+		// NiceArticleVO vo = niceArticleSvc.getOneNiceArticle(compositeKey);
+		// System.out.print(vo.getAcId() + ",");
+		// System.out.print(vo.getMemId() + ",");
+		// System.out.print(vo.getLikeTime());
+
 		// 查詢-使用 acId 和 memId 查詢單一按讚記錄
-//		NiceArticleVO vo2 = niceArticleSvc.getOneNiceArticle(1, 1001);
-//		System.out.print(vo2.getAcId() + ",");
-//		System.out.print(vo2.getMemId() + ",");
-//		System.out.print(vo2.getLikeTime());
-		
+		// NiceArticleVO vo2 = niceArticleSvc.getOneNiceArticle(1, 1001);
+		// System.out.print(vo2.getAcId() + ",");
+		// System.out.print(vo2.getMemId() + ",");
+		// System.out.print(vo2.getLikeTime());
+
 		// 刪除 --> 自訂的刪除方法
-//		NiceArticleId deleteKey = new NiceArticleId(999, 9999);
-//		niceArticleSvc.deleteNiceArticle(deleteKey);
-		
-		// 刪除 --> 使用 acId 和 memId 的刪除方法
-//		niceArticleSvc.deleteNiceArticle(999, 9999);
-		
-// ===================================================================================================
+		// NiceArticleId deleteKey = new NiceArticleId(999, 9999);
+		// niceArticleSvc.deleteNiceArticle(deleteKey);
+
+
+
+		// ===================================================================================================
 		context.close();
 	}
 }

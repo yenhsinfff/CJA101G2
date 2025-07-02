@@ -126,4 +126,14 @@ public class ArticlesService {
         return repository.countByMemberVOMemId(memId);
     }
 
+    /**
+     * 根據留言者姓名查詢所有有該留言者留言的文章
+     * 
+     * @param memName 留言者姓名
+     * @return 有該留言者留言的所有文章
+     */
+    public List<ArticlesVO> findArticlesByReplyMemberName(String memName) {
+        return repository.findDistinctArticlesByReplyMemberName(memName);
+    }
+
 }

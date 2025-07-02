@@ -1,6 +1,5 @@
 package com.lutu.reply.controller;
 
-
 import com.lutu.ApiResponse;
 import com.lutu.reply.model.ReplyService;
 import com.lutu.reply.model.ReplyVO;
@@ -64,12 +63,8 @@ public class ReplyApiController {
                 return new ApiResponse<>("fail", null, "查無此文章");
             }
 
-            // 取得所有留言並篩選出屬於該文章的留言
-            List<ReplyVO> allReplies = replyService.getAll();
-            List<ReplyVO> articleReplies = allReplies.stream()
-                    .filter(reply -> reply.getArticlesVO() != null &&
-                            reply.getArticlesVO().getAcId().equals(acId))
-                    .collect(Collectors.toList());
+            // 使用優化的查詢方法，直接取得該文章的留言並載入會員資料
+            List<ReplyVO> articleReplies = replyService.getRepliesByArticleId(acId);
 
             List<ReplyDTO> replyDTOs = articleReplies.stream()
                     .map(ReplyDTO::new)
