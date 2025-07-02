@@ -41,12 +41,6 @@ public class ShopProdController {
     @Autowired
     ProdTypeRepository prodTypeRepository;
 
-//    @Autowired
-//	ProdSpecListRepository prodSpecListRepository;
-//    
-//    @Autowired
-//    ProdColorListRepository prodColorListRepository;
-
     /**
      * 查詢所有商品（DTO）
      * @return 所有商品資料列表（含規格、顏色等）
@@ -211,38 +205,7 @@ public class ShopProdController {
     } 
     */
     
-    /**
-     * 商品圖片
-     * Get http://localhost:8081/CJA101G02/api/products/prodPic/{prodPicId}
-     */
-    @GetMapping("/api/products/prodpic/{prodPicId}")
-    public void getProdPic(@PathVariable Integer prodPicId, HttpServletResponse response) throws IOException {
-        byte[] img = prodPicService.getProdPicById(prodPicId); // 從 service 拿 byte[]
-
-        if (img != null && img.length > 0) {
-            try (InputStream is = new ByteArrayInputStream(img)) {
-                String mimeType = URLConnection.guessContentTypeFromStream(is);
-                if (mimeType == null) {
-                    mimeType = "application/octet-stream";
-                }
-                response.setContentType(mimeType);
-                response.getOutputStream().write(img);
-            }
-        }
-    }
-
-	// 接收會員大頭照
-//	@PostMapping("/{memId}/picture")
-//	public ApiResponse<String> getNewAvatar(@PathVariable Integer memId,
-//	        @RequestParam("file") MultipartFile file) {
-//		Boolean response = memberSvc.updateMemberPicture(memId,file);
-//		if(response) {
-//			return new ApiResponse<>("success", "ok", "更新成功");
-//		}else {
-//			return new ApiResponse<>("fail", "fail", "更新失敗");
-//		}
-//		
-//	}
+    
 //	// 抓取資料庫的營地圖片，提供給前端
 //	@GetMapping("/api/camps/{campId}/{num}")
 //	public void getCampPic3(@PathVariable Integer campId, @PathVariable Integer num, HttpServletResponse response)

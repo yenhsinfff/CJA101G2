@@ -24,11 +24,11 @@ import jakarta.persistence.Table;
 public class ProdColorListVO implements Serializable {
 
 	@Id
-	@Column(name = "prod_id", insertable = false, updatable = false)
+	@Column(name = "prod_id")
 	private Integer prodId; // PK
 
 	@Id
-	@Column(name = "prod_color_id", insertable = false, updatable = false)
+	@Column(name = "prod_color_id")
 	private Integer prodColorId; // PK
 
 	@Lob
@@ -36,11 +36,11 @@ public class ProdColorListVO implements Serializable {
 	private byte[] prodColorPic;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "prod_color_id", referencedColumnName = "color_id")
+	@JoinColumn(name = "prod_color_id", referencedColumnName = "color_id", insertable = false, updatable = false)
 	private ColorListVO colorListVO;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id")
+	@JoinColumn(name = "prod_id", referencedColumnName = "prod_id", insertable = false, updatable = false)
 	private ShopProdVO shopProdVO;
 	
 	// 特別加上對複合主鍵物件的 getter / setter
