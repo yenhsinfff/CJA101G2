@@ -41,10 +41,6 @@ public class AdministratorVO implements java.io.Serializable {
 	@NotEmpty(message = "管理者密碼: 請勿空白")
 	private String adminPwd; // 管理員密碼
 
-	@Column(name = "admin_pwd_hash")
-	@NotEmpty(message = "管理者加密密碼: 請勿空白")
-	private String adminPwdHash; // 管理員加密 密碼
-
 	@Column(name = "admin_status")
 	@NotNull(message = "帳號狀態: 請勿空白")
 	@Min(value = 0, message = "帳號狀態只能是 0:未啟用、1:已啟用")
@@ -96,14 +92,6 @@ public class AdministratorVO implements java.io.Serializable {
 	    return this.adminPwd;
 	}
 	
-
-	public String getAdminPwdHash() {
-		return adminPwdHash;
-	}
-
-	public void setAdminPwdHash(String adminPwdHash) {
-		this.adminPwdHash = adminPwdHash;
-	}
 
 	public byte getAdminStatus() {
 		return adminStatus;
