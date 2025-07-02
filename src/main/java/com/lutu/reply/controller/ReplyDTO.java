@@ -1,7 +1,5 @@
 package com.lutu.reply.controller;
 
-
-
 import com.lutu.reply.model.ReplyVO;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,6 +11,9 @@ public class ReplyDTO {
 
     @NotNull(message = "會員ID: 不能為空")
     private Integer memId;
+
+    // 會員姓名，用於前端顯示
+    private String memName;
 
     @NotNull(message = "文章ID: 不能為空")
     private Integer acId;
@@ -36,6 +37,7 @@ public class ReplyDTO {
     public ReplyDTO(ReplyVO replyVO) {
         this.replyId = replyVO.getReplyId();
         this.memId = replyVO.getMemberVO() != null ? replyVO.getMemberVO().getMemId() : null;
+        this.memName = replyVO.getMemberVO() != null ? replyVO.getMemberVO().getMemName() : null;
         this.acId = replyVO.getArticlesVO() != null ? replyVO.getArticlesVO().getAcId() : null;
         this.replyTime = replyVO.getReplyTime();
         this.replyContext = replyVO.getReplyContext();
@@ -67,6 +69,14 @@ public class ReplyDTO {
         this.acId = acId;
     }
 
+    public String getMemName() {
+        return memName;
+    }
+
+    public void setMemName(String memName) {
+        this.memName = memName;
+    }
+
     public LocalDateTime getReplyTime() {
         return replyTime;
     }
@@ -93,7 +103,8 @@ public class ReplyDTO {
 
     @Override
     public String toString() {
-        return "ReplyDTO [replyId=" + replyId + ", memId=" + memId + ", acId=" + acId + ", replyTime=" + replyTime
+        return "ReplyDTO [replyId=" + replyId + ", memId=" + memId + ", memName=" + memName + ", acId=" + acId
+                + ", replyTime=" + replyTime
                 + ", replyContext=" + replyContext + ", replyStatus=" + replyStatus + "]";
     }
 }
