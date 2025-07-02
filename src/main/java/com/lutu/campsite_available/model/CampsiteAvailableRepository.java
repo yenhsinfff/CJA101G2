@@ -27,23 +27,28 @@ public interface CampsiteAvailableRepository extends JpaRepository<CampsiteAvail
 //			@Param("end") Date end);
 //
 //	/* 一次扣一天（Optimistic）；回傳更新筆數 0=失敗 */
-//	@Modifying
-//	@Query("""
-//			    UPDATE RoomAvailability ra
-//			       SET ra.remaining = ra.remaining - :qty
-//			     WHERE ra.id = :id
-//			       AND ra.remaining >= :qty
-//			""")
-//	int deductOne(@Param("id") CampsiteAvailableVO.CACompositeDetail id, @Param("qty") int qty);
-//
-//	/* 回補一天 */
-//	@Modifying
-//	@Query("""
-//			    UPDATE RoomAvailability ra
-//			       SET ra.remaining = ra.remaining + :qty
-//			     WHERE ra.id = :id
-//			""")
-//	int refundOne(@Param("id") CampsiteAvailableVO.CACompositeDetail id, @Param("qty") int qty);
+	@Modifying
+	@Query("""
+	    UPDATE CampsiteAvailableVO ra
+	       SET ra.remaining = ra.remaining - :qty
+	     WHERE ra.id.campsiteTypeId = :campsiteTypeId
+	       AND ra.id.date = :date
+	       AND ra.remaining >= :qty
+	""")
+	int deductOne(@Param("campsiteTypeId") Integer campsiteTypeId,
+	              @Param("date") Date date,
+	              @Param("qty") int qty);
+
+	@Modifying
+	@Query("""
+	    UPDATE CampsiteAvailableVO ra
+	       SET ra.remaining = ra.remaining + :qty
+	     WHERE ra.id.campsiteTypeId = :campsiteTypeId
+	       AND ra.id.date = :date
+	""")
+	int refundOne(@Param("campsiteTypeId") Integer campsiteTypeId,
+	              @Param("date") Date date,
+	              @Param("qty") int qty);
 
 //	查詢某房型某日期的可用量
 //	@Query("""

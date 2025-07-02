@@ -17,12 +17,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutu.camp.model.CampService;
 import com.lutu.camp.model.CampVO;
+import com.lutu.campsite_available.model.CampsiteAvailableService;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.campsite_order.model.CampsiteOrderDTO;
 import com.lutu.util.HmacUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
+import javassist.runtime.DotClass;
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
@@ -33,6 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +50,9 @@ public class ApiController {
 
 	@Autowired
 	CampService campService;
+	
+	@Autowired
+	CampsiteAvailableService caService;
 
 	@PostMapping("/api/linepay/{isCamp}")
 	public ApiResponse<String> doLinePay(@PathVariable Boolean isCamp, @RequestBody String jsonBody,
@@ -150,6 +156,10 @@ public class ApiController {
 			if (isCamp) {
 				System.out.println("Camp");
 				campsiteOrdSvc.updatePaymentStatus(orderId, (byte)1);
+				CampsiteOrderDTO dto = campsiteOrdSvc.getOneDTOCampsiteOrder(orderId);
+				Boolean response1 = caService.deductRoomsByDateRange(dto.getCheckIn(),dto.getCheckOut(), dto.getOrderDetails());
+				System.out.println("linpay_response:"+response1);
+				
 				responseServlet.sendRedirect("http://127.0.0.1:5501/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
 			} else {
 				System.out.println("Shop");
