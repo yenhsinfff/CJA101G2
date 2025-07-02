@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,17 +27,50 @@ public class AdministratorController {
     // 登入
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
-        return adminRepo.findByAdminAcc(loginRequest.getAdminAcc())
-                .filter(admin -> admin.getAdminPwd().equals(loginRequest.getAdminPwd()))
-                .map(admin -> {
-                    if (admin.getAdminStatus() != 1) {
-                        return ResponseEntity.status(403).body("帳號未啟用或停權");
-                    }
-                    session.setAttribute("admin", admin);
-                    return ResponseEntity.ok("登入成功");
-                })
-                .orElse(ResponseEntity.status(401).body("帳號或密碼錯誤"));
+        System.out.println("AdminAcc:"+loginRequest.getAdminAcc());
+        System.out.println("AdminPwd:"+loginRequest.getAdminPwd());
+        Optional<AdministratorVO> optionalAdmin = adminRepo.findByAdminAcc(loginRequest.getAdminAcc());
+
+        if (optionalAdmin.isPresent()) {
+            AdministratorVO admin = optionalAdmin.get();
+
+            if (!admin.getAdminPwd().equals(loginRequest.getAdminPwd())) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("success", false);
+                error.put("message", "帳號或密碼錯誤");
+                return ResponseEntity.status(401).body(error);
+            }
+
+            if (admin.getAdminStatus() != 1) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("success", false);
+                error.put("message", "帳號未啟用或已停權");
+                return ResponseEntity.status(403).body(error);
+            }
+
+            // 登入成功 → 設定 session 並回傳 admin 資料
+            session.setAttribute("admin", admin);
+
+            Map<String, Object> adminData = new HashMap<>();
+            adminData.put("adminId", admin.getAdminId());
+            adminData.put("adminAcc", admin.getAdminAcc());
+            adminData.put("adminName", admin.getAdminName());
+            adminData.put("adminStatus", admin.getAdminStatus());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "登入成功");
+            response.put("admin", adminData);
+
+            return ResponseEntity.ok(response);
+        } else {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "帳號或密碼錯誤");
+            return ResponseEntity.status(401).body(error);
+        }
     }
+ 
 
     // 登出
     @PostMapping("/logout")
