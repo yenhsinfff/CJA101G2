@@ -1,4 +1,5 @@
 package com.lutu;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.lutu.campsite_available.model.CampsiteAvailableService;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.campsite_order.model.CampsiteOrderDTO;
+import com.lutu.shop_order.model.ShopOrderService;
 import com.lutu.util.HmacUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,6 +52,9 @@ public class ApiController {
 	CampService campService;
 	
 	@Autowired
+	ShopOrderService shopOrderSvc;
+	
+	@Autowired
 	CampsiteAvailableService caService;
 
 	@PostMapping("/api/linepay/{isCamp}")
@@ -66,7 +71,7 @@ public class ApiController {
 		System.out.println("jsonBody:" + body);
 		System.out.println("linepayBody:" + linepayBody);
 		System.out.println("linepayOrder:" + linepayOrder);
-
+		
 		// 產生 HMAC 簽章
 		String nonce = UUID.randomUUID().toString();
 		String uri = "/v3/payments/request";
