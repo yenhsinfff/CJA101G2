@@ -38,9 +38,10 @@ public class UserDiscountVO implements Serializable {
 
 //    @Column(name = "mem_id")
 //    private Integer memId;
-//    
+    
 //    @Column(name = "discount_code_id")
-//    private Integer discountCodeId;
+//    private String discountCodeId;
+
 
 	@Column(name = "discount_code_type")
 	@Min(value = 0, message = "折扣訂單類型: 只能是 0（營地）或 1（商城）")

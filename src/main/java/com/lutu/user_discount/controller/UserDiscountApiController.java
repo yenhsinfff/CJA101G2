@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lutu.user_discount.model.UserDiscountDTO;
 import com.lutu.user_discount.model.UserDiscountService;
 import com.lutu.user_discount.model.UserDiscountVO;
 
@@ -30,12 +31,14 @@ public class UserDiscountApiController {
         userDiscountService.addUserDiscount(userDiscountVO);
         return ResponseEntity.ok(userDiscountVO);
     }
-    
+  
+ // http://localhost:8081/CJA101G02/api/userdiscount/search/10000001
+ // http://localhost:8081/CJA101G02/api/userdiscount/search/{memId}
  // 2. 查詢
     @GetMapping("/search/{memId}")
-    public ResponseEntity<List<UserDiscountVO>> getDiscountsByMemberId(@PathVariable Integer memId) {
-        List<UserDiscountVO> list = userDiscountService.getDiscountsByMemberId(memId);
-        return ResponseEntity.ok(list);
+    public ResponseEntity<List<UserDiscountDTO>> getDiscountsByMemberId(@PathVariable Integer memId) {
+        List<UserDiscountDTO> dto = userDiscountService.getDiscountsByMemberId(memId);
+        return ResponseEntity.ok(dto);
     }
     
     @GetMapping("/used")
