@@ -1,5 +1,8 @@
 package com.lutu.owner.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.MediaType;
 
 import org.springframework.http.ResponseEntity;
@@ -30,9 +33,26 @@ public class OwnerAuthController {
     // 登入
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody OwnerLoginRequest request, HttpSession session) {
-        OwnerLoginResponse response = authService.login(request.getOwnerAcc(), request.getOwnerPwd());
-        session.setAttribute("loggedInOwner", response);  // 也可直接放 OwnerVO，但為了簡化前端資料回應使用 DTO
-        return ResponseEntity.ok(response);
+        try {
+            OwnerLoginResponse response = authService.login(request.getOwnerAcc(), request.getOwnerPwd());
+
+            // 登入成功，儲存 session
+            session.setAttribute("loggedInOwner", response);
+
+            // 包裝回傳 JSON
+            Map<String, Object> body = new HashMap<>();
+            body.put("success", true);
+            body.put("message", "登入成功");
+            body.put("owner", response);
+
+            return ResponseEntity.ok(body);
+        } catch (IllegalArgumentException e) {
+            // 登入失敗（帳號密碼錯或帳號未啟用）
+            Map<String, Object> body = new HashMap<>();
+            body.put("success", false);
+            body.put("message", e.getMessage());
+            return ResponseEntity.status(401).body(body);
+        }
     }
 
     // 登出
