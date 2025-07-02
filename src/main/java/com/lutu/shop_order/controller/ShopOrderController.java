@@ -3,6 +3,7 @@ package com.lutu.shop_order.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -61,10 +62,11 @@ public class ShopOrderController {
 
 	// 新增
 	@PostMapping("/api/addShopOrder")
-	public ApiResponse<ShopOrderDTO_res> addShopOrder(@Valid @RequestBody ShopOrderDTO_insert dto) {
+	public ApiResponse<ShopOrderDTO_res> addShopOrder(@Valid @RequestBody JSONObject orderJson) {
 
 //		ShopOrderVO sovo = new ShopOrderVO();
 		try {
+		    ShopOrderDTO_insert dto = sos.jsonToDTO(orderJson);
 			ShopOrderVO newSOVO = sos.addShopOrder(dto);
 
 			// 將 VO 轉成DTO_res

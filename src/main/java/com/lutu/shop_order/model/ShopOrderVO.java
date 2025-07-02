@@ -63,27 +63,21 @@ public class ShopOrderVO implements Serializable {
 	private Byte shopOrderPayment; // 付款方式
 
 	@Column(name = "order_name")
-	@Size(max = 40, message = "姓名不得超過40字")
 	private String orderName; // 訂購人姓名
 
 	@Column(name = "order_email")
-	@Email(message = "請輸入有效的電子郵件格式")
 	private String orderEmail; // 訂購人郵件
 
 	@Column(name = "order_phone")
-	@Pattern(regexp = "^09\\d{8}$", message = "請輸入手機號碼正確格式")
 	private String orderPhone; // 訂購人手機
 
 	@Column(name = "order_shipping_address")
-	@Size(max = 60, message = "地址不得超過60字")
 	private String orderShippingAddress; // 訂購人地址
 
 	@Column(name = "shop_order_note")
-	@Size(max = 30, message = "備註不得超過30字")
 	private String shopOrderNote; // 訂單備註
 
 	@Column(name = "shop_order_ship_date")
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime shopOrderShipDate; // 出貨日期
 
 	@Column(name = "shop_order_status")
