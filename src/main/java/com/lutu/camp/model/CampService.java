@@ -1,7 +1,9 @@
 package com.lutu.camp.model;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@ public class CampService {
 	@Autowired
 	CampRepository campRepository;
 	
-	@Autowired
+//	@Autowired
 //	private SessionFactory sessionFactory;
 	
     @Transactional
@@ -45,22 +47,21 @@ public class CampService {
 	
     
     @Transactional
-    public CampVO getOneCamp(Integer campId) {
+    public CampInsertDTO getOneCampDTO(Integer campId) {
     	CampVO camp = campRepository.findById(campId).orElse(null);
-//    	byte[] img = (camp != null) ? camp.getCampPic1() : null;
-//    	if (camp != null) {
-//            camp.getCampsiteOrders().size(); // 強制初始化
-//        }
-        if (camp != null) {
-            camp.getCampsiteTypes().size(); // 觸發初始化
-        }
-    	return camp;
-    	
+    	CampInsertDTO dto = new CampInsertDTO(camp);
+    	return dto;
     }
     
-    public CampVO createOneCamp(CampVO campVO) {
+    @Transactional
+    public CampVO getOneCamp(Integer campId) {
+    	CampVO camp = campRepository.findById(campId).orElse(null);
+    	return camp;
+    }
+    
+    public CampInsertDTO createOneCamp(CampVO campVO) {
     	campRepository.save(campVO);
-    	CampVO campVO2 = getOneCamp(campVO.getCampId());
+    	CampInsertDTO campVO2 = getOneCampDTO(campVO.getCampId());
     	return campVO2;
 	}
     

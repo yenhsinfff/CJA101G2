@@ -1,5 +1,6 @@
 package com.lutu.prodColorList.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -7,7 +8,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.lutu.colorList.model.ColorListDTO;
 import com.lutu.colorList.model.ColorListRepository;
 import com.lutu.colorList.model.ColorListVO;
 import com.lutu.prodColorList.model.ProdColorListVO.CompositeDetail;
@@ -71,6 +74,33 @@ public class ProdColorListService {
 	    return opt.map(ProdColorListVO::getProdColorPic).orElse(null);
 	}
 	
+	// 取得顏色名稱
+	public List<ColorListDTO> getAllColorNames() {
+	    List<ColorListVO> list = colorListRepository.findAll();
+	    List<ColorListDTO> result = new ArrayList<>();
+
+	    for (ColorListVO vo : list) {
+	        ColorListDTO dto = new ColorListDTO();
+	        dto.setColorId(vo.getColorId());
+	        dto.setColorName(vo.getColorName());
+	        result.add(dto);
+	    }
+	    return result;
+	}
+	
+	// 上傳商品顏色圖片
+	public boolean updateColorPic(Integer prodId, Integer colorId, MultipartFile file) throws IOException {
+	    Optional<ProdColorListVO> opt = repository.findById(new CompositeDetail(prodId, colorId));
+	    if (opt.isPresent()) {
+	        ProdColorListVO vo = opt.get();
+	        vo.setProdColorPic(file.getBytes());
+	        repository.save(vo);
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}
+
 	// 刪除
 //    public void delete(Integer prodId, Integer prodColorId) {
 //        repository.deleteById(new ProdColorListVO.CompositeDetail(prodId, prodColorId));

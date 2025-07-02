@@ -63,4 +63,21 @@ public interface ArticlesRepository extends JpaRepository<ArticlesVO, Integer> {
      * @return 該類別的文章數量
      */
     long countByArticleTypeVOAcTypeId(Integer acTypeId);
+
+    /**
+     * 根據會員ID查詢文章數量
+     * 
+     * @param memId 會員ID
+     * @return 該會員的文章數量
+     */
+    long countByMemberVOMemId(Integer memId);
+
+    /**
+     * 根據留言者姓名查詢所有有該留言者留言的文章（distinct）
+     * 
+     * @param memName 留言者姓名
+     * @return 有該留言者留言的所有文章
+     */
+    @Query("SELECT DISTINCT r.articlesVO FROM ReplyVO r WHERE r.memberVO.memName = :memName")
+    List<ArticlesVO> findDistinctArticlesByReplyMemberName(@Param("memName") String memName);
 }

@@ -22,26 +22,38 @@ public class WebConfig implements WebMvcConfigurer {
 
         // 露營者 
         registry.addInterceptor(memberLoginInterceptor)
-                .addPathPatterns("/mem/**")
-                .excludePathPatterns("/", "/index","/login",
-                    "/mem/login", "/mem/register", "/mem/forgot",
-                    "/css/**", "/js/**", "/images/**"
+                .addPathPatterns("/api/member/**")
+                .excludePathPatterns(
+                		"/api/member/login", 
+                		"api/member/logout",
+                		"api/member/update",
+                		"api/member/changePassword",
+                		"/api/member/register",
+                		"/api/auth/forgot-password",
+                        "/api/auth/reset-password"
                 );
 
         // 營地主
         registry.addInterceptor(ownerLoginInterceptor) 
-                .addPathPatterns("/owner/**")
-                .excludePathPatterns("/", "/index","/login",
-                    "/owner/login", "/owner/register",
-                    "/css/**", "/js/**", "/images/**"
+                .addPathPatterns("api/owner/**")
+                .excludePathPatterns(
+                		"/api/owner/login",
+                		"/api/owner/logout",
+                		"api/owner/update",
+                		"api/owner/changePassword",
+                        "/api/owner/register",
+                		"/api/auth/forgot-password",
+                        "/api/auth/reset-password"
                 );
 
         // 管理員
         registry.addInterceptor(adminLoginInterceptor)
-                .addPathPatterns("/admin/**")
-                .excludePathPatterns("/", "/index","/login",
-                    "/admin/login",
-                    "/css/**", "/js/**", "/images/**"
+                .addPathPatterns("api/admin/**")
+                .excludePathPatterns(
+                		"/api/admin/login",
+                		"/api/admin/logout",
+                		"/api/auth/forgot-password",
+                        "/api/auth/reset-password"
                 );
     }
 }

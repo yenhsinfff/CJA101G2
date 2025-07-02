@@ -5,6 +5,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 
 @Component
@@ -12,11 +13,18 @@ public class MemberLoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        Object mem = request.getSession().getAttribute("loggedInMember");
-        if (mem == null) {
-            response.sendRedirect(request.getContextPath()+ "/login");
-            return false;
-        }
-        return true;
+    	
+	    HttpSession session = request.getSession(false);
+	    Object member = session != null ? session.getAttribute("loggedInMember") : null;
+	
+	    System.out.println("[Interceptor] Member session 檢查: " + (member != null));
+	
+	    if (member == null) {
+	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	        response.getWriter().write("Interceptor 攔截：請先登入");
+	        return false;
+	    }
+	
+	    return true;
     }
 }

@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.lutu.ApiResponse;
 import com.lutu.prodColorList.model.ProdColorListDTO;
@@ -75,6 +77,24 @@ public class ProdColorListController {
         }
     }
 
+    //新增商品顏色圖片
+    @PostMapping("/colorpic/{prodId}/{colorId}")
+    public ApiResponse<String> uploadColorPic(
+            @PathVariable Integer prodId,
+            @PathVariable Integer colorId,
+            @RequestParam("file") MultipartFile file) {
+
+        try {
+            boolean success = service.updateColorPic(prodId, colorId, file);
+            if (success) {
+                return new ApiResponse<>("success", "圖片上傳成功", "顏色圖片已更新");
+            } else {
+                return new ApiResponse<>("fail", null, "圖片上傳失敗，找不到對應資料");
+            }
+        } catch (IOException e) {
+            return new ApiResponse<>("fail", null, "圖片處理錯誤：" + e.getMessage());
+        }
+    }
     
     // 刪除一筆顏色資料
     // DELETE http://localhost:8081/CJA101G02/api/prod-colors/101/3

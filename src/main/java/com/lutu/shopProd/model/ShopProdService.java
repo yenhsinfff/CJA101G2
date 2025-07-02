@@ -8,9 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lutu.colorList.model.ColorListDTO;
+import com.lutu.colorList.model.ColorListService;
 import com.lutu.prodColorList.model.ProdColorListDTO;
 import com.lutu.prodColorList.model.ProdColorListService;
-import com.lutu.prodPic.model.ProdPicDTO;
 import com.lutu.prodPic.model.ProdPicService;
 import com.lutu.prodSpecList.model.ProdSpecListDTO;
 import com.lutu.prodSpecList.model.ProdSpecListService;
@@ -31,6 +32,9 @@ public class ShopProdService {
     
     @Autowired
     private ProdPicService prodPicService;
+    
+    @Autowired
+    private ColorListService colorListService;
 
     // 查詢所有商品
     public List<ShopProdDTO> getAllProds() {
@@ -158,7 +162,7 @@ public class ShopProdService {
         return dtoList;
     }
 
-    // 新增 
+    // 新增商品
     public ShopProdDTO addProd(ShopProdDTO dto) {
         ShopProdVO vo = convertToVO(dto);
         repository.save(vo);
@@ -174,7 +178,23 @@ public class ShopProdService {
         // 新增每一筆商品顏色資料
         if (dto.getProdColorList() != null) {
             for (ProdColorListDTO colorDTO : dto.getProdColorList()) {
+
+                // 若 colorId 為 null 或 0，表示為新顏色，先存 color_list
+                if (colorDTO.getProdColorId() == null || colorDTO.getProdColorId() == 0) {
+	            	// 傳入前端送來的新顏色名稱
+	            	ColorListDTO newColorDTO = new ColorListDTO();
+	            	newColorDTO.setColorName(colorDTO.getColorName()); //從DTO取名稱
+	
+	            	// 新增顏色到 color_list 表
+	            	ColorListDTO savedColor = colorListService.saveOrUpdate(newColorDTO);
+	
+	            	// 回填 colorId 給後續 prodColorList 用
+	            	colorDTO.setProdColorId(savedColor.getColorId());
+	            	colorDTO.setColorName(savedColor.getColorName());
+                }
+                
                 colorDTO.setProdId(vo.getProdId());
+                
                 prodColorListService.saveOrUpdate(colorDTO);
             }
         }
@@ -244,17 +264,24 @@ public class ShopProdService {
 
         dto.setProdStatus(vo.getProdStatus());
         dto.setProdColorOrNot(vo.getProdColorOrNot());
-
+/*
         // 加入規格與顏色
         List<ProdSpecListDTO> specs = prodSpecListService.getProdSpecsByProdId(vo.getProdId());
         dto.setProdSpecList(specs);
-
         List<ProdColorListDTO> colors = prodColorListService.getProdColorsByProdId(vo.getProdId());
         dto.setProdColorList(colors);
-
         // 加入圖片清單
         List<ProdPicDTO> pics = prodPicService.getByProdId(vo.getProdId());
         dto.setProdPicList(pics);
+*/
+        dto.setProdSpecList(prodSpecListService.getProdSpecsByProdId(vo.getProdId()));
+        dto.setProdColorList(prodColorListService.getProdColorsByProdId(vo.getProdId()));
+        //取得規格顏色名稱
+        dto.setSpecList(prodSpecListService.getAllSpecNames());
+        dto.setColorList(prodColorListService.getAllColorNames());
+        //取得商品圖片
+        dto.setProdPicList(prodPicService.getByProdId(vo.getProdId()));
+
 
         return dto;
     }

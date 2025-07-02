@@ -31,6 +31,13 @@ public class ColorListService {
 
     /** 新增或修改顏色 */
     public ColorListDTO saveOrUpdate(ColorListDTO dto) {
+    	// 新增時檢查是否已有相同名稱
+        if (dto.getColorId() == null) {
+            Optional<ColorListVO> exists = repository.findByColorName(dto.getColorName());
+            if (exists.isPresent()) {
+                return toDTO(exists.get()); // 已存在就直接回傳，不重複新增
+            }
+        }
         ColorListVO vo = toVO(dto);
         ColorListVO saved = repository.save(vo);
         return toDTO(saved);

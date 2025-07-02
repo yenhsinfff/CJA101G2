@@ -41,6 +41,7 @@ public class AdministratorVO implements java.io.Serializable {
 	@NotEmpty(message = "管理者密碼: 請勿空白")
 	private String adminPwd; // 管理員密碼
 
+
 //	@Column(name = "admin_pwd_hash")
 //	@NotEmpty(message = "管理者加密密碼: 請勿空白")
 //	private String adminPwdHash; // 管理員加密 密碼

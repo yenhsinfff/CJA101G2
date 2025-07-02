@@ -52,6 +52,23 @@ public class ArticlesApiController {
         }
     }
 
+    // 根據會員ID查詢文章數量
+    @GetMapping("/api/articles/member/{memId}/count")
+    public ApiResponse<Long> getArticleCountByMember(@PathVariable Integer memId) {
+        try {
+            // 先確認會員是否存在
+            MemberVO member = memberRepository.findById(memId).orElse(null);
+            if (member == null) {
+                return new ApiResponse<>("fail", null, "查無此會員");
+            }
+
+            Long count = articlesService.getArticleCountByMember(memId);
+            return new ApiResponse<>("success", count, "查詢成功");
+        } catch (Exception e) {
+            return new ApiResponse<>("fail", 0L, "查詢失敗: " + e.getMessage());
+        }
+    }
+
     // 取得單一文章
     @GetMapping("/api/articles/{acId}")
     public ApiResponse<ArticlesDTO> getOneArticle(@PathVariable Integer acId) {
@@ -249,5 +266,18 @@ public class ArticlesApiController {
         } catch (Exception e) {
             return new ApiResponse<>("fail", null, "新增失敗: " + e.getMessage());
         }
+    }
+
+    /**
+     * API: GET /api/articles/by-reply-member?memName={memName}
+     * 根據留言者姓名查詢所有有該留言者留言的文章
+     */
+    @GetMapping("/api/articles/by-reply-member")
+    public ApiResponse<List<ArticlesDTO>> getArticlesByReplyMemberName(@RequestParam("memName") String memName) {
+        List<ArticlesVO> articles = articlesService.findArticlesByReplyMemberName(memName);
+        List<ArticlesDTO> articlesDTOs = articles.stream()
+                .map(ArticlesDTO::new)
+                .collect(Collectors.toList());
+        return new ApiResponse<>("success", articlesDTOs, "查詢成功");
     }
 }

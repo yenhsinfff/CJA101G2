@@ -5,6 +5,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 
 @Component
@@ -12,11 +13,18 @@ public class OwnerLoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        Object owner = request.getSession().getAttribute("loggedInOwner");
+    	
+        HttpSession session = request.getSession(false);
+        Object owner = session != null ? session.getAttribute("loggedInOwner") : null;
+
+        System.out.println("[Interceptor] Owner session 檢查: " + (owner != null));
+
         if (owner == null) {
-            response.sendRedirect(request.getContextPath()+ "/owner/login");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Interceptor 攔截：請先登入");
             return false;
         }
+
         return true;
     }
 }

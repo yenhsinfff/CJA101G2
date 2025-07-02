@@ -81,21 +81,22 @@ public class CampVO implements java.io.Serializable {
 //    @JoinColumn(name = "camp_id", referencedColumnName = "camp_id")
     private Set<CampsiteTypeVO> campsiteTypes;
     
-    
-    @OneToMany(mappedBy = "camp", cascade = CascadeType.ALL)
-    private Set<CampTrackListVO> campTrackLists;
+
+//    @OneToMany(mappedBy = "camp", cascade = CascadeType.ALL)
+//    private Set<CampTrackListVO> campTrackLists;
+
     
     
 
     // --- Getters and Setters ---
     
-    public Set<CampTrackListVO> getCampTrackLists() {
-		return campTrackLists;
-	}
-
-	public void setCampTrackLists(Set<CampTrackListVO> campTrackLists) {
-		this.campTrackLists = campTrackLists;
-	}
+//    public Set<CampTrackListVO> getCampTrackLists() {
+//		return campTrackLists;
+//	}
+//
+//	public void setCampTrackLists(Set<CampTrackListVO> campTrackLists) {
+//		this.campTrackLists = campTrackLists;
+//	}
 
 	public Set<CampsiteTypeVO> getCampsiteTypes() {
 		return campsiteTypes;
