@@ -157,8 +157,9 @@ public class CampApiController {
 			@RequestPart("campPic1") MultipartFile campPic1, @RequestPart("campPic2") MultipartFile campPic2,
 			@RequestPart(value = "campPic3", required = false) MultipartFile campPic3,
 			@RequestPart(value = "campPic4", required = false) MultipartFile campPic4) {
-		System.out.println("updateOneCamp||campId:"+campId);
-		CampVO camp = new CampVO();
+		System.out.println("updateOneCamp||campPic4:"+campPic4);
+		
+		CampVO camp =  campService.getOneCamp(campId);
 		try {
 			camp.setCampId(campId);
 			camp.setOwnerId(ownerId);
@@ -173,10 +174,16 @@ public class CampApiController {
 			camp.setCampRegDate(java.sql.Date.valueOf(campRegDate));
 			camp.setCampPic1(campPic1.getBytes());
 			camp.setCampPic2(campPic2.getBytes());
-			if (campPic3 != null)
-				camp.setCampPic3(campPic3.getBytes());
-			if (campPic4 != null)
-				camp.setCampPic4(campPic4.getBytes());
+			camp.setCampPic3(campPic3!=null?campPic3.getBytes():null);
+			camp.setCampPic4(campPic4!=null?campPic4.getBytes():null);
+//			if (campPic3 != null) {
+//				camp.setCampPic3(campPic3!=null?campPic3.getBytes():null);
+//			}else {
+//				
+//			}
+//				
+//			if (campPic4 != null)
+//				camp.setCampPic4(null);
 
 			// 2. 設定動態過濾器
 			CampInsertDTO newCampVO = campService.createOneCamp(camp);
@@ -209,6 +216,7 @@ public class CampApiController {
 //			SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("campFilter",
 //					SimpleBeanPropertyFilter.serializeAll());
 //			mapping.setFilters(filters);
+			System.out.println("updateOneCamp_err1:" + e);
 			return new ApiResponse<>("fail", false, "查詢失敗");
 //			return ResponseEntity.ok().body(mapping);
 		}
@@ -275,7 +283,7 @@ public class CampApiController {
 	@GetMapping("/api/camps1/{campId}/pic1")
 	public void getCampPic2(@PathVariable Integer campId, HttpServletResponse response) throws IOException {
 
-		byte[] img = (campService.getOneCamp(campId)).getCampPic1(); // 從資料庫取得
+		byte[] img = (campService.getOneCampDTO(campId)).getCampPic1(); // 從資料庫取得
 
 		response.setContentType("image/jpeg");
 		response.getOutputStream().write(img);
@@ -283,30 +291,30 @@ public class CampApiController {
 
 //	http://localhost:8081/CJA101G02/api/camps/1001/3
 	// 抓取資料庫的營地圖片，提供給前端
-	@GetMapping("/api/camps1/{campId}/{num}")
-	public void getCampPic3(@PathVariable Integer campId, @PathVariable Integer num, HttpServletResponse response)
+	@GetMapping("/api/camps/{campId}/{num}")
+	public void getCampPic(@PathVariable Integer campId, @PathVariable Integer num, HttpServletResponse response)
 			throws IOException {
 		byte[] img = null;
 		try {
 			switch (num) {
 			case 1:
 
-				img = (campService.getOneCamp(campId)).getCampPic1();
+				img = (campService.getOneCampDTO(campId)).getCampPic1();
 				break;
 
 			case 2:
 
-				img = (campService.getOneCamp(campId)).getCampPic2();
+				img = (campService.getOneCampDTO(campId)).getCampPic2();
 				break;
 
 			case 3:
 
-				img = (campService.getOneCamp(campId)).getCampPic3();
+				img = (campService.getOneCampDTO(campId)).getCampPic3();
 				break;
 
 			case 4:
 
-				img = (campService.getOneCamp(campId)).getCampPic4();
+				img = (campService.getOneCampDTO(campId)).getCampPic4();
 				break;
 
 			default:
@@ -316,9 +324,9 @@ public class CampApiController {
 			response.getOutputStream().write(img);
 		} catch (Exception e) {
 			System.out.println("營地編號：" + campId + "||第" + num + "張圖片無法讀取");// TODO: handle exception
-			img = (campService.getOneCamp(campId)).getCampPic1();
-			response.setContentType("image/jpeg");
-			response.getOutputStream().write(img);
+//			img = (campService.getOneCampDTO(campId)).getCampPic1();
+//			response.setContentType("image/jpeg");
+//			response.getOutputStream().write(img);
 		}
 	}
 }
