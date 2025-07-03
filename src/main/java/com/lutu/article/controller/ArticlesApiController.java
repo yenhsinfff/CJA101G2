@@ -280,4 +280,14 @@ public class ArticlesApiController {
                 .collect(Collectors.toList());
         return new ApiResponse<>("success", articlesDTOs, "查詢成功");
     }
+
+    // 根據露營者名稱查詢文章
+    @GetMapping("/api/articles/search/by-member-name")
+    public ApiResponse<List<ArticlesDTO>> searchArticlesByMemberName(@RequestParam("memName") String memName) {
+        List<ArticlesVO> articles = articlesService.findByMemberName(memName);
+        List<ArticlesDTO> articlesDTOs = articles.stream()
+                .map(ArticlesDTO::new)
+                .collect(Collectors.toList());
+        return new ApiResponse<>("success", articlesDTOs, "查詢成功");
+    }
 }
