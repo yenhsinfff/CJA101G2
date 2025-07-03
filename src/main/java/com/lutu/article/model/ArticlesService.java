@@ -136,4 +136,9 @@ public class ArticlesService {
         return repository.findDistinctArticlesByReplyMemberName(memName);
     }
 
+    // 根據會員名稱查詢所有有該會員發表的文章
+    public List<ArticlesVO> findByMemberName(String memName) {
+        return repository.findByMemberVOMemName(memName);
+    }
+
 }
