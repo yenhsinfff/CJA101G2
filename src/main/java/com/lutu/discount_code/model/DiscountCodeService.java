@@ -3,13 +3,18 @@ package com.lutu.discount_code.model;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.lutu.administrator.model.AdministratorRepository;
+import com.lutu.administrator.model.AdministratorVO;
+import com.lutu.owner.model.OwnerRepository;
+import com.lutu.owner.model.OwnerVO;
+
+import jakarta.transaction.Transactional;
 
 
 
@@ -21,14 +26,51 @@ public class DiscountCodeService {
 	DiscountCodeRepository repository;
 	
 	@Autowired
+	AdministratorRepository adminRepo;
+	
+	
+	@Autowired
     private SessionFactory sessionFactory;
 
-	public void addDiscountCode(String prefix, DiscountCodeVO discountCodeVO) {
+	//新增折價券
+//	public void addDiscountCode(String prefix, DiscountCodeVO discountCodeVO) {
+//		
+//		//產生折價券ID
+//		String newDiscountCodeId = getNextDiscountCodeId(prefix);
+//		System.out.println("newDiscountCodeId:"+newDiscountCodeId);
+//		discountCodeVO.setDiscountCodeId(newDiscountCodeId);
+//		System.out.println("discountCodeVO:"+discountCodeVO);
+//		repository.save(discountCodeVO);
+//	}
+	
+	//新增折價券
+	@Transactional
+	public void addDiscountCode(String prefix, DiscountCodeDTO_insert dto) {
+		
+		//產生折價券ID
 		String newDiscountCodeId = getNextDiscountCodeId(prefix);
-		System.out.println("newDiscountCodeId:"+newDiscountCodeId);
-		discountCodeVO.setDiscountCodeId(newDiscountCodeId);
-		System.out.println("discountCodeVO:"+discountCodeVO);
-		repository.save(discountCodeVO);
+
+		// DTO 轉 VO，存入Entity
+		DiscountCodeVO vo = new DiscountCodeVO();
+	    vo.setDiscountCodeId(newDiscountCodeId);
+	    vo.setDiscountCode(dto.getDiscountCode());
+	    vo.setDiscountType(dto.getDiscountType());
+	    vo.setDiscountValue(dto.getDiscountValue());
+	    vo.setDiscountExplain(dto.getDiscountExplain());
+	    vo.setMinOrderAmount(dto.getMinOrderAmount());
+	    vo.setStartDate(dto.getStartDate());
+	    vo.setEndDate(dto.getEndDate());
+	   
+
+	    // 查找 admin
+	    if (dto.getAdminId() != null) {
+	        AdministratorVO admin = adminRepo.findById(dto.getAdminId())
+	            .orElseThrow(() -> new RuntimeException("找不到對應的管理員 ID"));
+	        vo.setAdministratorVO(admin);
+	    }
+	    
+		repository.save(vo);
+
 	}
 
 	public void updateDiscountCode(DiscountCodeVO discountCodeVO) {
