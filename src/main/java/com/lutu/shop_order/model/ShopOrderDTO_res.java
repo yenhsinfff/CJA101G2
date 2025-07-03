@@ -4,10 +4,6 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -233,6 +229,7 @@ public class ShopOrderDTO_res {
 		case 4 -> "未取貨，退回賣家";
 		case 5 -> "已取消";
 		case 6 -> "付款失敗";
+		case 7 -> "付款成功，待賣家確認";
 		default -> "等待賣家確認中";
 		};
 		return result;

@@ -213,7 +213,7 @@ public class ApiController {
 			} else {
 				System.out.println("Shop");
 				Integer shopOrderId = Integer.parseInt(orderId.replace("SHOP", ""));
-				shopOrderSvc.updatePaymentStatus(shopOrderId, (byte) 1);;
+				shopOrderSvc.updatePaymentStatus(shopOrderId, (byte) 7);;
 				responseServlet.sendRedirect(
 						"http://127.0.0.1:5503/linepay-success-shop.html?orderId=" + orderId + "&isCamp=" + isCamp);
 			}
