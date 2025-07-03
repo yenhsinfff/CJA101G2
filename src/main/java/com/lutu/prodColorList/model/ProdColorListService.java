@@ -63,10 +63,31 @@ public class ProdColorListService {
 
 	// 新增或更新
 	public ProdColorListDTO saveOrUpdate(ProdColorListDTO dto) {
-		ProdColorListVO vo = toVO(dto);
-		ProdColorListVO saved = repository.save(vo);
-		return toDTO(saved);
+
+	    // 若有傳入 originalColorId，代表可能修改了顏色 ID，要判斷是否刪除舊的再新增
+	    if (dto.getProdId() != null && dto.getOriginalColorId() != null &&
+	        !dto.getOriginalColorId().equals(dto.getProdColorId())) {
+	        
+	        // 主鍵變更 → 先刪掉舊的（避免複合主鍵衝突）
+	        repository.deleteById(new CompositeDetail(dto.getProdId(), dto.getOriginalColorId()));
+
+	        // 用新的 VO 存入資料
+	        return toDTO(repository.save(toVO(dto)));
+	    }
+
+	    // 主鍵沒變 → 看資料是否存在（更新 or 新增）
+	    Optional<ProdColorListVO> existing = repository.findById(new CompositeDetail(dto.getProdId(), dto.getProdColorId()));
+	    if (existing.isPresent()) {
+	        ProdColorListVO vo = existing.get();
+	        // 可以更新內容（圖片不在這邊處理）
+	        return toDTO(repository.save(vo));
+	    }
+
+	    // 若找不到就是新增
+	    return toDTO(repository.save(toVO(dto)));
 	}
+
+
 
 	// 查詢顏色圖片
 	public byte[] getPicByCompositeKey(Integer prodId, Integer colorId) {
@@ -101,17 +122,27 @@ public class ProdColorListService {
 	    }
 	}
 
-	// 刪除
-//    public void delete(Integer prodId, Integer prodColorId) {
-//        repository.deleteById(new ProdColorListVO.CompositeDetail(prodId, prodColorId));
-//    }
+	// 刪除prodcolorlist
+    public void delete(Integer prodId, Integer prodColorId) {
+        repository.deleteById(new ProdColorListVO.CompositeDetail(prodId, prodColorId));
+    }
+    
+	// 刪除 by ProdId
+	public void deleteByProdId(Integer prodId) {
+	    List<ProdColorListVO> list = repository.findByProdId(prodId);
+	    for (ProdColorListVO vo : list) {
+	        repository.deleteById(new CompositeDetail(vo.getProdId(), vo.getProdColorId()));
+	    }
+	}
 
+	
 	// VO ➜ DTO
 	private ProdColorListDTO toDTO(ProdColorListVO vo) {
 		ProdColorListDTO dto = new ProdColorListDTO();
 		dto.setProdId(vo.getProdId());
 		dto.setProdColorId(vo.getProdColorId());
 //		dto.setProdColorPic(vo.getProdColorPic());
+		dto.setOriginalColorId(vo.getProdColorId());
 
 		if (vo.getColorListVO() != null) {
 			dto.setColorName(vo.getColorListVO().getColorName()); // 若 colorName 要顯示

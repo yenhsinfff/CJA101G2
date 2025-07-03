@@ -8,7 +8,8 @@ public class ProdColorListDTO {
 
     private String colorName;       // 額外欄位：顏色名稱（ColorListVO.colorName）
     private boolean hasPic;         // 額外欄位：是否有圖片
-    
+    private Integer originalColorId;
+
     public ProdColorListDTO() {}
 
     public Integer getProdId() {
@@ -49,6 +50,14 @@ public class ProdColorListDTO {
 
 	public void setHasPic(boolean hasPic) {
 		this.hasPic = hasPic;
+	}
+
+	public Integer getOriginalColorId() {
+		return originalColorId;
+	}
+
+	public void setOriginalColorId(Integer originalColorId) {
+		this.originalColorId = originalColorId;
 	}
     
     

@@ -72,6 +72,9 @@ public class ShopProdDTO {
 	private List<ColorListDTO> colorList; 			// 顏色
 	
 	private List<ProdPicDTO> prodPicList; 			//商品圖片
+	
+	private List<Integer> deletedSpecIds;
+	private List<Integer> deletedColorIds;
 
 	public ShopProdDTO() {
 		super();
@@ -219,6 +222,22 @@ public class ShopProdDTO {
 
 	public void setProdPicList(List<ProdPicDTO> prodPicList) {
 		this.prodPicList = prodPicList;
+	}
+
+	public List<Integer> getDeletedSpecIds() {
+		return deletedSpecIds;
+	}
+
+	public void setDeletedSpecIds(List<Integer> deletedSpecIds) {
+		this.deletedSpecIds = deletedSpecIds;
+	}
+
+	public List<Integer> getDeletedColorIds() {
+		return deletedColorIds;
+	}
+
+	public void setDeletedColorIds(List<Integer> deletedColorIds) {
+		this.deletedColorIds = deletedColorIds;
 	}
 
 	
