@@ -56,15 +56,29 @@ public class ShopOrderService {
 
 		// 驗證必要欄位
 		if (!orderJson.has("memId")) {
-			throw new IllegalArgumentException("缺少會員編號");
-		}
+	        System.out.println("orderJson 鍵名檢查: " + orderJson.keySet());
+	        throw new IllegalArgumentException("缺少會員編號, 可用鍵: " + orderJson.keySet());
+	    }
+	    try {
+	        Object memIdObj = orderJson.get("memId");
+	        if (memIdObj instanceof Integer) {
+	            dto.setMemId((Integer) memIdObj);
+	        } else if (memIdObj instanceof String) {
+	            dto.setMemId(Integer.parseInt((String) memIdObj));
+	        } else {
+	            throw new IllegalArgumentException("會員編號必須為數值: " + memIdObj);
+	        }
+	        System.out.println("接收到的 memId: " + dto.getMemId());
+	    } catch (NumberFormatException e) {
+	        System.out.println("memId 格式錯誤, 原始值: " + orderJson.get("memId"));
+	        throw new IllegalArgumentException("會員編號格式錯誤: " + orderJson.get("memId"));
+	    }
 
 		if (!orderJson.has("detailsDto")) {
 			throw new IllegalArgumentException("缺少訂單明細");
 		}
 
 		// 主表欄位
-		dto.setMemId(orderJson.getInt("memId"));
 		dto.setShopOrderShipment(
 				orderJson.has("shopOrderShipment") ? (byte) orderJson.getInt("shopOrderShipment") : (byte) 1);
 		dto.setShopOrderShipFee(orderJson.has("shopOrderShipFee") ? orderJson.getInt("shopOrderShipFee") : 60);
