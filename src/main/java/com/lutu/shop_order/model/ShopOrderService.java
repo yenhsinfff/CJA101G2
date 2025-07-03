@@ -2,9 +2,12 @@ package com.lutu.shop_order.model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +24,7 @@ import com.lutu.shopProd.model.ShopProdVO;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_insert_req;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsRepository;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsVO;
+
 
 @Service
 public class ShopOrderService {
@@ -45,6 +49,86 @@ public class ShopOrderService {
 
 	@Autowired
 	MemberRepository mr;
+
+	// 將 JSONObject 轉為 ShopOrderDTO_insert
+	public ShopOrderDTO_insert jsonToDTO(JSONObject orderJson) {
+		ShopOrderDTO_insert dto = new ShopOrderDTO_insert();
+
+		// 驗證必要欄位
+		if (!orderJson.has("memId")) {
+	        System.out.println("orderJson 鍵名檢查: " + orderJson.keySet());
+	        throw new IllegalArgumentException("缺少會員編號, 可用鍵: " + orderJson.keySet());
+	    }
+	    try {
+	        Object memIdObj = orderJson.get("memId");
+	        if (memIdObj instanceof Integer) {
+	            dto.setMemId((Integer) memIdObj);
+	        } else if (memIdObj instanceof String) {
+	            dto.setMemId(Integer.parseInt((String) memIdObj));
+	        } else {
+	            throw new IllegalArgumentException("會員編號必須為數值: " + memIdObj);
+	        }
+	        System.out.println("接收到的 memId: " + dto.getMemId());
+	    } catch (NumberFormatException e) {
+	        System.out.println("memId 格式錯誤, 原始值: " + orderJson.get("memId"));
+	        throw new IllegalArgumentException("會員編號格式錯誤: " + orderJson.get("memId"));
+	    }
+
+		if (!orderJson.has("detailsDto")) {
+			throw new IllegalArgumentException("缺少訂單明細");
+		}
+
+		// 主表欄位
+		dto.setShopOrderShipment(
+				orderJson.has("shopOrderShipment") ? (byte) orderJson.getInt("shopOrderShipment") : (byte) 1);
+		dto.setShopOrderShipFee(orderJson.has("shopOrderShipFee") ? orderJson.getInt("shopOrderShipFee") : 60);
+		dto.setShopOrderPayment(
+				orderJson.has("shopOrderPayment") ? (byte) orderJson.getInt("shopOrderPayment") : (byte) 1);
+		dto.setOrderName(orderJson.has("orderName") ? orderJson.getString("orderName") : "");
+		dto.setOrderEmail(orderJson.has("orderEmail") ? orderJson.getString("orderEmail") : "");
+		dto.setOrderPhone(orderJson.has("orderPhone") ? orderJson.getString("orderPhone") : "");
+		dto.setOrderShippingAddress(
+				orderJson.has("orderShippingAddress") ? orderJson.getString("orderShippingAddress") : "");
+		dto.setShopOrderNote(orderJson.has("shopOrderNote") ? orderJson.getString("shopOrderNote") : "");
+		dto.setShopOrderShipDate(orderJson.has("shopOrderShipDate") && !orderJson.isNull("shopOrderShipDate")
+				? LocalDateTime.parse(orderJson.getString("shopOrderShipDate"))
+				: null);
+		dto.setShopOrderStatus(
+				orderJson.has("shopOrderStatus") ? (byte) orderJson.getInt("shopOrderStatus") : (byte) 0);
+		dto.setShopReturnApply(
+				orderJson.has("shopReturnApply") ? (byte) orderJson.getInt("shopReturnApply") : (byte) 0);
+		dto.setDiscountCodeId(orderJson.has("discountCodeId") && !orderJson.isNull("discountCodeId")
+				? orderJson.getString("discountCodeId")
+				: null);
+
+		// 處理明細
+		JSONArray detailsJson = orderJson.getJSONArray("detailsDto");
+		if (detailsJson.length() == 0) {
+			throw new IllegalArgumentException("訂單明細不為空");
+		}
+
+		List<ShopOrderItemsDetailsDTO_insert_req> detailsList = new ArrayList<>();
+
+		for (int i = 0; i < detailsJson.length(); i++) {
+			JSONObject detailJson = detailsJson.getJSONObject(i);
+			ShopOrderItemsDetailsDTO_insert_req detail = new ShopOrderItemsDetailsDTO_insert_req();
+
+			if (!detailJson.has("prodId") || !detailJson.has("prodColorId") || !detailJson.has("prodSpecId")) {
+				throw new IllegalArgumentException("明細缺少必要欄位");
+			}
+
+			detail.setProdId(detailJson.getInt("prodId"));
+			detail.setProdColorId(detailJson.getInt("prodColorId"));
+			detail.setProdSpecId(detailJson.getInt("prodSpecId"));
+			detail.setShopOrderQty(detailJson.getInt("shopOrderQty"));
+
+			detailsList.add(detail);
+		}
+
+		dto.setDetailsDto(detailsList);
+
+		return dto;
+	}
 
 	@Transactional
 	public ShopOrderVO addShopOrder(ShopOrderDTO_insert dto) {
@@ -103,12 +187,16 @@ public class ShopOrderService {
 				ProdSpecListVO.CompositeDetail2 key = new ProdSpecListVO.CompositeDetail2(detailsDTO.getProdId(),
 						detailsDTO.getProdSpecId());
 				ProdSpecListVO spec = pslr.findById(key).orElseThrow(() -> new RuntimeException("查無該種規格"));
-				
+
 				// 商品折扣
-				ShopProdVO prod = spr.findById(detailsDTO.getProdId()).orElseThrow(() -> new RuntimeException("查無該種商品"));;
+				ShopProdVO prod = spr.findById(detailsDTO.getProdId())
+						.orElseThrow(() -> new RuntimeException("查無該種商品"));
+				;
 				BigDecimal prodDiscount = prod.getProdDiscount();
-				
-				BigDecimal price = new BigDecimal(spec.getProdSpecPrice()).multiply(prodDiscount).setScale(0, RoundingMode.HALF_UP);;
+
+				BigDecimal price = new BigDecimal(spec.getProdSpecPrice()).multiply(prodDiscount).setScale(0,
+						RoundingMode.HALF_UP);
+				;
 
 				// 將價格存入訂單明細
 				soidVO.setProdOrderPrice(price.intValue());
@@ -333,7 +421,7 @@ public class ShopOrderService {
 		}
 
 		if (sovo.getShopOrderStatus() != 3 || sovo.getShopOrderStatus() != 4 || sovo.getShopOrderStatus() != 5) {
-			
+
 			if (dtoUpdate.getShopOrderShipDate() != null) {
 				sovo.setShopOrderShipDate(dtoUpdate.getShopOrderShipDate());
 			}
@@ -367,6 +455,25 @@ public class ShopOrderService {
 		sor.save(sovo);
 		ShopOrderVO sovo2 = getOneShopOrder(sovo.getShopOrderId());
 		return sovo2;
+	}
+	
+	@Transactional
+	// 僅提供結帳後確認付款後修改訂單狀態
+	public ShopOrderVO updatePaymentStatus(Integer shopOrderId,Byte status) {
+		
+		ShopOrderVO sovo = sor.findById(shopOrderId).orElseThrow(() -> new RuntimeException("查無此筆訂單資料"));
+		
+		try {
+			sovo.setShopOrderStatus(status);
+			sor.save(sovo);
+			ShopOrderVO sovo2 = getOneShopOrder(sovo.getShopOrderId());
+			return sovo2;
+		} catch (Exception e) {
+			System.out.println("updatePaymentStatus_err" + e);
+			return sovo;
+		}
+
+		
 	}
 
 	public ShopOrderVO getOneShopOrder(Integer shopOrderId) {

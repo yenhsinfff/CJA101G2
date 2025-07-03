@@ -3,6 +3,7 @@ package com.lutu.shop_order.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
 import com.lutu.discount_code.model.DiscountCodeService;
+import com.lutu.member.model.MemberRepository;
 import com.lutu.member.model.MemberService;
 import com.lutu.member.model.MemberVO;
 import com.lutu.shop_order.model.ShopOrderDTO_insert;
@@ -35,6 +37,9 @@ public class ShopOrderController {
 
 	@Autowired
 	MemberService ms;
+	
+	@Autowired
+	MemberRepository mr;
 
 	@Autowired
 	DiscountCodeService dcs;
@@ -61,15 +66,23 @@ public class ShopOrderController {
 
 	// 新增
 	@PostMapping("/api/addShopOrder")
-	public ApiResponse<ShopOrderDTO_res> addShopOrder(@Valid @RequestBody ShopOrderDTO_insert dto) {
+	public ApiResponse<ShopOrderDTO_res> addShopOrder(@RequestBody JSONObject orderJson) {
 
 //		ShopOrderVO sovo = new ShopOrderVO();
 		try {
+		    ShopOrderDTO_insert dto = sos.jsonToDTO(orderJson);
 			ShopOrderVO newSOVO = sos.addShopOrder(dto);
 
 			// 將 VO 轉成DTO_res
 			ShopOrderDTO_res res = new ShopOrderDTO_res();
 			BeanUtils.copyProperties(newSOVO, res);
+			try {
+		        MemberVO mvo = mr.findById(dto.getMemId()).orElseThrow(() -> new RuntimeException("資料庫中無此會員編號: " + dto.getMemId()));
+		        // ... (後續邏輯)
+		    } catch (RuntimeException e) {
+		        throw new RuntimeException("訂單新增失敗: " + e.getMessage());
+		    }
+			
 			res.setMemId(newSOVO.getMemId().getMemId()); // 將會員編號轉為Integer推到前端
 			res.setDiscountCodeId(
 					newSOVO.getDiscountCodeId() != null ? newSOVO.getDiscountCodeId().getDiscountCodeId() : null);// 將折扣碼編號轉為String推到前端
@@ -79,6 +92,25 @@ public class ShopOrderController {
 		} catch (Exception e) {
 			return new ApiResponse<>("fail", null, "新增失敗" + e.getMessage());
 		}
+	}
+	
+	@PostMapping("/api/addShopOrderCOD")
+	public ApiResponse<ShopOrderDTO_res> addShopOrderCOD(@Valid @RequestBody ShopOrderDTO_insert dto) {
+	    try {
+	        System.out.println("接收的 dto.memId: " + dto.getMemId()); // 確認接收
+	        ShopOrderVO newSOVO = sos.addShopOrder(dto);
+
+	        // 將 VO 轉成 DTO_res
+	        ShopOrderDTO_res res = new ShopOrderDTO_res();
+	        BeanUtils.copyProperties(newSOVO, res);
+	        res.setMemId(newSOVO.getMemId().getMemId());
+	        res.setDiscountCodeId(newSOVO.getDiscountCodeId() != null ? newSOVO.getDiscountCodeId().getDiscountCodeId() : null);
+
+	        return new ApiResponse<>("success", res, "新增成功 (COD)");
+	    } catch (Exception e) {
+	        System.out.println("新增失敗 (COD), 錯誤: " + e.getMessage());
+	        return new ApiResponse<>("fail", null, "新增失敗 (COD): " + e.getMessage());
+	    }
 	}
 
 	@PostMapping("/api/updateShopOrder")

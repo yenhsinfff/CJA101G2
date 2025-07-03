@@ -1,5 +1,6 @@
 package com.lutu.campsite_available.model;
 
+import com.lutu.campsite_order_details.model.CampSiteOrderDetailsDTO;
 import com.lutu.campsitetype.model.CampsiteTypeRepository;
 import com.lutu.campsitetype.model.CampsiteTypeVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,4 +208,48 @@ public class CampsiteAvailableService {
             }
         }
     }
+    
+ // 訂單成立時 -1
+    @Transactional
+    public boolean deductRoomsByDateRange(Date checkIn, Date checkOut, List<CampSiteOrderDetailsDTO> detailsList) {
+        for (CampSiteOrderDetailsDTO detail : detailsList) {
+            Integer campsiteTypeId = detail.getCampsiteTypeId();
+            Integer qty = detail.getCampsiteNum(); // 訂幾間就扣幾間
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(checkIn);
+            while (cal.getTime().before(checkOut)) {
+                Date currentDate = new Date(cal.getTimeInMillis());
+                int updated = availRepo.deductOne(campsiteTypeId, currentDate, qty);
+                if (updated == 0) {
+                    throw new RuntimeException("房量不足，扣減失敗於：" + currentDate + "，房型ID：" + campsiteTypeId);
+                }
+                cal.add(Calendar.DATE, 1);
+            }
+        }
+        return true;
+    }
+
+
+
+    // 取消訂單時 +1
+    @Transactional
+    public boolean refundRoomsByDateRange(Date checkIn, Date checkOut, List<CampSiteOrderDetailsDTO> detailsList) {
+        for (CampSiteOrderDetailsDTO detail : detailsList) {
+            Integer campsiteTypeId = detail.getCampsiteTypeId();
+            Integer qty = detail.getCampsiteNum(); // 一次訂多間
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(checkIn);
+            while (cal.getTime().before(checkOut)) {
+                Date currentDate = new Date(cal.getTimeInMillis());
+                int updated = availRepo.refundOne(campsiteTypeId, currentDate, qty);
+                if (updated == 0) {
+                    throw new RuntimeException("回補失敗於：" + currentDate + "，房型ID：" + campsiteTypeId);
+                }
+                cal.add(Calendar.DATE, 1);
+            }
+        }
+        return true;
+    }
+
+
 }

@@ -49,7 +49,6 @@ public class NiceArticleVO implements Serializable {
     }
 
     @Column(name = "like_time", nullable = false)
-    @NotNull(message = "按讚時間: 不能為空")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     public LocalDateTime getLikeTime() {
         return likeTime;
