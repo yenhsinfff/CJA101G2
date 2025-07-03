@@ -47,12 +47,20 @@ public class CampsiteTypeApiController {
 	@Autowired
 	CampsiteTypeService campsiteTypeSvc;
 
+	// http://localhost:8081/CJA101G02/campsitetype/getAllCampsiteTypes
 	// 取得所有營地房型
-//	@GetMapping("/getCampsiteTypes")
-//	public ApiResponse<List<CampsiteTypeVO>> getCampsiteTypeList(@PathVariable Integer campId) {
-//	    List<CampsiteTypeVO> campsiteTypeList = campsiteTypeSvc.getByCampId(campId);
-//	    return new ApiResponse<>("success", campsiteTypeList, "查詢成功");
-//	}
+	@GetMapping("/getAllCampsiteTypes")
+	public ApiResponse<List<CampsiteTypeDTO>> getAllCampsiteTypeList() {
+		List<CampsiteTypeVO> campsiteTypeList = campsiteTypeSvc.getAll();
+
+		List<CampsiteTypeDTO> dtoList = campsiteTypeList.stream()
+				.map(vo -> new CampsiteTypeDTO(vo.getId().getCampsiteTypeId(), vo.getId().getCampId(),
+						vo.getCampsiteName(), vo.getCampsitePeople(), vo.getCampsiteNum(), vo.getCampsitePrice(), null,
+						null, null, null))
+				.collect(Collectors.toList());
+
+		return new ApiResponse<>("success", dtoList, "查詢成功");
+	}
 
 	// http://localhost:8081/CJA101G02/campsitetype/1001/getCampsiteTypes
 	// http://localhost:8081/CJA101G02/campsitetype/{campId}/getCampsiteTypes
@@ -83,54 +91,49 @@ public class CampsiteTypeApiController {
 //	    return new ApiResponse<>("success", campsiteType, "新增成功");
 //	}
 
-
 	// http://localhost:8081/CJA101G02/campsitetype/1001/addCampsiteType
 	// http://localhost:8081/CJA101G02/campsitetype/{campId}/addCampsiteType
 	// 新增營地房型，campsiteTypeId可自動遞增
 	@PostMapping("/{campId}/addCampsiteType")
-	public ResponseEntity<?> addCampsiteType(
-            @PathVariable Integer campId,
-            @Valid @ModelAttribute CampsiteTypeDTO_insert dto,
-            BindingResult result) {
-        
-        if (result.hasErrors()) {
-            // 傳回第一筆錯誤訊息（也可以全部合併傳回）
-            String errorMessage = result.getFieldError().getDefaultMessage();
-            return ResponseEntity.badRequest().body("驗證錯誤：" + errorMessage);
-        }
-        
-        if (dto.getCampsitePic1() == null || dto.getCampsitePic1().isEmpty()) {
-            return ResponseEntity.badRequest().body("房間照片: 至少上傳1張");
-        }
+	public ResponseEntity<?> addCampsiteType(@PathVariable Integer campId,
+			@Valid @ModelAttribute CampsiteTypeDTO_insert dto, BindingResult result) {
 
-        try {
-            // 將 DTO 資料轉換成 VO
-            CampsiteTypeVO vo = new CampsiteTypeVO();
-            vo.setCampsiteName(dto.getCampsiteName());
-            vo.setCampsitePeople(dto.getCampsitePeople());
-            vo.setCampsiteNum(dto.getCampsiteNum());
-            vo.setCampsitePrice(dto.getCampsitePrice());
+		if (result.hasErrors()) {
+			// 傳回第一筆錯誤訊息（也可以全部合併傳回）
+			String errorMessage = result.getFieldError().getDefaultMessage();
+			return ResponseEntity.badRequest().body("驗證錯誤：" + errorMessage);
+		}
 
-            vo.setCampsitePic1(dto.getCampsitePic1().getBytes());
-            vo.setCampsitePic2(getBytesOrNull(dto.getCampsitePic2()));
-            vo.setCampsitePic3(getBytesOrNull(dto.getCampsitePic3()));
-            vo.setCampsitePic4(getBytesOrNull(dto.getCampsitePic4()));
+		if (dto.getCampsitePic1() == null || dto.getCampsitePic1().isEmpty()) {
+			return ResponseEntity.badRequest().body("房間照片: 至少上傳1張");
+		}
 
-            CampsiteTypeVO saved = campsiteTypeSvc.addCampsiteType(vo, campId);
+		try {
+			// 將 DTO 資料轉換成 VO
+			CampsiteTypeVO vo = new CampsiteTypeVO();
+			vo.setCampsiteName(dto.getCampsiteName());
+			vo.setCampsitePeople(dto.getCampsitePeople());
+			vo.setCampsiteNum(dto.getCampsiteNum());
+			vo.setCampsitePrice(dto.getCampsitePrice());
 
-            // 你也可以轉成 DTO 回傳
-            return ResponseEntity.ok(saved);
+			vo.setCampsitePic1(dto.getCampsitePic1().getBytes());
+			vo.setCampsitePic2(getBytesOrNull(dto.getCampsitePic2()));
+			vo.setCampsitePic3(getBytesOrNull(dto.getCampsitePic3()));
+			vo.setCampsitePic4(getBytesOrNull(dto.getCampsitePic4()));
 
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("圖片轉換失敗：" + e.getMessage());
-        }
-    }
+			CampsiteTypeVO saved = campsiteTypeSvc.addCampsiteType(vo, campId);
 
-    private byte[] getBytesOrNull(MultipartFile file) throws IOException {
-        return (file != null && !file.isEmpty()) ? file.getBytes() : null;
-    }
+			// 你也可以轉成 DTO 回傳
+			return ResponseEntity.ok(saved);
 
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("圖片轉換失敗：" + e.getMessage());
+		}
+	}
 
+	private byte[] getBytesOrNull(MultipartFile file) throws IOException {
+		return (file != null && !file.isEmpty()) ? file.getBytes() : null;
+	}
 
 	// http://localhost:8081/CJA101G02/campsitetype/deleteCampsiteType
 	// 刪除營地房型

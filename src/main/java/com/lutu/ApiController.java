@@ -1,5 +1,7 @@
 package com.lutu;
 
+import org.json.JSONArray;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,7 +11,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +23,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.camp.model.CampService;
+import com.lutu.camp.model.CampVO;
+import com.lutu.campsite_available.model.CampsiteAvailableService;
+import com.lutu.campsite_order.model.CampSiteOrderService;
+import com.lutu.campsite_order.model.CampSiteOrderVO;
+import com.lutu.campsite_order.model.CampsiteOrderDTO;
+import com.lutu.shop_order.model.ShopOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.shop_order.model.ShopOrderDTO_insert;
 import com.lutu.shop_order.model.ShopOrderService;
 import com.lutu.shop_order.model.ShopOrderVO;
+
 import com.lutu.util.HmacUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
+import javassist.runtime.DotClass;
 
+
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.sql.Date;
+import java.util.List;
+import java.util.UUID;
 //api格式 「http://localhost:8081/CJA101G02/api/campsite_orders」
 
 @RestController
@@ -45,6 +67,11 @@ public class ApiController {
 	
 	@Autowired
 	ShopOrderService shopOrderSvc;
+
+	
+	@Autowired
+	CampsiteAvailableService caService;
+
 
 	@Transactional
 	@PostMapping("/api/linepay/{isCamp}")
@@ -61,6 +88,7 @@ public class ApiController {
 		System.out.println("jsonBody:" + body);
 		System.out.println("linepayBody:" + linepayBody);
 		System.out.println("linepayOrder:" + linepayOrder);
+
 
 		// 先儲存訂單，生成 shopOrderId
 		String orderId = null;
@@ -174,9 +202,14 @@ public class ApiController {
 			// 交易成功，將訂單狀態改成已付款塞入DB
 			if (isCamp) {
 				System.out.println("Camp");
-				campsiteOrdSvc.updatePaymentStatus(orderId, (byte) 1);
-				responseServlet.sendRedirect(
-						"http://127.0.0.1:5501/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
+
+				campsiteOrdSvc.updatePaymentStatus(orderId, (byte)1);
+				CampsiteOrderDTO dto = campsiteOrdSvc.getOneDTOCampsiteOrder(orderId);
+				Boolean response1 = caService.deductRoomsByDateRange(dto.getCheckIn(),dto.getCheckOut(), dto.getOrderDetails());
+				System.out.println("linpay_response:"+response1);
+				
+				responseServlet.sendRedirect("http://127.0.0.1:5501/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
+
 			} else {
 				System.out.println("Shop");
 				Integer shopOrderId = Integer.parseInt(orderId.replace("SHOP", ""));
