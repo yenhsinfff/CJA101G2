@@ -80,4 +80,13 @@ public interface ArticlesRepository extends JpaRepository<ArticlesVO, Integer> {
      */
     @Query("SELECT DISTINCT r.articlesVO FROM ReplyVO r WHERE r.memberVO.memName = :memName")
     List<ArticlesVO> findDistinctArticlesByReplyMemberName(@Param("memName") String memName);
+
+    /**
+     * 根據會員名稱查詢所有有該會員發表的文章
+     * 
+     * @param memName 會員名稱
+     * @return 該會員發表的所有文章
+     */
+    @Query("SELECT a FROM ArticlesVO a WHERE a.memberVO.memName = :memName")
+    List<ArticlesVO> findByMemberVOMemName(@Param("memName") String memName);
 }

@@ -1,19 +1,27 @@
 package com.lutu;
+
 import org.json.JSONArray;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+import java.util.UUID;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutu.camp.model.CampService;
 import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_available.model.CampsiteAvailableService;
@@ -21,10 +29,17 @@ import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.campsite_order.model.CampsiteOrderDTO;
 import com.lutu.shop_order.model.ShopOrderService;
+import com.lutu.campsite_order.model.CampSiteOrderService;
+import com.lutu.campsite_order.model.CampSiteOrderVO;
+import com.lutu.shop_order.model.ShopOrderDTO_insert;
+import com.lutu.shop_order.model.ShopOrderService;
+import com.lutu.shop_order.model.ShopOrderVO;
+
 import com.lutu.util.HmacUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
 import javassist.runtime.DotClass;
+
 
 import java.awt.Desktop;
 import java.io.BufferedReader;
@@ -38,7 +53,6 @@ import java.net.URL;
 import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
-
 //api格式 「http://localhost:8081/CJA101G02/api/campsite_orders」
 
 @RestController
@@ -53,10 +67,13 @@ public class ApiController {
 	
 	@Autowired
 	ShopOrderService shopOrderSvc;
+
 	
 	@Autowired
 	CampsiteAvailableService caService;
 
+
+	@Transactional
 	@PostMapping("/api/linepay/{isCamp}")
 	public ApiResponse<String> doLinePay(@PathVariable Boolean isCamp, @RequestBody String jsonBody,
 			HttpServletResponse response) throws IOException, JSONException {
@@ -71,7 +88,29 @@ public class ApiController {
 		System.out.println("jsonBody:" + body);
 		System.out.println("linepayBody:" + linepayBody);
 		System.out.println("linepayOrder:" + linepayOrder);
+
+
+		// 先儲存訂單，生成 shopOrderId
+		String orderId = null;
+		if (!isCamp) { // 屬於商城訂單
+			System.out.println("Shop");
+			ShopOrderDTO_insert dto = shopOrderSvc.jsonToDTO(linepayOrder);
+			ShopOrderVO shopOrder = shopOrderSvc.addShopOrder(dto);
+			orderId = "SHOP" + shopOrder.getShopOrderId(); // 將 Integer 轉為 String
+			// 驗證金額
+			if (linepayBody.getInt("amount") != shopOrder.getAfterDiscountAmount()) {
+				shopOrderSvc.updatePaymentStatus(shopOrder.getShopOrderId(), (byte) 6); // 6: 付款失敗
+				 return new ApiResponse<>("fail", null, "金額不一致");
+			}
+			
+			// 更新 linepayBody 的 orderId 和 confirmUrl
+			linepayBody.put("orderId", orderId);
+			linepayBody.getJSONObject("redirectUrls").put("confirmUrl", 
+					linepayBody.getJSONObject("redirectUrls")
+					.getString("confirmUrl").replace("{orderId}", orderId));
+		}
 		
+
 		// 產生 HMAC 簽章
 		String nonce = UUID.randomUUID().toString();
 		String uri = "/v3/payments/request";
@@ -100,7 +139,7 @@ public class ApiController {
 		System.out.println("resJson:" + resJson);
 		JSONObject info = resJson.optJSONObject("info");
 		String returnCode = resJson.getString("returnCode");
-		
+
 		if (returnCode.equals("0000")) {
 			// 付款網址請求成功，將訂單資料(未付款)塞入DB
 			if (isCamp) {
@@ -108,8 +147,9 @@ public class ApiController {
 				campsiteOrdSvc.createOneCampOrderJson(linepayOrder);
 			} else {
 				System.out.println("Shop");
+
 			}
-			
+
 			System.out.println("aaaaaa");
 			String paymentUrl = (info != null && info.has("paymentUrl"))
 					? info.getJSONObject("paymentUrl").getString("web")
@@ -118,6 +158,10 @@ public class ApiController {
 			// 回傳 paymentUrl 給前端
 			return new ApiResponse<>("success", paymentUrl, "查詢成功");
 		} else {
+			
+			if (!isCamp) {//針對商品訂單
+                shopOrderSvc.updatePaymentStatus(Integer.parseInt(orderId.replace("SHOP", "")), (byte) 6); //6: 付款失敗
+            }
 			// 交易失敗
 			return new ApiResponse<>("fail", "fail", "查詢失敗");
 		}
@@ -126,8 +170,8 @@ public class ApiController {
 
 	// 確認LINEPAY付款狀態
 	@GetMapping("api/confirmpayment/{orderId}/{isCamp}")
-	public void checkLinePayStatus(@PathVariable String orderId, @PathVariable Boolean isCamp,HttpServletResponse responseServlet)
-			throws IOException, URISyntaxException, JSONException {
+	public void checkLinePayStatus(@PathVariable String orderId, @PathVariable Boolean isCamp,
+			HttpServletResponse responseServlet) throws IOException, URISyntaxException, JSONException {
 		final String channelId = "1656895462";
 		final String CHANNEL_SECRET = "fd01e635b9ea97323acbe8d5c6b2fb71";
 		final String API_URL = "https://sandbox-api-pay.line.me/v2/payments/orders/" + orderId + "/check";
@@ -158,22 +202,31 @@ public class ApiController {
 			// 交易成功，將訂單狀態改成已付款塞入DB
 			if (isCamp) {
 				System.out.println("Camp");
+
 				campsiteOrdSvc.updatePaymentStatus(orderId, (byte)1);
 				CampsiteOrderDTO dto = campsiteOrdSvc.getOneDTOCampsiteOrder(orderId);
 				Boolean response1 = caService.deductRoomsByDateRange(dto.getCheckIn(),dto.getCheckOut(), dto.getOrderDetails());
 				System.out.println("linpay_response:"+response1);
 				
 				responseServlet.sendRedirect("http://127.0.0.1:5501/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
+
 			} else {
 				System.out.println("Shop");
-				//這裡要改成商品的成功頁面
-				responseServlet.sendRedirect("http://127.0.0.1:5501/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
+				Integer shopOrderId = Integer.parseInt(orderId.replace("SHOP", ""));
+				shopOrderSvc.updatePaymentStatus(shopOrderId, (byte) 1);;
+				responseServlet.sendRedirect(
+						"http://127.0.0.1:5503/linepay-success-shop.html?orderId=" + orderId + "&isCamp=" + isCamp);
 			}
-            
-             
+
 		} else {
 			// 交易失敗
-			responseServlet.sendRedirect("http://127.0.0.1:5501/linepay-cancel.html?orderId=" + orderId + "&isCamp=" + isCamp);
+			if (isCamp) {
+			responseServlet
+					.sendRedirect("http://127.0.0.1:5501/linepay-cancel.html?orderId=" + orderId + "&isCamp=" + isCamp);
+			} else {
+				responseServlet
+				.sendRedirect("http://127.0.0.1:5503/linepay-cancel-shop.html?orderId=" + orderId + "&isCamp=" + isCamp);
+			}
 		}
 	}
 
