@@ -191,19 +191,6 @@ public class ShopProdController {
         }
     }
 	
-    /**
-     * 查詢所有商品類別（回傳 DTO）
-     * @return 所有商品分類（id + 名稱）
-     * GET http://localhost:8081/CJA101G02/api/product-types
-    
-    @GetMapping("/api/product-types")
-    public List<ProdTypeDTO> getAllTypes() {
-        return prodTypeRepository.findAll()
-            .stream()
-            .map(pt -> new ProdTypeDTO(pt.getProdTypeId(), pt.getProdTypeName()))
-            .collect(Collectors.toList());
-    } 
-    */
     
     
 //	// 抓取資料庫的營地圖片，提供給前端
