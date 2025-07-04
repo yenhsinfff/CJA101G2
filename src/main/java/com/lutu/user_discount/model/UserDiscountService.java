@@ -4,20 +4,30 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lutu.discount_code.model.DiscountCodeRepository;
 import com.lutu.discount_code.model.DiscountCodeVO;
+import com.lutu.member.model.MemberRepository;
+import com.lutu.member.model.MemberVO;
+
+import jakarta.transaction.Transactional;
 
 @Service("userDiscountService")
 public class UserDiscountService {
 
 	@Autowired
-	UserDiscountRepository repository;
-
+	private UserDiscountRepository repository;
+	
 	@Autowired
-	private SessionFactory sessionFactory;
+	private DiscountCodeRepository discountRepo;
+	
+	@Autowired
+	private MemberRepository memberRepo;
+
+//	@Autowired
+//	private SessionFactory sessionFactory;
 
 	// 新增
 	public void addUserDiscount(UserDiscountVO userDiscountVO) {
@@ -27,6 +37,73 @@ public class UserDiscountService {
 	// 更新
 	public void updateUserDiscount(UserDiscountVO userDiscountVO) {
 		repository.save(userDiscountVO);
+
+	}
+
+	// 新增單一會員折價券，作為「管理員發送折價券給會員」
+	@Transactional
+	public UserDiscountDTO sendDiscountToUser(UserDiscountDTO_request dto) {
+
+	    // 1. 檢查是否已發送過
+	    Optional<UserDiscountVO> existing = repository.findByIdMemIdAndIdDiscountCodeId(dto.getMemId(), dto.getDiscountCodeId());
+	    if (existing.isPresent()) {
+	        throw new RuntimeException("該會員已領取此折價券");
+	    }
+
+	    // 2. 查找資料
+	    DiscountCodeVO discount = discountRepo.findById(dto.getDiscountCodeId())
+	            .orElseThrow(() -> new RuntimeException("查無折價券"));
+	    MemberVO member = memberRepo.findById(dto.getMemId())
+	            .orElseThrow(() -> new RuntimeException("查無會員"));
+
+	    // 3.建立UserDiscountVO
+	    UserDiscountVO userDiscount = new UserDiscountVO();
+	    UserDiscountVO.CompositeDetail id = new UserDiscountVO.CompositeDetail();
+	    id.setDiscountCodeId(dto.getDiscountCodeId());
+	    id.setMemId(dto.getMemId());
+	    userDiscount.setId(id);
+	    userDiscount.setUsedAt(null);
+
+	    repository.save(userDiscount);
+
+	    // 將結果回傳 DTO 
+	    UserDiscountDTO responseDto = new UserDiscountDTO();
+	    responseDto.setMemId(member.getMemId());
+	    responseDto.setDiscountCodeId(discount.getDiscountCodeId());
+	    responseDto.setDiscountCode(discount.getDiscountCode());
+	    responseDto.setMinOrderAmount(discount.getMinOrderAmount());
+	    responseDto.setDiscountType(discount.getDiscountType());
+	    responseDto.setDiscountValue(discount.getDiscountValue());
+	    responseDto.setStartDate(discount.getStartDate());
+	    responseDto.setEndDate(discount.getEndDate());
+	    responseDto.setUsedAt(null); // 初始未使用
+
+	    return responseDto;
+	}
+	
+	//新增所有會員折價券
+	@Transactional
+	public void sendDiscountToAllMembers(String discountCodeId) {
+	    DiscountCodeVO discount = discountRepo.findById(discountCodeId)
+	        .orElseThrow(() -> new RuntimeException("查無折價券"));
+	    
+	    List<MemberVO> allMembers = memberRepo.findAll();
+
+	    for (MemberVO member : allMembers) {
+	        Optional<UserDiscountVO> existing = repository.findByIdMemIdAndIdDiscountCodeId(member.getMemId(), discountCodeId);
+	        if (existing.isPresent()) {
+	            continue; // 已有就跳過
+	        }
+
+	        UserDiscountVO userDiscount = new UserDiscountVO();
+	        UserDiscountVO.CompositeDetail id = new UserDiscountVO.CompositeDetail();
+	        id.setDiscountCodeId(discountCodeId);
+	        id.setMemId(member.getMemId());
+	        userDiscount.setId(id);
+	        userDiscount.setUsedAt(null);
+
+	        repository.save(userDiscount);
+	    }
 	}
 
 	// 刪除（必須傳入複合主鍵）
@@ -37,27 +114,17 @@ public class UserDiscountService {
 
 	// 查詢特定會員擁有的折扣碼，傳入dto
 	public List<UserDiscountDTO> getDiscountsByMemberId(Integer memId) {
-	    List<UserDiscountVO> voList = repository.findByIdMemId(memId);
+		List<UserDiscountVO> voList = repository.findByIdMemId(memId);
 
-	    // 將 VO 轉為 DTO
-	    return voList.stream()
-	        .map(vo -> {
-	            DiscountCodeVO discount = vo.getDiscountCodeVO(); //從userDiscount抓出discount資料
-	           
-	            return new UserDiscountDTO(
-	            	vo.getId().getMemId(),
-	            	vo.getId().getDiscountCodeId(),
-	            	discount.getDiscountCode(),
-	            	vo.getDiscountCodeType(),
-	            	discount.getStartDate(),
-	            	discount.getEndDate(),
-	            	discount.getMinOrderAmount(),
-	            	vo.getUsedAt()
-	            );
-	         })
-	        .collect(Collectors.toList());
-         }
+		// 將 VO 轉為 DTO
+		return voList.stream().map(vo -> {
+			DiscountCodeVO discount = vo.getDiscountCodeVO(); // 從userDiscount抓出discount資料
 
+			return new UserDiscountDTO(vo.getId().getMemId(), vo.getId().getDiscountCodeId(),
+					discount.getDiscountCode(), discount.getMinOrderAmount(), discount.getDiscountType(),
+					discount.getDiscountValue(), discount.getStartDate(), discount.getEndDate(), vo.getUsedAt());
+		}).collect(Collectors.toList());
+	}
 
 	// 查詢所有
 	public List<UserDiscountVO> getAll() {
