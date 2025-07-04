@@ -14,6 +14,11 @@ public class OwnerLoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
     	
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return false; // 不繼續進入 controller
+        }
+        
         HttpSession session = request.getSession(false);
         Object owner = session != null ? session.getAttribute("loggedInOwner") : null;
 

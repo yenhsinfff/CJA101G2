@@ -25,9 +25,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/member/**")
                 .excludePathPatterns(
                 		"/api/member/login", 
-                		"api/member/logout",
-                		"api/member/update",
-                		"api/member/changePassword",
+                		"/api/member/logout",
+                		"/api/member/update",
+                		"/api/member/changePassword",
                 		"/api/member/register",
                 		"/api/auth/forgot-password",
                         "/api/auth/reset-password"
@@ -35,12 +35,12 @@ public class WebConfig implements WebMvcConfigurer {
 
         // 營地主
         registry.addInterceptor(ownerLoginInterceptor) 
-                .addPathPatterns("api/owner/**")
+                .addPathPatterns("/api/owner/**")
                 .excludePathPatterns(
                 		"/api/owner/login",
                 		"/api/owner/logout",
-                		"api/owner/update",
-                		"api/owner/changePassword",
+                		"/api/owner/update",
+                		"/api/owner/changePassword",
                         "/api/owner/register",
                 		"/api/auth/forgot-password",
                         "/api/auth/reset-password"
@@ -48,7 +48,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         // 管理員
         registry.addInterceptor(adminLoginInterceptor)
-                .addPathPatterns("api/admin/**")
+                .addPathPatterns("/api/admin/**")
                 .excludePathPatterns(
                 		"/api/admin/login",
                 		"/api/admin/logout",
