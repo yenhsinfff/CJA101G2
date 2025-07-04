@@ -21,7 +21,6 @@ import com.lutu.camptracklist.model.CampTrackListVO;
 import jakarta.persistence.EntityNotFoundException;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/camptracklist")
 public class CampTrackListController {
 

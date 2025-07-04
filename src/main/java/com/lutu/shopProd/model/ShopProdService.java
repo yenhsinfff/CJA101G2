@@ -45,6 +45,16 @@ public class ShopProdService {
         }
         return dtoList;
     }
+    // 給前台使用，僅查上架商品
+    public List<ShopProdDTO> getAvailableProds() {
+        List<ShopProdVO> voList = repository.findByStatus(1); // 只撈上架商品
+        List<ShopProdDTO> dtoList = new ArrayList<>();
+        for (ShopProdVO vo : voList) {
+            dtoList.add(convertToDTO(vo));
+        }
+        return dtoList;
+    }
+
 
     // 查詢單筆產品
     public ShopProdDTO getProdById(Integer prodId) {
@@ -78,8 +88,8 @@ public class ShopProdService {
     }
 
     // 最新上架
-    public List<ShopProdDTO> getLatestProds() {
-        List<ShopProdVO> voList = repository.findByReleaseDateDesc();
+    public List<ShopProdDTO> getLatestProds(int limit) {
+        List<ShopProdVO> voList = repository.findByReleaseDateDesc(limit);
         List<ShopProdDTO> dtoList = new ArrayList<>();
         for (ShopProdVO vo : voList) {
             dtoList.add(convertToDTO(vo));
@@ -151,7 +161,8 @@ public class ShopProdService {
                 voList = repository.findByPriceMoreThan(5000);
                 break;
             default:
-                voList = repository.findAll(); // 不限價格
+//                voList = repository.findAll(); // 不限價格
+                voList = repository.findByStatus(1); // 僅查上架商品
                 break;
         }
 
@@ -223,20 +234,57 @@ public class ShopProdService {
                 vo.setProdTypeVO(type);
             }
 
-            if (dto.getProdSpecList() != null) {
-                for (ProdSpecListDTO specDTO : dto.getProdSpecList()) {
-                    specDTO.setProdId(vo.getProdId());
-                    prodSpecListService.saveOrUpdate(specDTO);
+            // === 刪除已移除的規格 ===
+            if (dto.getDeletedSpecIds() != null && !dto.getDeletedSpecIds().isEmpty()) {
+                for (Integer specId : dto.getDeletedSpecIds()) {
+                    prodSpecListService.delete(dto.getProdId(), specId);
                 }
             }
 
-            if (dto.getProdColorList() != null) {
+            // === 刪除已移除的顏色 ===
+            if (dto.getDeletedColorIds() != null && !dto.getDeletedColorIds().isEmpty()) {
+                for (Integer colorId : dto.getDeletedColorIds()) {
+                    prodColorListService.delete(dto.getProdId(), colorId);
+                }
+            }
+
+            
+            if (dto.getProdSpecList() != null && !dto.getProdSpecList().isEmpty()) {
+                // 若是單一規格（只有一筆且 prodSpecId == 1）
+                if (dto.getProdSpecList().size() == 1 && dto.getProdSpecList().get(0).getProdSpecId() == 1) {
+                    // 刪掉所有舊的規格資料，只保留單一規格
+                    prodSpecListService.deleteByProdId(dto.getProdId());
+
+                    ProdSpecListDTO singleSpec = dto.getProdSpecList().get(0);
+                    singleSpec.setProdId(vo.getProdId());
+                    prodSpecListService.saveOrUpdate(singleSpec);
+                } else {
+                    // 多規格：逐筆更新或新增
+                    for (ProdSpecListDTO specDTO : dto.getProdSpecList()) {
+                        specDTO.setProdId(vo.getProdId());
+                        prodSpecListService.saveOrUpdate(specDTO);
+                    }
+                }
+            }
+
+            
+            // === 若 prodColorOrNot = 0，只新增單一顏色 ===
+            if (vo.getProdColorOrNot() == 0) {
+                prodColorListService.deleteByProdId(dto.getProdId());
+                ProdColorListDTO singleColor = new ProdColorListDTO();
+                singleColor.setProdId(vo.getProdId());
+                singleColor.setProdColorId(1); // 預設單一顏色
+                singleColor.setColorName("單一顏色");
+                prodColorListService.saveOrUpdate(singleColor);
+            } else if (dto.getProdColorList() != null) {
+                // 有顏色時才做這區段
+//                prodColorListService.deleteByProdId(dto.getProdId()); // 先刪除該商品所有原本的顏色資料（避免殘留）
                 for (ProdColorListDTO colorDTO : dto.getProdColorList()) {
                     colorDTO.setProdId(vo.getProdId());
                     prodColorListService.saveOrUpdate(colorDTO);
                 }
             }
-
+            
             repository.save(vo);
             return convertToDTO(vo);
         } else {

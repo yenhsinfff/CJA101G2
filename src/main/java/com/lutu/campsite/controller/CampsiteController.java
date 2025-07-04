@@ -2,6 +2,7 @@ package com.lutu.campsite.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +23,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/campsite")
 public class CampsiteController {
 	
@@ -36,10 +36,26 @@ public class CampsiteController {
 
 	// 取得所有營地房間
 	@GetMapping("/getAllCampsite")
-	public ApiResponse<List<CampsiteVO>> getAllCampsite() {
+	public ApiResponse<List<CampsiteDTO>> getAllCampsite() {
 	    List<CampsiteVO> campsiteList = campsiteSvc.getAll();
-	    return new ApiResponse<>("success", campsiteList, "查詢成功");
+	    List<CampsiteDTO> dtoList = campsiteList.stream()
+	        .map(vo -> new CampsiteDTO(
+	            vo.getCampsiteId(),
+	            vo.getCampId(),
+	            vo.getCampsiteTypeId(),
+	            vo.getCampsiteIdName(),
+	            vo.getCamperName()
+	        ))
+	        .collect(Collectors.toList());
+	    return new ApiResponse<>("success", dtoList, "查詢成功");
 	}
+
+	
+//	@GetMapping("/getAllCampsite")
+//	public ApiResponse<List<CampsiteVO>> getAllCampsite() {
+//	    List<CampsiteVO> campsiteList = campsiteSvc.getAll();
+//	    return new ApiResponse<>("success", campsiteList, "查詢成功");
+//	}
 	
 	//http://localhost:8081/CJA101G02/campsite/addCampsite
 	// 新增營地房間，關聯出現campsiteType資料，改傳至DTO

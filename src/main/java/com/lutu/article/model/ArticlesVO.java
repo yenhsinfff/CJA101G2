@@ -29,6 +29,7 @@ public class ArticlesVO implements Serializable {
     private LocalDateTime acTime; // 文章發布時間
     private String acContext; // 文章內容
     private Byte acStatus; // 文章狀態 Not Null 0 : 顯示 1 : 不顯示
+    private Long acViewCount = 0L; // 文章瀏覽次數
 
     private Set<ArticleImageVO> articleImages; // 討論區圖片
     private Set<ReplyVO> replies; // 留言
@@ -95,9 +96,9 @@ public class ArticlesVO implements Serializable {
         this.acTime = acTime;
     }
 
-    @Column(name = "ac_context", nullable = false, length = 4000)
+    @Column(name = "ac_context", nullable = false, columnDefinition = "TEXT")
     @NotEmpty(message = "文章內容: 請勿空白")
-    @Size(max = 4000, message = "文章內容: 長度不能超過{max}個字元")
+    @Size(max = 100000, message = "文章內容: 長度不能超過100KB，圖片請使用圖片上傳功能")
     public String getAcContext() {
         return acContext;
     }
@@ -116,6 +117,15 @@ public class ArticlesVO implements Serializable {
 
     public void setAcStatus(Byte acStatus) {
         this.acStatus = acStatus;
+    }
+
+    @Column(name = "ac_view_count", nullable = false)
+    public Long getAcViewCount() {
+        return acViewCount;
+    }
+
+    public void setAcViewCount(Long acViewCount) {
+        this.acViewCount = acViewCount;
     }
 
     @OneToMany(mappedBy = "articlesVO", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

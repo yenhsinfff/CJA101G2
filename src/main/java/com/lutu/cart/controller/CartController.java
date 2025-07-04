@@ -17,7 +17,7 @@ import com.lutu.cart.model.dto.CartDTO_req;
 import com.lutu.cart.model.dto.CartDTO_res;
 
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class CartController {
 
 	@Autowired

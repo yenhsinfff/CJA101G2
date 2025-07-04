@@ -78,7 +78,7 @@ public class DiscountCodeVO implements Serializable{
 	private LocalDateTime created; //建立時間
 	
 	@Column(name = "updated")
-	private LocalDateTime update; //更新時間
+	private LocalDateTime updated; //更新時間
 	
 	
 	
@@ -176,12 +176,12 @@ public class DiscountCodeVO implements Serializable{
 		this.created = created;
 	}
 
-	public LocalDateTime getUpdate() {
-		return update;
+	public LocalDateTime getUpdated() {
+		return updated;
 	}
 
-	public void setUpdate(LocalDateTime update) {
-		this.update = update;
+	public void setUpdated(LocalDateTime updated) {
+		this.updated = updated;
 	}
 
 }

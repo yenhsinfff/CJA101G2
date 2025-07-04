@@ -29,7 +29,6 @@ import jakarta.servlet.http.HttpServletResponse;
 //api格式 「http://web/CJA101G02/api/campsite_orders」
 
 @RestController
-@CrossOrigin(origins = "*") // 允許所有網域跨域存取
 public class ShopProdController {
 
     @Autowired
@@ -42,15 +41,23 @@ public class ShopProdController {
     ProdTypeRepository prodTypeRepository;
 
     /**
-     * 查詢所有商品（DTO）
+     * 查詢所有商品（上下架商品）
      * @return 所有商品資料列表（含規格、顏色等）
-     * GET http://localhost:8081/CJA101G02/api/products
+     * GET http://localhost:8081/CJA101G02/admin/products
      */
-    @GetMapping("/api/products")
+    @GetMapping("/admin/products")
     public ApiResponse<List<ShopProdDTO>> getAllProds() {
         List<ShopProdDTO> dtoList = shopProdService.getAllProds();
         return new ApiResponse<>("success", dtoList, "查詢成功");
     }
+    
+    // 只查詢上架商品
+    @GetMapping("/api/products")
+    public ApiResponse<List<ShopProdDTO>> getAllAvailableProds() {
+        List<ShopProdDTO> dtoList = shopProdService.getAvailableProds(); // 只查上架商品
+        return new ApiResponse<>("success", dtoList, "查詢成功");
+    }
+
 
     /**
      * 查詢單一商品by 商品 ID
@@ -95,8 +102,8 @@ public class ShopProdController {
      * GET http://localhost:8081/CJA101G02/api/products/latest
      */
     @GetMapping("/api/products/latest")
-    public ApiResponse<List<ShopProdDTO>> getLatest() {
-        return new ApiResponse<>("success", shopProdService.getLatestProds(), "查詢成功");
+    public ApiResponse<List<ShopProdDTO>> getLatest(@RequestParam(defaultValue = "6") int limit) {
+        return new ApiResponse<>("success", shopProdService.getLatestProds(limit), "查詢成功");
     }
 
     /**
@@ -191,19 +198,6 @@ public class ShopProdController {
         }
     }
 	
-    /**
-     * 查詢所有商品類別（回傳 DTO）
-     * @return 所有商品分類（id + 名稱）
-     * GET http://localhost:8081/CJA101G02/api/product-types
-    
-    @GetMapping("/api/product-types")
-    public List<ProdTypeDTO> getAllTypes() {
-        return prodTypeRepository.findAll()
-            .stream()
-            .map(pt -> new ProdTypeDTO(pt.getProdTypeId(), pt.getProdTypeName()))
-            .collect(Collectors.toList());
-    } 
-    */
     
     
 //	// 抓取資料庫的營地圖片，提供給前端

@@ -39,8 +39,9 @@ import com.lutu.util.HmacUtil;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@CrossOrigin(origins = "*")
 public class CampApiController {
+	
+	
 	@Autowired
 	CampSiteOrderService campsiteOrdSvc;
 

@@ -83,7 +83,7 @@ public class OwnerVO implements Serializable{
 	@Column(name = "owner_tel")
 	@NotEmpty(message = "電話不可空白")
 	@Pattern(
-	  regexp = "^(09\\d{2}-\\d{3}-\\d{3}|0[3-8]-\\d{3}-\\d{4}|02-\\d{4}-\\d{4})$",
+	  regexp = "^(09\\d{2}-\\d{3}-\\d{3}|0[3-8]-\\d{4}-\\d{4}|02-\\d{4}-\\d{4})$",
 	  message = "電話格式錯誤，請輸入手機如0968-123-456，或市話如03-456-7890 / 02-1234-5678"
 	)
 	private String ownerTel; //負責人電話
@@ -94,7 +94,7 @@ public class OwnerVO implements Serializable{
 	@Pattern(regexp = "^[(\u4e00-\u9fa5)(a-zA-Z0-9_)]{2,10}$", message = "聯絡人姓名: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間")
 	private String ownerPoc; //聯絡人
 	
-	
+	//調整：電話格式需要這麼嚴謹嗎？？？
 	@Column(name = "owner_con_phone")
 	@NotEmpty(message = "電話不可空白")
 	@Pattern(

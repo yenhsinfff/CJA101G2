@@ -22,7 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/prod-colors")
-@CrossOrigin(origins = "*")
 public class ProdColorListController {
 
     @Autowired
@@ -85,6 +84,10 @@ public class ProdColorListController {
             @RequestParam("file") MultipartFile file) {
 
         try {
+        	if (file == null || file.isEmpty()) {
+                return new ApiResponse<>("fail", null, "未選擇圖片檔案");
+            }
+        	
             boolean success = service.updateColorPic(prodId, colorId, file);
             if (success) {
                 return new ApiResponse<>("success", "圖片上傳成功", "顏色圖片已更新");
