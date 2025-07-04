@@ -19,7 +19,6 @@ import com.lutu.prodSpecList.model.ProdSpecListService;
 
 @RestController
 @RequestMapping("/api/prod-specs")
-@CrossOrigin(origins = "*")
 public class ProdSpecListController {
 
     @Autowired

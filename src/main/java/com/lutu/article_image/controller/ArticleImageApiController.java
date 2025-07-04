@@ -23,7 +23,7 @@ import com.lutu.article_image.model.ArticleImageVO;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class ArticleImageApiController {
 
     @Autowired

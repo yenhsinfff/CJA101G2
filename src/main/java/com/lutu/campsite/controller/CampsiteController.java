@@ -23,7 +23,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/campsite")
 public class CampsiteController {
 	

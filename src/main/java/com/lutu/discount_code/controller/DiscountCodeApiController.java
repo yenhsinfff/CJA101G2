@@ -2,6 +2,7 @@
 package com.lutu.discount_code.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -24,7 +25,6 @@ import com.lutu.shop_order.model.ShopOrderDTO_res;
 
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("api/discount")
 public class DiscountCodeApiController {
 

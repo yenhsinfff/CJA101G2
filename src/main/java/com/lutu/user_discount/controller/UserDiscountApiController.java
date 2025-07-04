@@ -19,7 +19,6 @@ import com.lutu.user_discount.model.UserDiscountService;
 import com.lutu.user_discount.model.UserDiscountVO;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/userdiscount")
 public class UserDiscountApiController {
 	

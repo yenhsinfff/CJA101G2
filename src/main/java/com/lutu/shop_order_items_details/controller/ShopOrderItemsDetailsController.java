@@ -18,7 +18,6 @@ import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsVO;
 import jakarta.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "*")
 public class ShopOrderItemsDetailsController {
 
 	@Autowired

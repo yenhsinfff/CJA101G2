@@ -22,7 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/prod-colors")
-@CrossOrigin(origins = "*")
 public class ProdColorListController {
 
     @Autowired

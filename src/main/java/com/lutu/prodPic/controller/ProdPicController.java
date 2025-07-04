@@ -24,7 +24,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/prodpics")
-@CrossOrigin(origins = "*") // 允許所有網域跨域存取
 public class ProdPicController {
 
 	@Autowired
