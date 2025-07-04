@@ -52,5 +52,16 @@ public class CampsiteApiController {
 		  return new ApiResponse<>("success", dto, "查詢成功");
 	}
 	
+	@GetMapping("/cancel/{campsiteOrderId}")
+	public ApiResponse<Boolean> cancelOneCampsiteOrder(@PathVariable String campsiteOrderId) throws IOException {
+		Boolean cancelRes = campsiteOrdSvc.updatePaymentStatus(campsiteOrderId, (byte)3);
+		if(cancelRes) {
+			return new ApiResponse<>("success", cancelRes, "取消成功");
+		}else {
+			return new ApiResponse<>("fail", cancelRes, "取消失敗");
+		}
+		  
+	}
+	
 
 }
