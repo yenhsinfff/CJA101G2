@@ -89,4 +89,11 @@ public interface ArticlesRepository extends JpaRepository<ArticlesVO, Integer> {
      */
     @Query("SELECT a FROM ArticlesVO a WHERE a.memberVO.memName = :memName")
     List<ArticlesVO> findByMemberVOMemName(@Param("memName") String memName);
+
+    /**
+     * 查詢瀏覽次數最多的文章
+     * 
+     * @return Optional<ArticlesVO>
+     */
+    Optional<ArticlesVO> findTopByOrderByAcViewCountDesc();
 }
