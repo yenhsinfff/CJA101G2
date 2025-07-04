@@ -45,6 +45,16 @@ public class ShopProdService {
         }
         return dtoList;
     }
+    // 給前台使用，僅查上架商品
+    public List<ShopProdDTO> getAvailableProds() {
+        List<ShopProdVO> voList = repository.findByStatus(1); // 只撈上架商品
+        List<ShopProdDTO> dtoList = new ArrayList<>();
+        for (ShopProdVO vo : voList) {
+            dtoList.add(convertToDTO(vo));
+        }
+        return dtoList;
+    }
+
 
     // 查詢單筆產品
     public ShopProdDTO getProdById(Integer prodId) {
@@ -78,8 +88,8 @@ public class ShopProdService {
     }
 
     // 最新上架
-    public List<ShopProdDTO> getLatestProds() {
-        List<ShopProdVO> voList = repository.findByReleaseDateDesc();
+    public List<ShopProdDTO> getLatestProds(int limit) {
+        List<ShopProdVO> voList = repository.findByReleaseDateDesc(limit);
         List<ShopProdDTO> dtoList = new ArrayList<>();
         for (ShopProdVO vo : voList) {
             dtoList.add(convertToDTO(vo));
@@ -151,7 +161,8 @@ public class ShopProdService {
                 voList = repository.findByPriceMoreThan(5000);
                 break;
             default:
-                voList = repository.findAll(); // 不限價格
+//                voList = repository.findAll(); // 不限價格
+                voList = repository.findByStatus(1); // 僅查上架商品
                 break;
         }
 
