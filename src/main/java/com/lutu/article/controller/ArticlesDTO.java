@@ -25,6 +25,7 @@ public class ArticlesDTO implements Serializable {
     private LocalDateTime acTime; // 文章發布時間
     private String acContext; // 文章內容
     private Byte acStatus; // 文章狀態
+    private Long acViewCount; // 文章瀏覽次數
 
     public ArticlesDTO() {
     }
@@ -36,6 +37,7 @@ public class ArticlesDTO implements Serializable {
             this.acTime = articlesVO.getAcTime();
             this.acContext = articlesVO.getAcContext();
             this.acStatus = articlesVO.getAcStatus();
+            this.acViewCount = articlesVO.getAcViewCount();
 
             // 處理會員資訊
             if (articlesVO.getMemberVO() != null) {
@@ -133,6 +135,14 @@ public class ArticlesDTO implements Serializable {
         this.acStatus = acStatus;
     }
 
+    public Long getAcViewCount() {
+        return acViewCount;
+    }
+
+    public void setAcViewCount(Long acViewCount) {
+        this.acViewCount = acViewCount;
+    }
+
     @Override
     public String toString() {
         return "ArticlesDTO{" +
@@ -148,6 +158,7 @@ public class ArticlesDTO implements Serializable {
                 + (acContext != null && acContext.length() > 50 ? acContext.substring(0, 47) + "..." : acContext) + '\''
                 +
                 ", acStatus=" + acStatus +
+                ", acViewCount=" + acViewCount +
                 '}';
     }
 }
