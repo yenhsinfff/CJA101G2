@@ -29,7 +29,6 @@ import jakarta.servlet.http.HttpServletResponse;
 //api格式 「http://web/CJA101G02/api/campsite_orders」
 
 @RestController
-@CrossOrigin(origins = "*") // 允許所有網域跨域存取
 public class ShopProdController {
 
     @Autowired

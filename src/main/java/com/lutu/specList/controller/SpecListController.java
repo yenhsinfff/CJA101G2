@@ -10,7 +10,6 @@ import com.lutu.specList.model.SpecListService;
 
 @RestController
 @RequestMapping("/api/specs")
-@CrossOrigin(origins = "*") //允許所有網域跨域存取
 public class SpecListController {
 
     @Autowired

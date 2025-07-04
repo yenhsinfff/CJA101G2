@@ -29,16 +29,35 @@ public class OwnerAuthController {
         authService.register(request);
         return ResponseEntity.ok("註冊成功，請至信箱收取驗證信。");
     }
+    
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentOwner(HttpSession session) {
+    	System.out.println("getCurrentOwner:尋找cuuremowner session");
+    	OwnerLoginResponse response = (OwnerLoginResponse) session.getAttribute("loggedInOwner");
+    	System.out.println("getCurrentOwner_response"+response);
+        if (response != null) {
+        	System.out.println("currentOwner:"+response);
+            return ResponseEntity.ok(response);
+        } else {
+        	 // 登入失敗（帳號密碼錯或帳號未啟用）
+            Map<String, Object> body = new HashMap<>();
+            body.put("success", false);
+            body.put("message", "登入失敗");
+            return ResponseEntity.status(401).body(body);
+        }
+    }
 
     // 登入
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody OwnerLoginRequest request, HttpSession session) {
         try {
             OwnerLoginResponse response = authService.login(request.getOwnerAcc(), request.getOwnerPwd());
-
+            System.out.println("currentOwner_login:"+response);
             // 登入成功，儲存 session
             session.setAttribute("loggedInOwner", response);
-
+            System.out.println("login:成功");
+            OwnerLoginResponse response1 = (OwnerLoginResponse) session.getAttribute("loggedInOwner");
+            System.out.println("response1"+response1);
             // 包裝回傳 JSON
             Map<String, Object> body = new HashMap<>();
             body.put("success", true);
@@ -59,6 +78,7 @@ public class OwnerAuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpSession session) {
         session.invalidate();
+        System.out.println("登出成功");
         return ResponseEntity.ok("登出成功");
     }
 

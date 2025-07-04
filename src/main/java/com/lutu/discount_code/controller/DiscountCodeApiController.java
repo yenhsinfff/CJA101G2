@@ -27,7 +27,6 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("api/discount")
 public class DiscountCodeApiController {
 
