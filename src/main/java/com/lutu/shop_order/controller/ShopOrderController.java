@@ -29,7 +29,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @Validated
-@CrossOrigin(origins = "*")
 public class ShopOrderController {
 
 	@Autowired

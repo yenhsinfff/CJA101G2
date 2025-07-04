@@ -17,7 +17,6 @@ import com.lutu.productType.model.ProdTypeDTO;
 import com.lutu.productType.model.ProdTypeService;
 
 @RestController
-@CrossOrigin(origins = "*")
 public class ProdTypeController {
 
     @Autowired

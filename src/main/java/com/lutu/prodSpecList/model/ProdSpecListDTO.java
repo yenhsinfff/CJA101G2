@@ -14,6 +14,7 @@ public class ProdSpecListDTO {
     private Integer prodSpecPrice;
     
     private String prodSpecName;
+    private Integer originalSpecId;
 
 	public Integer getProdId() {
 		return prodId;
@@ -46,6 +47,15 @@ public class ProdSpecListDTO {
 	public void setProdSpecName(String prodSpecName) {
 		this.prodSpecName = prodSpecName;
 	}
+
+	public Integer getOriginalSpecId() {
+		return originalSpecId;
+	}
+
+	public void setOriginalSpecId(Integer originalSpecId) {
+		this.originalSpecId = originalSpecId;
+	}
+
 
    
 }

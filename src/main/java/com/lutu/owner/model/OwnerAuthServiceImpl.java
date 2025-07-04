@@ -142,6 +142,7 @@ public class OwnerAuthServiceImpl implements OwnerAuthService {
 
         OwnerVO owner = ownerRepo.findById(loggedIn.getOwnerId())
             .orElseThrow(() -> new RuntimeException("找不到使用者"));
+        
 
         if (!owner.getOwnerPwd().equals(request.getOldPassword())) {
             throw new RuntimeException("舊密碼錯誤");

@@ -26,13 +26,14 @@ import com.lutu.discount_code.model.DiscountCodeVO;
 import jakarta.validation.Valid;
 
 
+
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("api/discount")
 public class DiscountCodeApiController {
 
 	@Autowired
 	private DiscountCodeService service;
+
 
 //  http://localhost:8081/CJA101G02/api/discount/all
 	@GetMapping("/all")
@@ -95,3 +96,4 @@ public class DiscountCodeApiController {
         return ResponseEntity.ok(response);
     }
 }
+

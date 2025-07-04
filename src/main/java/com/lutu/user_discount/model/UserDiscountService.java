@@ -1,5 +1,6 @@
 package com.lutu.user_discount.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -116,6 +117,7 @@ public class UserDiscountService {
 	public List<UserDiscountDTO> getDiscountsByMemberId(Integer memId) {
 		List<UserDiscountVO> voList = repository.findByIdMemId(memId);
 
+
 		// 將 VO 轉為 DTO
 		return voList.stream().map(vo -> {
 			DiscountCodeVO discount = vo.getDiscountCodeVO(); // 從userDiscount抓出discount資料
@@ -124,6 +126,33 @@ public class UserDiscountService {
 					discount.getDiscountCode(), discount.getMinOrderAmount(), discount.getDiscountType(),
 					discount.getDiscountValue(), discount.getStartDate(), discount.getEndDate(), vo.getUsedAt());
 		}).collect(Collectors.toList());
+
+    }
+  
+	// 查詢會員未使用過的折扣
+	public List<UserDiscountDTO> getNotUsedByMemberId(Integer memId) {
+		List<UserDiscountVO> voList = repository.findByIdMemId(memId);
+		
+		 // 將 VO 轉為 DTO
+		List<UserDiscountDTO> dtoList = new ArrayList<>();
+		
+		for (UserDiscountVO vo : voList) {
+			if (vo.getUsedAt() == null) {
+				UserDiscountDTO dto = new UserDiscountDTO();
+				dto.setDiscountCode(vo.getDiscountCodeVO().getDiscountCode());
+				dto.setDiscountCodeId(vo.getDiscountCodeVO().getDiscountCodeId());
+				dto.setDiscountCodeType(vo.getDiscountCodeType());
+				dto.setEndDate(vo.getDiscountCodeVO().getEndDate());
+				dto.setMemId(memId);
+				dto.setMinOrderAmount(vo.getDiscountCodeVO().getMinOrderAmount());
+				dto.setStartDate(vo.getDiscountCodeVO().getStartDate());
+				dto.setUsedAt(vo.getUsedAt());
+				
+				dtoList.add(dto);
+			}
+		}
+		
+		return dtoList;
 	}
 
 	// 查詢所有

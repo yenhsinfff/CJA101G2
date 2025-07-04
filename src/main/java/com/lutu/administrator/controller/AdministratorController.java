@@ -27,8 +27,8 @@ public class AdministratorController {
     // 登入
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
-        System.out.println("AdminAcc:"+loginRequest.getAdminAcc());
-        System.out.println("AdminPwd:"+loginRequest.getAdminPwd());
+//        System.out.println("AdminAcc:"+loginRequest.getAdminAcc());
+//        System.out.println("AdminPwd:"+loginRequest.getAdminPwd());
         Optional<AdministratorVO> optionalAdmin = adminRepo.findByAdminAcc(loginRequest.getAdminAcc());
 
         if (optionalAdmin.isPresent()) {
@@ -50,7 +50,7 @@ public class AdministratorController {
 
             // 登入成功 → 設定 session 並回傳 admin 資料
             session.setAttribute("admin", admin);
-
+            System.out.println("管理員登入成功");
             Map<String, Object> adminData = new HashMap<>();
             adminData.put("adminId", admin.getAdminId());
             adminData.put("adminAcc", admin.getAdminAcc());
@@ -76,6 +76,7 @@ public class AdministratorController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
         session.invalidate();
+        System.out.println("管理員登出成功");
         return ResponseEntity.ok("已登出");
     }
 

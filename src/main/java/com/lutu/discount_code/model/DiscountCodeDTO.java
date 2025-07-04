@@ -147,6 +147,7 @@ public class DiscountCodeDTO implements Serializable {
 
 	public void setUpdated(LocalDateTime updated) {
 		this.updated = updated;
+
 	}
 
 }
