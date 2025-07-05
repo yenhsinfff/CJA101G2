@@ -56,7 +56,6 @@ import java.util.UUID;
 //api格式 「http://localhost:8081/CJA101G02/api/campsite_orders」
 
 @RestController
-@CrossOrigin(origins = "*")
 public class ApiController {
 
 	@Autowired
