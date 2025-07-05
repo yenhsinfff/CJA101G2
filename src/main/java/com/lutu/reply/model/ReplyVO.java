@@ -114,9 +114,17 @@ public class ReplyVO implements Serializable {
 
     @Override
     public String toString() {
-        return "ReplyVO [replyId=" + replyId + ", memberVO=" + memberVO + ", articlesVO=" + articlesVO + ", replyTime="
-                + replyTime + ", replyContext=" + replyContext + ", replyStatus=" + replyStatus + ", replyImages="
-                + replyImages + ", replyReportVO=" + replyReportVO + "]";
+        return "ReplyVO [replyId=" + replyId +
+                ", memberVO=" + (memberVO != null ? "MemberVO@" + memberVO.hashCode() : null) +
+                ", articlesVO=" + (articlesVO != null ? "ArticlesVO@" + articlesVO.hashCode() : null) +
+                ", replyTime=" + replyTime +
+                ", replyContext="
+                + (replyContext != null && replyContext.length() > 50 ? replyContext.substring(0, 47) + "..."
+                        : replyContext)
+                +
+                ", replyStatus=" + replyStatus + "]";
+        // 重要提醒：絕對不要在 toString() 中包含延遲載入的集合
+        // 例如：不要使用 replyImages, replyReportVO 等
     }
 
     @OneToMany(mappedBy = "replyVO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
