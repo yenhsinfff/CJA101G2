@@ -1,5 +1,7 @@
 package com.lutu.user_discount.model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -136,14 +138,20 @@ public class UserDiscountService {
 		 // 將 VO 轉為 DTO
 		List<UserDiscountDTO> dtoList = new ArrayList<>();
 		
+		// 取得今日時間
+		LocalDateTime now = LocalDateTime.now();
+		
 		for (UserDiscountVO vo : voList) {
-			if (vo.getUsedAt() == null) {
+			LocalDateTime endDate = vo.getDiscountCodeVO().getEndDate();
+			// 未使用過，且在使用效期內
+			if (vo.getUsedAt() == null && !endDate.isBefore(now)){
 				UserDiscountDTO dto = new UserDiscountDTO();
 				dto.setDiscountCode(vo.getDiscountCodeVO().getDiscountCode());
 				dto.setDiscountCodeId(vo.getDiscountCodeVO().getDiscountCodeId());
 				dto.setEndDate(vo.getDiscountCodeVO().getEndDate());
 				dto.setMemId(memId);
 				dto.setMinOrderAmount(vo.getDiscountCodeVO().getMinOrderAmount());
+				dto.setDiscountType(vo.getDiscountCodeType());
 				dto.setStartDate(vo.getDiscountCodeVO().getStartDate());
 				dto.setUsedAt(vo.getUsedAt());
 				
