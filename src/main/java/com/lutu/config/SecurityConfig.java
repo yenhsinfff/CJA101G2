@@ -21,7 +21,7 @@ public class SecurityConfig {
 //								.permitAll()
 //						.anyRequest().authenticated());
 								//預設開放，設定攔截
-								.requestMatchers("/admin/**","/*/getonemember").authenticated()
+								.requestMatchers("/api/admin/**","/*/getonemember").authenticated()
 								.anyRequest().permitAll());
 								
 		return http.build();
