@@ -1,11 +1,16 @@
 package com.lutu.reply.controller;
 
 import com.lutu.reply.model.ReplyVO;
+import com.lutu.reply_image.model.ReplyImageVO;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReplyDTO {
     private Integer replyId;
 
@@ -29,6 +34,11 @@ public class ReplyDTO {
     @Max(value = 1, message = "回覆狀態: 值必須為0或1")
     private Byte replyStatus;
 
+    // 圖片相關欄位
+    private Integer imageCount; // 圖片數量
+    private List<Integer> imageIds; // 圖片ID列表，用於前端顯示
+    private Boolean hasImages; // 是否有圖片
+
     // 預設建構子
     public ReplyDTO() {
     }
@@ -42,6 +52,19 @@ public class ReplyDTO {
         this.replyTime = replyVO.getReplyTime();
         this.replyContext = replyVO.getReplyContext();
         this.replyStatus = replyVO.getReplyStatus();
+
+        // 處理圖片資訊
+        if (replyVO.getReplyImages() != null) {
+            this.imageCount = replyVO.getReplyImages().size();
+            this.hasImages = this.imageCount > 0;
+            this.imageIds = replyVO.getReplyImages().stream()
+                    .map(ReplyImageVO::getReplyImgId)
+                    .collect(Collectors.toList());
+        } else {
+            this.imageCount = 0;
+            this.hasImages = false;
+            this.imageIds = null;
+        }
     }
 
     // Getter 和 Setter
@@ -101,10 +124,35 @@ public class ReplyDTO {
         this.replyStatus = replyStatus;
     }
 
+    public Integer getImageCount() {
+        return imageCount;
+    }
+
+    public void setImageCount(Integer imageCount) {
+        this.imageCount = imageCount;
+    }
+
+    public List<Integer> getImageIds() {
+        return imageIds;
+    }
+
+    public void setImageIds(List<Integer> imageIds) {
+        this.imageIds = imageIds;
+    }
+
+    public Boolean getHasImages() {
+        return hasImages;
+    }
+
+    public void setHasImages(Boolean hasImages) {
+        this.hasImages = hasImages;
+    }
+
     @Override
     public String toString() {
         return "ReplyDTO [replyId=" + replyId + ", memId=" + memId + ", memName=" + memName + ", acId=" + acId
                 + ", replyTime=" + replyTime
-                + ", replyContext=" + replyContext + ", replyStatus=" + replyStatus + "]";
+                + ", replyContext=" + replyContext + ", replyStatus=" + replyStatus
+                + ", imageCount=" + imageCount + ", hasImages=" + hasImages + "]";
     }
 }
