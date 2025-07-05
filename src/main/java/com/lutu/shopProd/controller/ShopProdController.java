@@ -45,7 +45,7 @@ public class ShopProdController {
      * @return 所有商品資料列表（含規格、顏色等）
      * GET http://localhost:8081/CJA101G02/admin/products
      */
-    @GetMapping("/admin/products")
+    @GetMapping("/api/adminproducts")
     public ApiResponse<List<ShopProdDTO>> getAllProds() {
         List<ShopProdDTO> dtoList = shopProdService.getAllProds();
         return new ApiResponse<>("success", dtoList, "查詢成功");

@@ -22,7 +22,7 @@ public class CorsConfig {
                             "http://192.168.*.*:*",
                             "http://lutu.ddnsking.com"
                         )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true)  // ✅ 使用 credentials 要搭配非萬用 * 設定
                         .maxAge(3600);
