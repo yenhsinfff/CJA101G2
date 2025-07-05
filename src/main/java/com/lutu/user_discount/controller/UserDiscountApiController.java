@@ -5,21 +5,18 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lutu.ApiResponse;
-import com.lutu.discount_code.model.DiscountCodeService;
 import com.lutu.user_discount.model.UserDiscountDTO;
-
 import com.lutu.user_discount.model.UserDiscountDTO_request;
 import com.lutu.user_discount.model.UserDiscountDTO_updateUsedTime;
-
 import com.lutu.user_discount.model.UserDiscountService;
 import com.lutu.user_discount.model.UserDiscountVO;
 
@@ -71,7 +68,7 @@ public class UserDiscountApiController {
 //  http://localhost:8081/CJA101G02/api/userdiscount/sendDiscountToAll?discountCodeId=A00001
  // 發送折價券給所有會員
     @PostMapping("/sendDiscountToAll")
-    public ResponseEntity<ApiResponse<String>> sendDiscountToAll(@RequestParam String discountCodeId) {
+    public ResponseEntity<ApiResponse<String>> sendDiscountToAll(@RequestParam("discountCodeId") String discountCodeId) {
         userDiscountService.sendDiscountToAllMembers(discountCodeId);
 
         ApiResponse<String> response = new ApiResponse<>();
