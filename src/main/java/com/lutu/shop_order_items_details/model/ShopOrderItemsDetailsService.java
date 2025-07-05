@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lutu.colorList.model.ColorListRepository;
 import com.lutu.colorList.model.ColorListVO;
@@ -117,8 +118,8 @@ public class ShopOrderItemsDetailsService {
 
 		// 3. 判斷訂單狀態
 		ShopOrderVO order = sos.getOneShopOrder(dtoUpdate.getShopOrderId());
-		
-		final int ORDER_STATUS_COMPLETED = 3;	//設定訂單完成的狀態為常數，3: 已取貨，完成訂單
+
+		final int ORDER_STATUS_COMPLETED = 3; // 設定訂單完成的狀態為常數，3: 已取貨，完成訂單
 
 		if (order.getShopOrderStatus() != ORDER_STATUS_COMPLETED) { // 訂單狀態還沒取貨無法修改
 			throw new RuntimeException("訂單未完成，無法評論或修改評價");
@@ -148,6 +149,44 @@ public class ShopOrderItemsDetailsService {
 		// vo轉dto
 		return voToDto(detailsVO);
 
+	}
+
+	// 查看商品評分評價
+	public List<ShopOrderItemsDetailsDTO_comment> getProdComments(@RequestParam Integer prodId) {
+		List<ShopOrderItemsDetailsVO> listVO = soidr.findByprodId(prodId);
+
+		List<ShopOrderItemsDetailsDTO_comment> listDTO = new ArrayList<>();
+
+		for (ShopOrderItemsDetailsVO vo : listVO) {
+			
+			// 只留下有評分或有評論的資料
+			boolean hasScore = vo.getCommentSatis() != 0;
+			boolean hasComments = vo.getCommentContent() != null && !vo.getCommentContent().trim().isEmpty();
+			
+			if (!hasScore && !hasComments) {
+		        continue; // 兩者都沒填就跳過
+		    }
+			
+			ShopOrderItemsDetailsDTO_comment dto = new ShopOrderItemsDetailsDTO_comment();
+
+			dto.setProdId(vo.getProdId());
+
+			// 取得會員編號
+			ShopOrderVO orderVO = sos.getOneShopOrder(vo.getShopOrderId());
+			dto.setMemId(orderVO.getMemId().getMemId());
+
+			if (hasScore) {
+		        dto.setCommentSatis(vo.getCommentSatis());
+		    }
+		    if (hasComments) {
+		        dto.setCommentContent(vo.getCommentContent());
+		    }
+
+			listDTO.add(dto);
+
+		}
+
+		return listDTO;
 	}
 
 }

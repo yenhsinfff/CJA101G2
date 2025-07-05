@@ -3,13 +3,14 @@ package com.lutu.shop_order_items_details.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.lutu.ApiResponse;
+import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_comment;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_res;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_update;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsService;
@@ -69,6 +70,14 @@ public class ShopOrderItemsDetailsController {
 			return new ApiResponse<>("fail", null, "修改失敗");
 		}
 
+	}
+	
+	// 取得商品評分評價訂單明細
+	@GetMapping("/api/getProdComments")
+	public ApiResponse<List<ShopOrderItemsDetailsDTO_comment>> getProdComments(Integer prodId) {
+		List<ShopOrderItemsDetailsDTO_comment> prodComments = soids.getProdComments(prodId);
+
+		return new ApiResponse<>("success", prodComments, "查詢成功");
 	}
 
 }
