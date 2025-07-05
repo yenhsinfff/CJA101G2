@@ -141,7 +141,6 @@ public class UserDiscountService {
 				UserDiscountDTO dto = new UserDiscountDTO();
 				dto.setDiscountCode(vo.getDiscountCodeVO().getDiscountCode());
 				dto.setDiscountCodeId(vo.getDiscountCodeVO().getDiscountCodeId());
-				dto.setDiscountCodeType(vo.getDiscountCodeType());
 				dto.setEndDate(vo.getDiscountCodeVO().getEndDate());
 				dto.setMemId(memId);
 				dto.setMinOrderAmount(vo.getDiscountCodeVO().getMinOrderAmount());
