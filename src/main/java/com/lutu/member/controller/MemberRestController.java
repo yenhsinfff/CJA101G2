@@ -110,34 +110,33 @@ public class MemberRestController {
             @RequestPart(name = "memPic", required = false) MultipartFile memPic,
             HttpSession session) {
 
-    	MemberLoginDTO loggedInMember = (MemberLoginDTO) session.getAttribute("loggedInMember");
+        MemberLoginDTO loggedInMember = (MemberLoginDTO) session.getAttribute("loggedInMember");
         if (loggedInMember == null) {
             return ResponseEntity.status(401).body("未登入");
         }
 
-        // 建立 DTO 物件
+        // 建立 DTO
         UpdateMemberRequest dto = new UpdateMemberRequest();
         dto.setMemName(memName);
-        dto.setMemPwd(memPwd);
+//        dto.setMemPwd(memPwd);
         dto.setMemMobile(memMobile);
         dto.setMemAddr(memAddr);
 
-        System.out.println("收到資料：");
-        System.out.println("memName: " + dto.getMemName());
-        System.out.println("memPwd: " + (dto.getMemPwd() != null ? "***" : "null"));
-        System.out.println("memMobile: " + dto.getMemMobile());
-        System.out.println("memAddr: " + dto.getMemAddr());
-        System.out.println("memPic is null: " + (memPic == null));
-        
         try {
-            MemberVO updated = memberCrudService.updateMemberSelective(loggedInMember.getMemId(), dto, memPic);
-            session.setAttribute("loggedInMember", updated); // 更新 Session
-            return ResponseEntity.ok(updated);
+            // 呼叫 Service 更新資料
+            MemberVO updatedMember = memberCrudService.updateMemberSelective(loggedInMember.getMemId(), dto, memPic);
+
+            // 同步更新 session 內資料（可選擇同步更多欄位）
+            loggedInMember.setMemName(updatedMember.getMemName());
+            session.setAttribute("loggedInMember", loggedInMember);
+
+            return ResponseEntity.ok(updatedMember);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("更新失敗：" + e.getMessage());
         }
     }
+
 
 
 
@@ -195,8 +194,9 @@ public class MemberRestController {
         member.setMemPwd(request.getNewPassword());
         memberRepository.save(member);
 
-        return ResponseEntity.ok("密碼修改成功");
+        return ResponseEntity.ok(Map.of("success", true, "message", "密碼修改成功"));
     }
+
     
 
     
