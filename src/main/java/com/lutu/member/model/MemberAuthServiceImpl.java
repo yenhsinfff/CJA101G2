@@ -112,7 +112,7 @@ public class MemberAuthServiceImpl implements MemberAuthService {
     private void sendVerificationEmail(String toEmail, String token) {
         try {
             String subject = "請確認您的註冊信箱";
-            String verificationLink = "http://localhost:8082/CJA101G2/api/member/verify?token=" + token;
+            String verificationLink = "http://localhost:8081/CJA101G02/api/member/verify?token=" + token;
             String content = "<p>感謝您的註冊！</p>"
                     + "<p>請點擊下列連結以啟用帳號：</p>"
                     + "<a href=\"" + verificationLink + "\">啟用帳號</a>";
