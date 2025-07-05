@@ -1,4 +1,4 @@
-package com.lutu.shop.model;
+package com.lutu.prodFavList.model;
 
 import java.io.Serializable;
 import java.util.Objects;
