@@ -27,7 +27,7 @@ public class ProdFavListController {
 
     /**
      * 加入收藏
-     * POST /api/favorites/{memId}/{prodId}
+     * POST /api/prodfavorites/{memId}/{prodId}
      */
     @PostMapping("/{memId}/{prodId}")
     public ApiResponse<String> addFavorite(@PathVariable Integer memId,
@@ -39,7 +39,7 @@ public class ProdFavListController {
 
     /**
      * 查詢會員所有收藏商品（含商品詳細資料）
-     * GET /api/favorites/member/{memId}
+     * GET /api/prodfavorites/member/{memId}
      */
     @GetMapping("/member/{memId}")
     public ApiResponse<List<ShopProdDTO>> getMemberFavorites(@PathVariable Integer memId) {
@@ -49,7 +49,7 @@ public class ProdFavListController {
 
     /**
      * 是否已收藏（給前端判斷愛心狀態）
-     * GET /api/favorites/{memId}/{prodId}
+     * GET /api/prodfavorites/{memId}/{prodId}
      */
     @GetMapping("/isFavoriteOrNot/{memId}/{prodId}")
     public ApiResponse<Boolean> isFavorite(@PathVariable Integer memId,
@@ -60,7 +60,7 @@ public class ProdFavListController {
     
     /**
      * 取消收藏
-     * DELETE /api/favorites/{memId}/{prodId}
+     * DELETE /api/prodfavorites/{memId}/{prodId}
      */
     @DeleteMapping("/{memId}/{prodId}")
     public ApiResponse<String> removeFavorite(@PathVariable Integer memId,
