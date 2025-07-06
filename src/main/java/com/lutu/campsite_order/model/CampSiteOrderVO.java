@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
 import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
 import com.lutu.member.model.MemberVO;
@@ -109,11 +110,23 @@ public class CampSiteOrderVO implements java.io.Serializable {
 
 	@OneToMany(mappedBy = "campSiteOrderVO", cascade = CascadeType.ALL)
 	private Set<CampSiteOrderDetailsVO> campsiteOrderDetails = new HashSet<>();
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "campsite_order_id") // 外鍵會在 BundleItemDetailsVO 中維護
+	private Set<BundleItemDetailsVO> bundleitemDetails = new HashSet<>();
 
 	
+	
+
+	
+
 	//=====================ManyToOne=====================//
 	public void setCampSiteOrderDetails(Set<CampSiteOrderDetailsVO> campsiteOrders) {
 		this.campsiteOrderDetails = campsiteOrders;
+	}
+	
+	public void setBundleitemDetails(Set<BundleItemDetailsVO> bundleitemDetails) {
+		this.bundleitemDetails = bundleitemDetails;
 	}
 
 //	public MemberVO getMemberVO() {
@@ -155,6 +168,10 @@ public class CampSiteOrderVO implements java.io.Serializable {
 
 	public Set<CampSiteOrderDetailsVO> getCampSiteOrderDetails() {
 		return campsiteOrderDetails;
+	}
+	
+	public Set<BundleItemDetailsVO> getBundleitemDetails() {
+		return bundleitemDetails;
 	}
 	
 	//=====================OneToMany=====================//

@@ -24,13 +24,13 @@ public class BundleItemDetailsVO implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer bundleDetailsId; // 加購項目明細編號
 
-	@Column(name = "campsite_details_id")
-	@NotNull(message="訂單明細編號: 請勿空白")
-	private Integer campsiteDetailsId; // 訂單明細編號
+	@Column(name = "campsite_order_id")
+	@NotNull(message="訂單編號: 請勿空白")
+	private String campsiteOrderId; // 訂單編號
 
-//	@Column(name = "bundle_id")
-//	@NotNull(message="加購項目編號: 請勿空白")
-//	private Integer bundleId; // 加購項目編號
+	@Column(name = "bundle_id")
+	@NotNull(message="加購項目編號: 請勿空白")
+	private Integer bundleId; // 加購項目編號
 
 	@Column(name = "bundle_buy_num")
 	@NotNull(message="購買數量: 請勿空白")
@@ -43,23 +43,23 @@ public class BundleItemDetailsVO implements Serializable {
 	
 //=======================================================	
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "bundle_id", referencedColumnName = "bundle_id")
-	private BundleItemVO bundleItem;
-	
-	public BundleItemVO getBundleItem() {
-		return bundleItem;
-	}
-
-	public void setBundleItem(BundleItemVO bundleItem) {
-		this.bundleItem = bundleItem;
-	}
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "bundle_id", referencedColumnName = "bundle_id")
+//	private BundleItemVO bundleItem;
+//	
+//	public BundleItemVO getBundleItem() {
+//		return bundleItem;
+//	}
+//
+//	public void setBundleItem(BundleItemVO bundleItem) {
+//		this.bundleItem = bundleItem;
+//	}
 	
 //=======================================================	
 
-	public BundleItemDetailsVO(){
-		
-	}
+//	public BundleItemDetailsVO(){
+//		
+//	}
 	
 	public Integer getBundleDetailsId() {
 		return bundleDetailsId;
@@ -69,21 +69,21 @@ public class BundleItemDetailsVO implements Serializable {
 		this.bundleDetailsId = bundleDetailsId;
 	}
 
-	public Integer getCampsiteDetailsId() {
-		return campsiteDetailsId;
+	public String getCampsiteOrderId() {
+		return campsiteOrderId;
 	}
 
-	public void setCampsiteDetailsId(Integer campsiteDetailsId) {
-		this.campsiteDetailsId = campsiteDetailsId;
+	public void setCampsiteOrderId(String campsiteOrderId) {
+		this.campsiteOrderId = campsiteOrderId;
 	}
 
-//	public Integer getBundleId() {
-//		return bundleId;
-//	}
+	public Integer getBundleId() {
+		return bundleId;
+	}
 
-//	public void setBundleId(Integer bundleId) {
-//		this.bundleId = bundleId;
-//	}
+	public void setBundleId(Integer bundleId) {
+		this.bundleId = bundleId;
+	}
 
 	public Integer getBundleBuyNum() {
 		return bundleBuyNum;

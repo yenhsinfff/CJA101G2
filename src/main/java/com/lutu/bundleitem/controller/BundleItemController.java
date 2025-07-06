@@ -94,6 +94,17 @@ public class BundleItemController {
 
 		return new ApiResponse<>("success", dtoList, "查詢成功");
 	}
+	
+	@GetMapping("/all")
+	public ApiResponse<List<BundleItemDTO>> getAllBundleItemList() {
+		List<BundleItemVO> bundleItemList = bundleItemSvc.getAll();
+
+		List<BundleItemDTO> dtoList = bundleItemList.stream().map(vo -> new BundleItemDTO(vo.getBundleId(),
+				vo.getCampId(), vo.getBundleName(), vo.getBundleAddDate(), vo.getBundlePrice()))
+				.collect(Collectors.toList());
+
+		return new ApiResponse<>("success", dtoList, "查詢成功");
+	}
 
 //=========================================================================================
 //	/*

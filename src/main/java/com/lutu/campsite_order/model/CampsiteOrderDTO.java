@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
 import com.lutu.campsite_order_details.model.CampSiteOrderDetailsDTO;
 import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
 
@@ -28,6 +29,7 @@ public class CampsiteOrderDTO {
     private Timestamp commentDate;
     private Integer campId;
     private List<CampSiteOrderDetailsDTO> orderDetails; // 使用DTO列表
+    private Set<BundleItemDetailsVO> bundleitemDetails;
 
     // 轉換方法
     public static CampsiteOrderDTO fromEntity(CampSiteOrderVO entity) {
@@ -58,7 +60,10 @@ public class CampsiteOrderDTO {
             .map(CampSiteOrderDetailsDTO::new)
             .collect(Collectors.toList());
         
+        Set<BundleItemDetailsVO> bundleItemDetails = entity.getBundleitemDetails();
+        
         dto.setOrderDetails(detailsDTOs);
+        dto.setBundleItemDetails(bundleItemDetails);
         return dto;
     }
 
@@ -205,6 +210,16 @@ public class CampsiteOrderDTO {
 	public void setOrderDetails(List<CampSiteOrderDetailsDTO> orderDetails) {
 		this.orderDetails = orderDetails;
 	}
+
+	public Set<BundleItemDetailsVO> getBundleItemDetails() {
+		return bundleitemDetails;
+	}
+
+	public void setBundleItemDetails(Set<BundleItemDetailsVO> bundleItemDetails) {
+		this.bundleitemDetails = bundleItemDetails;
+	}
+	
+	
 
     // Getters and Setters
 }

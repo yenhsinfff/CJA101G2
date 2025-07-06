@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lutu.bundleitemdetails.model.BundleItemDetailsVO;
 import com.lutu.camp.model.CampVO;
 import com.lutu.campsite_order_details.model.CampSiteOrderDetailsVO;
 import com.lutu.member.model.MemberVO;
@@ -144,8 +145,11 @@ public class CampSiteOrderService {
         vo.setDiscountCodeId(orderJson.getString("discountCodeId"));
         // 訂單明細
         Set<CampSiteOrderDetailsVO> details = new HashSet<>();
+     // 佳構明細
+        Set<BundleItemDetailsVO> bundleItemDetails = new HashSet<>();
        
-
+        
+        //campsiteDetails
         JSONArray detailArray = orderJson.getJSONArray("details");
         for (int i = 0; i < detailArray.length(); i++) {
             JSONObject obj = detailArray.getJSONObject(i);
@@ -160,6 +164,21 @@ public class CampSiteOrderService {
         }
         
         vo.setCampSiteOrderDetails(details);
+        
+      //bundleitemsDetails
+        JSONArray bundleItemDetailArray = orderJson.getJSONArray("bundleItemDetails");
+        for (int i = 0; i < bundleItemDetailArray.length(); i++) {
+            JSONObject obj = bundleItemDetailArray.getJSONObject(i);
+            BundleItemDetailsVO detail = new BundleItemDetailsVO();
+            detail.setBundleId(obj.getInt("bundleId"));
+            detail.setCampsiteOrderId(obj.getString("campsiteOrderId"));
+            detail.setBundleBuyAmount(obj.getInt("bundleBuyAmount"));
+            detail.setBundleBuyNum(obj.getInt("bundleBuyNum"));
+//            System.out.println(obj.getInt("campsiteAmount")+"||"+obj.getInt("campsiteNum")+"||"+obj.getString("campsiteTypeId"));
+            bundleItemDetails.add(detail);
+        }
+        
+        vo.setBundleitemDetails(bundleItemDetails);
 
         
         return vo;
