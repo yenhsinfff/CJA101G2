@@ -212,6 +212,7 @@ public class CampsiteAvailableService {
  // 訂單成立時 -1
     @Transactional
     public boolean deductRoomsByDateRange(Date checkIn, Date checkOut, List<CampSiteOrderDetailsDTO> detailsList) {
+    	try {
         for (CampSiteOrderDetailsDTO detail : detailsList) {
             Integer campsiteTypeId = detail.getCampsiteTypeId();
             Integer qty = detail.getCampsiteNum(); // 訂幾間就扣幾間
@@ -226,7 +227,10 @@ public class CampsiteAvailableService {
                 cal.add(Calendar.DATE, 1);
             }
         }
-        return true;
+        return true;}catch (Exception e) {
+			System.out.println("deductRoomsByDateRange_err:"+e);
+			return false;
+		}
     }
 
 

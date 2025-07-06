@@ -206,8 +206,13 @@ public class ApiController {
 				CampsiteOrderDTO dto = campsiteOrdSvc.getOneDTOCampsiteOrder(orderId);
 				Boolean response1 = caService.deductRoomsByDateRange(dto.getCheckIn(),dto.getCheckOut(), dto.getOrderDetails());
 				System.out.println("linpay_response:"+response1);
+				if(response1) {
+					responseServlet.sendRedirect("http://127.0.0.1:5503/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
+				}else {
+					responseServlet.sendRedirect("http://127.0.0.1:5503/linepay-cancel.html?orderId=" + orderId + "&isCamp=" + isCamp);
+				}
 				
-				responseServlet.sendRedirect("http://127.0.0.1:5501/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
+				
 
 			} else {
 				System.out.println("Shop");
