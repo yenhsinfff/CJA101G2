@@ -14,7 +14,7 @@ public class SecurityConfig {
 		http.cors(cors -> cors.configure(http)).csrf(csrf -> csrf.disable()) // ✅ 若使用 RESTful API 建議關閉
 				.authorizeHttpRequests(
 						authz -> authz
-						//預設攔截，例外通行1
+						//預設攔截，例外通行2
 //								.requestMatchers("/api/getallcamps", "/campsitetype/**", "/camptracklist/**", "/api/**",
 //										"/campsite/**", "/bundleitem/**", "/member/getallmembers", "/CJA101G02/**",
 //										"/static/**", "/index.html", "/css/**","/js/**","/data/**","/images/**","/#")
