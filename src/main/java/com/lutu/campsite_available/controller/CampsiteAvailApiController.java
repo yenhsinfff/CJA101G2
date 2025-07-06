@@ -68,6 +68,9 @@ public class CampsiteAvailApiController {
 			@RequestParam(required = false) List<Integer> campIds, @RequestParam(required = false) Integer people,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut) {
+		
+		System.out.println("CHECKIN:"+checkIn);
+		System.out.println("CHECKOUT:"+checkOut);
 
 //	     // 這裡根據 campIds 迴圈呼叫 repository，合併結果
 //	     List<CampsiteTypeAvailableDTO> result = new ArrayList<>();
