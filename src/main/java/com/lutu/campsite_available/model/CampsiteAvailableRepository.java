@@ -105,4 +105,9 @@ public interface CampsiteAvailableRepository extends JpaRepository<CampsiteAvail
 	List<CampsiteTypeAvailableDTO> findAvailableRoomTypesWithRemaining(@Param("campId") Integer campId,
 			@Param("people") Integer people, @Param("checkIn") Date checkIn, @Param("checkOut") Date checkOut);
 
+	//為刪除房型，先刪除可用房間內的資料列
+	@Modifying
+	@Query("DELETE FROM CampsiteAvailableVO c WHERE c.campId = :campId AND c.id.campsiteTypeId = :campsiteTypeId")
+	void deleteByCampIdAndCampsiteTypeId(@Param("campId") Integer campId, @Param("campsiteTypeId") Integer campsiteTypeId);
+	
 }

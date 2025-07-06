@@ -5,11 +5,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.lutu.campsite_available.model.CampsiteAvailableRepository;
 import com.lutu.campsitetype.model.CampsiteTypeVO.CompositeDetail;
-import com.lutu.member.model.MemberVO;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -19,6 +18,9 @@ public class CampsiteTypeService {
 
 	@Autowired
 	CampsiteTypeRepository repository;
+	
+	@Autowired 
+	CampsiteAvailableRepository campsiteAvailableRepo;
 
 	// 查詢特定營地下的房型
 	public List<CampsiteTypeVO> getByCampId(Integer campId) {
@@ -54,10 +56,17 @@ public class CampsiteTypeService {
 		return repository.save(campsiteTypeVO);
 	}
 
-	public void deleteCampsiteType(CampsiteTypeVO.CompositeDetail id) {
+	@Transactional
+	public void deleteCampsiteType(CompositeDetail id) {
+		
 		if (!repository.existsById(id)) {
 			throw new EntityNotFoundException("找不到要刪除的房型");
 		}
+		
+		// 1. 刪除子資料（可用房間）
+		campsiteAvailableRepo.deleteByCampIdAndCampsiteTypeId(id.getCampId(), id.getCampsiteTypeId());
+		
+	    // 2. 刪除主資料（房型）
 		repository.deleteById(id);
 	}
 
