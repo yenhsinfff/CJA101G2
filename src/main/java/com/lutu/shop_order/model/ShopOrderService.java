@@ -296,7 +296,7 @@ public class ShopOrderService {
 				&& !sovo.getShopOrderStatus().equals(dtoUpdate.getShopOrderStatus())) {
 
 			// 如果ShopReturnApply不是未申請退貨(0)就不能進行修改
-			if (sovo.getShopReturnApply() == 0) {
+			if (sovo.getShopReturnApply() == 0 || sovo.getShopOrderStatus() != 5) {
 				sovo.setShopOrderStatus(dtoUpdate.getShopOrderStatus());
 
 			} else {

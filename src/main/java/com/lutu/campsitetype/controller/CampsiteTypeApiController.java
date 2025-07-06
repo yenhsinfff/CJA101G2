@@ -40,7 +40,6 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/campsitetype")
 public class CampsiteTypeApiController {
 

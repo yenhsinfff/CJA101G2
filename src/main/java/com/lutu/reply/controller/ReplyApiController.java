@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import java.util.Base64;
 
 @RestController
-//@CrossOrigin(origins = "*")
 public class ReplyApiController {
     @Autowired
     ReplyService replyService;

@@ -50,6 +50,7 @@ public class MemberRestController {
         if (member != null) {
             if (authService.checkAccountStatus(member)) {
                 session.setAttribute("loggedInMember", member);
+                System.out.println("MEM登入成功");
                 
                 // 回傳 JSON 包含狀態與會員資料
                 Map<String, Object> response = new HashMap<>();
@@ -70,6 +71,7 @@ public class MemberRestController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpSession session) {
         session.invalidate();
+        System.out.println("登出成功");
         return ResponseEntity.ok("登出成功");
     }
 
@@ -85,7 +87,8 @@ public class MemberRestController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentMember(HttpSession session) {
-        Object member = session.getAttribute("loggedInMember");
+    	MemberLoginDTO member = (MemberLoginDTO) session.getAttribute("loggedInMember");
+        System.out.println("getCurrentMember:"+member);
         if (member != null) {
             return ResponseEntity.ok(member);
         } else {

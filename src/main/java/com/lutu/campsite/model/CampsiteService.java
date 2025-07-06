@@ -79,6 +79,17 @@ public class CampsiteService {
 	    return campsiteRepo.save(campsiteVO);
 	}
 	
+	public static CampsiteDTO toDTO(CampsiteVO vo) {
+	    return new CampsiteDTO(
+	        vo.getCampsiteId(),
+	        vo.getCampId(),
+	        vo.getCampsiteTypeId(),
+	        vo.getCampsiteIdName(),
+	        vo.getCamperName()
+	    );
+	}
+
+	
 
 
 }

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>露途 - 多角色露營預訂平台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto+Mono&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/role-system.css" />
+</head>
+
+<body>
+  <div id="header-container"></div>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1>探索自然，體驗野趣</h1>
+        <p>精選全台優質露營地，一站式預訂服務</p>
+        <div class="search-box">
+          <form action="search-results.html" method="get">
+            <div class="search-group">
+              <label for="location">地區</label>
+              <select id="location" name="location">
+                <option value="">選擇地區</option>
+                <!-- 地區選項將由JavaScript動態載入 -->
+              </select>
+            </div>
+            <div class="search-group">
+              <label for="county">縣市</label>
+              <select id="county" name="county">
+                <option value="">選擇縣市</option>
+              </select>
+            </div>
+            <div class="search-group">
+              <label for="district">鄉鎮市區</label>
+              <select id="district" name="district">
+                <option value="">請先選擇縣市</option>
+              </select>
+            </div>
+            <div class="search-group">
+              <label for="check-in">入住日期</label>
+              <input type="date" id="check-in" name="check-in" />
+            </div>
+            <div class="search-group">
+              <label for="check-out">退房日期</label>
+              <input type="date" id="check-out" name="check-out" />
+            </div>
+            <div class="search-group">
+              <label for="guests">人數</label>
+              <select id="guests" name="guests">
+                <option value="1">1人</option>
+                <option value="2">2人</option>
+                <option value="3">3人</option>
+                <option value="4">4人</option>
+                <option value="5">5人</option>
+                <option value="6">6人以上</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-search-submit" id="room_search_btn">
+              搜尋營地
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section class="featured-camps">
+    <div class="container">
+      <h2 class="section-title">熱門營地推薦</h2>
+      <div class="camp-cards" id="camp-cards">
+        <!-- 營地卡片將由JavaScript動態載入 -->
+      </div>
+      <div class="view-more">
+        <a href="search-results.html" class="btn-more">查看更多營地</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="shop-preview">
+    <div class="container">
+      <h2 class="section-title">露營裝備商城</h2>
+      <div class="shop-categories">
+        <a href="shop.html?type=rent" class="shop-category">
+          <div class="category-icon">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <h3>裝備租借</h3>
+          <p>短期露營的最佳選擇</p>
+        </a>
+        <a href="shop.html?type=buy" class="shop-category">
+          <div class="category-icon">
+            <i class="fas fa-tag"></i>
+          </div>
+          <h3>全新商品</h3>
+          <p>優質露營裝備一次購足</p>
+        </a>
+        <a href="shop.html?type=used" class="shop-category">
+          <div class="category-icon">
+            <i class="fas fa-sync-alt"></i>
+          </div>
+          <h3>二手市集</h3>
+          <p>環保經濟的實用選擇</p>
+        </a>
+      </div>
+      <div class="view-more">
+        <a href="shop.html" class="btn-more">前往商城</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title">為什麼選擇露途？</h2>
+      <div class="feature-cards">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h3>嚴選優質營地</h3>
+          <p>所有營地均經過實地考察與評估，確保品質與安全</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <h3>透明定價</h3>
+          <p>無隱藏費用，價格公開透明，輕鬆掌握預算</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-headset"></i>
+          </div>
+          <h3>24小時客服</h3>
+          <p>專業團隊全天候在線，解決您的任何疑問</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h3>安心保障</h3>
+          <p>提供露營保險與不可抗力因素退款保障</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials">
+    <div class="container">
+      <h2 class="section-title">露友們的真實體驗</h2>
+      <div class="testimonial-slider">
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            <p>
+              「第一次使用露途預訂服務，整個過程非常順暢，營地環境比照片上還要美，設施也很完善，絕對會再次使用！」
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <img src="images/user-1.jpg" alt="陳小明" />
+            <div class="author-info">
+              <h4>陳小明</h4>
+              <p>台北市</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            <p>
+              「商城的裝備品質非常好，租借服務更是解決了我們這種偶爾露營的家庭的大問題，不用花大錢買設備，卻能享受高品質的露營體驗。」
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <img src="images/user-2.jpg" alt="林美玲" />
+            <div class="author-info">
+              <h4>林美玲</h4>
+              <p>台中市</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            <p>
+              「平台上的營地資訊非常詳細，實際抵達後與描述完全符合，沒有任何落差，讓我們全家都非常滿意，已經計劃下個月再去另一個營地了！」
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <img src="images/user-3.jpg" alt="王大華" />
+            <div class="author-info">
+              <h4>王大華</h4>
+              <p>高雄市</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2>準備好開始您的露營冒險了嗎？</h2>
+        <p>立即註冊，獲得新會員專屬優惠券！</p>
+        <a href="login.html" class="btn-cta">立即註冊</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-container"></div>
+  
+  <div class="loading-overlay">
+    <div class="loading-animation">
+      <svg class="pine-cone" width="60" height="60" viewBox="0 0 60 60">
+        <!-- 松果動畫將在CSS中實現 -->
+        <circle cx="30" cy="30" r="25" fill="#3A5A40" />
+        <path class="pine-cone-scale" d="M30,5 L35,15 L25,15 Z" fill="#A68A64" />
+        <!-- 更多松果鱗片將在JavaScript中動態生成 -->
+      </svg>
+    </div>
+    <p>載入中，請稍候...</p>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/camp-data.js"></script>
+  <script src="js/header-auth.js"></script>
+  <script src="js/include.js"></script>
+</body>
+
+</html>

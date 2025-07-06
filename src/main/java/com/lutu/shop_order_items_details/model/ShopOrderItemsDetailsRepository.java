@@ -11,5 +11,9 @@ public interface ShopOrderItemsDetailsRepository extends JpaRepository<ShopOrder
 	@Query(value = "SELECT soid FROM ShopOrderItemsDetailsVO soid WHERE soid.shopOrderId = :shopOrderId")
 	List<ShopOrderItemsDetailsVO> findByShopOrderId(Integer shopOrderId);
 	
+	// 依商品編號查詢
+	@Query(value = "SELECT soid FROM ShopOrderItemsDetailsVO soid WHERE soid.prodId = :prodId")
+	List<ShopOrderItemsDetailsVO> findByprodId(Integer prodId);
+	
 
 }

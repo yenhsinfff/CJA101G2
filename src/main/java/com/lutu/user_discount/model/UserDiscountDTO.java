@@ -3,16 +3,17 @@ package com.lutu.user_discount.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
+//回傳發送會員折價券(傳出)
 public class UserDiscountDTO {
 
-	private Integer memId; // 露營者編號
+	private Integer memId; // 露營者編號，前端不顯示
 	private String discountCodeId; // 折價券編號
 	private String discountCode; // 折價券名稱
-	private byte discountCodeType; // 折扣訂單類型 0營地 1商城
+	private BigDecimal minOrderAmount; //最低訂單金額
+	private byte discountType; //折扣類型
+	private BigDecimal discountValue; //折扣值
 	private LocalDateTime startDate; //生效日期
 	private LocalDateTime endDate; //失效日期
-	private BigDecimal minOrderAmount; //最低訂單金額
 	private LocalDateTime usedAt; // 使用時間
 	
 	public UserDiscountDTO() {
@@ -20,16 +21,18 @@ public class UserDiscountDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserDiscountDTO(Integer memId, String discountCodeId, String discountCode, byte discountCodeType,
-			LocalDateTime startDate, LocalDateTime endDate, BigDecimal minOrderAmount, LocalDateTime usedAt) {
+	public UserDiscountDTO(Integer memId, String discountCodeId, String discountCode, BigDecimal minOrderAmount,
+			byte discountType, BigDecimal discountValue, LocalDateTime startDate, LocalDateTime endDate,
+			LocalDateTime usedAt) {
 		super();
 		this.memId = memId;
 		this.discountCodeId = discountCodeId;
 		this.discountCode = discountCode;
-		this.discountCodeType = discountCodeType;
+		this.minOrderAmount = minOrderAmount;
+		this.discountType = discountType;
+		this.discountValue = discountValue;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.minOrderAmount = minOrderAmount;
 		this.usedAt = usedAt;
 	}
 
@@ -57,12 +60,28 @@ public class UserDiscountDTO {
 		this.discountCode = discountCode;
 	}
 
-	public byte getDiscountCodeType() {
-		return discountCodeType;
+	public BigDecimal getMinOrderAmount() {
+		return minOrderAmount;
 	}
 
-	public void setDiscountCodeType(byte discountCodeType) {
-		this.discountCodeType = discountCodeType;
+	public void setMinOrderAmount(BigDecimal minOrderAmount) {
+		this.minOrderAmount = minOrderAmount;
+	}
+
+	public byte getDiscountType() {
+		return discountType;
+	}
+
+	public void setDiscountType(byte discountType) {
+		this.discountType = discountType;
+	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
 	}
 
 	public LocalDateTime getStartDate() {
@@ -81,14 +100,6 @@ public class UserDiscountDTO {
 		this.endDate = endDate;
 	}
 
-	public BigDecimal getMinOrderAmount() {
-		return minOrderAmount;
-	}
-
-	public void setMinOrderAmount(BigDecimal minOrderAmount) {
-		this.minOrderAmount = minOrderAmount;
-	}
-
 	public LocalDateTime getUsedAt() {
 		return usedAt;
 	}
@@ -96,5 +107,7 @@ public class UserDiscountDTO {
 	public void setUsedAt(LocalDateTime usedAt) {
 		this.usedAt = usedAt;
 	}
+
+	
 
 }

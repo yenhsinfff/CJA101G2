@@ -15,19 +15,20 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedOriginPatterns(
+                            "http://localhost:8081",
+                            "http://localhost:8080",
+                            "http://127.0.0.1:*",
+                            "http://192.168.*.*:*",
+                            "http://lutu.ddnsking.com"
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(false)
+                        .allowCredentials(true)  // ✅ 使用 credentials 要搭配非萬用 * 設定
                         .maxAge(3600);
             }
-            
-            public void registerStompEndpoints(StompEndpointRegistry registry) {
-                registry.addEndpoint("/ws-chat")
-                        .setAllowedOrigins("http://127.0.0.1:5500") // 明確指定你的前端來源
-                        .withSockJS();
-            }
-
         };
     }
 }
+
+
