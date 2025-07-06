@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class ArticlesApiController {
     @Autowired
     ArticlesService articlesService;

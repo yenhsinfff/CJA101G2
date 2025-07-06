@@ -24,7 +24,7 @@ import com.lutu.reply_image.model.HybridReplyImageUploadService;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class ReplyImageApiController {
 
     @Autowired
