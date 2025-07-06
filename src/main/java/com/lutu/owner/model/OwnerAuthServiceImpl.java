@@ -9,13 +9,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lutu.owner.dto.OwnerLoginResponse;
 import com.lutu.owner.dto.OwnerChangePasswordRequest;
-import com.lutu.owner.dto.OwnerLoginRequest;
+import com.lutu.owner.dto.OwnerLoginResponse;
 import com.lutu.owner.dto.OwnerRegisterRequest;
 import com.lutu.owner.dto.OwnerUpdateRequest;
-import com.lutu.owner.model.OwnerVO;
-import com.lutu.owner.model.OwnerRepository;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -58,7 +55,7 @@ public class OwnerAuthServiceImpl implements OwnerAuthService {
     }
 
     private void sendVerificationEmail(String to, String token) {
-        String verifyLink = "http://localhost:8080/api/owner/verify?token=" + token;
+        String verifyLink = "http://lutu.ddnsking.com/api/owner/verify?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
@@ -70,21 +67,19 @@ public class OwnerAuthServiceImpl implements OwnerAuthService {
     }
 
     @Override
-    public OwnerLoginResponse login(String acc, String pwd) {
-        OwnerVO owner = ownerRepo.findByOwnerAcc(acc)
-                .orElseThrow(() -> new RuntimeException("帳號不存在"));
+    public OwnerVO login(String ownerAcc, String ownerPwd) {
+        OwnerVO owner = ownerRepo.findByOwnerAcc(ownerAcc)
+            .orElseThrow(() -> new IllegalArgumentException("帳號不存在"));
 
-        if (!owner.getOwnerPwd().equals(pwd)) {
-            throw new RuntimeException("密碼錯誤");
+        if (!owner.getOwnerPwd().equals(ownerPwd)) {
+            throw new IllegalArgumentException("密碼錯誤");
         }
 
-        if (owner.getAccStatus() == 0) {
-            throw new RuntimeException("帳號尚未驗證");
-        } else if (owner.getAccStatus() == 2) {
-            throw new RuntimeException("帳號已被停權");
+        if (owner.getAccStatus() != 1) {
+            throw new IllegalArgumentException("帳號尚未啟用或已停用");
         }
 
-        return new OwnerLoginResponse(owner.getOwnerId(), owner.getOwnerAcc(), owner.getAccStatus());
+        return owner; // ✅ 直接回傳 OwnerVO
     }
 
     @Override
@@ -103,39 +98,56 @@ public class OwnerAuthServiceImpl implements OwnerAuthService {
         ownerRepo.save(owner);
     }
 
+    
     @Override
-    public void update(OwnerUpdateRequest request, HttpSession session) {
-        OwnerLoginResponse loginOwner = (OwnerLoginResponse) session.getAttribute("loggedInOwner");
-        Optional<OwnerVO> optional = ownerRepo.findById(loginOwner.getOwnerId());
+    public OwnerVO update(OwnerUpdateRequest request, HttpSession session) {
+        OwnerVO loginOwner = (OwnerVO) session.getAttribute("loggedInOwner");
+        if (loginOwner == null) {
+            throw new RuntimeException("尚未登入");
+        }
 
+        Optional<OwnerVO> optional = ownerRepo.findById(loginOwner.getOwnerId());
         if (optional.isPresent()) {
             OwnerVO owner = optional.get();
 
-            if (request.getOwnerPwd() != null) owner.setOwnerPwd(request.getOwnerPwd());
-            if (request.getOwnerRep() != null) owner.setOwnerRep(request.getOwnerRep());
-            if (request.getOwnerTel() != null) owner.setOwnerTel(request.getOwnerTel());
-            if (request.getOwnerPoc() != null) owner.setOwnerPoc(request.getOwnerPoc());
-            if (request.getOwnerConPhone() != null) owner.setOwnerConPhone(request.getOwnerConPhone());
-            if (request.getBankAccount() != null) owner.setBankAccount(request.getBankAccount());
+            // 只更新非空且非空字串欄位
+            if (request.getOwnerRep() != null && !request.getOwnerRep().isBlank()) {
+                owner.setOwnerRep(request.getOwnerRep());
+            }
+            if (request.getOwnerTel() != null && !request.getOwnerTel().isBlank()) {
+                owner.setOwnerTel(request.getOwnerTel());
+            }
+            if (request.getOwnerPoc() != null && !request.getOwnerPoc().isBlank()) {
+                owner.setOwnerPoc(request.getOwnerPoc());
+            }
+            if (request.getOwnerConPhone() != null && !request.getOwnerConPhone().isBlank()) {
+                owner.setOwnerConPhone(request.getOwnerConPhone());
+            }
+            if (request.getBankAccount() != null && !request.getBankAccount().isBlank()) {
+                owner.setBankAccount(request.getBankAccount());
+            }
 
-            // 關鍵圖片處理
+            // 圖片部分判斷檔案是否存在且不為空
             if (request.getOwnerPic() != null && !request.getOwnerPic().isEmpty()) {
                 try {
                     owner.setOwnerPic(request.getOwnerPic().getBytes());
                 } catch (IOException e) {
-                    e.printStackTrace(); // 或改成丟 RuntimeException
                     throw new RuntimeException("圖片讀取失敗");
                 }
             }
 
+            // 儲存更新
             ownerRepo.save(owner);
+            return owner;
         }
-    }
 
+        throw new RuntimeException("找不到營地主資料");
+    }
     
     @Override
     public void changePassword(OwnerChangePasswordRequest request, HttpSession session) {
-        OwnerLoginResponse loggedIn = (OwnerLoginResponse) session.getAttribute("loggedInOwner");
+    	
+    	OwnerVO loggedIn = (OwnerVO) session.getAttribute("loggedInOwner");
         if (loggedIn == null) {
             throw new RuntimeException("尚未登入");
         }
