@@ -57,7 +57,7 @@ public class PasswordResetController {
         resetToken.setExpiry(LocalDateTime.now().plusHours(1)); // ⏰ 有效期限 1 小時
         tokenRepo.save(resetToken);
 
-        String resetUrl = "http://127.0.0.1:5503/Reset-Password.html?token=" + token;
+        String resetUrl = "http://lutu.ddnsking.com/Reset-Password.html?token=" + token;
         String emailBody = "請點擊以下連結重設您的密碼（連結一小時內有效）：\n\n" + resetUrl;
 
         emailService.sendEmail(email, "密碼重設連結", emailBody);

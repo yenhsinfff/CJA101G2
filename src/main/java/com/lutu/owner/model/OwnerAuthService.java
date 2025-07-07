@@ -7,10 +7,10 @@ import jakarta.servlet.http.HttpSession;
 public interface OwnerAuthService {
 	
     void register(OwnerRegisterRequest request);
-    OwnerLoginResponse login(String acc, String pwd);
+    OwnerVO login(String ownerAcc, String ownerPwd);
     void logout(HttpSession session);
     void verifyAccount(String token);
-    void update(OwnerUpdateRequest request, HttpSession session);
+    public OwnerVO update(OwnerUpdateRequest request, HttpSession session);
     void changePassword(OwnerChangePasswordRequest request, HttpSession session);
     
 }

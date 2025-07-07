@@ -4,20 +4,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class OwnerUpdateRequest {
 	
-    private String ownerPwd;
+//    private String ownerPwd;
     private String ownerRep;
     private String ownerTel;
     private String ownerPoc;
-    private String ownerConPhone;
+	private String ownerConPhone;
     private String bankAccount;
     private MultipartFile ownerPic;
     
-	public String getOwnerPwd() {
-		return ownerPwd;
-	}
-	public void setOwnerPwd(String ownerPwd) {
-		this.ownerPwd = ownerPwd;
-	}
+//	public String getOwnerPwd() {
+//		return ownerPwd;
+//	}
+//	public void setOwnerPwd(String ownerPwd) {
+//		this.ownerPwd = ownerPwd;
+//	}
 	public String getOwnerRep() {
 		return ownerRep;
 	}
