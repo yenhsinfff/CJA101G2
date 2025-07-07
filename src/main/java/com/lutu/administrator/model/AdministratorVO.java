@@ -48,8 +48,8 @@ public class AdministratorVO implements java.io.Serializable {
 
 	@Column(name = "admin_status")
 	@NotNull(message = "帳號狀態: 請勿空白")
-	@Min(value = 0, message = "帳號狀態只能是 0:未啟用、1:已啟用")
-	@Max(value = 1, message = "帳號狀態只能是 0:未啟用、1:已啟用")
+	@Min(value = 0, message = "帳號狀態只能是 0:未啟用、1:已啟用、2:停權")
+	@Max(value = 2, message = "帳號狀態只能是 0:未啟用、1:已啟用、2:停權")
 	private byte adminStatus; // 帳號狀態
 
 	@Column(name = "admin_name")
