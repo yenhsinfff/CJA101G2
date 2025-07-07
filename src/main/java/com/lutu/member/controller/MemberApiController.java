@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.lutu.ApiResponse;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.campsite_order.model.CampsiteOrderDTO;
+import com.lutu.member.dto.MemberAdminListDTO;
 import com.lutu.member.dto.MemberLoginDTO;
 import com.lutu.member.model.MemberService;
 import com.lutu.member.model.MemberVO;
@@ -93,5 +94,31 @@ public class MemberApiController {
 		List<CampsiteOrderDTO> orders = memberSvc.getMemberOrders(memId);
 		return new ApiResponse<>("success", orders, "查詢成功");
 	}
+	
+	// 管理員取得所有會員摘要資料
+	@GetMapping("/admin/all")
+	public ApiResponse<List<MemberAdminListDTO>> getAllMembersForAdmin() {
+	    List<MemberVO> memberList = memberSvc.getAll();
+	    List<MemberAdminListDTO> dtoList = memberList.stream()
+	        .map(MemberAdminListDTO::new)
+	        .collect(Collectors.toList());
+	    return new ApiResponse<>("success", dtoList, "查詢成功");
+	}
+	
+	//更新帳號狀態
+	@PatchMapping("/{memId}/status")
+	public ApiResponse<String> updateAccountStatus(
+	        @PathVariable Integer memId,
+	        @RequestParam("status") Integer status) {
+
+	    boolean success = memberSvc.updateAccountStatus(memId, status);
+
+	    if (success) {
+	        return new ApiResponse<>("success", "ok", "狀態已更新");
+	    } else {
+	        return new ApiResponse<>("fail", "fail", "更新失敗");
+	    }
+	}
+
 
 }

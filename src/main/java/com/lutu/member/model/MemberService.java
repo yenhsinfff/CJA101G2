@@ -87,5 +87,18 @@ public class MemberService {
             .map(CampsiteOrderDTO::fromEntity)
             .collect(Collectors.toList());
     }
+	
+	
+	
+    //更新帳號狀態
+    public boolean updateAccountStatus(Integer memId, Integer status) {
+        MemberVO member = getOneMember(memId);
+        if (member != null) {
+            member.setAccStatus(status.byteValue());
+            updateMember(member); // 假設你已有 update 方法
+            return true;
+        }
+        return false;
+    }
 
 }

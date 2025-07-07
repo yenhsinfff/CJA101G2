@@ -2,8 +2,10 @@ package com.lutu.owner.controller;
 
 import org.springframework.http.HttpHeaders;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.lutu.ApiResponse;
 import com.lutu.owner.dto.*;
 import com.lutu.owner.model.OwnerAuthService;
 import com.lutu.owner.model.OwnerRepository;
@@ -28,6 +31,9 @@ public class OwnerAuthController {
     
     @Autowired
     private OwnerRepository ownerRepo;
+    
+    @Autowired
+    private OwnerAuthService ownerAuthService;
 
     public OwnerAuthController(OwnerAuthService authService) {
         this.authService = authService;
@@ -147,11 +153,33 @@ public class OwnerAuthController {
 
         // 為了安全與簡潔，傳給前端的資料可以用 DTO
         OwnerProfileDTO dto = new OwnerProfileDTO(owner);
-        return ResponseEntity.ok(dto);
-        
-        
+        return ResponseEntity.ok(dto);  
     }
     
+    
+    //取得所有營地主資料
+    @GetMapping("/all")
+    public ApiResponse<List<OwnerListDTO>> getAllOwners() {
+        List<OwnerVO> list = ownerAuthService.getAllOwners();
+        List<OwnerListDTO> dtoList = list.stream()
+                                         .map(OwnerListDTO::new)
+                                         .collect(Collectors.toList());
+        return new ApiResponse<>("success", dtoList, "取得所有營地主成功");
+    }
+    
+    
+    //修改營地主狀態
+    @PutMapping("/update-status/{id}")
+    public ResponseEntity<String> updateOwnerStatus(@PathVariable Integer id, @RequestParam byte status) {
+        return ownerRepo.findById(id)
+            .map(owner -> {
+                owner.setAccStatus(status);
+                ownerRepo.save(owner);
+                return ResponseEntity.ok("營地主狀態更新成功");
+            })
+            .orElse(ResponseEntity.notFound().build());
+    }
+
     
 }
     

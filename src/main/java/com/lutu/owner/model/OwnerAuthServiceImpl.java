@@ -1,6 +1,7 @@
 package com.lutu.owner.model;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -163,4 +164,11 @@ public class OwnerAuthServiceImpl implements OwnerAuthService {
         owner.setOwnerPwd(request.getNewPassword());
         ownerRepo.save(owner);
     }
+    
+    @Override
+    public List<OwnerVO> getAllOwners() {
+        return ownerRepo.findAll();
+    }
+    
+    
 }
