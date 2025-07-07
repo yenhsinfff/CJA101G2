@@ -13,6 +13,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic", "/queue"); // 支援一對一（queue）和群聊（topic）
         config.setApplicationDestinationPrefixes("/app");
+        config.setUserDestinationPrefix("/user");       // ✅ 這行很關鍵
     }
 
 //    @Override
