@@ -42,43 +42,42 @@ public class UserDiscountApiController {
 		List<UserDiscountDTO> dto = userDiscountService.getDiscountsByMemberId(memId);
 		return ResponseEntity.ok(dto);
 	}
-	
+
 	@GetMapping("/notUsed/{memId}")
 	public ResponseEntity<List<UserDiscountDTO>> getNotUsed(@PathVariable Integer memId) {
 		List<UserDiscountDTO> dtoList = userDiscountService.getNotUsedByMemberId(memId);
 		return ResponseEntity.ok(dtoList);
 	}
-	
-    
+
 //  http://localhost:8081/CJA101G02/api/userdiscount/sendDiscount
 //  發送折價券給單一會員
-    @PostMapping("/sendDiscount")
-    public ResponseEntity<ApiResponse<UserDiscountDTO>> sendDiscount(@RequestBody UserDiscountDTO_request dto) {
-        UserDiscountDTO result = userDiscountService.sendDiscountToUser(dto);
+	@PostMapping("/sendDiscount")
+	public ResponseEntity<ApiResponse<UserDiscountDTO>> sendDiscount(@RequestBody UserDiscountDTO_request dto) {
+		UserDiscountDTO result = userDiscountService.sendDiscountToUser(dto);
 
-        ApiResponse<UserDiscountDTO> response = new ApiResponse<>();
-        response.setStatus("success");
-        response.setMessage("折價券已成功發送給會員");
-        response.setData(result); // 回傳完整 DTO 給前端
+		ApiResponse<UserDiscountDTO> response = new ApiResponse<>();
+		response.setStatus("success");
+		response.setMessage("折價券已成功發送給會員");
+		response.setData(result); // 回傳完整 DTO 給前端
 
-        return ResponseEntity.ok(response);
-    }
+		return ResponseEntity.ok(response);
+	}
 
 //  http://localhost:8081/CJA101G02/api/userdiscount/sendDiscountToAll?discountCodeId=A00001
 //  http://localhost:8081/CJA101G02/api/userdiscount/sendDiscountToAll?discountCodeId=A00001
- // 發送折價券給所有會員
-    @PostMapping("/sendDiscountToAll")
-    public ResponseEntity<ApiResponse<String>> sendDiscountToAll(@RequestParam("discountCodeId") String discountCodeId) {
-        userDiscountService.sendDiscountToAllMembers(discountCodeId);
+	// 發送折價券給所有會員
+	@PostMapping("/sendDiscountToAll")
+	public ResponseEntity<ApiResponse<String>> sendDiscountToAll(
+			@RequestParam("discountCodeId") String discountCodeId) {
+		userDiscountService.sendDiscountToAllMembers(discountCodeId);
 
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setStatus("success");
-        response.setMessage("折價券已成功發送給所有會員");
-        response.setData(null);
+		ApiResponse<String> response = new ApiResponse<>();
+		response.setStatus("success");
+		response.setMessage("折價券已成功發送給所有會員");
+		response.setData(null);
 
-        return ResponseEntity.ok(response);
-    }
-    
+		return ResponseEntity.ok(response);
+	}
 
 	@PostMapping("/used")
 	public ResponseEntity<Void> updateUsedAtNow(@RequestBody UserDiscountDTO_updateUsedTime dto) {
@@ -91,13 +90,21 @@ public class UserDiscountApiController {
 			vo.setUsedAt(java.time.LocalDateTime.now());
 			userDiscountService.updateUserDiscount(vo);
 			System.out.println("更新使用時間");
-			return ResponseEntity.ok().build();	// 200 OK，無內容
-			
+			return ResponseEntity.ok().build(); // 200 OK，無內容
+
 		} else {
-			return ResponseEntity.notFound().build();	// 404 Not Found
+			return ResponseEntity.notFound().build(); // 404 Not Found
 		}
 
 	}
 
+	// 取消使用紀錄
+	@PostMapping("/cancelUsed")
+	public ResponseEntity<Void> cancelUsed(@RequestBody UserDiscountDTO_updateUsedTime dto) {
+
+		userDiscountService.cancelUsedDiscount(dto.getDiscountCodeId(), dto.getMemId());
+		return ResponseEntity.ok().build(); // 200 OK，無內容
+
+	}
 
 }
