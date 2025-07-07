@@ -187,8 +187,8 @@ public class HybridReplyImageUploadService {
      */
     private byte[] optimizeImageForReply(byte[] imageData) {
         try {
-            // 如果圖片已經小於1MB，不需要處理
-            if (imageData.length <= 1024 * 1024) {
+            // 如果圖片已經小於10MB，不需要處理
+            if (imageData.length <= SIZE_10MB) {
                 return imageData;
             }
 
@@ -212,18 +212,22 @@ public class HybridReplyImageUploadService {
                 throw new IOException("無法讀取圖片資料");
             }
 
-            // 計算新尺寸（留言圖片建議最大800px）
-            int maxDimension = 800;
             int originalWidth = originalImage.getWidth();
             int originalHeight = originalImage.getHeight();
 
+            // 目標檔案大小約10MB
+            long targetSize = SIZE_10MB;
+            double quality = 0.8; // 初始品質
+            int maxDimension = 1920; // 最大尺寸限制
+
+            // 計算縮放比例，確保圖片不會太大
             double scale = Math.min(
                     (double) maxDimension / originalWidth,
                     (double) maxDimension / originalHeight);
 
-            // 如果圖片已經夠小，且檔案大小合理，不需要縮放
-            if (scale >= 1.0 && imageData.length <= SIZE_2MB) {
-                return imageData;
+            // 如果圖片已經夠小，不需要縮放尺寸
+            if (scale >= 1.0) {
+                scale = 1.0;
             }
 
             int newWidth = (int) (originalWidth * scale);
@@ -241,11 +245,35 @@ public class HybridReplyImageUploadService {
             g2d.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
             g2d.dispose();
 
-            // 輸出為JPEG格式
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(resizedImage, "jpg", outputStream);
+            // 嘗試不同的品質設定，直到檔案大小接近10MB
+            byte[] result = null;
+            for (int attempt = 0; attempt < 5; attempt++) {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-            return outputStream.toByteArray();
+                // 使用JPEG格式，設定品質
+                javax.imageio.ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+                javax.imageio.ImageWriteParam param = writer.getDefaultWriteParam();
+                param.setCompressionMode(javax.imageio.ImageWriteParam.MODE_EXPLICIT);
+                param.setCompressionQuality((float) quality);
+
+                javax.imageio.stream.ImageOutputStream ios = ImageIO.createImageOutputStream(outputStream);
+                writer.setOutput(ios);
+                writer.write(null, new javax.imageio.IIOImage(resizedImage, null, null), param);
+                writer.dispose();
+                ios.close();
+
+                result = outputStream.toByteArray();
+
+                // 如果檔案大小已經小於或接近目標大小，就停止
+                if (result.length <= targetSize) {
+                    break;
+                }
+
+                // 調整品質，下次嘗試更低的品質
+                quality = Math.max(0.1, quality - 0.1);
+            }
+
+            return result;
 
         } catch (Exception e) {
             throw new IOException("圖片壓縮失敗: " + e.getMessage(), e);
@@ -308,7 +336,7 @@ public class HybridReplyImageUploadService {
         recommendations.put("maxTotalSize", "50MB");
         recommendations.put("recommendedSingleSize", "2MB以下獲得最佳體驗");
         recommendations.put("supportedFormats", Arrays.asList("JPEG", "PNG", "GIF", "WebP"));
-        recommendations.put("autoCompress", "超過2MB的圖片會自動壓縮");
+        recommendations.put("autoCompress", "超過10MB的圖片會自動壓縮到10MB左右");
         recommendations.put("recommendedDimensions", "800x600以下獲得最佳載入速度");
 
         return recommendations;
