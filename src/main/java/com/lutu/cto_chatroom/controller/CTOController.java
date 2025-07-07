@@ -34,9 +34,14 @@ public class CTOController {
 
 		// 儲存訊息到 Redis
 		ctoSrv.createMsg(message.getMemId(), message.getOwnerId(), message);
+		
+		// 決定推送給誰：如果是會員發送（chatMsgDirect=0），就推給 owner；反之亦然
+		String targetUserId = (message.getChatMsgDirect() == 0)
+		    ? message.getOwnerId().toString()
+		    : message.getMemId().toString();
 
 		// 推送訊息給對方（即時顯示）
-		messagingTemplate.convertAndSendToUser(message.getMemId().toString(), "/queue/messages", message);
+		messagingTemplate.convertAndSendToUser(targetUserId, "/queue/messages", message);
 	}
 
 	// 已讀回執
@@ -44,8 +49,14 @@ public class CTOController {
 	public void readMessage(CTOChatRoomVO message) {
 		// 更新資料庫中該訊息狀態為已讀
 		message.setStatus(0);
+		
+		// 決定推送給誰：如果是會員發送（chatMsgDirect=0），就推給 owner；反之亦然
+				String targetUserId = (message.getChatMsgDirect() == 0)
+				    ? message.getOwnerId().toString()
+				    : message.getMemId().toString();
+		
 		// 通知發送者該訊息已讀
-		messagingTemplate.convertAndSendToUser(message.getMemId().toString(), "/queue/read", message);
+		messagingTemplate.convertAndSendToUser(targetUserId, "/queue/read", message);
 	}
 
 	// 讀取歷史資料

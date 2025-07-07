@@ -65,12 +65,27 @@ public class CampsiteAvailApiController {
 
 	@PostMapping("/available/Remaing")
 	public ApiResponse<List<CampsiteTypeAvailableDTO>> searchAvailableRemaing(
-			@RequestParam(required = false) List<Integer> campIds, @RequestParam(required = false) Integer people,
+			@RequestParam(required = false) List<Integer> campIds,  @RequestParam(required = false) Integer people,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut) {
 		
-		System.out.println("CHECKIN:"+checkIn);
-		System.out.println("CHECKOUT:"+checkOut);
+		// 預設人數為 2
+	    if (people == null) {
+	        people = 2;
+	    }
+
+	    // 預設日期為明天與後天
+	    LocalDate today = LocalDate.now();
+	    if (checkIn == null) {
+	        checkIn = today.plusDays(1);
+	    }
+	    if (checkOut == null) {
+	        checkOut = today.plusDays(2);
+	    }
+
+	    System.out.println("CHECKIN:" + checkIn);
+	    System.out.println("CHECKOUT:" + checkOut);
+	    System.out.println("PEOPLE:" + people);
 
 //	     // 這裡根據 campIds 迴圈呼叫 repository，合併結果
 //	     List<CampsiteTypeAvailableDTO> result = new ArrayList<>();
