@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +50,14 @@ public class CampsiteController {
 	        .collect(Collectors.toList());
 	    return new ApiResponse<>("success", dtoList, "查詢成功");
 	}
+	
+	@GetMapping("/{campId}/getCampsiteByCampId")
+	public ApiResponse<List<CampsiteDTO>> getCampsiteByCampId(@PathVariable Integer campId) {
+	    List<CampsiteDTO> dtoList = campsiteSvc.getCampsiteDTOsByCampId(campId);
+	    return new ApiResponse<>("success", dtoList, "查詢成功");
+	}
+
+	
 
 	
 //	@GetMapping("/getAllCampsite")

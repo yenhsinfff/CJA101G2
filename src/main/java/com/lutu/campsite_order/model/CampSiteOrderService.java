@@ -215,5 +215,13 @@ public class CampSiteOrderService {
 		return dto;
 
 	}
+    
+    public List<CampsiteOrderDTO> getDTOOrdersByCampId(Integer campId) {
+        List<CampSiteOrderVO> orders = campSiteOrderRepository.findByCampId(campId);
+        return orders.stream()
+            .map(CampsiteOrderDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+
 
 }

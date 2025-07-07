@@ -2,6 +2,7 @@ package com.lutu.campsite.model;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,14 @@ public class CampsiteService {
 		
 
 	}
+	
+	public List<CampsiteDTO> getCampsiteDTOsByCampId(Integer campId) {
+	    List<CampsiteVO> voList = campsiteRepo.findByCampId(campId);
+	    return voList.stream()
+	        .map(CampsiteService::toDTO)
+	        .collect(Collectors.toList());
+	}
+
 
 	public List<CampsiteVO> getAll() {
 		return campsiteRepo.findAll();

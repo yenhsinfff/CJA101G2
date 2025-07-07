@@ -59,6 +59,15 @@ public class CampService {
     	return camp;
     }
     
+    @Transactional
+    public List<CampDTO> getCampDTOsByOwnerId(Integer ownerId) {
+        List<CampVO> camps = campRepository.findByOwnerId(ownerId);
+        return camps.stream()
+            .map(CampDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+
+    
     public CampInsertDTO createOneCamp(CampVO campVO) {
     	campRepository.save(campVO);
     	CampInsertDTO campVO2 = getOneCampDTO(campVO.getCampId());
