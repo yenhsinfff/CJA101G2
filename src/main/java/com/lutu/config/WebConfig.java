@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-        // 露營者 
+        //露營者 
         registry.addInterceptor(memberLoginInterceptor)
                 .addPathPatterns("/api/member/**")
                 .excludePathPatterns(
@@ -29,11 +29,12 @@ public class WebConfig implements WebMvcConfigurer {
                 		"/api/member/update",
                 		"/api/member/changePassword",
                 		"/api/member/register",
+                		"/api/member/verify",
                 		"/api/auth/forgot-password",
                         "/api/auth/reset-password"
                 );
 
-        // 營地主
+        //營地主
         registry.addInterceptor(ownerLoginInterceptor) 
                 .addPathPatterns("/api/owner/**")
                 .excludePathPatterns(
@@ -42,11 +43,15 @@ public class WebConfig implements WebMvcConfigurer {
                 		"/api/owner/update",
                 		"/api/owner/changePassword",
                         "/api/owner/register",
+                        "/api/owner/verify",
+                        "/api/owner/avatar/**",
+                        "/api/owner/all",
+                        "/api/owner/update-status/**",
                 		"/api/auth/forgot-password",
                         "/api/auth/reset-password"
                 );
 
-        // 管理員
+        //管理員
         registry.addInterceptor(adminLoginInterceptor)
                 .addPathPatterns("/api/admin/**")
                 .excludePathPatterns(
@@ -54,7 +59,7 @@ public class WebConfig implements WebMvcConfigurer {
                 		"/api/admin/logout",
                 		"/api/admin/all",
                 		"/api/admin/add",
-                		"/api/admin/update-status",
+                		"/api/admin/update-status/**",
                 		"/api/auth/forgot-password",
                         "/api/auth/reset-password"
                 );
