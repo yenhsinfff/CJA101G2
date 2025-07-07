@@ -90,6 +90,7 @@ public class CampsiteService {
 	
 	public static CampsiteDTO toDTO(CampsiteVO vo) {
 	    return new CampsiteDTO(
+	    		vo.getCampsiteType().getCampsitePeople(),
 	        vo.getCampsiteId(),
 	        vo.getCampId(),
 	        vo.getCampsiteTypeId(),
