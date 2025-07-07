@@ -8,6 +8,7 @@ import com.lutu.administrator.model.AdministratorRepository;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -102,11 +103,23 @@ public class AdministratorController {
 
     // 修改狀態
     @PutMapping("/update-status/{id}")
-    public ResponseEntity<String> updateStatus(@PathVariable Integer id, @RequestParam byte status) {
+    public ResponseEntity<Map<String, String>> updateStatus(@PathVariable Integer id, @RequestParam byte status) {
         return adminRepo.findById(id).map(admin -> {
             admin.setAdminStatus(status);
             adminRepo.save(admin);
-            return ResponseEntity.ok("更新成功");
-        }).orElse(ResponseEntity.notFound().build());
+
+            Map<String, String> body = new HashMap<>();
+            body.put("status", "success");
+            body.put("message", "狀態更新成功");
+            return ResponseEntity.ok(body);
+
+        }).orElseGet(() -> {
+            Map<String, String> body = new HashMap<>();
+            body.put("status", "fail");
+            body.put("message", "找不到管理員");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+        });
     }
+    
+    
 }
