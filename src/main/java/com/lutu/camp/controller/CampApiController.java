@@ -81,10 +81,15 @@ public class CampApiController {
 		return new ApiResponse<>("success", camps, "查詢成功");
 	}
 	
+	@GetMapping("/api/{ownerId}/getonecamp")
+	public ApiResponse<List<CampDTO>> getOneCamp(@PathVariable Integer ownerId) {
+	    List<CampDTO> camps = campService.getCampDTOsByOwnerId(ownerId);
+	    return new ApiResponse<>("success", camps, "查詢成功");
+	}
 
 
 	@PostMapping("/api/camps/createonecamp")
-	public ApiResponse<Boolean> createOneCamp1(
+	public ResponseEntity<MappingJacksonValue> createOneCamp1(@RequestParam boolean withOrders,
 			@RequestParam("ownerId") Integer ownerId, @RequestParam("campName") String campName,
 			@RequestParam("campContent") String campContent, @RequestParam("campCity") String campCity,
 			@RequestParam("campDist") String campDist, @RequestParam("campAddr") String campAddr,
@@ -116,12 +121,31 @@ public class CampApiController {
 
 			// 2. 設定動態過濾器
 			CampInsertDTO newCampVO = campService.createOneCamp(camp);
-//			ApiResponse<CampInsertDTO> response = new ApiResponse<>("success", newCampVO, "查詢成功");
+			ApiResponse<CampInsertDTO> response = new ApiResponse<>("success", newCampVO, "查詢成功");
 
-			return new ApiResponse<>("success", true, "建立成功");
+			// 設定動態過濾器
+			SimpleFilterProvider filters = new SimpleFilterProvider();
+			if (withOrders) {
+				filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAll());
+			} else {
+				filters.addFilter("campFilter", SimpleBeanPropertyFilter.serializeAllExcept("campsiteOrders"));
+			}
+
+			MappingJacksonValue mapping = new MappingJacksonValue(response);
+			mapping.setFilters(filters);
+			System.out.println("aaaaaaaa");
+
+			return ResponseEntity.ok().body(mapping);
 
 		} catch (Exception e) {
-			return new ApiResponse<>("success", false, "建立失敗");
+			ApiResponse<CampVO> failResponse = new ApiResponse<>("fail", camp, "查詢失敗");
+			System.out.println("create_err:"+e);
+			MappingJacksonValue mapping = new MappingJacksonValue(failResponse);
+			// 失敗時通常不用過濾，但為了保險也設一個 filter
+			SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("campFilter",
+					SimpleBeanPropertyFilter.serializeAll());
+			mapping.setFilters(filters);
+			return ResponseEntity.ok().body(mapping);
 		}
 
 	}

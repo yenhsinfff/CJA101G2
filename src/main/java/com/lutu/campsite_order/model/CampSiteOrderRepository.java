@@ -28,4 +28,7 @@ public interface CampSiteOrderRepository extends JpaRepository<CampSiteOrderVO, 
 //    @Query(value = "from CampSiteOrderVO where campsite_order_id=?1")
     @Query("from CampSiteOrderVO where campsiteOrderId = ?1")
     CampSiteOrderVO findByCampSiteOrderId(String campSiteOrderId);
+    
+    @Query("from CampSiteOrderVO where campId = ?1")
+    List<CampSiteOrderVO> findByCampId(Integer campId);
 }

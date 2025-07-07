@@ -66,6 +66,13 @@ public class CampsiteApiController {
 		  
 	}
 	
+	@GetMapping("{campId}/byCampId")
+	public ApiResponse<List<CampsiteOrderDTO>> getOrdersByCampId(@PathVariable Integer campId) {
+	    List<CampsiteOrderDTO> dtoList = campsiteOrdSvc.getDTOOrdersByCampId(campId);
+	    return new ApiResponse<>("success", dtoList, "查詢成功");
+	}
+
+	
 	@PostMapping("/update")
 	public ApiResponse<Boolean> updateStatus(
 			@RequestParam String orderId, @RequestParam int status) {
