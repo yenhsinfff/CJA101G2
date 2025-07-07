@@ -10,4 +10,7 @@ import com.lutu.prodColorList.model.ProdColorListVO.CompositeDetail;
 public interface ProdColorListRepository extends JpaRepository<ProdColorListVO, CompositeDetail>{
 
 	 List<ProdColorListVO> findByProdId(Integer prodId);
+	 
+	 List<ProdColorListVO> findByProdIdAndProdColorStatus(Integer prodId, Byte status);
+
 }

@@ -36,14 +36,21 @@ public class ProdColorListController {
         return new ApiResponse<>("success", list, "查詢成功");
     }
     
-    // 查詢某商品的所有顏色規格
+    // 查詢某商品的所有顏色規格 (上下架)
     // GET http://localhost:8081/CJA101G02/api/prod-colors/101
-    @GetMapping("/{prodId}")
+    @GetMapping("/all/{prodId}")
     public ApiResponse<List<ProdColorListDTO>> getProdColorsByProdId(@PathVariable Integer prodId) {
         List<ProdColorListDTO> colorList = service.getProdColorsByProdId(prodId);
         return new ApiResponse<>("success", colorList, "查詢成功");
     }
+    // 取得某商品的「上架中」顏色
+    @GetMapping("/active/{prodId}")
+    public ApiResponse<List<ProdColorListDTO>> getActiveColors(@PathVariable Integer prodId) {
+        List<ProdColorListDTO> list = service.getActiveProdColorsByProdId(prodId);
+        return new ApiResponse<>("success", list, "查詢成功（上架顏色）");
+    }
 
+    
     // 查詢單一顏色規格
     // GET http://localhost:8081/CJA101G02/api/prod-colors/101/3
     @GetMapping("/{prodId}/{colorId}")
@@ -56,14 +63,6 @@ public class ProdColorListController {
         }
     }
 
-    // 新增或更新一筆顏色資料
-    // POST http://localhost:8081/CJA101G02/api/prod-colors
-    @PostMapping("")
-    public ApiResponse<ProdColorListDTO> saveOrUpdate(@RequestBody ProdColorListDTO dto) {
-        ProdColorListDTO saved = service.saveOrUpdate(dto);
-        return new ApiResponse<>("success", saved, "儲存成功");
-    }
-    
     // 取得顏色圖片
     @GetMapping("/colorpic/{prodId}/{colorId}")
     public void getProdColorPic(@PathVariable Integer prodId, @PathVariable Integer colorId, HttpServletResponse response) throws IOException {

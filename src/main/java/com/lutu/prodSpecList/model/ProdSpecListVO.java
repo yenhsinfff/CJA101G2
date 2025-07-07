@@ -15,6 +15,7 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -35,6 +36,12 @@ public class ProdSpecListVO implements Serializable {
 	@NotNull(message = "規格價格: 請勿空白")
 	@Min(value = 0, message = "規格價格不能為負數")
 	private Integer prodSpecPrice; // 規格價格
+	
+	@Column(name = "prod_spec_status")
+	@NotNull(message = "商品規格狀態: 請勿空白")
+	@Min(value = 0, message = "商品規格狀態只能是 0 或 1")
+	@Max(value = 1, message = "商品規格狀態只能是 0 或 1")
+	private Byte prodSpecStatus;// 0:未上架 1:上架
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_spec_id", referencedColumnName = "spec_id", insertable = false, updatable = false)
@@ -103,6 +110,14 @@ public class ProdSpecListVO implements Serializable {
 
 	public void setShopProdVO(ShopProdVO shopProdVO) {
 		this.shopProdVO = shopProdVO;
+	}
+
+	public Byte getProdSpecStatus() {
+		return prodSpecStatus;
+	}
+
+	public void setProdSpecStatus(Byte prodSpecStatus) {
+		this.prodSpecStatus = prodSpecStatus;
 	}
 
 	@Override

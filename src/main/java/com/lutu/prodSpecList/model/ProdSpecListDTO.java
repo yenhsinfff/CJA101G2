@@ -1,5 +1,6 @@
 package com.lutu.prodSpecList.model;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,9 +13,14 @@ public class ProdSpecListDTO {
     @NotNull(message = "規格價格不可為空")
     @Min(value = 0, message = "規格價格不能為負數")
     private Integer prodSpecPrice;
-    
-    private String prodSpecName;
+
+    private String prodSpecName; 	//（SpecListVO.specName）
     private Integer originalSpecId;
+    
+    @NotNull(message = "商品規格狀態: 請勿空白")
+	@Min(value = 0, message = "商品規格狀態只能是 0 或 1")
+	@Max(value = 1, message = "商品規格狀態只能是 0 或 1")
+    private Byte prodSpecStatus; // 0:未上架 1:上架
 
 	public Integer getProdId() {
 		return prodId;
@@ -54,6 +60,14 @@ public class ProdSpecListDTO {
 
 	public void setOriginalSpecId(Integer originalSpecId) {
 		this.originalSpecId = originalSpecId;
+	}
+
+	public Byte getProdSpecStatus() {
+		return prodSpecStatus;
+	}
+
+	public void setProdSpecStatus(Byte prodSpecStatus) {
+		this.prodSpecStatus = prodSpecStatus;
 	}
 
 
