@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,5 +83,35 @@ public class CTOChatService {
 		vo.setStatus(0);
 		return vo;
 	}
+	
+	public List<CTOChatRoomVO> getChatListByOwnerId(Integer campId) {
+	    Set<String> keys = ctoRedisRepository.getAllChatRoomKeys(); // 移到 repository
+
+	    List<CTOChatRoomVO> chatList = new ArrayList<>();
+
+	    if (keys != null) {
+	        for (String key : keys) {
+	            String[] parts = key.split(":");
+	            if (parts.length == 3) {
+	                int id1 = Integer.parseInt(parts[1]);
+	                int id2 = Integer.parseInt(parts[2]);
+
+	                if (id1 == campId || id2 == campId) {
+	                    List<Object> messages = ctoRedisRepository.getMessagesByKey(key); // 移到 repository
+	                    if (messages != null && !messages.isEmpty()) {
+	                        Object latest = messages.get(messages.size() - 1);
+	                        if (latest instanceof CTOChatRoomVO) {
+	                            chatList.add((CTOChatRoomVO) latest);
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	    }
+
+	    return chatList;
+	}
+
+
 
 }

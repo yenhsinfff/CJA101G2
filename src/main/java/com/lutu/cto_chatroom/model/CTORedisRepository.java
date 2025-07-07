@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class CTORedisRepository {
@@ -25,6 +26,16 @@ public class CTORedisRepository {
     public List<Object> getMessages(Integer memId, Integer ownerId) {
         String key = getRoomKey(memId, ownerId);
         return redisTemplate.opsForList().range(key, 0, -1);
+    }
+    
+    // 取得所有聊天室的 Redis Key
+    public Set<String> getAllChatRoomKeys() {
+        return redisTemplate.keys("CTOROOM:*");
+    }
+
+    // 取得指定聊天室（key）中的所有訊息
+    public List<Object> getMessagesByKey(String redisKey) {
+        return redisTemplate.opsForList().range(redisKey, 0, -1);
     }
 }
 

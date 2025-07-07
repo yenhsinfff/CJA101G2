@@ -162,7 +162,7 @@ public class CampsiteTypeApiController {
 
 		Set<CampsiteVO> campsiteList = campsiteType.getCampsites();
 
-		List<CampsiteDTO> dtoList = campsiteList.stream().map(c -> new CampsiteDTO(c.getCampsiteId(), campId,
+		List<CampsiteDTO> dtoList = campsiteList.stream().map(c -> new CampsiteDTO(c.getCampsiteType().getCampsitePeople(),c.getCampsiteId(), campId,
 				campsiteTypeId, c.getCampsiteIdName(), c.getCamperName())).collect(Collectors.toList());
 
 		return new ApiResponse<>("success", dtoList, "查詢成功");
