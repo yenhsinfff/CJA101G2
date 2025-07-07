@@ -1,5 +1,9 @@
 package com.lutu.prodColorList.model;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public class ProdColorListDTO {
 
     private Integer prodId;         // 商品編號（外鍵，也是 composite key）
@@ -9,6 +13,11 @@ public class ProdColorListDTO {
     private String colorName;       // 額外欄位：顏色名稱（ColorListVO.colorName）
     private boolean hasPic;         // 額外欄位：是否有圖片
     private Integer originalColorId;
+    
+	@NotNull(message = "商品顏色狀態: 請勿空白")
+	@Min(value = 0, message = "商品顏色狀態只能是 0 或 1")
+	@Max(value = 1, message = "商品顏色狀態只能是 0 或 1")
+    private Byte prodColorStatus;
 
     public ProdColorListDTO() {}
 
@@ -58,6 +67,14 @@ public class ProdColorListDTO {
 
 	public void setOriginalColorId(Integer originalColorId) {
 		this.originalColorId = originalColorId;
+	}
+
+	public Byte getProdColorStatus() {
+		return prodColorStatus;
+	}
+
+	public void setProdColorStatus(Byte prodColorStatus) {
+		this.prodColorStatus = prodColorStatus;
 	}
     
     

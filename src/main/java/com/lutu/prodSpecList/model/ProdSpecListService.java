@@ -1,8 +1,12 @@
 package com.lutu.prodSpecList.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,9 @@ public class ProdSpecListService {
     
     @Autowired
     private SpecListRepository specListRepository;
+    
+    @Autowired
+    private ProdSpecListRepository prodSpecListRepository;
 
     /* 查所有規格 */
     public List<ProdSpecListDTO> getAllProdSpecs() {
@@ -36,7 +43,7 @@ public class ProdSpecListService {
 
     /* 查某商品所有商品規格 */
     public List<ProdSpecListDTO> getProdSpecsByProdId(Integer prodId) {
-        List<ProdSpecListVO> voList = repository.findByProdId(prodId);
+        List<ProdSpecListVO> voList = repository.findAllByProdId(prodId);
         List<ProdSpecListDTO> dtoList = new ArrayList<>();
 
         for (ProdSpecListVO vo : voList) {
@@ -69,46 +76,89 @@ public class ProdSpecListService {
         return result;
     }
     
-    /* 新增或修改商品規格*/
-    public ProdSpecListDTO saveOrUpdate(ProdSpecListDTO dto) {
-        // 如果原始的 specId 存在，且與目前要儲存的不一樣
-        if (dto.getProdId() != null && dto.getOriginalSpecId() != null &&
-            !dto.getOriginalSpecId().equals(dto.getProdSpecId())) {
-            
-            // 主鍵要變動 → 先刪舊的
-            repository.deleteById(new CompositeDetail2(dto.getProdId(), dto.getOriginalSpecId()));
-            
-            // 建立新實體再存
-            return toDTO(repository.save(toVO(dto)));
-        }
+    // 只查上架的商品規格
+    public List<ProdSpecListDTO> getActiveProdSpecsByProdId(Integer prodId) {
+        List<ProdSpecListVO> voList = repository.findActiveSpecsByProdId(prodId);
+        List<ProdSpecListDTO> dtoList = new ArrayList<>();
 
-        // 若是原始的 key（主鍵）沒變動，就是單純更新價格
-        Optional<ProdSpecListVO> existing = repository.findById(new CompositeDetail2(dto.getProdId(), dto.getProdSpecId()));
-        if (existing.isPresent()) {
-            ProdSpecListVO vo = existing.get();
-            vo.setProdSpecPrice(dto.getProdSpecPrice());
-            return toDTO(repository.save(vo));
+        for (ProdSpecListVO vo : voList) {
+            dtoList.add(toDTO(vo));
         }
-
-        // 若是新增的，直接存
-        return toDTO(repository.save(toVO(dto)));
+        return dtoList;
     }
+
+    
+    // *更新商品規格狀態
+    public void updateProdSpecs(Integer prodId, List<ProdSpecListDTO> newSpecDTOs) {
+        // 取得目前商品所有規格（含上下架）
+        List<ProdSpecListVO> currentSpecs = repository.findAllByProdId(prodId);
+
+        // 建立目前已有的規格 ID 集合
+        Set<Integer> currentSpecIds = new HashSet<>();
+        for (ProdSpecListVO vo : currentSpecs) {
+            currentSpecIds.add(vo.getCompositeKey().getProdSpecId());
+        }
+
+        // 將這次傳入的有效規格建立清單
+        Set<Integer> newSpecIds = new HashSet<>();
+        List<ProdSpecListDTO> validSpecs = new ArrayList<>();
+
+        // 檢查是否選擇了單一規格（假設 ID = 1）
+        boolean hasSingleSpec = newSpecDTOs.stream()
+            .anyMatch(dto -> dto.getProdSpecId() != null && dto.getProdSpecId() == 1);
+
+        for (ProdSpecListDTO dto : newSpecDTOs) {
+            Integer specId = dto.getProdSpecId();
+            if (hasSingleSpec && specId != 1) {
+                continue; // 有單一規格就跳過其他
+            }
+
+            // 記錄本次出現的 ID
+            newSpecIds.add(specId);
+            validSpecs.add(dto);
+        }
+
+        // 處理每個新的或更新的規格
+        for (ProdSpecListDTO dto : validSpecs) {
+            Integer specId = dto.getProdSpecId();
+            ProdSpecListVO existing = repository.findByCompositeKey(prodId, specId);
+
+            if (existing == null) {
+                // 新增（只新增主鍵、價格、狀態）
+                ProdSpecListVO newVO = new ProdSpecListVO();
+                newVO.setCompositeKey(new CompositeDetail2(prodId, specId));
+                newVO.setProdSpecPrice(dto.getProdSpecPrice());
+                newVO.setProdSpecStatus((byte) 1);
+                repository.save(newVO);
+            } else {
+                // 已存在 → 更新價格 & 設為上架
+                existing.setProdSpecPrice(dto.getProdSpecPrice());
+                existing.setProdSpecStatus((byte) 1);
+                repository.save(existing);
+            }
+        }
+
+        // 將舊有但未被保留的 → 設為下架
+        for (ProdSpecListVO vo : currentSpecs) {
+            Integer oldSpecId = vo.getCompositeKey().getProdSpecId();
+            if (!newSpecIds.contains(oldSpecId)) {
+                vo.setProdSpecStatus((byte) 0); // 下架，不刪除
+                repository.save(vo);
+            }
+        }
+    }
+
 
 
 
     // 刪除 by ProdId
  	public void deleteByProdId(Integer prodId) {
- 	    List<ProdSpecListVO> list = repository.findByProdId(prodId);
+ 	    List<ProdSpecListVO> list = repository.findAllByProdId(prodId);
  	    for (ProdSpecListVO vo : list) {
  	        repository.deleteById(new CompositeDetail2(vo.getProdId(), vo.getProdSpecId()));
  	    }
  	}
  	
- 	
-    /* 刪除 */
-    public void delete(Integer prodId, Integer specId) {
-        repository.deleteById(new CompositeDetail2(prodId, specId));
-    }
 
     
     /* ======== 轉換工具 ======== */
@@ -118,14 +168,12 @@ public class ProdSpecListService {
         dto.setProdId(vo.getProdId());
         dto.setProdSpecId(vo.getProdSpecId());
         dto.setProdSpecPrice(vo.getProdSpecPrice());
+        dto.setProdSpecStatus(vo.getProdSpecStatus());
 
         // 顯示規格名稱
         if (vo.getSpecListVO() != null) {
             dto.setProdSpecName(vo.getSpecListVO().getSpecName());
         }
-
-        // 記錄原本的 prodSpecId，供修改時辨識用
-        dto.setOriginalSpecId(vo.getProdSpecId());
 
         return dto;
     }
@@ -137,6 +185,7 @@ public class ProdSpecListService {
         vo.setProdId(dto.getProdId());
         vo.setProdSpecId(dto.getProdSpecId());
         vo.setProdSpecPrice(dto.getProdSpecPrice());
+        vo.setProdSpecStatus(dto.getProdSpecStatus());
         return vo;
     }
 }

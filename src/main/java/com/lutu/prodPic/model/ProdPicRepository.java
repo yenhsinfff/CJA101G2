@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProdPicRepository extends JpaRepository<ProdPicVO, Integer> {
 	
-    List<ProdPicVO> findByProdId(Integer prodId);
+	List<ProdPicVO> findByProdIdOrderByProdPicIdAsc(Integer prodId);
     
 }

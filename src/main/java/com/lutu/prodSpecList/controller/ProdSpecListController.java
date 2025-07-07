@@ -33,16 +33,22 @@ public class ProdSpecListController {
         return new ApiResponse<>("success", list, "查詢成功");
     }
 
-    /** 取得某商品所有規格 
-     * http://localhost:8081/CJA101G02/api/prod-specs/{prodId}
+    /** 取得某商品所有規格 (上下架)
+     * http://localhost:8081/CJA101G02/api/prod-specs/all/{prodId}
      * */
-    @GetMapping("/{prodId}")
+    @GetMapping("/all/{prodId}")
     public ApiResponse<List<ProdSpecListDTO>> getProdSpecsByProdId(@PathVariable Integer prodId) {
         List<ProdSpecListDTO> list = service.getProdSpecsByProdId(prodId);
         return new ApiResponse<>("success", list, "查詢成功");
     }
+    // 取得某商品的「上架中」規格 
+    @GetMapping("/active/{prodId}")
+    public ApiResponse<List<ProdSpecListDTO>> getActiveSpecs(@PathVariable Integer prodId) {
+        List<ProdSpecListDTO> list = service.getActiveProdSpecsByProdId(prodId);
+        return new ApiResponse<>("success", list, "查詢成功（上架規格）");
+    }
 
-    /** 取得單筆規格 */
+    // 取得單筆規格 
     @GetMapping("/{prodId}/{specId}")
     public ApiResponse<ProdSpecListDTO> getOne(@PathVariable Integer prodId,
                                            @PathVariable Integer specId) {
@@ -51,12 +57,6 @@ public class ProdSpecListController {
                            : new ApiResponse<>("fail",   null, "查無資料");
     }
 
-    /** 新增或修改（規格唯一鍵相同時即為更新） */
-    @PostMapping
-    public ApiResponse<ProdSpecListDTO> saveOrUpdate(@RequestBody @Validated ProdSpecListDTO dto) {
-        ProdSpecListDTO saved = service.saveOrUpdate(dto);
-        return new ApiResponse<>("success", saved, "儲存成功");
-    }
 
     /** 刪除 */
 //    @DeleteMapping("/{prodId}/{specId}")

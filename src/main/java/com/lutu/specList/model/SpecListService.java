@@ -31,9 +31,11 @@ public class SpecListService {
     }
 
     public SpecListDTO saveOrUpdate(SpecListDTO dto) {
-        SpecListVO vo = toVO(dto);
+        SpecListVO vo = new SpecListVO();
+        vo.setSpecName(dto.getSpecName());
         SpecListVO saved = repository.save(vo);
-        return toDTO(saved);
+        dto.setSpecId(saved.getSpecId());
+        return dto;
     }
 
 //    public void delete(Integer id) {

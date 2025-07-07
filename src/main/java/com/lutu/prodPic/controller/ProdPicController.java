@@ -7,8 +7,8 @@ import java.net.URLConnection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +54,13 @@ public class ProdPicController {
         }
     }
     
+    // 依照prodId取得其商品圖片
+    @GetMapping("/byProd/{prodId}")
+    public List<ProdPicDTO> getProdPicsByProdId(@PathVariable Integer prodId) {
+        return prodPicService.getByProdId(prodId);
+    }
+
+    
     /**
      * 上傳商品圖片（指定商品 ID）
      * POST /api/prodpics/upload/{prodId}
@@ -78,4 +85,38 @@ public class ProdPicController {
             return new ApiResponse<>("fail", null, "上傳發生錯誤：" + e.getMessage());
         }
     }
+    
+    
+    /**
+     * 覆蓋更新指定商品圖片（依商品 ID 與第幾張圖）用 index 取出第幾張圖。
+     * POST /api/prodpics/upload/{prodId}/{index}
+     */
+    @PostMapping("/upload/{prodId}/{index}")
+    public ApiResponse<String> uploadProductImageByIndex(
+        @PathVariable Integer prodId,
+        @PathVariable Integer index,
+        @RequestParam("file") MultipartFile file) {
+
+        if (file == null || file.isEmpty()) {
+            return new ApiResponse<>("fail", null, "圖片為空，請重新上傳");
+        }
+
+        boolean success = prodPicService.updateProductImageByIndex(prodId, index, file);
+        if (success) {
+            return new ApiResponse<>("success", "圖片上傳成功", "商品圖片已更新");
+        } else {
+            return new ApiResponse<>("fail", null, "圖片更新失敗");
+        }
+    }
+
+    // 移除商品圖片
+    @PatchMapping("/clear/{prodId}/{index}")
+    public ApiResponse<String> clearImage(@PathVariable Integer prodId, @PathVariable Integer index) {
+        boolean success = prodPicService.clearImageByIndex(prodId, index);
+        return success
+            ? new ApiResponse<>("success", "圖片已清除", null)
+            : new ApiResponse<>("fail", null, "圖片清除失敗");
+    }
+
+    
 }

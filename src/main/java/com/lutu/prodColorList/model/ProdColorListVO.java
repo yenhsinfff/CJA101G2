@@ -17,6 +17,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "prod_color_list")
@@ -35,6 +38,12 @@ public class ProdColorListVO implements Serializable {
 	@Column(name = "prod_color_pic")
 	private byte[] prodColorPic;
 
+	@Column(name = "prod_color_status")
+	@NotNull(message = "商品顏色狀態: 請勿空白")
+	@Min(value = 0, message = "商品顏色狀態只能是 0 或 1")
+	@Max(value = 1, message = "商品顏色狀態只能是 0 或 1")
+	private Byte prodColorStatus;// 0:未上架 1:上架
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_color_id", referencedColumnName = "color_id", insertable = false, updatable = false)
 	private ColorListVO colorListVO;
@@ -103,6 +112,14 @@ public class ProdColorListVO implements Serializable {
 
 	public void setShopProdVO(ShopProdVO shopProdVO) {
 		this.shopProdVO = shopProdVO;
+	}
+
+	public Byte getProdColorStatus() {
+		return prodColorStatus;
+	}
+
+	public void setProdColorStatus(Byte prodColorStatus) {
+		this.prodColorStatus = prodColorStatus;
 	}
 
 	@Override
