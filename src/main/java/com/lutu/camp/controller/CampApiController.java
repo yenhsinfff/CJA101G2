@@ -81,6 +81,11 @@ public class CampApiController {
 		return new ApiResponse<>("success", camps, "查詢成功");
 	}
 	
+	@GetMapping("/api/{ownerId}/getonecamp")
+	public ApiResponse<List<CampDTO>> getOneCamp(@PathVariable Integer ownerId) {
+	    List<CampDTO> camps = campService.getCampDTOsByOwnerId(ownerId);
+	    return new ApiResponse<>("success", camps, "查詢成功");
+	}
 
 
 	@PostMapping("/api/camps/createonecamp")

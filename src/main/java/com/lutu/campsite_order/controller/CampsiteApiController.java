@@ -1,9 +1,11 @@
 package com.lutu.campsite_order.controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lutu.ApiResponse;
 import com.lutu.camp.model.CampService;
 import com.lutu.campsite.model.CampsiteVO;
+import com.lutu.campsite_available.model.CampsiteTypeAvailableDTO;
 import com.lutu.campsite_order.model.CampSiteOrderService;
 import com.lutu.campsite_order.model.CampSiteOrderVO;
 import com.lutu.campsite_order.model.CampsiteOrderDTO;
@@ -61,6 +64,26 @@ public class CampsiteApiController {
 			return new ApiResponse<>("fail", cancelRes, "取消失敗");
 		}
 		  
+	}
+	
+	@GetMapping("{campId}/byCampId")
+	public ApiResponse<List<CampsiteOrderDTO>> getOrdersByCampId(@PathVariable Integer campId) {
+	    List<CampsiteOrderDTO> dtoList = campsiteOrdSvc.getDTOOrdersByCampId(campId);
+	    return new ApiResponse<>("success", dtoList, "查詢成功");
+	}
+
+	
+	@PostMapping("/update")
+	public ApiResponse<Boolean> updateStatus(
+			@RequestParam String orderId, @RequestParam int status) {
+		Boolean response = false;
+		try {
+			response=campsiteOrdSvc.updatePaymentStatus(orderId,(byte) status);
+			return new ApiResponse<>("success", response, "取消成功");
+		} catch (Exception e) {
+			System.out.println("updateStatus_err:"+e);
+			return new ApiResponse<>("fail", response, "取消失敗");
+		}
 	}
 	
 

@@ -1,6 +1,7 @@
 package com.lutu.owner.dto;
 
 public class OwnerChangePasswordRequest {
+	
     private String oldPassword;
     private String newPassword;
 
