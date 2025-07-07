@@ -1,5 +1,7 @@
 package com.lutu.shop_order_items_details.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +64,14 @@ public class ShopOrderItemsDetailsService {
 
 		ProdSpecListVO.CompositeDetail2 key = new ProdSpecListVO.CompositeDetail2(vo.getProdId(), vo.getProdSpecId());
 		// 價格
-		dto.setProdOrderPrice(psr.findById(key).map(ProdSpecListVO::getProdSpecPrice).orElse(0));
+		ShopProdVO prod = spr.findById(vo.getProdId()).orElseThrow(() -> new RuntimeException("查無該種商品"));
+
+		BigDecimal prodDiscount = prod.getProdDiscount();
+
+		BigDecimal price = new BigDecimal(psr.findById(key).map(ProdSpecListVO::getProdSpecPrice).orElse(0))
+				.multiply(prodDiscount).setScale(0, RoundingMode.HALF_UP);
+
+		dto.setProdOrderPrice(price.intValue());
 
 		return dto;
 	}
@@ -158,15 +167,15 @@ public class ShopOrderItemsDetailsService {
 		List<ShopOrderItemsDetailsDTO_comment> listDTO = new ArrayList<>();
 
 		for (ShopOrderItemsDetailsVO vo : listVO) {
-			
+
 			// 只留下有評分或有評論的資料
 			boolean hasScore = vo.getCommentSatis() != 0;
 			boolean hasComments = vo.getCommentContent() != null && !vo.getCommentContent().trim().isEmpty();
-			
+
 			if (!hasScore && !hasComments) {
-		        continue; // 兩者都沒填就跳過
-		    }
-			
+				continue; // 兩者都沒填就跳過
+			}
+
 			ShopOrderItemsDetailsDTO_comment dto = new ShopOrderItemsDetailsDTO_comment();
 
 			dto.setProdId(vo.getProdId());
@@ -176,11 +185,11 @@ public class ShopOrderItemsDetailsService {
 			dto.setMemId(orderVO.getMemId().getMemId());
 
 			if (hasScore) {
-		        dto.setCommentSatis(vo.getCommentSatis());
-		    }
-		    if (hasComments) {
-		        dto.setCommentContent(vo.getCommentContent());
-		    }
+				dto.setCommentSatis(vo.getCommentSatis());
+			}
+			if (hasComments) {
+				dto.setCommentContent(vo.getCommentContent());
+			}
 
 			listDTO.add(dto);
 
