@@ -381,8 +381,8 @@ public class ShopOrderService {
 						sovo.setDiscountAmount(value.intValue());
 						afterDiscountAmount = beforeDiscountAmount.subtract(value).add(shipFee);
 					} else if (type == 1) {
-						BigDecimal discountAmount = beforeDiscountAmount.multiply(BigDecimal.ONE.subtract(value))
-								.setScale(0, RoundingMode.HALF_UP);
+						BigDecimal discountAmount = beforeDiscountAmount.multiply(value).setScale(0,
+								RoundingMode.HALF_UP);
 						sovo.setDiscountAmount(discountAmount.intValue());
 						afterDiscountAmount = beforeDiscountAmount.subtract(discountAmount).add(shipFee);
 					}
