@@ -104,6 +104,47 @@ public class CampsiteAvailApiController {
 		return new ApiResponse<>("success", campsiteTypeVOList, "查詢成功");
 	}
 	
+	@PostMapping("/available/Remaing1")
+	public ApiResponse<List<CampsiteTypeAvailableDTO>> searchAvailableRemaing1(
+			@RequestParam(required = false) List<Integer> campIds,  @RequestParam(required = false) Integer people,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut) {
+		
+		// 預設人數為 2
+	    if (people == null) {
+	        people = 2;
+	    }
+
+	    // 預設日期為明天與後天
+	    LocalDate today = LocalDate.now();
+	    if (checkIn == null) {
+	        checkIn = today.plusDays(1);
+	    }
+	    if (checkOut == null) {
+	        checkOut = today.plusDays(2);
+	    }
+
+	    System.out.println("CHECKIN:" + checkIn);
+	    System.out.println("CHECKOUT:" + checkOut);
+	    System.out.println("PEOPLE:" + people);
+
+//	     // 這裡根據 campIds 迴圈呼叫 repository，合併結果
+//	     List<CampsiteTypeAvailableDTO> result = new ArrayList<>();
+//	     if (campIds == null || campIds.isEmpty()) {
+//	         result = service.ensureAndQueryRemaing(null, people, Date.valueOf(checkIn), Date.valueOf(checkOut));
+//	     } else {
+//	         for (Integer campId : campIds) {
+//	             result.addAll(service.ensureAndQueryRemaing(campId, people, Date.valueOf(checkIn), Date.valueOf(checkOut)));
+//	         }
+//	     }
+		if (!checkIn.isBefore(checkOut)) {
+			throw new IllegalArgumentException("checkIn 必須早於 checkOut");
+		}
+		List<CampsiteTypeAvailableDTO> campsiteTypeVOList = service.ensureAndQueryRemaing1(campIds, people,
+				java.sql.Date.valueOf(checkIn), java.sql.Date.valueOf(checkOut));
+		return new ApiResponse<>("success", campsiteTypeVOList, "查詢成功");
+	}
+	
 	//訂單成立 剩餘房型數量-1
 //	@PostMapping("/deduct")
 //	public ApiResponse<Boolean> deductRooms(
