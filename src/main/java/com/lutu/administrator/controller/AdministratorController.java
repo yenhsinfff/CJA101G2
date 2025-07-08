@@ -4,6 +4,7 @@ import com.lutu.administrator.dto.AdminDTO;
 import com.lutu.administrator.dto.LoginRequest;
 import com.lutu.administrator.model.AdministratorVO;
 import com.lutu.administrator.model.AdministratorRepository;
+import com.lutu.administrator.model.AdministratorService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -18,12 +19,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @RestController
 @RequestMapping("/api/admin")
 public class AdministratorController {
 
     @Autowired
     private AdministratorRepository adminRepo;
+    
+    @Autowired
+    private AdministratorService administratorService;
 
     // 登入
     @PostMapping("/login")
@@ -50,7 +55,7 @@ public class AdministratorController {
             }
 
             // 登入成功 → 設定 session 並回傳 admin 資料
-            session.setAttribute("admin", admin);
+            session.setAttribute("loggedInAdmin", admin);
             System.out.println("管理員登入成功");
             Map<String, Object> adminData = new HashMap<>();
             adminData.put("adminId", admin.getAdminId());
@@ -81,6 +86,7 @@ public class AdministratorController {
         return ResponseEntity.ok("已登出");
     }
 
+    
     // 查全部管理員
     @GetMapping("/all")
     public List<AdminDTO> getAllAdmins() {
@@ -94,13 +100,34 @@ public class AdministratorController {
                 .collect(Collectors.toList());
     }
 
-    // 新增管理員
-    @PostMapping("/add")
-    public ResponseEntity<String> addAdmin(@RequestBody AdministratorVO admin) {
-        adminRepo.save(admin);
-        return ResponseEntity.ok("新增成功");
-    }
 
+   
+    //新增管理員
+    @PostMapping("/add")
+    public ResponseEntity<String> addAdmin(
+        @RequestParam String adminAcc,
+        @RequestParam String adminName,
+        @RequestParam String adminPwd,
+        @RequestParam(defaultValue = "0") String adminStatus,
+        HttpSession session) {
+        
+        try {
+            AdministratorVO admin = new AdministratorVO();
+            admin.setAdminAcc(adminAcc);
+            admin.setAdminName(adminName);
+            admin.setAdminPwd(adminPwd);
+            admin.setAdminStatus(Byte.parseByte(adminStatus));
+            
+            administratorService.addAdministrator(admin);
+            return ResponseEntity.ok("新增成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("新增失敗：" + e.getMessage());
+        }
+    }
+    
+    
     // 修改狀態
     @PutMapping("/update-status/{id}")
     public ResponseEntity<Map<String, String>> updateStatus(@PathVariable Integer id, @RequestParam byte status) {
