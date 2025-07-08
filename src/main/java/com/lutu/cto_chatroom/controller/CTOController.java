@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,9 +26,13 @@ public class CTOController {
 
 	@Autowired
 	private CTOChatService ctoSrv;
+	
+	@Autowired
+	private SimpUserRegistry simpUserRegistry;
 
 	// 發送訊息
 	@MessageMapping("/chat.send")
+	@SendToUser("/queue/messages")
 	public void sendMessage(CTOChatRoomVO message) {
 //        message.setChatMsgTime(System.currentTimeMillis());
 //        message.setStatus(1); // 初始為未讀
@@ -39,6 +44,12 @@ public class CTOController {
 		String targetUserId = (message.getChatMsgDirect() == 0)
 		    ? message.getOwnerId().toString()
 		    : message.getMemId().toString();
+		
+		System.out.println("推送給使用者: " + targetUserId + ", 訊息: " + message.getChatMsgContent());
+		
+		boolean userSessionExists = simpUserRegistry.getUser(targetUserId) != null;
+		System.out.println("該使用者是否在線？" + userSessionExists);
+
 
 		// 推送訊息給對方（即時顯示）
 		messagingTemplate.convertAndSendToUser(targetUserId, "/queue/messages", message);

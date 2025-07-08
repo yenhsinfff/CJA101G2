@@ -11,7 +11,7 @@ public class CTORedisRepository {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    private String getRoomKey(Integer memId, Integer ownerId) {
+    public String getRoomKey(Integer memId, Integer ownerId) {
         // 用戶ID排序確保唯一性
         return "CTOROOM:" + Math.min(memId, ownerId) + ":" + Math.max(memId, ownerId);
     }
