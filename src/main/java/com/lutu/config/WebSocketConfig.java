@@ -9,26 +9,22 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic", "/queue"); // 支援一對一（queue）和群聊（topic）
-        config.setApplicationDestinationPrefixes("/app");
-        config.setUserDestinationPrefix("/user");       // ✅ 這行很關鍵
-    }
+	@Override
+	public void configureMessageBroker(MessageBrokerRegistry config) {
+		config.enableSimpleBroker("/topic", "/queue"); // 支援一對一（queue）和群聊（topic）
+		config.setApplicationDestinationPrefixes("/app");
+		config.setUserDestinationPrefix("/user"); // ✅ 這行很關鍵
+	}
 
 //    @Override
 //    public void registerStompEndpoints(StompEndpointRegistry registry) {
 //        registry.addEndpoint("/ws-chat").setAllowedOriginPatterns("*").withSockJS();
 //    }
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws-chat")
-            .setAllowedOriginPatterns(
-                "http://localhost:*",
-                "http://127.0.0.1:*",
-                "http://192.168.*.*:*",   // 內網開發者
-                "http://lutu.ddnsking.com"
-            )
-            .withSockJS();
-    }
+	@Override
+	public void registerStompEndpoints(StompEndpointRegistry registry) {
+		registry.addEndpoint("/ws-chat").setHandshakeHandler(new CustomHandshakeHandler()) // ← 這一行很關鍵
+				.setAllowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*", "http://192.168.*.*:*", // 內網開發者
+						"http://lutu.ddnsking.com")
+				.withSockJS();
+	}
 }
