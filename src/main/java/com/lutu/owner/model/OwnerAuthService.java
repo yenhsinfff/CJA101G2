@@ -10,6 +10,7 @@ public interface OwnerAuthService {
 	
     void register(OwnerRegisterRequest request);
     OwnerVO login(String ownerAcc, String ownerPwd);
+    OwnerVO getOneProfile(String ownerAcc);
     void logout(HttpSession session);
     void verifyAccount(String token);
     public OwnerVO update(OwnerUpdateRequest request, HttpSession session);
