@@ -82,6 +82,15 @@ public class OwnerAuthServiceImpl implements OwnerAuthService {
 
         return owner; // ✅ 直接回傳 OwnerVO
     }
+    
+    @Override
+    public OwnerVO getOneProfile(String ownerAcc) {
+        OwnerVO owner = ownerRepo.findByOwnerAcc(ownerAcc)
+            .orElseThrow(() -> new IllegalArgumentException("帳號不存在"));
+        return owner; // ✅ 直接回傳 OwnerVO
+    }
+    
+    
 
     @Override
     public void logout(HttpSession session) {

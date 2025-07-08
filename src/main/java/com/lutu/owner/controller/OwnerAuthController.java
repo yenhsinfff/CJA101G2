@@ -143,14 +143,22 @@ public class OwnerAuthController {
     }
     
     //取得資料
-    @GetMapping("/profile")
-    public ResponseEntity<?> getOwnerProfile(HttpSession session) {
-        OwnerVO owner = (OwnerVO) session.getAttribute("loggedInOwner");
-
-        if (owner == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("尚未登入");
-        }
-
+//    @GetMapping("/profile")
+//    public ResponseEntity<?> getOwnerProfile(HttpSession session) {
+//        OwnerVO owner = (OwnerVO) session.getAttribute("loggedInOwner");
+//
+//        if (owner == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("尚未登入");
+//        }
+//
+//        // 為了安全與簡潔，傳給前端的資料可以用 DTO
+//        OwnerProfileDTO dto = new OwnerProfileDTO(owner);
+//        return ResponseEntity.ok(dto);  
+//    }
+    
+    @PostMapping("/profile")
+    public ResponseEntity<?> getOwnerProfile(@RequestParam("ownerAcc") String ownerAcc) {
+        OwnerVO owner = ownerAuthService.getOneProfile(ownerAcc);
         // 為了安全與簡潔，傳給前端的資料可以用 DTO
         OwnerProfileDTO dto = new OwnerProfileDTO(owner);
         return ResponseEntity.ok(dto);  

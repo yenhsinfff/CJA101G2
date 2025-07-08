@@ -48,7 +48,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/owner/all",
                         "/api/owner/update-status/**",
                 		"/api/auth/forgot-password",
-                        "/api/auth/reset-password"
+                        "/api/auth/reset-password",
+                        "/api/owner/profile"
                 );
 
         //管理員
