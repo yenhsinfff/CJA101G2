@@ -295,7 +295,7 @@ public class ShopOrderService {
 		if (dtoUpdate.getShopOrderStatus() != null
 				&& !sovo.getShopOrderStatus().equals(dtoUpdate.getShopOrderStatus())) {
 
-			// 如果ShopReturnApply不是未申請退貨(0)就不能進行修改
+			// 如果ShopReturnApply不是未申請退貨(0)或訂單狀態不為5(取消申請)就不能進行修改
 			if (sovo.getShopReturnApply() == 0 || sovo.getShopOrderStatus() != 5) {
 				sovo.setShopOrderStatus(dtoUpdate.getShopOrderStatus());
 
@@ -317,7 +317,7 @@ public class ShopOrderService {
 
 		}
 
-		if (sovo.getShopOrderStatus() == 0) {// 訂單狀態為0時才可以進行update
+		if (sovo.getShopOrderStatus() == 0 || sovo.getShopOrderStatus() == 7) {// 訂單狀態為0或7時才可以進行update
 			if (dtoUpdate.getShopOrderShipment() != null) {
 				sovo.setShopOrderShipment(dtoUpdate.getShopOrderShipment());
 			}
