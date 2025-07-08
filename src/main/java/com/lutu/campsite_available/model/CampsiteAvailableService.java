@@ -62,6 +62,7 @@ public class CampsiteAvailableService {
 
                 Optional<CampsiteAvailableVO> exists = availRepo.findById(id);
                 if (!exists.isPresent()) {
+                	System.out.println(cal.getTime()+"");
                     CampsiteAvailableVO ra = new CampsiteAvailableVO();
                     ra.setId(id);
                     ra.setCampId(t.getId().getCampId());
@@ -84,8 +85,67 @@ public class CampsiteAvailableService {
                 ));
             }
         }
+        System.out.println("完成剩餘房型搜尋");
         return result;
     }
+    
+    //搜尋相關房型資料
+    @Transactional
+    public List<CampsiteTypeAvailableDTO> ensureAndQueryRemaing1(
+            List<Integer> campIds,
+            Integer people,
+            Date checkIn,
+            Date checkOut) {
+
+        // 1. 取得所有目標房型
+        List<CampsiteTypeVO> targetTypes;
+        if (campIds == null || campIds.isEmpty()) {
+            targetTypes = typeRepo.findAll();
+        } else {
+            targetTypes = new ArrayList<>();
+            for (Integer campId : campIds) {
+                targetTypes.addAll(typeRepo.findByIdCampId(campId));
+            }
+        }
+
+        // 2. 過濾符合入住人數的房型
+        List<CampsiteTypeVO> filteredTypes = targetTypes.stream()
+            .filter(t -> t.getCampsitePeople() >= people)
+            .collect(Collectors.toList());
+
+        // 3. 逐日補齊房況（若無資料則補齊）
+        Calendar cal = Calendar.getInstance();
+        for (CampsiteTypeVO t : filteredTypes) {
+            cal.setTime(checkIn);
+            while (cal.getTime().before(checkOut)) {
+                Date d = new Date(cal.getTimeInMillis());
+                CampsiteAvailableVO.CACompositeDetail id =
+                    new CampsiteAvailableVO.CACompositeDetail(t.getId().getCampsiteTypeId(), d);
+                if (!availRepo.findById(id).isPresent()) {
+                    CampsiteAvailableVO ra = new CampsiteAvailableVO();
+                    ra.setId(id);
+                    ra.setCampId(t.getId().getCampId());
+                    ra.setRemaining(t.getCampsiteNum());
+                    availRepo.save(ra);
+                }
+                cal.add(Calendar.DATE, 1);
+            }
+        }
+
+        // 4. 查詢剩餘房型資訊
+        List<CampsiteTypeAvailableDTO> result = new ArrayList<>();
+        if (campIds == null || campIds.isEmpty()) {
+            result = availRepo.findAvailableRoomTypesWithRemaining(null, people, checkIn, checkOut);
+        } else {
+            for (Integer campId : campIds) {
+                result.addAll(availRepo.findAvailableRoomTypesWithRemaining(campId, people, checkIn, checkOut));
+            }
+        }
+
+        return result;
+    }
+
+
 
     
     @Transactional
