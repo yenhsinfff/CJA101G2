@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登入/註冊 - 露途</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/role-system.css" />
+    <link rel="stylesheet" href="css/login.css" />
+  </head>
+  
+  <body>
+    <div id="header-container"></div>
+
+
+    <section class="auth-section">
+      <div class="container">
+        <div class="auth-container">
+          <div class="auth-logo">
+            <img src="images/logo.svg" alt="露途 Logo" />
+          </div>
+          <h1 class="auth-title">歡迎回到露途</h1>
+          <p class="auth-subtitle">探索自然，體驗野趣</p>
+
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login">登入</button>
+            <button class="auth-tab" data-tab="register">註冊</button>
+          </div>
+
+          <div class="auth-content">
+            <!-- 登入表單 -->
+            <div class="auth-form active" id="login-form">
+              <!-- 身份選擇 -->
+              <div class="role-selector">
+                <label>選擇登入身份</label>
+                <div class="role-tabs">
+                  <button
+                    type="button"
+                    class="role-tab active"
+                    data-role="camper"
+                  >
+                    <i class="fas fa-campground"></i>
+                    <span>露營者</span>
+                  </button>
+                  <button type="button" class="role-tab" data-role="owner">
+                    <i class="fas fa-building"></i>
+                    <span>營地主</span>
+                  </button>
+                  <button type="button" class="role-tab" data-role="admin">
+                    <i class="fas fa-user-shield"></i>
+                    <span>管理者</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 露營者登入表單 -->
+              <form
+                action="#"
+                method="post"
+                id="camperLoginForm"
+                class="role-form active"
+              >
+                <div class="form-group">
+                  <label for="camper-id">露營者帳號</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-user input-icon"></i>
+                    <input
+                      type="text"
+                      id="camper-id"
+                      name="mem_acc"
+                      required
+                      placeholder="請輸入露營者帳號"
+                      autocomplete="username"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="camper-password">密碼</label>
+                  <div class="input-with-icon password-input">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input
+                      type="password"
+                      id="camper-password"
+                      name="password"
+                      required
+                      placeholder="請輸入密碼"
+                      autocomplete="current-password"
+                    />
+                    <button type="button" class="toggle-password">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <a href="enter-mailbox.html" class="forgot-password">忘記密碼？</a>
+                </div>
+                <div class="form-group remember-me">
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="remember" />
+                    <span>記住我</span>
+                  </label>
+                </div>
+                <button type="submit" class="btn-auth">登入</button>
+                <div class="demo-info">
+                  <p>
+                    <!-- <small
+                      >測試帳號：mem001, mem002, mem003 等<br />密碼：password123</small
+                    > -->
+                  </p>
+                </div>
+              </form>
+
+              <!-- 營地主登入表單 -->
+              <form
+                action="#"
+                method="post"
+                id="ownerLoginForm"
+                class="role-form"
+              >
+                <div class="form-group">
+                  <label for="owner-id">營地主帳號</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-building input-icon"></i>
+                    <input
+                      type="text"
+                      id="owner-id"
+                      name="owner_acc"
+                      required
+                      placeholder="請輸入營地主帳號"
+                      autocomplete="username"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-password">密碼</label>
+                  <div class="input-with-icon password-input">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input
+                      type="password"
+                      id="owner-password"
+                      name="owner_pwd"
+                      required
+                      placeholder="請輸入密碼"
+                      autocomplete="current-password"
+                    />
+                    <button type="button" class="toggle-password">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <a href="enter-mailbox.html" class="forgot-password">忘記密碼？</a>
+                </div>
+                <div class="form-group remember-me">
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="remember" />
+                    <span>記住我</span>
+                  </label>
+                </div>
+                <button type="submit" class="btn-auth">登入</button>
+                <div class="demo-info">
+                  <p>
+                    <!-- <small
+                      >測試帳號：owner001, owner002 等<br />密碼：password123</small
+                    > -->
+                  </p>
+                </div>
+              </form>
+
+              <!-- 管理者登入表單 -->
+              <form
+                action="#"
+                method="post"
+                id="adminLoginForm"
+                class="role-form"
+              >
+                <div class="form-group">
+                  <label for="admin-id">管理員帳號</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-user-shield input-icon"></i>
+                    <input
+                      type="text"
+                      id="admin-id"
+                      name="admin_acc"
+                      required
+                      placeholder="請輸入管理員帳號"
+                      autocomplete="username"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="admin-password">密碼</label>
+                  <div class="input-with-icon password-input">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input
+                      type="password"
+                      id="admin-password"
+                      name="admin_pwd"
+                      required
+                      placeholder="請輸入密碼"
+                      autocomplete="current-password"
+                    />
+                    <button type="button" class="toggle-password">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <a href="enter-mailbox.html" class="forgot-password">忘記密碼？</a>
+                </div>
+                <div class="form-group remember-me">
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="remember" />
+                    <span>記住我</span>
+                  </label>
+                </div>
+                <button type="submit" class="btn-auth">登入</button>
+                <div class="demo-info">
+                  <p>
+                    <!-- <small>測試帳號：admin001<br />密碼：admin123</small> -->
+                  </p>
+                </div>
+              </form>
+
+              <div class="social-login">
+                <!-- <p>或使用以下方式登入</p> -->
+                <!-- <div class="social-buttons">
+                  <button class="btn-social btn-google">
+                    <i class="fab fa-google"></i>
+                    <span>Google</span>
+                  </button>
+                  <button class="btn-social btn-facebook">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>Facebook</span>
+                  </button>
+                  <button class="btn-social btn-line">
+                    <i class="fab fa-line"></i>
+                    <span>Line</span>
+                  </button> -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 註冊表單 -->
+            <div class="auth-form" id="register-form">
+              <!-- 身份選擇 -->
+              <div class="role-selector">
+                <label>選擇註冊身份</label>
+                <div class="role-tabs">
+                  <button
+                    type="button"
+                    class="role-tab active"
+                    data-role="camper"
+                  >
+                    <i class="fas fa-campground"></i>
+                    <span>露營者</span>
+                  </button>
+                  <button type="button" class="role-tab" data-role="owner">
+                    <i class="fas fa-building"></i>
+                    <span>營地主</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 露營者註冊表單 -->
+              <form
+                action="#"
+                method="post"
+                id="camperRegisterForm"
+                class="role-form active"
+              >
+                <div class="form-group">
+                  <label for="camper-register-account">帳號</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-user input-icon"></i>
+                    <input
+                      type="email"
+                      id="camper-register-account"
+                      name="memAcc"
+                      required
+                      placeholder="帳號日後不可更改，信箱即為會員帳號"
+                      autocomplete="email"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="camper-register-password">密碼</label>
+                  <div class="input-with-icon password-input">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input
+                      type="password"
+                      id="camper-register-password"
+                      name="memPwd"
+                      required
+                      placeholder="請設定6-20位密碼"
+                      autocomplete="new-password"
+                    />
+                    <button type="button" class="toggle-password">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <div class="password-strength">
+                    <div class="strength-bar">
+                      <div class="strength-fill" style="width: 0%"></div>
+                    </div>
+                    <!-- <span class="strength-text">密碼強度: 尚未輸入</span> -->
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="camper-register-confirm-password">確認密碼</label>
+                  <div class="input-with-icon password-input">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input
+                      type="password"
+                      id="camper-register-confirm-password"
+                      name="confirm-password"
+                      required
+                      placeholder="請再次輸入密碼"
+                      autocomplete="new-password"
+                    />
+                    <button type="button" class="toggle-password">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="camper-register-name">姓名</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-user input-icon"></i>
+                    <input
+                      type="text"
+                      id="camper-register-name"
+                      name="memName"
+                      required
+                      placeholder="請輸入您的姓名"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>性別</label>
+                  <div class="radio-group">
+                    <label class="radio-label">
+                      <input type="radio" name="memGender" value="1" required />
+                      <span>男生</span>
+                    </label>
+                    <label class="radio-label">
+                      <input type="radio" name="memGender" value="2" required />
+                      <span>女生</span>
+                    </label>
+                    <label class="radio-label">
+                      <input type="radio" name="memGender" value="3" required />
+                      <span>其他</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="camper-register-email">信箱</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input
+                      type="email"
+                      id="camper-register-email"
+                      name="memEmail"
+                      required
+                      placeholder="請輸入與會員帳號相同"
+                      autocomplete="email"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="camper-register-phone">手機</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-phone input-icon"></i>
+                    <input
+                      type="tel"
+                      id="camper-register-phone"
+                      name="memMobile"
+                      required
+                      placeholder="格式如0911-123-456"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="camper-register-address">地址</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-map-marker-alt input-icon"></i>
+                    <input
+                      type="text"
+                      id="camper-register-address"
+                      name="memAddr"
+                      required
+                      placeholder="請輸入您的地址"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>國籍</label>
+                  <div class="radio-group">
+                    <label class="radio-label">
+                      <input type="radio" name="memNation" value="0" required />
+                      <span>本國籍</span>
+                    </label>
+                    <label class="radio-label">
+                      <input type="radio" name="memNation" value="1" required />
+                      <span>非本國籍</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="camper-register-id">身分證</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-id-card input-icon"></i>
+                    <input
+                      type="text"
+                      id="camper-register-id"
+                      name="memNationId"
+                      required
+                      placeholder="非本國籍請輸入護照號碼"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="camper-register-birth">生日</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-calendar-alt input-icon"></i>
+                    <input
+                      type="date"
+                      id="camper-register-birth"
+                      name="memBirth"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group terms-agree">
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="terms" required />
+                    <span
+                      >我已閱讀並同意 <a href="#">服務條款</a> 和
+                      <a href="#">隱私政策</a></span
+                    >
+                  </label>
+                </div>
+                <button type="submit" class="btn-auth">送出註冊</button>
+              </form>
+
+              <!-- 營地主註冊表單 -->
+              <form
+                action="#"
+                method="post"
+                id="ownerRegisterForm"
+                class="role-form"
+              >
+                <div class="form-group">
+                  <label for="owner-register-account">帳號</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-user input-icon"></i>
+                    <input
+                      type="text"
+                      id="owner-register-account"
+                      name="ownerAcc"
+                      required
+                      placeholder="帳號日後不可更改，信箱即為會員帳號"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-password">密碼</label>
+                  <div class="input-with-icon password-input">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input
+                      type="password"
+                      id="owner-register-password"
+                      name="ownerPwd"
+                      required
+                      placeholder="請設定6-20位密碼"
+                      autocomplete="new-password"
+                    />
+                    <button type="button" class="toggle-password">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <div class="password-strength">
+                    <div class="strength-bar">
+                      <div class="strength-fill" style="width: 0%"></div>
+                    </div>
+                    <!-- <span class="strength-text">密碼強度: 尚未輸入</span> -->
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-confirm-password">確認密碼</label>
+                  <div class="input-with-icon password-input">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input
+                      type="password"
+                      id="owner-register-confirm-password"
+                      name="confirm-password"
+                      required
+                      placeholder="請再次輸入密碼"
+                      autocomplete="new-password"
+                    />
+                    <button type="button" class="toggle-password">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-company">店家名稱</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-campground input-icon"></i>
+                    <input
+                      type="text"
+                      id="owner-register-company"
+                      name="ownerName"
+                      required
+                      placeholder="日後不可更改"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-license">統一編號</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-certificate input-icon"></i>
+                    <input
+                      type="text"
+                      id="owner-register-license"
+                      name="ownerGui"
+                      required
+                      placeholder="8碼，日後不可更改"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-manager">負責人</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-user-tie input-icon"></i>
+                    <input
+                      type="text"
+                      id="owner-register-manager"
+                      name="ownerRep"
+                      required
+                      placeholder="請輸入負責人姓名"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-manager-phone">負責人電話</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-phone input-icon"></i>
+                    <input
+                      type="tel"
+                      id="owner-register-manager-phone"
+                      name="ownerTel"
+                      required
+                      placeholder="請輸入負責人電話"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-contact">聯絡人</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-user input-icon"></i>
+                    <input
+                      type="text"
+                      id="owner-register-contact"
+                      name="ownerPoc"
+                      required
+                      placeholder="請輸入聯絡人姓名"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-contact-phone">聯絡人電話</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-phone input-icon"></i>
+                    <input
+                      type="tel"
+                      id="owner-register-contact-phone"
+                      name="ownerConPhone"
+                      required
+                      placeholder="請輸入聯絡人電話"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-address">登記地址</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-map-marker-alt input-icon"></i>
+                    <input
+                      type="text"
+                      id="owner-register-address"
+                      name="ownerAddr"
+                      required
+                      placeholder="日後不可更改"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-email">信箱</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input
+                      type="email"
+                      id="owner-register-email"
+                      name="ownerEmail"
+                      required
+                      placeholder="請輸入與會員帳號相同"
+                      autocomplete="email"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="owner-register-bank-account">匯款帳號</label>
+                  <div class="input-with-icon">
+                    <i class="fas fa-university input-icon"></i>
+                    <input
+                      type="text"
+                      id="owner-register-bank-account"
+                      name="bankAccount"
+                      required
+                      placeholder="請輸入匯款帳號"
+                    />
+                  </div>
+                </div>
+                <div class="form-group terms-agree">
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="terms" required />
+                    <span
+                      >我已閱讀並同意 <a href="#">服務條款</a> 和
+                      <a href="#">隱私政策</a></span
+                    >
+                  </label>
+                </div>
+                <button type="submit" class="btn-auth">送出註冊</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="auth-info">
+          <div class="auth-benefits">
+            <h2>加入露途的好處</h2>
+            <ul>
+              <li><i class="fas fa-check-circle"></i> 獲得新會員專屬優惠券</li>
+              <li>
+                <i class="fas fa-check-circle"></i> 累積消費點數，兌換更多優惠
+              </li>
+              <li><i class="fas fa-check-circle"></i> 收藏喜愛的營地和裝備</li>
+              <li>
+                <i class="fas fa-check-circle"></i> 獲取最新露營資訊和優惠
+              </li>
+              <li>
+                <i class="fas fa-check-circle"></i> 參與社群活動，分享露營體驗
+              </li>
+            </ul>
+          </div> -->
+          <br>
+          <!-- <div class="auth-image">
+            <img src="images/camp-1.jpg" alt="露營場景" />
+          </div> -->
+        </div>
+      </div>
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script src="js/main.js"></script>
+    <script src="js/camp-data.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/header-auth.js"></script>
+    <script src="js/include.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // 切換登入/註冊頁籤
+        const authTabs = document.querySelectorAll(".auth-tab");
+        const authForms = document.querySelectorAll(".auth-form");
+
+        authTabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            // 移除所有頁籤和表單的active類
+            authTabs.forEach((t) => t.classList.remove("active"));
+            authForms.forEach((f) => f.classList.remove("active"));
+
+            // 添加當前頁籤的active類
+            this.classList.add("active");
+
+            // 顯示對應的表單
+            const formId = this.getAttribute("data-tab") + "-form";
+            document.getElementById(formId).classList.add("active");
+          });
+        });
+
+        // 切換身份選擇
+        const roleTabs = document.querySelectorAll(".role-tab");
+        const roleForms = document.querySelectorAll(".role-form");
+
+        roleTabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            const parentForm = this.closest(".auth-form");
+            const parentRoleTabs = parentForm.querySelectorAll(".role-tab");
+            const parentRoleForms = parentForm.querySelectorAll(".role-form");
+
+            // 移除同一個auth-form內所有role-tab和role-form的active類
+            parentRoleTabs.forEach((t) => t.classList.remove("active"));
+            parentRoleForms.forEach((f) => f.classList.remove("active"));
+
+            // 添加當前role-tab的active類
+            this.classList.add("active");
+
+            // 顯示對應的role-form
+            const role = this.getAttribute("data-role");
+            const authType =
+              parentForm.id === "login-form" ? "Login" : "Register";
+            let formId;
+
+            if (role === "camper") {
+              formId = "camper" + authType + "Form";
+            } else if (role === "owner") {
+              formId = "owner" + authType + "Form";
+            } else if (role === "admin" && authType === "Login") {
+              formId = "adminLoginForm";
+            }
+
+            if (formId) {
+              document.getElementById(formId).classList.add("active");
+            }
+          });
+        });
+
+        // 切換密碼可見性
+        const toggleButtons = document.querySelectorAll(".toggle-password");
+
+        toggleButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const input = this.previousElementSibling;
+            const icon = this.querySelector("i");
+
+            if (input.type === "password") {
+              input.type = "text";
+              icon.classList.remove("fa-eye");
+              icon.classList.add("fa-eye-slash");
+            } else {
+              input.type = "password";
+              icon.classList.remove("fa-eye-slash");
+              icon.classList.add("fa-eye");
+            }
+          });
+        });
+
+        // 密碼強度檢測
+        
+        // const passwordInput = document.getElementById("register-password");
+        // const strengthBar = document.querySelector(".strength-fill");
+        // const strengthText = document.querySelector(".strength-text");
+
+        // if (passwordInput) {
+        //   passwordInput.addEventListener("input", function () {
+        //     const password = this.value;
+        //     let strength = 0;
+        //     let status = "";
+
+        //     if (password.length >= 6) strength += 20;
+        //     if (password.length >= 10) strength += 20;
+        //     if (/[A-Z]/.test(password)) strength += 20;
+        //     if (/[0-9]/.test(password)) strength += 20;
+        //     if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+
+        //     strengthBar.style.width = strength + "%";
+
+        //     if (strength <= 20) {
+        //       strengthBar.style.backgroundColor = "#E76F51";
+        //       status = "非常弱";
+        //     } else if (strength <= 40) {
+        //       strengthBar.style.backgroundColor = "#E76F51";
+        //       status = "弱";
+        //     } else if (strength <= 60) {
+        //       strengthBar.style.backgroundColor = "#F4A261";
+        //       status = "中等";
+        //     } else if (strength <= 80) {
+        //       strengthBar.style.backgroundColor = "#A68A64";
+        //       status = "強";
+        //     } else {
+        //       strengthBar.style.backgroundColor = "#3A5A40";
+        //       status = "非常強";
+        //     }
+
+        //     strengthText.textContent = "密碼強度: " + status;
+        //   });
+        // }
+      });
+    </script>
+  </body>
+</html>

@@ -65,9 +65,14 @@ class HeaderAuth {
       const camp = camps.find((c) => c.owner_id === ownerData.owner_id);
 
       const campName = camp ? camp.camp_name : ownerData.owner_name;
+      const avatarSrc = ownerData.owner_avatar || "images/default-avatar.png";
 
       btnLogin.href = "owner-dashboard.html";
-      btnLogin.innerHTML = `<i class="fas fa-user"></i> ${campName}`;
+      btnLogin.classList.add("logged-in");
+      btnLogin.innerHTML = `
+        <img src="${avatarSrc}" alt="${campName}" class="user-avatar" onerror="this.src='images/default-avatar.png'">
+        <span class="user-name">${campName}</span>
+      `;
       btnLogin.title = `營地主：${campName}`;
 
       // 添加登出功能
@@ -75,7 +80,12 @@ class HeaderAuth {
     } catch (error) {
       console.error("載入營地資料失敗：", error);
       btnLogin.href = "owner-dashboard.html";
-      btnLogin.innerHTML = `<i class="fas fa-user"></i> ${ownerData.owner_name}`;
+      btnLogin.classList.add("logged-in");
+      const avatarSrc = ownerData.owner_avatar || "images/default-avatar.png";
+      btnLogin.innerHTML = `
+        <img src="${avatarSrc}" alt="${ownerData.owner_name}" class="user-avatar" onerror="this.src='images/default-avatar.png'">
+        <span class="user-name">${ownerData.owner_name}</span>
+      `;
       btnLogin.title = `營地主：${ownerData.owner_name}`;
     }
   }
@@ -83,7 +93,14 @@ class HeaderAuth {
   // 更新會員按鈕
   updateMemberButton(btnLogin, memberData) {
     btnLogin.href = "user-profile.html";
-    btnLogin.innerHTML = `<i class="fas fa-user"></i> ${memberData.mem_name}`;
+    btnLogin.classList.add("logged-in");
+    
+    // 創建頭像和用戶名稱的HTML結構
+    const avatarSrc = memberData.mem_avatar || "images/default-avatar.png";
+    btnLogin.innerHTML = `
+      <img src="${avatarSrc}" alt="${memberData.mem_name}" class="user-avatar" onerror="this.src='images/default-avatar.png'">
+      <span class="user-name">${memberData.mem_name}</span>
+    `;
     btnLogin.title = `會員：${memberData.mem_name}`;
 
     // 添加登出功能
@@ -92,8 +109,8 @@ class HeaderAuth {
 
   // 更新訪客按鈕
   updateGuestButton(btnLogin) {
-	btnLogin.setAttribute("href", "/login");
-//    btnLogin.href = "login.html";
+    btnLogin.href = "login.html";
+    btnLogin.classList.remove("logged-in");
     btnLogin.innerHTML = "登入 / 註冊";
     btnLogin.title = "登入或註冊";
 
@@ -213,3 +230,76 @@ class HeaderAuth {
 document.addEventListener("DOMContentLoaded", () => {
   new HeaderAuth();
 });
+
+// 全域購物車管理器
+// class GlobalCartManager {
+//   constructor() {
+//     this.init();
+//   }
+
+//   init() {
+//     // 初始化購物車數量顯示
+//     this.updateCartCount();
+//   }
+
+//   // 取得會員ID（從localStorage或session）
+//   getMemberId() {
+//     const memberInfo = localStorage.getItem('memberInfo');
+//     if (memberInfo) {
+//       const member = JSON.parse(memberInfo);
+//       return member.memId || null;
+//     }
+//     return null;
+//   }
+
+//   // 更新購物車數量顯示
+//   updateCartCount(count = null) {
+//     const cartCountElements = document.querySelectorAll('.cart-count');
+//     if (count !== null) {
+//       cartCountElements.forEach(element => {
+//         element.textContent = count;
+//         element.style.display = count > 0 ? 'inline' : 'none';
+//       });
+//     } else {
+//       // 如果沒有傳入數量，可以從後端取得購物車數量
+//       this.fetchCartCount();
+//     }
+//   }
+
+//   // 從後端取得購物車數量
+//   fetchCartCount() {
+//     const memId = this.getMemberId();
+//     fetch(`${window.api_prefix}/api/getCart?memId=${memId || ''}`, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//       if (data.status === 'success' && data.data) {
+//         const cartItems = data.data;
+//         const totalCount = cartItems.reduce((sum, item) => sum + item.cartProdQty, 0);
+//         this.updateCartCount(totalCount);
+//       } else {
+//         this.updateCartCount(0);
+//       }
+//     })
+//     .catch(error => {
+//       console.error('取得購物車數量失敗:', error);
+//       this.updateCartCount(0);
+//     });
+//   }
+
+// }
+
+// // 建立全域購物車管理實例
+// const globalCartManager = new GlobalCartManager();
+
+// // 頁面載入時初始化購物車數量
+// document.addEventListener('DOMContentLoaded', function() {
+//   globalCartManager.updateCartCount();
+// });
+
+// 導出供其他模組使用
+// window.globalCartManager = globalCartManager;

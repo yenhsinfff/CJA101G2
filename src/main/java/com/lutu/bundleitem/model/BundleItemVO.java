@@ -49,7 +49,7 @@ public class BundleItemVO implements Serializable {
 //=======================================================	
 	
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "bundleItem")
+	@JoinColumn(name = "bundle_id") // 外鍵名稱應對應在子表（bundle_item_details）中
 	private Set<BundleItemDetailsVO> bundleItemDetails;
 
    public Set<BundleItemDetailsVO> getBundleItemDetails() {

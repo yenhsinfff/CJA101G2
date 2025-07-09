@@ -23,7 +23,7 @@ class CheckoutManager {
     // 使用 cartManager.getBundleItems() 獲取加購商品
     this.bundleItems = cartManager.getBundleItems();
     this.totalPrice = cartManager.getTotalPrice();
-    this.selectedPaymentMethod = "credit-card"; // 預設付款方式
+    this.selectedPaymentMethod = "line-pay"; // 預設付款方式
     this.isProcessing = false; // 付款處理中標誌
 
     // 如果購物車為空，重定向到購物車頁面
@@ -33,7 +33,44 @@ class CheckoutManager {
     }
 
     this.renderOrderSummary();
+    this.loadMemberData();
     this.bindEvents();
+  }
+
+  // 載入會員資料
+  loadMemberData() {
+    try {
+      // 從 localStorage 獲取會員資料
+      const memberData = JSON.parse(localStorage.getItem("memberData"));
+
+      if (memberData) {
+        // 自動填入會員資料到表單
+        const customerNameInput = document.getElementById("customer-name");
+        const customerPhoneInput = document.getElementById("customer-phone");
+        const customerEmailInput = document.getElementById("customer-email");
+        const customerAddressInput =
+          document.getElementById("customer-address");
+
+        if (customerNameInput && memberData.name) {
+          customerNameInput.value = memberData.name;
+        }
+        if (customerPhoneInput && memberData.phone) {
+          customerPhoneInput.value = memberData.phone;
+        }
+        if (customerEmailInput && memberData.email) {
+          customerEmailInput.value = memberData.email;
+        }
+        if (customerAddressInput && memberData.address) {
+          customerAddressInput.value = memberData.address;
+        }
+
+        console.log("會員資料已自動載入");
+      } else {
+        console.log("未找到會員資料");
+      }
+    } catch (error) {
+      console.error("載入會員資料時發生錯誤:", error);
+    }
   }
 
   // 渲染訂單摘要
@@ -44,7 +81,7 @@ class CheckoutManager {
 
     // 清空容器
     orderItemsContainer.innerHTML = "";
-
+    console.log("清空容器:", this.cartItems);
     // 渲染訂單項目
     this.cartItems.forEach((item) => {
       const orderItemElement = document.createElement("div");
@@ -53,41 +90,31 @@ class CheckoutManager {
       if (item.isBundle) {
         // 加購商品
         orderItemElement.innerHTML = `
-          <div class="order-item-image">
-            <img src="/images/bundles/bundle-${item.bundle_id}.jpg" alt="${
-          item.bundle_name
-        }">
-          </div>
           <div class="order-item-details">
-            <div class="order-item-title">${item.bundle_name}</div>
+            <div class="order-item-title">${item.bundleName}</div>
             <div class="order-item-info">數量: ${item.quantity || 1}</div>
             <div class="order-item-price">NT$ ${(
-              item.bundle_price * (item.quantity || 1)
+              item.bundlePrice * (item.quantity || 1)
             ).toLocaleString()}</div>
           </div>
         `;
       } else {
         // 營地項目
-        console.log("campsite_type_id_check_out:" + item.campsite_type_id);
+        console.log("campsite_type_id_check_out:" + item.campsiteTypeId);
 
         const campsiteType = cartManager.getCampsiteTypeById(
-          item.campsite_type_id
+          item.campsiteTypeId
         );
         const nights = cartManager.calculateNights(item.checkIn, item.checkOut);
         const tentPrice =
           item.tentType && item.tentType.includes("rent")
             ? cartManager.getTentPrice(item.tentType)
             : 0;
-        const totalPrice = (campsiteType.campsite_price + tentPrice) * nights;
+        const totalPrice = (campsiteType.campsitePrice + tentPrice) * nights;
 
         orderItemElement.innerHTML = `
-          <div class="order-item-image">
-            <img src="${
-              item.image || "/images/campsites/" + campsiteType.image
-            }" alt="${campsiteType.name}">
-          </div>
           <div class="order-item-details">
-            <div class="order-item-title">${campsiteType.campsite_name}</div>
+            <div class="order-item-title">${campsiteType.campsiteName}</div>
             <div class="order-item-info">${this.formatDate(
               item.checkIn
             )} - ${this.formatDate(item.checkOut)} (${nights}晚)</div>
@@ -105,16 +132,11 @@ class CheckoutManager {
       orderItemElement.className = "order-item bundle-item";
 
       orderItemElement.innerHTML = `
-        <div class="order-item-image">
-          <img src="/images/bundles/bundle-${item.bundle_id}.jpg" alt="${
-        item.bundle_name
-      }">
-        </div>
         <div class="order-item-details">
-          <div class="order-item-title">${item.bundle_name}</div>
+          <div class="order-item-title">${item.bundleName}</div>
           <div class="order-item-info">數量: ${item.quantity || 1}</div>
           <div class="order-item-price">NT$ ${(
-            item.bundle_price * (item.quantity || 1)
+            item.bundlePrice * (item.quantity || 1)
           ).toLocaleString()}</div>
         </div>
       `;
@@ -142,32 +164,7 @@ class CheckoutManager {
       });
     });
 
-    // 信用卡表單格式化
-    const cardNumberInput = document.getElementById("card-number");
-    if (cardNumberInput) {
-      cardNumberInput.addEventListener("input", (e) => {
-        let value = e.target.value.replace(/\D/g, "");
-        let formattedValue = "";
-        for (let i = 0; i < value.length; i++) {
-          if (i > 0 && i % 4 === 0) {
-            formattedValue += " ";
-          }
-          formattedValue += value[i];
-        }
-        e.target.value = formattedValue;
-      });
-    }
 
-    const cardExpiryInput = document.getElementById("card-expiry");
-    if (cardExpiryInput) {
-      cardExpiryInput.addEventListener("input", (e) => {
-        let value = e.target.value.replace(/\D/g, "");
-        if (value.length > 2) {
-          value = value.substring(0, 2) + "/" + value.substring(2, 4);
-        }
-        e.target.value = value;
-      });
-    }
 
     // 提交付款按鈕
     const submitPaymentBtn = document.getElementById("submit-payment");
@@ -195,6 +192,35 @@ class CheckoutManager {
     if (backToCheckoutBtn) {
       backToCheckoutBtn.addEventListener("click", () => {
         this.hidePaymentResultModal();
+      });
+    }
+
+    // 新增：同會員資訊按鈕
+    const fillMemberBtn = document.getElementById("fill-member-info");
+    if (fillMemberBtn) {
+      fillMemberBtn.addEventListener("click", () => {
+        let memberInfo =
+          localStorage.getItem("currentMember") ||
+          sessionStorage.getItem("currentMember");
+        if (memberInfo) {
+          try {
+            const member = JSON.parse(memberInfo);
+            document.getElementById("customer-name").value =
+              member.memName || "";
+            // 手機號碼格式化
+            let mobile = member.memMobile || "";
+            mobile = mobile.replace(/\D/g, ""); // 移除所有非數字
+            document.getElementById("customer-phone").value = mobile;
+            document.getElementById("customer-email").value =
+              member.memEmail || "";
+            document.getElementById("customer-address").value =
+              member.memAddr || "";
+          } catch (e) {
+            alert("會員資料解析失敗");
+          }
+        } else {
+          alert("找不到會員資料");
+        }
       });
     }
   }
@@ -294,10 +320,8 @@ class CheckoutManager {
     // 收集訂單資訊
     const orderData = this.collectOrderData();
 
-    // 根據付款方式處理
-    if (this.selectedPaymentMethod === "credit-card") {
-      this.processCreditCardPayment(orderData);
-    } else if (this.selectedPaymentMethod === "line-pay") {
+    // 只處理 LINE Pay 付款
+    if (this.selectedPaymentMethod === "line-pay") {
       this.processServerPayment(orderData);
     }
   }
@@ -321,44 +345,11 @@ class CheckoutManager {
       items: allItems,
       totalPrice: totalPrice,
       paymentMethod: this.selectedPaymentMethod,
-      paymentDetails:
-        this.selectedPaymentMethod === "credit-card"
-          ? {
-              cardNumber: document
-                .getElementById("card-number")
-                .value.trim()
-                .replace(/\s/g, ""),
-              cardExpiry: document.getElementById("card-expiry").value.trim(),
-              cardCvc: document.getElementById("card-cvc").value.trim(),
-              cardName: document.getElementById("card-name").value.trim(),
-            }
-          : {},
+      paymentDetails: {},
     };
   }
 
-  // 處理信用卡付款 (模擬綠界API)
-  processCreditCardPayment(orderData) {
-    console.log("處理信用卡付款", orderData);
 
-    // 模擬API請求
-    setTimeout(() => {
-      // 模擬80%成功率
-      const isSuccess = Math.random() < 0.8;
-
-      if (isSuccess) {
-        this.handlePaymentSuccess({
-          orderId: this.generateOrderId(),
-          transactionId: this.generateTransactionId(),
-          paymentMethod: "credit-card",
-        });
-      } else {
-        this.handlePaymentFailure({
-          errorCode: "PAYMENT_FAILED",
-          errorMessage: "信用卡交易失敗，請確認卡片資訊或聯絡發卡銀行。",
-        });
-      }
-    }, 2000); // 模擬2秒的API延遲
-  }
 
   // 處理伺服器付款
   async processServerPayment(orderData) {
@@ -378,7 +369,7 @@ class CheckoutManager {
       this.cartItems.forEach((item) => {
         if (!item.isBundle) {
           const campsiteType = cartManager.getCampsiteTypeById(
-            item.campsite_type_id
+            item.campsiteTypeId
           );
           const nights = cartManager.calculateNights(
             item.checkIn,
@@ -388,10 +379,10 @@ class CheckoutManager {
             item.tentType && item.tentType.includes("rent")
               ? cartManager.getTentPrice(item.tentType)
               : 0;
-          const totalPrice = (campsiteType.campsite_price + tentPrice) * nights;
+          const totalPrice = (campsiteType.campsitePrice + tentPrice) * nights;
 
           products.push({
-            name: `${campsiteType.campsite_name} (${this.formatDate(
+            name: `${campsiteType.campsiteName} (${this.formatDate(
               item.checkIn
             )} - ${this.formatDate(item.checkOut)})`,
             quantity: 1,
@@ -403,9 +394,9 @@ class CheckoutManager {
       // 添加加購商品
       this.bundleItems.forEach((item) => {
         products.push({
-          name: item.bundle_name,
+          name: item.bundleName,
           quantity: item.quantity || 1,
-          price: item.bundle_price,
+          price: item.bundlePrice,
         });
       });
 
@@ -413,7 +404,7 @@ class CheckoutManager {
       const totalAmount = cartManager.getTotalPrice();
 
       //confirmURL
-      const confirm_url = "http://127.0.0.1:5501/linepay-success.html";
+      const confirm_url = "http://127.0.0.1:5503/linepay-success.html";
 
       // 構建付款請求參數
       const linepay_body = {
@@ -429,29 +420,26 @@ class CheckoutManager {
         ],
 
         redirectUrls: {
-          confirmUrl:
-            "http://localhost:8081/CJA101G02/api/confirmpayment/" +
-            orderId +
-            "/true",
-          cancelUrl: "http://127.0.0.1:5501/linepay-cancel.html",
+          confirmUrl: `${window.api_prefix}/api/confirmpayment/${orderId}/true`,
+          cancelUrl: "http://127.0.0.1:5503/linepay-cancel.html",
         },
       };
 
       // 計算各種金額
       const campsiteAmount = this.cartItems.reduce((total, item) => {
         const campsiteType = cartManager.getCampsiteTypeById(
-          item.campsite_type_id
+          item.campsiteTypeId
         );
         const nights = cartManager.calculateNights(item.checkIn, item.checkOut);
         const tentPrice =
           item.tentType && item.tentType.includes("rent")
             ? cartManager.getTentPrice(item.tentType)
             : 0;
-        return total + (campsiteType.campsite_price + tentPrice) * nights;
+        return total + (campsiteType.campsitePrice + tentPrice) * nights;
       }, 0);
 
       const bundleAmount = this.bundleItems.reduce((total, item) => {
-        return total + item.bundle_price * (item.quantity || 1);
+        return total + item.bundlePrice * (item.quantity || 1);
       }, 0);
 
       const befAmount = campsiteAmount + bundleAmount;
@@ -473,7 +461,15 @@ class CheckoutManager {
       const orderDate = now.toISOString();
 
       // 從localStorage獲取會員ID
-      const memId = localStorage.getItem("memId") || 10000001; // 預設會員ID
+	  const memberData =
+	          localStorage.getItem("currentMember") ||
+	          sessionStorage.getItem("currentMember");
+	        const memberDataJson = JSON.parse(memberData);
+	        console.log("linepay_memberData:", memberData);
+
+	        // 從localStorage獲取會員ID
+	        const memId = memberDataJson.memId; // 預設會員ID
+	        console.log("linepay_id:", memId); // 預設會員ID
 
       const linepay_order_body = {
         orderId: orderId,
@@ -503,7 +499,7 @@ class CheckoutManager {
         details: this.cartItems.map((item) => {
           // 獲取房型資料
           const campsiteType = cartManager.getCampsiteTypeById(
-            item.campsite_type_id
+            item.campsiteTypeId
           );
           // 計算住宿天數
           const nights = cartManager.calculateNights(
@@ -516,13 +512,23 @@ class CheckoutManager {
               ? cartManager.getTentPrice(item.tentType)
               : 0;
           // 計算總金額
-          const totalAmount =
-            (campsiteType.campsite_price + tentPrice) * nights;
+          const totalAmount = (campsiteType.campsitePrice + tentPrice) * nights;
 
           return {
-            campsiteTypeId: item.campsite_type_id,
+            campsiteTypeId: item.campsiteTypeId,
             campsiteNum: 1, // 預設為1，如果需要可以從item中獲取
             campsiteAmount: totalAmount,
+          };
+        }),
+        bundleItemDetails: this.bundleItems.map((item) => {
+          // 計算加購商品總金額
+          const totalAmount = item.bundlePrice * (item.quantity || 1);
+
+          return {
+            campsiteOrderId: orderId, // 使用當前訂單ID
+            bundleBuyAmount: totalAmount,
+            bundleBuyNum: item.quantity || 1,
+            bundleId: item.bundleId,
           };
         }),
       };
@@ -544,12 +550,12 @@ class CheckoutManager {
         const cartItemsWithTypeName = this.cartItems.map((item) => {
           if (!item.isBundle) {
             const campsiteType = cartManager.getCampsiteTypeById(
-              item.campsite_type_id
+              item.campsiteTypeId
             );
             return {
               ...item,
-              campsite_type_name: campsiteType.campsite_name,
-              campsite_type_price: campsiteType.campsite_price,
+              campsiteTypeName: campsiteType.campsiteName,
+              campsiteTypePrice: campsiteType.campsitePrice,
             };
           }
           return item;
@@ -586,7 +592,7 @@ class CheckoutManager {
   async getOrderIdFromServer() {
     try {
       const response = await fetch(
-        "http://localhost:8081/CJA101G02/api/campsite/newordernumber"
+        `${window.api_prefix}/api/campsite/newordernumber`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -605,16 +611,13 @@ class CheckoutManager {
   // 發送付款請求到伺服器
   async sendPaymentRequest(requestBody) {
     try {
-      const response = await fetch(
-        "http://localhost:8081/CJA101G02/api/linepay/true",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+      const response = await fetch(`${window.api_prefix}/api/linepay/true`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

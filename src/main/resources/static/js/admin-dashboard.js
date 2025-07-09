@@ -11,42 +11,50 @@ let campData = [];
 let campsiteTypeData = [];
 let reportsData = [];
 let discountCodesData = [];
+let isEdit = false;
+let currentEditDiscountId = null;
 let campReportsData = [];
 let shopOrdersData = [];
 let shopOrderDetailsData = [];
 
-
 // 初始化區段狀態追蹤器
 let sectionInitialized = {
-  productManagement: false
+  productManagement: false,
 };
 
 // 頁面載入時初始化
 document.addEventListener("DOMContentLoaded", function () {
   checkAdminAuth();
   loadAllData();
-  
+
   // 初始化侧边栏切换功能
   initSidebarToggle();
+
+  // 檢查 URL 參數並顯示對應區段
+  const urlParams = new URLSearchParams(window.location.search);
+  const section = urlParams.get("section");
+  if (section) {
+    showSection(section);
+  }
 });
 
 // 初始化侧边栏切换功能
 function initSidebarToggle() {
-  const sidebarToggle = document.getElementById('sidebarToggle');
-  const sidebar = document.querySelector('.sidebar');
-  const mainContent = document.querySelector('.main-content');
-  
+  const sidebarToggle = document.getElementById("sidebarToggle");
+  const sidebar = document.querySelector(".sidebar");
+  const mainContent = document.querySelector(".main-content");
+
   // 隐藏切换按钮
   if (sidebarToggle) {
-    sidebarToggle.style.display = 'none';
+    sidebarToggle.style.display = "none";
   }
-  
+
   // 始终应用收缩样式
-  sidebar.classList.add('collapsed');
-  mainContent.classList.add('expanded');
-  
+  sidebar.classList.add("collapsed");
+  mainContent.classList.add("expanded");
+
   // 将收缩状态保存到本地存储
-  localStorage.setItem('sidebarCollapsed', 'true');
+  localStorage.setItem("sidebarCollapsed", "true");
 }
 
 // 檢查管理員身份驗證
@@ -69,8 +77,9 @@ function checkAdminAuth() {
 async function loadAllData() {
   try {
     // 載入會員資料
-    const membersResponse = await fetch("data/mem.json");
-    membersData = await membersResponse.json();
+    const membersResponse = await fetch(`${window.api_prefix}/member/getallmembers`);
+    const membersDataJson = await membersResponse.json();
+    membersData = membersDataJson.data;
 
     // 載入營地主資料
     const ownersResponse = await fetch("data/owner.json");
@@ -81,54 +90,97 @@ async function loadAllData() {
     adminsData = await adminsResponse.json();
 
     // 載入營地訂單資料
-    const campOrderResponse = await fetch("data/campsite_order.json");
-    ordersData = await campOrderResponse.json();
+    const campOrderResponse = await fetch(`${window.api_prefix}/api/campsite/order/all`);
+    const ordersDataJson = await campOrderResponse.json();
+    ordersData = ordersDataJson.data;
 
     // 載入營地訂單詳細資料
-    const campOrderDetailResponse = await fetch(
-      "data/campsite_order_details.json"
-    );
-    ordersDetailData = await campOrderDetailResponse.json();
+    ordersDetailData = ordersData.orderDetails;
+    // const campOrderDetailResponse = await fetch(
+    //   "data/campsite_order_details.json"
+    // );
+    // ordersDetailData = await campOrderDetailResponse.json();
 
     // 載入營地資料
-    const campResponse = await fetch("data/camp.json");
-    campData = await campResponse.json();
+    const campResponse = await fetch(`${window.api_prefix}/api/getallcamps`);
+    const campResponseJson = await campResponse.json();
+    campData = campResponseJson.data;
 
     // 載入營地類型資料
-    const campsiteTypeResponse = await fetch("data/campsite_type.json");
-    campsiteTypeData = await campsiteTypeResponse.json();
+    const campsiteTypeResponse = await fetch(`${window.api_prefix}/campsite/getAllCampsite`);
+    const campsiteTypeDataJson = await campsiteTypeResponse.json();
+    campsiteTypeData = campsiteTypeDataJson.data;
+
+    console.log("MEMEBERDATA:", membersData);
+    console.log("ordersData:", ordersData);
+    console.log("ordersDetailData:", ordersDetailData);
+    console.log("campData:", campData);
+    console.log("campsiteTypeData:", campsiteTypeData);
 
     // 載入商品訂單資料
     try {
+      console.log("開始載入商品訂單資料...");
       const shopOrderResponse = await fetch(
-        "http://localhost:8081/CJA101G02/api/getAllShopOrders"
-      ); //data/shop_order.json
-      shopOrdersData = await shopOrderResponse.json();
-      shopOrdersData = shopOrdersData.data;
-      console.log(shopOrdersData); // Add this line to log the data t
+        `${window.api_prefix}/api/getAllShopOrders`
+      );
+
+      if (!shopOrderResponse.ok) {
+        throw new Error(`HTTP error! status: ${shopOrderResponse.status}`);
+      }
+
+      const responseData = await shopOrderResponse.json();
+
+      // 處理資料結構差異
+      if (responseData.data) {
+        // API 回應格式
+        shopOrdersData = responseData.data;
+      } else {
+        // 本地 JSON 格式，需要轉換欄位名稱
+        shopOrdersData = responseData.map((order) => ({
+          shopOrderId: order.shop_order_id,
+          memId: order.mem_id,
+          shopOrderDate: order.shop_order_date,
+          shopOrderShipment: order.shop_order_shipment,
+          shopOrderShipFee: order.shop_order_ship_fee,
+          beforeDiscountAmount: order.before_discount_amount,
+          discountCodeId: order.discount_code_id,
+          discountAmount: order.discount_amount,
+          afterDiscountAmount: order.after_discount_amount,
+          shopOrderPayment: order.shop_order_payment,
+          orderName: order.order_name,
+          orderEmail: order.order_email,
+          orderPhone: order.order_phone,
+          orderShippingAddress: order.order_shipping_address,
+          shopOrderNote: order.shop_order_note,
+          shopOrderShipDate: order.shop_order_ship_date,
+          shopOrderStatus: order.shop_order_status,
+          shopReturnApply: order.shop_return_apply,
+          // 添加狀態文字（本地 JSON 沒有這些欄位）
+          shopOrderStatusStr: getShopOrderStatusInfo(order.shop_order_status)
+            .text,
+          shopOrderPaymentStr: getPaymentMethodText(order.shop_order_payment),
+          shopOrderShipmentStr: getShipmentMethodText(
+            order.shop_order_shipment
+          ),
+          shopReturnApplyStr: getReturnApplyText(order.shop_return_apply),
+        }));
+      }
     } catch (error) {
       console.log("商品訂單資料載入失敗，使用空陣列");
+      console.log("錯誤詳情:", error);
       shopOrdersData = [];
     }
 
     // 載入商品訂單詳細資料
     try {
       const shopOrderDetailsResponse = await fetch(
-        "http://localhost:8081/CJA101G02/api/getAllShopOrdersDetails"
-      ); //data/shop_order_details.json
+        `${window.api_prefix}/api/getAllShopOrdersDetails`
+      ); 
       shopOrderDetailsData = await shopOrderDetailsResponse.json();
+      shopOrderDetailsData = shopOrderDetailsData.data;
     } catch (error) {
       console.log("商品訂單詳細資料載入失敗，使用空陣列");
       shopOrderDetailsData = [];
-    }
-
-    // 載入折價券資料
-    try {
-      const discountResponse = await fetch("data/discount_code.json");
-      discountCodesData = await discountResponse.json();
-    } catch (error) {
-      console.log("折價券資料載入失敗，使用空陣列");
-      discountCodesData = [];
     }
 
     // 載入營地檢舉資料
@@ -142,6 +194,20 @@ async function loadAllData() {
 
     // 初始化帳號管理頁面
     loadAccountManagement();
+
+    // // 在資料載入完成後檢查資料
+    // console.log("loadAllData 完成 - shopOrdersData:", shopOrdersData);
+    // console.log(
+    //   "loadAllData 完成 - shopOrderDetailsData",
+    //   shopOrderDetailsData
+    // );
+
+    // 如果當前在商品訂單管理頁面，重新載入
+    const currentSection = document.querySelector(".content-section.active");
+    if (currentSection && currentSection.id === "order-management") {
+      console.log("重新載入商品訂單管理頁面");
+      loadOrderManagement();
+    }
   } catch (error) {
     console.error("資料載入失敗:", error);
     alert("資料載入失敗，請重新整理頁面");
@@ -150,6 +216,12 @@ async function loadAllData() {
 
 // 顯示指定區段
 function showSection(sectionId) {
+  // ***如果是商品管理，則跳轉到商品管理頁面
+  if (sectionId === "product-management") {
+    window.location.href = "product-management.html";
+    return;
+  }
+
   // 隱藏所有區段
   document.querySelectorAll(".content-section").forEach((section) => {
     section.classList.remove("active");
@@ -161,34 +233,52 @@ function showSection(sectionId) {
   });
 
   // 顯示指定區段
-  document.getElementById(sectionId).classList.add("active");
+  const targetSection = document.getElementById(sectionId);
+  if (targetSection) {
+    targetSection.classList.add("active");
 
-  // 設定對應導航連結為 active
-  event.target.classList.add("active");
+    // 設定對應導航連結為 active
+    const navLink = document.querySelector(
+      `.nav-link[onclick*="'${sectionId}'"`
+    );
+    if (navLink) {
+      navLink.classList.add("active");
+    }
 
-  // 根據區段載入對應內容
-  switch (sectionId) {
-    case "account-management":
-      loadAccountManagement();
-      break;
-    case "campsite-orders":
-      loadCampsiteOrders();
-      break;
-    case "customer-service":
-      loadCustomerService();
-      break;
-    case "forum-management":
-      loadForumManagement();
-      break;
-    case "order-management":
-      loadOrderManagement();
-      break;
-    case "discount-management":
-      loadDiscountManagement();
-      break;
-    case "product-management":
-      loadProductManagement();
-      break;
+    // 更新頁面標題
+    const pageTitle = navLink ? navLink.textContent.trim() : "管理員後台";
+    document.title = `${pageTitle} - 露營趣管理員後台`;
+
+    // 根據區段載入對應內容
+    switch (sectionId) {
+      case "account-management":
+        loadAccountManagement();
+        break;
+      case "campsite-orders":
+        loadCampsiteOrders();
+        break;
+      case "customer-service":
+        loadCustomerService();
+        break;
+      case "forum-management":
+        loadForumManagement();
+        break;
+      case "order-management":
+        loadOrderManagement();
+        break;
+      case "discount-management":
+        loadDiscountManagement();
+        break;
+      // case "product-management":
+      //   loadProductManagement();
+      //   break;
+    }
+
+    // 分發區段顯示事件，通知其他模組
+    const event = new CustomEvent("sectionShown", {
+      detail: { sectionId: sectionId },
+    });
+    document.dispatchEvent(event);
   }
 }
 
@@ -235,118 +325,120 @@ function showAccountTab(tabType, event) {
   }
 }
 
-// 載入露營者表格
-function loadCampersTable() {
+
+
+// 載入露營者表格（從後端 API 取得資料）
+async function loadCampersTable() {
   const tbody = document.getElementById("campers-table-body");
   tbody.innerHTML = "";
 
-  membersData.forEach((member) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-            <td>${member.mem_id}</td>
-            <td>${member.mem_acc}</td>
-            <td>${member.mem_name}</td>
-            <td>${member.mem_email}</td>
-            <td>${new Date(member.mem_reg_date).toLocaleDateString()}</td>
-            <td><span class="status-badge ${getStatusClass(
-              member.acc_status
-            )}">${getStatusText(member.acc_status)}</span></td>
-            <td>
-                ${
-                  member.acc_status !== 1
-                    ? `<button class="action-btn btn-activate" onclick="updateAccountStatus('member', ${member.mem_id}, 1)">啟用</button>`
-                    : ""
-                }
-                ${
-                  member.acc_status !== 2
-                    ? `<button class="action-btn btn-suspend" onclick="updateAccountStatus('member', ${member.mem_id}, 2)">停權</button>`
-                    : ""
-                }
-                ${
-                  member.acc_status !== 0
-                    ? `<button class="action-btn btn-deactivate" onclick="updateAccountStatus('member', ${member.mem_id}, 0)">停用</button>`
-                    : ""
-                }
-            </td>
+  try {
+    const response = await fetch(`${window.api_prefix}/member/admin/all`);
+    const result = await response.json();
+
+    if (result.status === "success") {
+      const members = result.data;
+
+      members.forEach((member) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${member.memId}</td>
+          <td>${member.memAcc}</td>
+          <td>${member.memName}</td>
+          <td>${member.memEmail}</td>
+          <td>${new Date(member.memRegDate).toLocaleDateString()}</td>
+          <td>
+            <span class="status-badge ${getStatusClass(member.accStatus)}">
+              ${getStatusText(member.accStatus)}
+            </span>
+          </td>
+          <td>
+            ${generateActionButtons(member.memId, member.accStatus)}
+          </td>
         `;
-    tbody.appendChild(row);
-  });
+        tbody.appendChild(row);
+      });
+    } else {
+      console.error("取得會員資料失敗:", result.message);
+    }
+  } catch (error) {
+    console.error("API 請求錯誤:", error);
+  }
 }
 
-// 載入營地主表格
-function loadOwnersTable() {
+
+
+// 載入營地主表格（從後端 API 取得資料）
+async function loadOwnersTable() {
   const tbody = document.getElementById("owners-table-body");
   tbody.innerHTML = "";
 
-  ownersData.forEach((owner) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-            <td>${owner.owner_id}</td>
-            <td>${owner.owner_acc}</td>
-            <td>${owner.owner_name}</td>
-            <td>${owner.owner_rep}</td>
-            <td>${owner.owner_email}</td>
-            <td>${new Date(owner.owner_reg_date).toLocaleDateString()}</td>
-            <td><span class="status-badge ${getStatusClass(
-              owner.acc_status
-            )}">${getStatusText(owner.acc_status)}</span></td>
-            <td>
-                ${
-                  owner.acc_status !== 1
-                    ? `<button class="action-btn btn-activate" onclick="updateAccountStatus('owner', ${owner.owner_id}, 1)">啟用</button>`
-                    : ""
-                }
-                ${
-                  owner.acc_status !== 2
-                    ? `<button class="action-btn btn-suspend" onclick="updateAccountStatus('owner', ${owner.owner_id}, 2)">停權</button>`
-                    : ""
-                }
-                ${
-                  owner.acc_status !== 0
-                    ? `<button class="action-btn btn-deactivate" onclick="updateAccountStatus('owner', ${owner.owner_id}, 0)">停用</button>`
-                    : ""
-                }
-            </td>
+  try {
+    const response = await fetch(`${window.api_prefix}/api/owner/all`);
+    const result = await response.json();
+
+    if (result.status === "success") {
+      const owners = result.data;
+
+      owners.forEach((owner) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${owner.ownerId}</td>
+          <td>${owner.ownerAcc}</td>
+          <td>${owner.ownerName}</td>
+          <td>${owner.ownerRep}</td>
+          <td>${owner.ownerEmail}</td>
+          <td>${new Date(owner.ownerRegDate).toLocaleDateString()}</td>
+          <td>
+            <span class="status-badge ${getStatusClass(owner.accStatus)}">
+              ${getStatusText(owner.accStatus)}
+            </span>
+          </td>
+          <td>
+            ${generateOwnerActionButtons(owner.ownerId, owner.accStatus)}
+          </td>
         `;
-    tbody.appendChild(row);
-  });
+        tbody.appendChild(row);
+      });
+    } else {
+      console.error("取得營地主資料失敗：", result.message);
+    }
+  } catch (error) {
+    console.error("載入營地主失敗：", error);
+  }
 }
 
-// 載入管理員表格
-function loadAdminsTable() {
+// 載入管理員表格（從後端 API 取得資料）
+async function loadAdminsTable() {
   const tbody = document.getElementById("admins-table-body");
   tbody.innerHTML = "";
 
-  adminsData.forEach((admin) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-            <td>${admin.admin_id}</td>
-            <td>${admin.admin_acc}</td>
-            <td>${admin.admin_name}</td>
-            <td><span class="status-badge ${getStatusClass(
-              admin.admin_status
-            )}">${getStatusText(admin.admin_status)}</span></td>
-            <td>
-                ${
-                  admin.admin_status !== 1
-                    ? `<button class="action-btn btn-activate" onclick="updateAccountStatus('admin', ${admin.admin_id}, 1)">啟用</button>`
-                    : ""
-                }
-                ${
-                  admin.admin_status !== 2
-                    ? `<button class="action-btn btn-suspend" onclick="updateAccountStatus('admin', ${admin.admin_id}, 2)">停權</button>`
-                    : ""
-                }
-                ${
-                  admin.admin_status !== 0
-                    ? `<button class="action-btn btn-deactivate" onclick="updateAccountStatus('admin', ${admin.admin_id}, 0)">停用</button>`
-                    : ""
-                }
-            </td>
-        `;
-    tbody.appendChild(row);
-  });
+  try {
+    const response = await fetch(`${window.api_prefix}/api/admin/all`);
+    const admins = await response.json();
+
+    admins.forEach((admin) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${admin.adminId}</td>
+        <td>${admin.adminAcc}</td>
+        <td>${admin.adminName}</td>
+        <td>
+          <span class="status-badge ${getStatusClass(admin.adminStatus)}">
+            ${getStatusText(admin.adminStatus)}
+          </span>
+        </td>
+        <td>
+          ${generateAdminActionButtons(admin.adminId, admin.adminStatus)}
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  } catch (error) {
+    console.error("載入管理員資料失敗：", error);
+  }
 }
+
 
 // 取得狀態樣式類別
 function getStatusClass(status) {
@@ -376,44 +468,288 @@ function getStatusText(status) {
   }
 }
 
-// 更新帳號狀態
-function updateAccountStatus(type, id, newStatus) {
-  const confirmText = `確定要將此帳號狀態更改為「${getStatusText(
-    newStatus
-  )}」嗎？`;
 
-  if (!confirm(confirmText)) {
-    return;
+
+// 更新露營者帳號狀態（呼叫後端API）
+async function updateAccountStatus(type, memId, newStatus, buttonElement) {
+  const row = buttonElement.closest("tr");
+  const statusCell = row.querySelector("td:nth-child(6)");
+  const buttonsCell = row.querySelector("td:nth-child(7)");
+  const originalText = buttonElement.textContent;
+
+  buttonElement.textContent = "處理中...";
+  buttonElement.disabled = true;
+
+  try {
+    const response = await fetch(`${window.api_prefix}/member/${memId}/status?status=${newStatus}`, {
+      method: "PATCH"
+    });
+
+    const result = await response.json();
+
+    if (result.status === "success") {
+      alert("狀態更新成功");
+      // 更新該列的狀態與按鈕
+      statusCell.innerHTML = `
+        <span class="status-badge ${getStatusClass(newStatus)}">
+          ${getStatusText(newStatus)}
+        </span>
+      `;
+      buttonsCell.innerHTML = generateActionButtons(memId, newStatus);
+    } else {
+      alert("更新失敗：" + result.message);
+    }
+  } catch (err) {
+    console.error("API 錯誤：", err);
+    alert("系統錯誤，請稍後再試");
+  } finally {
+    buttonElement.textContent = originalText;
+    buttonElement.disabled = false;
   }
-
-  // 這裡應該發送 API 請求更新資料庫
-  // 目前只更新本地資料
-  switch (type) {
-    case "member":
-      const member = membersData.find((m) => m.mem_id === id);
-      if (member) {
-        member.acc_status = newStatus;
-        loadCampersTable();
-      }
-      break;
-    case "owner":
-      const owner = ownersData.find((o) => o.owner_id === id);
-      if (owner) {
-        owner.acc_status = newStatus;
-        loadOwnersTable();
-      }
-      break;
-    case "admin":
-      const admin = adminsData.find((a) => a.admin_id === id);
-      if (admin) {
-        admin.admin_status = newStatus;
-        loadAdminsTable();
-      }
-      break;
-  }
-
-  alert("帳號狀態已更新");
 }
+
+// 更新露營者帳號狀態:產生操作按鈕
+function generateActionButtons(memId, currentStatus) {
+  let html = "";
+  if (currentStatus !== 1) {
+    html += `<button class="action-btn btn-activate" data-mem-id="${memId}" data-action="activate">啟用</button>`;
+  }
+  if (currentStatus !== 2) {
+    html += `<button class="action-btn btn-suspend" data-mem-id="${memId}" data-action="suspend">停權</button>`;
+  }
+  if (currentStatus !== 0) {
+    html += `<button class="action-btn btn-deactivate" data-mem-id="${memId}" data-action="deactivate">停用</button>`;
+  }
+  return html;
+}
+
+//營地主狀態更新函式(呼叫API)
+async function updateOwnerStatus(ownerId, newStatus, buttonElement) {
+  const originalText = buttonElement.textContent;
+  buttonElement.textContent = "處理中...";
+  buttonElement.disabled = true;
+
+  try {
+    const response = await fetch(`${window.api_prefix}/api/owner/update-status/${ownerId}?status=${newStatus}`, {
+      method: "PUT",
+      credentials: "include"
+    });
+
+    const resultText = await response.text();
+
+    if (response.ok) {
+      alert("狀態更新成功");
+
+      // 重新載入表格
+      loadOwnersTable();
+    } else {
+      alert("更新失敗：" + resultText);
+    }
+  } catch (err) {
+    console.error("API 錯誤：", err);
+    alert("系統錯誤，請稍後再試");
+  } finally {
+    buttonElement.textContent = originalText;
+    buttonElement.disabled = false;
+  }
+}
+//營地主狀態更新函式:產生操作按鈕
+function generateOwnerActionButtons(ownerId, currentStatus) {
+  let html = "";
+  if (currentStatus !== 1) {
+    html += `<button class="action-btn btn-activate" data-owner-id="${ownerId}" data-status="1">啟用</button>`;
+  }
+  if (currentStatus !== 2) {
+    html += `<button class="action-btn btn-suspend" data-owner-id="${ownerId}" data-status="2">停權</button>`;
+  }
+  if (currentStatus !== 0) {
+    html += `<button class="action-btn btn-deactivate" data-owner-id="${ownerId}" data-status="0">停用</button>`;
+  }
+  return html;
+}
+
+
+// 管理員狀態更新函式(呼叫API)
+async function updateAdminStatus(adminId, newStatus, buttonElement) {
+  const originalText = buttonElement.textContent;
+  buttonElement.textContent = "處理中...";
+  buttonElement.disabled = true;
+
+  try {
+    const response = await fetch(`${window.api_prefix}/api/admin/update-status/${adminId}?status=${newStatus}`, {
+      method: "PUT",
+      credentials: "include"
+    });
+
+    const result = await response.json();
+
+    if (result.status === "success") {
+      alert("狀態更新成功");
+      // 選擇性：重新載入管理員表格或更新 UI
+      loadAdminsTable();
+    } else {
+      alert("更新失敗：" + result.message);
+    }
+  } catch (err) {
+    console.error("API 錯誤：", err);
+    alert("系統錯誤，請稍後再試");
+  } finally {
+    buttonElement.textContent = originalText;
+    buttonElement.disabled = false;
+  }
+}
+
+// 更新管理員帳號狀態:產生操作按鈕
+function generateAdminActionButtons(adminId, currentStatus) {
+  let html = "";
+
+  if (currentStatus !== 1) {
+    html += `<button class="action-btn btn-activate" data-admin-id="${adminId}" data-status="1">啟用</button>`;
+  }
+  if (currentStatus !== 2) {
+    html += `<button class="action-btn btn-suspend" data-admin-id="${adminId}" data-status="2">停權</button>`;
+  }
+  if (currentStatus !== 0) {
+    html += `<button class="action-btn btn-deactivate" data-admin-id="${adminId}" data-status="0">停用</button>`;
+  }
+
+  return html;
+}
+
+
+
+
+// 露營者狀態管理事件綁定
+document.getElementById("campers-table-body").addEventListener("click", function (e) {
+  const btn = e.target;
+  if (!btn.classList.contains("action-btn")) return;
+
+  const memId = btn.dataset.memId;
+  const role = btn.dataset.role;
+  const action = btn.dataset.action;
+  const statusMap = {
+    activate: 1,
+    suspend: 2,
+    deactivate: 0,
+  };
+  const newStatus = statusMap[action];
+
+  if (memId && newStatus !== undefined) {
+    updateAccountStatus("member", parseInt(memId), newStatus, btn);
+  }
+});
+
+
+//營地主狀態管理事件綁定
+document.getElementById("owners-table-body").addEventListener("click", function (e) {
+  const btn = e.target;
+  if (!btn.classList.contains("action-btn")) return;
+
+  const ownerId = btn.dataset.ownerId;
+  const newStatus = parseInt(btn.dataset.status);
+
+  if (ownerId && !isNaN(newStatus)) {
+    updateOwnerStatus(ownerId, newStatus, btn);
+  }
+});
+
+
+//管理員狀態管理事件綁定
+window.addEventListener("DOMContentLoaded", function () {
+  // 確保 HTML 都載入後再綁事件
+  document.getElementById("admins-table-body").addEventListener("click", function (e) {
+    const btn = e.target;
+    if (!btn.classList.contains("action-btn")) return;
+
+    const adminId = btn.dataset.adminId;
+    const newStatus = parseInt(btn.dataset.status);
+
+    if (adminId && !isNaN(newStatus)) {
+      updateAdminStatus(adminId, newStatus, btn);
+    }
+  });
+
+  // 初次載入管理員資料
+  loadAdminsTable();
+});
+
+
+
+// 綁定新增管理員事件
+sessionStorage.setItem("loginRole", "admin");
+document.addEventListener("DOMContentLoaded", () => {
+  const currentRole = sessionStorage.getItem("loginRole");
+
+  if (currentRole === "admin") {
+    const header = document.querySelector("#admin-page-header");
+    if (!header) return;
+
+    // 插入新增管理員按鈕
+    header.innerHTML = `
+      <button id="add-admin-btn" class="btn btn-outline-success rounded">新增管理員</button>
+    `;
+
+    const addBtn = document.getElementById("add-admin-btn");
+    const modal = document.getElementById("add-admin-modal");
+    const closeBtn = document.getElementById("close-modal");
+    const form = document.getElementById("add-admin-form");
+
+    addBtn.addEventListener("click", () => {
+      modal.style.display = "block";
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+    
+      const adminAcc = document.getElementById("adminAcc").value.trim();
+      const adminName = document.getElementById("adminName").value.trim();
+      const adminPwd = document.getElementById("adminPwd").value.trim();
+    
+      // 使用 FormData 可以自動處理 CSRF token
+      const formData = new FormData();
+      formData.append("adminAcc", adminAcc);
+      formData.append("adminName", adminName);
+      formData.append("adminPwd", adminPwd);
+      formData.append("adminStatus", "0");
+    
+      try {
+        const response = await fetch(`${window.api_prefix}/api/admin/add`, {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        });
+    
+        if (response.ok) {
+          alert("新增成功！");
+          modal.style.display = "none";
+          form.reset();
+        } else {
+          const msg = await response.text();
+          alert("新增失敗：" + msg);
+        }
+      } catch (error) {
+        console.error("詳細錯誤:", error);
+        alert("發生錯誤：" + error.message);
+      }
+    });
+    
+  }
+});
+
+
+
+
+
 
 // 載入營地訂單管理
 function loadCampsiteOrders() {
@@ -430,30 +766,28 @@ function loadCampsiteOrders() {
       tableRows = ordersData
         .map((order) => {
           const memberInfo = membersData.find(
-            (member) => member.mem_id === order.mem_id
+            (member) => member.memId === order.memId
           );
           const campInfo = campData.find(
-            (camp) => camp.camp_id === order.camp_id
+            (camp) => camp.campId === order.campId
           );
 
           return `
           <tr>
-            <td>${order.campsite_order_id}</td>
-            <td>${memberInfo ? memberInfo.mem_name : "未知會員"}</td>
-            <td>${campInfo ? campInfo.camp_name : "未知營地"}</td>
-            <td>${order.order_date}</td>
-            <td>${order.check_in}</td>
-            <td>${order.check_out}</td>
-            <td>NT$ ${
-              order.aft_amount ? order.aft_amount.toLocaleString() : "0"
+            <td>${order.campsiteOrderId}</td>
+            <td>${memberInfo ? memberInfo.memName : "未知會員"}</td>
+            <td>${campInfo ? campInfo.campName : "未知營地"}</td>
+            <td>${order.orderDate}</td>
+            <td>${order.checkIn}</td>
+            <td>${order.checkOut}</td>
+            <td>NT$ ${order.aftAmount ? order.aftAmount.toLocaleString() : "0"
             }</td>
             <td><span class="status-badge ${getOrderStatusClass(
-              order.campsite_order_status
-            )}">${getOrderStatusText(order.campsite_order_status)}</span></td>
+              order.campsiteOrderStatus
+            )}">${getOrderStatusText(order.campsiteOrderStatus)}</span></td>
             <td>
-              <button class="btn btn-info btn-sm" onclick="viewOrderDetail('${
-                order.campsite_order_id
-              }')">
+              <button class="btn btn-info btn-sm" onclick="viewOrderDetail('${order.campsiteOrderId
+            }')">
                 <i class="fas fa-eye"></i> 查看詳情
               </button>
             </td>
@@ -498,6 +832,7 @@ function loadCampsiteOrders() {
   }, 1000);
 }
 
+
 // 取得訂單狀態樣式類別
 function getOrderStatusClass(status) {
   switch (status) {
@@ -516,38 +851,37 @@ function getOrderStatusClass(status) {
 
 // 取得訂單狀態文字
 function getOrderStatusText(status) {
-  switch (status) {
-    case 1:
-      return "待確認";
-    case 2:
-      return "已確認";
-    case 3:
-      return "已完成";
-    case 0:
-      return "已取消";
-    default:
-      return "未知狀態";
-  }
+  const statusMap = {
+    0: "露營者未付款",
+    1: "營地主未確認",
+    2: "營地主已確認",
+    3: "露營者自行取消",
+    4: "訂單結案(撥款)",
+    5: "營地主自行取消",
+  };
+  
+  return statusMap[status] || "未知狀態";
 }
 
 // 查看訂單詳情
 function viewOrderDetail(orderId) {
-  const order = ordersData.find((o) => o.campsite_order_id === orderId);
+  const order = ordersData.find((o) => o.campsiteOrderId === orderId);
   if (!order) {
     alert("找不到訂單資料");
     return;
   }
 
-  const memberInfo = membersData.find(
-    (member) => member.mem_id === order.mem_id
-  );
-  const campInfo = campData.find((camp) => camp.camp_id === order.camp_id);
-  const orderDetails = ordersDetailData.filter(
-    (detail) => detail.campsite_order_id === orderId
-  );
-  const discountInfo = order.discount_code_id
+  const memberInfo = membersData.find((member) => member.memId === order.memId);
+  const campInfo = campData.find((camp) => camp.campId === order.campId);
+  // const orderDetails = ordersDetailData.filter(
+  //   (detail) => detail.campsiteOrderId === orderId
+  // );
+  const orderDetails = order.orderDetails;
+  console.log("orderDetails1111", orderDetails);
+
+  const discountInfo = order.discountCodeId
     ? discountCodesData.find(
-        (discount) => discount.discount_code_id === order.discount_code_id
+        (discount) => discount.discountCodeId === order.discountCodeId
       )
     : null;
 
@@ -555,20 +889,24 @@ function viewOrderDetail(orderId) {
   const campsiteDetailsHtml = orderDetails
     .map((detail) => {
       const campsiteType = campsiteTypeData.find(
-        (type) => type.campsite_type_id === detail.campsite_type_id
+        (type) => type.campsiteTypeId === detail.campsiteTypeId
       );
+
+      console.log("建立營地類型詳細資料HTML:", campsiteType);
+      console.log("建立營地類型詳細資料HTML_detail:", detail);
+
       return `
       <div class="campsite-detail-item">
         <div class="campsite-info">
-          <h6>${campsiteType ? campsiteType.campsite_name : "未知營地類型"}</h6>
+          <h6>${
+            campsiteType ? campsiteType.campsiteIdName : "未知營地類型"
+          }</h6>
           <p><strong>可容納人數:</strong> ${
-            campsiteType ? campsiteType.campsite_people : "N/A"
+            campsiteType ? campsiteType.campsitePeople : "N/A"
           } 人</p>
-          <p><strong>預訂數量:</strong> ${detail.campsite_num} 間</p>
-          <p><strong>單價:</strong> NT$ ${
-            campsiteType ? campsiteType.campsite_price.toLocaleString() : "0"
-          }</p>
-          <p><strong>小計金額:</strong> NT$ ${detail.campsite_amount.toLocaleString()}</p>
+          <p><strong>預訂數量:</strong> ${detail.campsiteNum} 間</p>
+         
+          <p><strong>小計金額:</strong> NT$ ${detail.campsiteAmount.toLocaleString()}</p>
         </div>
       </div>
     `;
@@ -577,21 +915,22 @@ function viewOrderDetail(orderId) {
 
   // 計算總數量
   const totalCampsiteNum = orderDetails.reduce(
-    (sum, detail) => sum + detail.campsite_num,
+    (sum, detail) => sum + detail.campsiteNum,
     0
   );
 
   // 獲取訂單狀態文字和樣式
-  const statusText = getOrderStatusText(order.campsite_order_status);
-  const statusClass = getOrderStatusClass(order.campsite_order_status);
+  const statusText = getOrderStatusText(order.campsiteOrderStatus);
+  const statusClass = getOrderStatusClass(order.campsiteOrderStatus);
 
   // 付款方式文字
   const payMethodText =
-    order.pay_method === 1
+    order.payMethod === 1
       ? "信用卡"
-      : order.pay_method === 2
+      : order.payMethod === 2
       ? "銀行轉帳"
       : "其他";
+  console.log("TTESJ:", order);
 
   const modalHtml = `
     <div class="modal-overlay" id="orderDetailsModal" onclick="closeOrderModal(event)">
@@ -605,36 +944,34 @@ function viewOrderDetail(orderId) {
             <div class="info-row">
               <div class="info-col">
                 <h6>基本資訊</h6>
-                <p><strong>訂單編號:</strong> ${order.campsite_order_id}</p>
+                <p><strong>訂單編號:</strong> ${order.campsiteOrderId}</p>
                 <p><strong>營地名稱:</strong> ${
-                  campInfo ? campInfo.camp_name : "未知營地"
+                  campInfo ? campInfo.campName : "未知營地"
                 }</p>
                 <p><strong>客戶姓名:</strong> ${
-                  memberInfo ? memberInfo.mem_name : "未知會員"
+                  memberInfo ? memberInfo.memName : "未知會員"
                 }</p>
-                <p><strong>下訂日期:</strong> ${order.order_date}</p>
+                <p><strong>下訂日期:</strong> ${order.orderDate}</p>
                 <p><strong>付款方式:</strong> ${payMethodText}</p>
               </div>
               <div class="info-col">
                 <h6>住宿資訊</h6>
-                <p><strong>入住日期:</strong> ${order.check_in}</p>
-                <p><strong>退房日期:</strong> ${order.check_out}</p>
+                <p><strong>入住日期:</strong> ${order.checkIn}</p>
+                <p><strong>退房日期:</strong> ${order.checkOut}</p>
                 <p><strong>訂單狀態:</strong> <span class="status-badge ${statusClass}">${statusText}</span></p>
-                ${
-                  order.comment_satisfaction
-                    ? `<p><strong>評價星數:</strong> ${order.comment_satisfaction} 星</p>`
-                    : ""
-                }
-                ${
-                  order.comment_content
-                    ? `<p><strong>評價內容:</strong> ${order.comment_content}</p>`
-                    : ""
-                }
-                ${
-                  order.comment_date
-                    ? `<p><strong>評價日期:</strong> ${order.comment_date}</p>`
-                    : ""
-                }
+                <div class="status-update-section">
+                  <label for="orderStatusSelect"><strong>更改狀態:</strong></label>
+                  <select id="orderStatusSelect" class="form-control" style="margin-top: 5px;">
+                    <option value="0" ${order.campsiteOrderStatus === 0 ? 'selected' : ''}>露營者未付款</option>
+                    <option value="1" ${order.campsiteOrderStatus === 1 ? 'selected' : ''}>營地主未確認</option>
+                    <option value="2" ${order.campsiteOrderStatus === 2 ? 'selected' : ''}>營地主已確認</option>
+                    <option value="3" ${order.campsiteOrderStatus === 3 ? 'selected' : ''}>露營者自行取消</option>
+                    <option value="4" ${order.campsiteOrderStatus === 4 ? 'selected' : ''}>訂單結案(撥款)</option>
+                    <option value="5" ${order.campsiteOrderStatus === 5 ? 'selected' : ''}>營地主自行取消</option>
+                  </select>
+                  <button class="btn btn-primary btn-sm" style="margin-top: 10px;" onclick="updateOrderStatus('${order.campsiteOrderId}', document.getElementById('orderStatusSelect').value)">更新狀態</button>
+                </div>
+                
               </div>
             </div>
           </div>
@@ -660,37 +997,37 @@ function viewOrderDetail(orderId) {
                 </div>
                 <div class="amount-item">
                   <span>營地費用:</span>
-                  <span>NT$ ${order.camp_amount.toLocaleString()}</span>
+                  <span>NT$ ${order.campsiteAmount}</span>
                 </div>
                 ${
-                  order.bundle_amount > 0
+                  order.bundleAmount > 0
                     ? `
                 <div class="amount-item">
                   <span>加購項目:</span>
-                  <span>NT$ ${order.bundle_amount.toLocaleString()}</span>
+                  <span>NT$ ${order.bundleAmount}</span>
                 </div>
                 `
                     : ""
                 }
                 <div class="amount-item">
                   <span>小計:</span>
-                  <span>NT$ ${order.bef_amount.toLocaleString()}</span>
+                  <span>NT$ ${order.befAmount}</span>
                 </div>
               </div>
               <div class="amount-col">
                 ${
-                  order.dis_amount > 0
+                  order.disAmount > 0
                     ? `
                 <div class="amount-item discount">
                   <span>折扣金額:</span>
-                  <span class="discount-amount">-NT$ ${order.dis_amount.toLocaleString()}</span>
+                  <span class="discount-amount">-NT$ ${order.disAmount.toLocaleString()}</span>
                 </div>
                 ${
                   discountInfo
                     ? `
                 <div class="discount-info">
-                  <p><strong>折價券:</strong> ${discountInfo.discount_code}</p>
-                  <p><strong>說明:</strong> ${discountInfo.discount_explain}</p>
+                  <p><strong>折價券:</strong> ${discountInfo.discountCode}</p>
+                 
                 </div>
                 `
                     : ""
@@ -700,7 +1037,7 @@ function viewOrderDetail(orderId) {
                 }
                 <div class="amount-item total">
                   <span><strong>實付金額:</strong></span>
-                  <span class="total-amount"><strong>NT$ ${order.aft_amount.toLocaleString()}</strong></span>
+                  <span class="total-amount"><strong>NT$ ${order.aftAmount.toLocaleString()}</strong></span>
                 </div>
               </div>
             </div>
@@ -726,6 +1063,63 @@ function closeOrderModal(event) {
   const modal = document.getElementById("orderDetailsModal");
   if (modal) {
     modal.remove();
+  }
+}
+
+// 更新訂單狀態
+async function updateOrderStatus(orderId, newStatus) {
+  const statusMap = {
+    0: "露營者未付款",
+    1: "營地主未確認",
+    2: "營地主已確認",
+    3: "露營者自行取消",
+    4: "訂單結案(撥款)",
+    5: "營地主自行取消",
+  };
+
+  const confirmText = `確定要將訂單狀態更改為「${statusMap[newStatus]}」嗎？`;
+  
+  if (!confirm(confirmText)) {
+    return;
+  }
+
+  try {
+    // 建立 FormData 物件
+    const formData = new FormData();
+    formData.append("orderId", orderId);
+    formData.append("status", newStatus);
+
+    // 調用 API 更新訂單狀態
+    const response = await fetch(
+      `${window.api_prefix}/api/campsite/order/update`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (response.ok) {
+      const result = await response.json();
+      
+      // 更新本地資料
+      const orderIndex = ordersData.findIndex(order => order.campsiteOrderId === orderId);
+      if (orderIndex !== -1) {
+        ordersData[orderIndex].campsiteOrderStatus = parseInt(newStatus);
+      }
+      
+      alert("訂單狀態更新成功！");
+      
+      // 關閉模態視窗
+      closeOrderModal();
+      
+      // 重新載入訂單列表
+      loadCampsiteOrders();
+    } else {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("更新訂單狀態失敗:", error);
+    alert("更新訂單狀態失敗，請稍後再試");
   }
 }
 
@@ -862,7 +1256,6 @@ function loadOrderManagement() {
   content.innerHTML = `
         <div class="loading">載入訂單管理資料中...</div>
     `;
-
   // 檢查是否有訂單數據
   if (!shopOrdersData || shopOrdersData.length === 0) {
     content.innerHTML = `
@@ -871,11 +1264,11 @@ function loadOrderManagement() {
                     <thead>
                         <tr>
                             <th>訂單編號</th>
-                            <th>會員姓名</th>
+                            <th style="min-width: 150px;">會員編號</th>
                             <th>訂單日期</th>
-                            <th>訂單金額</th>
-                            <th>付款方式</th>
+                            <th style="min-width: 150px;">訂單金額</th>
                             <th>訂單狀態</th>
+                            <th>退貨申請</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -893,7 +1286,6 @@ function loadOrderManagement() {
         `;
     return;
   }
-
   // 生成訂單表格
   let tableRows = "";
 
@@ -903,7 +1295,7 @@ function loadOrderManagement() {
   });
 
   // 分頁設置
-  const itemsPerPage = 5;
+  const itemsPerPage = 50;
   let currentPage = 1;
   const totalPages = Math.ceil(sortedOrders.length / itemsPerPage);
 
@@ -915,52 +1307,54 @@ function loadOrderManagement() {
 
   currentPageData.forEach((order) => {
     // 查找會員資料
-    const member = membersData.find((m) => m.memId === order.memId) || {
-      memName: "未知會員",
-    };
+    // const member = membersData.find((m) => m.memId === order.memId) || {
+    //   memName: "未知會員",
+    // };
 
-    // 訂單狀態文字和樣式
-    const statusInfo = getShopOrderStatusInfo(order.shopOrderStatus);
+    // // 使用 DTO 的 str() 方法獲取狀態文字
+    const statusText =
+      order.shopOrderStatusStr ||
+      getShopOrderStatusInfo(order.shopOrderStatus).text;
+    const statusClass = getShopOrderStatusInfo(order.shopOrderStatus).class;
 
-    // 付款方式文字
-    const paymentMethod = getPaymentMethodText(order.shopOrderPayment);
+    // 使用 DTO 的 str() 方法獲取付款方式文字
+    const paymentMethod =
+      order.shopOrderPaymentStr || getPaymentMethodText(order.shopOrderPayment);
 
-    // 格式化日期
-    const orderDate = new Date(order.shopOrderDate).toLocaleDateString("zh-TW");
+    // 使用 DTO 的 str() 方法獲取出貨方式文字
+    const shipmentMethod =
+      order.shopOrderShipmentStr ||
+      getShipmentMethodText(order.shopOrderShipment);
+
+    // 使用 DTO 的 str() 方法獲取退貨申請文字
+    const returnApplyText =
+      order.shopReturnApplyStr || getReturnApplyText(order.shopReturnApply);
+    // 格式化日期（含時間）
+    const orderDate = formatDateTime(order.shopOrderDate);
+    // 只有訂單狀態為0(等待賣家確認中)才顯示編輯按鈕
+    const canEdit = order.shopOrderStatus === 0;
 
     // 生成表格行
     tableRows += `
       <tr>
         <td>${order.shopOrderId}</td>
-        <td>${order.orderName}</td>
+        <td style="min-width: 150px;">${order.memId}</td>
         <td>${orderDate}</td>
-        <td>NT$ ${order.afterDiscountAmount}</td>
-        <td>${paymentMethod}</td>
-        <td><span class="status-badge ${statusInfo.class}">${
-      statusInfo.text
-    }</span></td>
+        <td style="min-width: 150px;">NT$ ${order.afterDiscountAmount}</td>
+        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+        <td><span class="status-badge ${getReturnApplyClass(
+          order.shopReturnApply
+        )}">${returnApplyText}</span></td>
         <td>
           <button class="action-btn btn-view" onclick="viewShopOrderDetails(${
             order.shopOrderId
           })">查看詳情</button>
+          <button class="action-btn btn-edit" onclick="showEditShopOrderModal(${
+            order.shopOrderId
+          })">編輯</button>
           ${
-            order.shopOrderStatus === 0
-              ? `<button class="action-btn btn-activate" onclick="updateShopOrderStatus(${order.shopOrderId}, 1)">待確認</button>`
-              : ""
-          }
-          ${
-            order.shopOrderStatus === 1
-              ? `<button class="action-btn btn-activate" onclick="updateShopOrderStatus(${order.shopOrderId}, 2)">出貨</button>`
-              : ""
-          }
-          ${
-            order.shopOrderStatus === 2
-              ? `<button class="action-btn btn-activate" onclick="updateShopOrderStatus(${order.shopOrderId}, 3)">已送達</button>`
-              : ""
-          }
-          ${
-            order.shopRetyurnApply === 1 && order.shopOrderStatus !== 5
-              ? `<button class="action-btn btn-deactivate" onclick="updateShopOrderStatus(${order.shopOrderId}, 5)">處理退貨</button>`
+            order.shopOrderStatus === 3 && order.shopReturnApply === 1
+              ? `<button class="action-btn btn-deactivate" onclick="showReturnProcessModal(${order.shopOrderId})">處理退貨</button>`
               : ""
           }
         </td>
@@ -975,14 +1369,24 @@ function loadOrderManagement() {
         <label for="status-filter">訂單狀態:</label>
         <select id="status-filter" onchange="filterShopOrders()">
           <option value="all">全部</option>
-          <option value="0">待確認</option>
-          <option value="1">已取消</option>
-          <option value="2">等待賣家確認中</option>
-          <option value="3">準備出貨中</option>
-          <option value="4">已出貨</option>
-          <option value="5"> 已取貨，完成訂單</option>
-          <option value="6"> 未取貨，退回賣家 </option>
-
+          <option value="0">等待賣家確認中</option>
+          <option value="1">準備出貨中</option>
+          <option value="2">已出貨</option>
+          <option value="3">已取貨，完成訂單</option>
+          <option value="4">未取貨，退回賣家</option>
+          <option value="5">已取消</option>
+          <option value="6">付款失敗</option>
+          <option value="7">付款成功，待賣家確認</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="return-filter">退貨申請:</label>
+        <select id="return-filter" onchange="filterShopOrders()">
+          <option value="all">全部</option>
+          <option value="0">未申請退貨</option>
+          <option value="1">申請退貨</option>
+          <option value="2">退貨成功</option>
+          <option value="3">退貨失敗</option>
         </select>
       </div>
       <div class="filter-group">
@@ -998,11 +1402,11 @@ function loadOrderManagement() {
         <thead>
           <tr>
             <th>訂單編號</th>
-            <th>會員姓名</th>
+            <th style="min-width: 150px;">會員編號</th>
             <th>訂單日期</th>
-            <th>訂單金額</th>
-            <th>付款方式</th>
+            <th style="min-width: 150px;">訂單金額</th>
             <th>訂單狀態</th>
+            <th>退貨申請</th>
             <th>操作</th>
           </tr>
         </thead>
@@ -1030,21 +1434,19 @@ function loadOrderManagement() {
 function getShopOrderStatusInfo(status) {
   switch (parseInt(status)) {
     case 0:
-      return { text: "等待付款中", class: "status-pending" };
+      return { text: "等待賣家確認中", class: "status-pending" };
     case 1:
-      return { text: "已取消", class: "status-canceled" };
+      return { text: "準備出貨中", class: "status-confirmed" };
     case 2:
-      return { text: "等待賣家確認中", class: "status-confirmed" };
+      return { text: "已出貨", class: "status-shipped" };
     case 3:
-      return { text: "準備出貨中", class: "status-shipped" };
-    case 4:
-      return { text: "已出貨", class: "status-delivered" };
-    case 5:
       return { text: "已取貨，完成訂單", class: "status-completed" };
-    case 6:
-      return { text: "未取貨，退回賣家 ", class: "status-returned" };
+    case 4:
+      return { text: "未取貨，退回賣家", class: "status-returned" };
+    case 5:
+      return { text: "已取消", class: "status-canceled" };
     default:
-      return { text: "未知狀態", class: "status-unknown" };
+      return { text: "等待賣家確認中", class: "status-pending" };
   }
 }
 
@@ -1052,13 +1454,11 @@ function getShopOrderStatusInfo(status) {
 function getPaymentMethodText(method) {
   switch (parseInt(method)) {
     case 1:
-      return "信用卡";
+      return "LINEPAY";
     case 2:
-      return "銀行轉帳";
+      return "宅配取貨付款";
     case 3:
-      return "超商付款";
-    case 4:
-      return "行動支付";
+      return "超商取貨付款";
     default:
       return "其他";
   }
@@ -1068,17 +1468,50 @@ function getPaymentMethodText(method) {
 function getShipmentMethodText(method) {
   switch (parseInt(method)) {
     case 1:
-      return "宅配";
+      return "賣家宅配";
     case 2:
-      return "超商取貨";
+      return "超商取貨付款";
     default:
-      return "其他";
+      return "尚未選取";
+  }
+}
+
+// 獲取退貨申請文字
+function getReturnApplyText(returnApply) {
+  switch (parseInt(returnApply)) {
+    case 0:
+      return "未申請退貨";
+    case 1:
+      return "申請退貨";
+    case 2:
+      return "退貨成功";
+    case 3:
+      return "退貨失敗";
+    default:
+      return "未申請退貨";
+  }
+}
+
+// 獲取退貨申請樣式類別
+function getReturnApplyClass(returnApply) {
+  switch (parseInt(returnApply)) {
+    case 0:
+      return "status-normal";
+    case 1:
+      return "status-pending";
+    case 2:
+      return "status-success";
+    case 3:
+      return "status-error";
+    default:
+      return "status-normal";
   }
 }
 
 // 篩選商品訂單
 function filterShopOrders() {
   const statusFilter = document.getElementById("status-filter").value;
+  const returnFilter = document.getElementById("return-filter").value;
   const dateFrom = document.getElementById("date-from").value;
   const dateTo = document.getElementById("date-to").value;
 
@@ -1089,6 +1522,13 @@ function filterShopOrders() {
   if (statusFilter !== "all") {
     filteredOrders = filteredOrders.filter(
       (order) => order.shopOrderStatus.toString() === statusFilter
+    );
+  }
+
+  // 按退貨申請篩選
+  if (returnFilter !== "all") {
+    filteredOrders = filteredOrders.filter(
+      (order) => order.shopReturnApply.toString() === returnFilter
     );
   }
 
@@ -1118,17 +1558,17 @@ function filterShopOrders() {
 // 重置商品訂單篩選
 function resetShopOrderFilters() {
   document.getElementById("status-filter").value = "all";
+  document.getElementById("return-filter").value = "all";
   document.getElementById("date-from").value = "";
   document.getElementById("date-to").value = "";
-
-  // 重新載入所有訂單，重置為第一頁
-  updateShopOrdersTable(shopOrdersData, 1);
+  filterShopOrders();
 }
 
 // 切換頁面
 function changePage(pageNumber) {
   // 獲取當前篩選條件
   const statusFilter = document.getElementById("status-filter").value;
+  const returnFilter = document.getElementById("return-filter").value;
   const dateFrom = document.getElementById("date-from").value;
   const dateTo = document.getElementById("date-to").value;
 
@@ -1139,6 +1579,13 @@ function changePage(pageNumber) {
   if (statusFilter !== "all") {
     filteredOrders = filteredOrders.filter(
       (order) => order.shopOrderStatus.toString() === statusFilter
+    );
+  }
+
+  // 按退貨申請篩選
+  if (returnFilter !== "all") {
+    filteredOrders = filteredOrders.filter(
+      (order) => order.shopReturnApply.toString() === returnFilter
     );
   }
 
@@ -1164,6 +1611,7 @@ function changePage(pageNumber) {
 
 // 更新商品訂單表格
 function updateShopOrdersTable(orders, pageNumber = 1) {
+  console.log("updateShopOrdersTable orders:", orders);
   const tbody = document.querySelector("#shop-orders-table tbody");
   const paginationDiv = document.querySelector(".pagination");
 
@@ -1172,24 +1620,21 @@ function updateShopOrdersTable(orders, pageNumber = 1) {
   if (orders.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="7" class="empty-state">
+        <td colspan="9" class="empty-state">
           <i class="fas fa-shopping-cart"></i>
           <h3>無符合條件的訂單</h3>
           <p>請調整篩選條件</p>
         </td>
       </tr>
     `;
-
-    // 隱藏分頁控制
     if (paginationDiv) {
       paginationDiv.style.display = "none";
     }
-
     return;
   }
 
   // 分頁設置
-  const itemsPerPage = 5;
+  const itemsPerPage = 50;
   const currentPage = pageNumber;
   const totalPages = Math.ceil(orders.length / itemsPerPage);
 
@@ -1199,62 +1644,64 @@ function updateShopOrdersTable(orders, pageNumber = 1) {
   const currentPageData = orders.slice(startIndex, endIndex);
 
   let tableRows = "";
-
   currentPageData.forEach((order) => {
     // 查找會員資料
     const member = membersData.find((m) => m.memId === order.memId) || {
       memName: "未知會員",
     };
 
-    // 訂單狀態文字和樣式
-    const statusInfo = getShopOrderStatusInfo(order.shopOrderStatus);
+    // 使用 DTO 的 str() 方法獲取狀態文字
+    const statusText =
+      order.shopOrderStatusStr ||
+      getShopOrderStatusInfo(order.shopOrderStatus).text;
+    const statusClass = getShopOrderStatusInfo(order.shopOrderStatus).class;
 
-    // 付款方式文字
-    const paymentMethod = getPaymentMethodText(order.shopOrderPayment);
+    // 使用 DTO 的 str() 方法獲取付款方式文字
+    const paymentMethod =
+      order.shopOrderPaymentStr || getPaymentMethodText(order.shopOrderPayment);
 
-    // 格式化日期
-    const orderDate = new Date(order.shopOrderDate).toLocaleDateString("zh-TW");
+    // 使用 DTO 的 str() 方法獲取出貨方式文字
+    const shipmentMethod =
+      order.shopOrderShipmentStr ||
+      getShipmentMethodText(order.shopOrderShipment);
+
+    // 使用 DTO 的 str() 方法獲取退貨申請文字
+    const returnApplyText =
+      order.shopReturnApplyStr || getReturnApplyText(order.shopReturnApply);
+
+    // 格式化日期（含時間）
+    const orderDate = formatDateTime(order.shopOrderDate);
+
+    // 只有訂單狀態為0(等待賣家確認中)才顯示編輯按鈕
+    const canEdit = order.shopOrderStatus === 0;
 
     // 生成表格行
     tableRows += `
       <tr>
         <td>${order.shopOrderId}</td>
-        <td>${order.orderName}</td>
+        <td style="min-width: 150px;">${order.memId}</td>
         <td>${orderDate}</td>
-        <td>NT$ ${order.afterDiscountAmount}</td>
-        <td>${paymentMethod}</td>
-        <td><span class="status-badge ${statusInfo.class}">${
-      statusInfo.text
-    }</span></td>
+        <td style="min-width: 150px;">NT$ ${order.afterDiscountAmount}</td>
+        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+        <td><span class="status-badge ${getReturnApplyClass(
+          order.shopReturnApply
+        )}">${returnApplyText}</span></td>
         <td>
           <button class="action-btn btn-view" onclick="viewShopOrderDetails(${
             order.shopOrderId
           })">查看詳情</button>
+          <button class="action-btn btn-edit" onclick="showEditShopOrderModal(${
+            order.shopOrderId
+          })">編輯</button>
           ${
-            order.shopOrderStatus === 0
-              ? `<button class="action-btn btn-activate" onclick="updateShopOrderStatus(${order.shopOrderId}, 1)">確認訂單</button>`
-              : ""
-          }
-          ${
-            order.shopOrderStatus === 1
-              ? `<button class="action-btn btn-activate" onclick="updateShopOrderStatus(${order.shopOrderId}, 2)">出貨</button>`
-              : ""
-          }
-          ${
-            order.shopOrderStatus === 2
-              ? `<button class="action-btn btn-activate" onclick="updateShopOrderStatus(${order.shopOrderId}, 3)">已送達</button>`
-              : ""
-          }
-          ${
-            order.shopReturnApply === 1 && order.shopOrderStatus !== 5
-              ? `<button class="action-btn btn-deactivate" onclick="updateShopOrderStatus(${order.shopOrderId}, 5)">處理退貨</button>`
+            order.shopOrderStatus === 3 && order.shopReturnApply === 1
+              ? `<button class="action-btn btn-deactivate" onclick="showReturnProcessModal(${order.shopOrderId})">處理退貨</button>`
               : ""
           }
         </td>
       </tr>
     `;
   });
-
   tbody.innerHTML = tableRows;
 
   // 更新分頁控制
@@ -1292,6 +1739,28 @@ function updateShopOrdersTable(orders, pageNumber = 1) {
   window.currentOrderPage = currentPage;
 }
 
+// 載入折價券資料
+async function fetchDiscountList() {
+  try {
+    const discountResponse = await fetch(
+      `${window.api_prefix}/api/discount/all`
+    );
+    discountCodesData = await discountResponse.json();
+    console.log("折價券資料", discountCodesData);
+  } catch (error) {
+    console.log("折價券資料載入失敗，使用空陣列");
+    discountCodesData = [];
+  }
+
+  console.log("目前折價券筆數：", discountCodesData.length);
+  console.log(
+    "discount-table-body 是否存在：",
+    !!document.getElementById("discount-table-body")
+  );
+
+  loadDiscountTable(); // ⬅️ 抓完資料後渲染表格
+}
+
 // 載入折價券管理
 function loadDiscountManagement() {
   const content = document.getElementById("discount-management-content");
@@ -1303,14 +1772,11 @@ function loadDiscountManagement() {
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>折價券代碼</th>
                         <th>折價券名稱</th>
-                        <th>折扣類型</th>
-                        <th>折扣值</th>
-                        <th>最低消費</th>
-                        <th>建立日期</th>
-                        <th>使用期限</th>
-                        <th>使用次數</th>
+                        <th>折扣說明</th>
+                        <th>折扣金額/折扣百分比</th>
+                        <th>最低消費金額</th>
+                        <th>生效期間</th>
                         <th>狀態</th>
                         <th>操作</th>
                     </tr>
@@ -1327,12 +1793,12 @@ function loadDiscountManagement() {
                 <h3>建立新折價券</h3>
                 <form id="discountForm">
                     <div class="form-group">
-                        <label>折價券代碼:</label>
+                        <label>折價券名稱:</label>
                         <input type="text" name="code" required>
                     </div>
                     <div class="form-group">
-                        <label>折價券名稱:</label>
-                        <input type="text" name="name" required>
+                        <label>折扣說明:</label>
+                        <input type="text" name="explain" required>
                     </div>
                     <div class="form-group">
                         <label>折扣類型:</label>
@@ -1342,15 +1808,22 @@ function loadDiscountManagement() {
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>折扣值:</label>
-                        <input type="number" name="value" required>
+                        <label>折扣金額/折扣百分比:</label>
+                        <input type="number" name="value" required step="0.01" min="0">
+                        <small class="form-text text-muted">
+                        若為金額，請輸入數字如「100」；若為百分比，請輸入「10」代表 10% OFF。
+                        </small>
                     </div>
                     <div class="form-group">
-                        <label>最低消費:</label>
+                        <label>最低消費金額:</label>
                         <input type="number" name="min_amount" required>
                     </div>
                     <div class="form-group">
-                        <label>使用期限:</label>
+                        <label>生效日期:</label>
+                        <input type="date" name="start_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>失效日期:</label>
                         <input type="date" name="expiry_date" required>
                     </div>
                     <div class="form-actions">
@@ -1362,11 +1835,33 @@ function loadDiscountManagement() {
         </div>
     `;
 
-  loadDiscountTable();
+  fetchDiscountList(); // ✅ 抓資料 + 渲染畫面;
 }
 
+//折價券日期轉換
+function formatDate(dateString) {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  if (isNaN(date)) return "-";
+
+  // YYYY-MM-DD
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+let isDiscountFormBound = false;
 // 載入折價券表格
 function loadDiscountTable() {
+  // 失效日期由遠到近排序
+  discountCodesData.sort((a, b) => {
+    const dateA = new Date(a.endDate);
+    const dateB = new Date(b.endDate);
+    return dateB - dateA;
+  });
+
   const tbody = document.getElementById("discount-table-body");
   if (!tbody) return;
 
@@ -1374,83 +1869,156 @@ function loadDiscountTable() {
 
   if (discountCodesData.length === 0) {
     tbody.innerHTML = `
-            <tr>
-                <td colspan="10" class="empty-state">
-                    <i class="fas fa-tags"></i>
-                    <h3>暫無折價券</h3>
-                    <p>目前沒有建立任何折價券</p>
-                </td>
-            </tr>
-        `;
+      <tr>
+        <td colspan="7" class="empty-state">
+          <i class="fas fa-tags"></i>
+          <h3>暫無折價券</h3>
+          <p>目前沒有建立任何折價券</p>
+        </td>
+      </tr>
+    `;
     return;
   }
 
-  discountCodesData.forEach((discount) => {
+  discountCodesData.forEach((discount, index) => {
     const currentDate = new Date();
-    const endDate = new Date(discount.end_date);
+    const endDate = new Date(discount.endDate);
     const isActive = endDate > currentDate;
     const isExpiredToday =
       endDate.toDateString() === currentDate.toDateString() &&
       endDate <= currentDate;
-    const discountTypeText =
-      discount.discount_type === 1 ? "百分比" : "固定金額";
+
+    const discountTypeText = discount.discountType === 1 ? "百分比" : "固定金額";
     const discountValueText =
-      discount.discount_type === 1
-        ? `${discount.discount_value * 100}%`
-        : `${discount.discount_value}元`;
+      discount.discountType === 1
+        ? `${discount.discountValue * 100}%`
+        : `${discount.discountValue}元`;
 
-    // 格式化建立日期
-    const createdDate = discount.created
-      ? discount.created.split(" ")[0]
-      : "未知";
+    // 格式化日期
+    const formattedStartDate = formatDate(discount.startDate);
+    const formattedEndDate = formatDate(discount.endDate);
+    const dateRangeText = `${formattedStartDate} ~ ${formattedEndDate}`;
+    const formattedUpdateDate = formatDate(discount.updated);
 
-    // 判斷是否顯示刪除按鈕（當日已過期則不顯示）
-    const showDeleteButton = !isExpiredToday && endDate > currentDate;
+    // 只在折價券有效且未過期當天才顯示按鈕
+    const isExpired = endDate <= currentDate;
+
+    // 操作按鈕
+    const actionCellContent = isExpired
+  ? `<span class="text-muted">已過期</span>`
+  : `
+    <button class="action-btn btn-edit-discount" onclick="editDiscount('${discount.discountCodeId}')">
+      編輯
+    </button>
+    <button class="action-btn btn-send" onclick="sendDiscountToAll('${discount.discountCodeId}')">
+      發送
+    </button>
+  `;
+
+    
 
     const row = document.createElement("tr");
     row.innerHTML = `
-            <td>${discount.discount_code}</td>
-            <td>${discount.discount_explain}</td>
-            <td>${discountTypeText}</td>
-            <td>${discountValueText}</td>
-            <td>${discount.min_order_amount}元</td>
-            <td>${createdDate}</td>
-            <td>${discount.start_date.split(" ")[0]} ~ ${
-      discount.end_date.split(" ")[0]
-    }</td>
-            <td>-</td>
-            <td><span class="status-badge ${
-              isActive ? "status-active" : "status-inactive"
-            }">${isActive ? "有效" : "已過期"}</span></td>
-            <td>
-                ${
-                  showDeleteButton
-                    ? `
-                <button class="btn btn-danger" onclick="deleteDiscount('${discount.discount_code_id}')">
-                    <i class="fas fa-trash"></i> 刪除
-                </button>
-                `
-                    : `
-                <span class="text-muted">已過期</span>
-                `
-                }
-            </td>
-        `;
+                <td>
+                   <button class="toggle-details-btn" id="toggle-btn-${index}" onclick="toggleDetails(${index})">▼</button>
+                     ${discount.discountCode}
+                </td>
+                <td>${discount.discountExplain}</td>
+                <td>${discountValueText}</td>
+                <td>${discount.minOrderAmount}元</td>
+                <td>${dateRangeText}</td>
+                <td>${isActive ? "有效" : "已過期"}</td>
+                <td class="action-cell">${actionCellContent}</td>
+                 `;
+
     tbody.appendChild(row);
+
+    // 折疊區塊（預設隱藏）
+    const detailRow = document.createElement("tr");
+    detailRow.classList.add("discount-details-row");
+    detailRow.style.display = "none";
+    detailRow.id = `detail-row-${index}`;
+
+    detailRow.innerHTML = `
+    <td colspan="7" class="discount-detail-cell">
+      <div><strong>折價券編號：</strong>${discount.discountCodeId}</div>
+      <div><strong>折扣類型：</strong>${discountTypeText}</div>
+      <div><strong>建立日期：</strong>${formatDate(discount.created)}</div>
+      <div><strong>更新日期：</strong>${formattedUpdateDate}</div>
+    </td>
+  `;
+
+    tbody.appendChild(detailRow);
   });
+}
+
+
+function toggleDetails(index) {
+  const detailRow = document.getElementById(`detail-row-${index}`);
+  const toggleBtn = document.getElementById(`toggle-btn-${index}`);
+
+  if (!detailRow || !toggleBtn) return;
+
+  const isVisible = detailRow.style.display !== "none";
+  detailRow.style.display = isVisible ? "none" : "table-row";
+
+  toggleBtn.classList.toggle("expanded", !isVisible);
 }
 
 // 顯示建立折價券表單
 function showCreateDiscountForm() {
   document.getElementById("create-discount-form").style.display = "block";
 
-  // 綁定表單提交事件
-  document
-    .getElementById("discountForm")
-    .addEventListener("submit", function (e) {
-      e.preventDefault();
-      createDiscount();
-    });
+  const todayStr = new Date().toISOString().split("T")[0]; // 取得今天 yyyy-MM-dd 格式
+
+  const startDateInput = document.querySelector('input[name="start_date"]');
+  const endDateInput = document.querySelector('input[name="expiry_date"]');
+
+  startDateInput.min = todayStr;
+  startDateInput.value = todayStr;
+
+  endDateInput.min = todayStr; // 預設先設為今天，等使用者選了生效日再變動
+
+  // 當使用者選擇生效日期時，自動調整失效日期的 min 值
+  startDateInput.addEventListener("change", function () {
+    endDateInput.min = this.value;
+    if (endDateInput.value < this.value) {
+      endDateInput.value = this.value; // 若原本日期小於，強制調整
+    }
+  });
+
+  const typeSelect = document.querySelector('select[name="type"]');
+  const valueInput = document.querySelector('input[name="value"]');
+
+  typeSelect.addEventListener("change", function () {
+    if (this.value === "percentage") {
+      valueInput.step = "0.1";
+      valueInput.min = "0.1";
+      valueInput.max = "100";
+      valueInput.placeholder = "請輸入百分比（例如 12.5）";
+    } else {
+      valueInput.step = "1";
+      valueInput.min = "1";
+      valueInput.removeAttribute("max");
+      valueInput.placeholder = "請輸入整數金額";
+    }
+
+    valueInput.value = "";
+  });
+
+  // ✅ 預設觸發一次以設定初始格式
+  typeSelect.dispatchEvent(new Event("change"));
+
+  // ✅ 只綁定一次 submit 事件
+  if (!isDiscountFormBound) {
+    document
+      .getElementById("discountForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        createDiscount();
+      });
+    isDiscountFormBound = true;
+  }
 }
 
 // 隱藏建立折價券表單
@@ -1458,66 +2026,183 @@ function hideCreateDiscountForm() {
   document.getElementById("create-discount-form").style.display = "none";
 }
 
-// 建立折價券
+// 建立折價券(驗證)
 function createDiscount() {
   const form = document.getElementById("discountForm");
   const formData = new FormData(form);
 
-  // 生成新的折價券ID
-  const newId = "A" + String(discountCodesData.length + 1).padStart(5, "0");
+  const discountTypeRaw = formData.get("type"); // "percentage" 或 "fixed"
+  const discountType = discountTypeRaw === "percentage" ? 1 : 0;
 
-  const discountType = formData.get("type") === "percentage" ? 1 : 0;
-  let discountValue = parseFloat(formData.get("value"));
+  let discountValue = formData.get("value");
 
-  // 如果是百分比，轉換為小數
+  // ✅ 檢查金額格式
   if (discountType === 1) {
-    discountValue = discountValue / 100;
+    // 百分比，允許小數但需在 0~100 範圍內
+    const valueNum = parseFloat(discountValue);
+    if (isNaN(valueNum) || valueNum <= 0 || valueNum > 100) {
+      alert("百分比折扣請輸入 0~100 的數值");
+      return;
+    }
+    discountValue = valueNum / 100; // 轉換成小數儲存
+  } else {
+    // 固定金額，只允許整數
+    if (!/^\d+$/.test(discountValue)) {
+      alert("固定金額折扣只能輸入整數金額");
+      return;
+    }
+    discountValue = parseInt(discountValue);
   }
 
-  const newDiscount = {
-    discount_code_id: newId,
-    discount_code: formData.get("code"),
-    owner_id: null,
-    admin_id: currentAdmin.admin_id,
-    discount_type: discountType,
-    discount_value: discountValue,
-    discount_explain: formData.get("name"),
-    min_order_amount: parseFloat(formData.get("min_amount")),
-    start_date: new Date().toISOString().replace("T", " ").split(".")[0],
-    end_date: formData.get("expiry_date") + " 23:59:59",
-    created: new Date().toISOString().replace("T", " ").split(".")[0],
-    updated: null,
-  };
+  // ✅ 日期驗證
+  const startDate = formData.get("start_date") + " 00:00:00";
+  const endDate = formData.get("expiry_date") + " 23:59:59";
 
-  // 檢查代碼是否重複
-  if (
-    discountCodesData.some((d) => d.discount_code === newDiscount.discount_code)
-  ) {
-    alert("折價券代碼已存在，請使用其他代碼");
+  const today = new Date().setHours(0, 0, 0, 0);
+  const startTime = new Date(startDate).getTime();
+  const endTime = new Date(endDate).getTime();
+
+  if (startTime < today) {
+    alert("生效日期不可早於今天");
     return;
   }
 
-  discountCodesData.push(newDiscount);
-  loadDiscountTable();
-  hideCreateDiscountForm();
-  form.reset();
-
-  alert("折價券建立成功！");
-}
-
-// 刪除折價券
-function deleteDiscount(discountId) {
-  if (confirm("確定要刪除這個折價券嗎？此操作無法復原。")) {
-    const index = discountCodesData.findIndex(
-      (d) => d.discount_code_id === discountId
-    );
-    if (index !== -1) {
-      discountCodesData.splice(index, 1);
-      loadDiscountTable();
-      alert("折價券已成功刪除！");
-    }
+  if (endTime <= startTime) {
+    alert("失效日期必須晚於生效日期");
+    return;
   }
+
+  // ✅ 建立折價券物件
+  const newDiscount = {
+    discountCode: formData.get("code"),
+    discountExplain: formData.get("explain"),
+    discountType: discountType,
+    discountValue: discountValue,
+    minOrderAmount: parseFloat(formData.get("min_amount")),
+    startDate: startDate,
+    endDate: endDate,
+    adminId: currentAdmin.adminId,
+    ownerId: null,
+  };
+
+  // 若是編輯，補上 discountCodeId
+  if (isEdit) {
+    newDiscount.discountCodeId = currentEditDiscountId;
+  }
+
+  const url = isEdit
+    ? `${window.api_prefix}/api/discount/updateDiscount`
+    : `${window.api_prefix}/api/discount/add?prefix=A`;
+
+  const successMessage = isEdit ? "折價券更新成功！" : "折價券建立成功！";
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newDiscount),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((err) => {
+          throw new Error(err.message || (isEdit ? "更新失敗" : "新增失敗"));
+        });
+      }
+      return response.json();
+    })
+    .then((data) => {
+      alert(successMessage);
+      hideCreateDiscountForm();
+      form.reset();
+      // 你可重新呼叫 API 載入折價券資料（如果有）
+      fetchDiscountList();
+      // 重置編輯狀態
+      isEdit = false;
+      currentEditDiscountId = null;
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
 }
+
+// 編輯折價券
+function editDiscount(discountCodeId) {
+  isEdit = true;
+  currentEditDiscountId = discountCodeId;
+
+  const discount = discountCodesData.find(
+    (d) => d.discountCodeId === discountCodeId
+  );
+  if (!discount) {
+    alert("找不到此折價券資料");
+    return;
+  }
+
+  // 顯示建立折價券表單（共用）
+  showCreateDiscountForm();
+
+  const form = document.getElementById("discountForm");
+
+  // 修改表單標題與按鈕文字
+  document.querySelector("#create-discount-form h3").textContent = "編輯折價券";
+  form.querySelector('button[type="submit"]').textContent = "更新";
+
+  // 將資料填入表單欄位
+  form.elements["code"].value = discount.discountCode;
+  form.elements["explain"].value = discount.discountExplain;
+  form.elements["type"].value =
+    discount.discountType === 1 ? "percentage" : "fixed";
+  form.elements["value"].value =
+    discount.discountType === 1
+      ? discount.discountValue * 100
+      : discount.discountValue;
+
+  form.elements["min_amount"].value = discount.minOrderAmount;
+
+  form.elements["start_date"].value = formatDate(discount.startDate);
+  form.elements["expiry_date"].value = formatDate(discount.endDate);
+
+  // 編輯狀態旗標 + 折價券編號記錄
+  form.setAttribute("data-edit-id", discountCodeId);
+
+  // 重新觸發折扣類型格式調整
+  form.elements["type"].dispatchEvent(new Event("change"));
+}
+
+// 發送折價券給所有會員
+function sendDiscountToAll(discountCodeId) {
+  if (!discountCodeId) {
+    alert("請選擇折價券");
+    return;
+  }
+
+  if (!confirm(`確定要將折價券 ${discountCodeId} 發送給所有會員嗎？`)) {
+    return;
+  }
+
+  fetch(`${window.api_prefix}/api/userdiscount/sendDiscountToAll?discountCodeId=${discountCodeId}`, {
+    method: "POST",
+  })
+  .then(response => {
+    if (!response.ok) {
+      return response.json().then(err => {
+        throw new Error(err.message || "發送失敗");
+      });
+    }
+    return response.json();
+  })
+  .then(data => {
+    alert("折價券已成功發送給所有會員！");
+    console.log("發送結果", data);
+  })
+  .catch(error => {
+    alert(`發送失敗：${error.message}`);
+  });
+}
+
+
+
 
 // 聊天視窗相關功能
 function openChatWindow(reportId) {
@@ -1594,14 +2279,43 @@ function sendMessage() {
 }
 
 // 登出功能
-function logout() {
-  if (confirm("確定要登出嗎？")) {
-    // 清除儲存的管理員資料
-    localStorage.removeItem("currentAdmin");
-    sessionStorage.removeItem("currentAdmin");
+// function logout() {
+//   if (confirm("確定要登出嗎？")) {
+//     // 清除儲存的管理員資料
+//     localStorage.removeItem("currentAdmin");
+//     sessionStorage.removeItem("currentAdmin");
 
-    // 跳轉到登入頁面
-    window.location.href = "login.html";
+//     // 跳轉到登入頁面
+//     window.location.href = "login.html";
+//   }
+// }
+
+// 新增：登出 API 呼叫
+async function logout() {
+  if (confirm("確定要登出嗎？")) {
+    try {
+      const response = await fetch(`${window.api_prefix}/api/admin/logout`, {
+        method: "POST",
+        credentials: "include", // 包含Cookie，讓後端 session 正確失效
+      });
+      if (!response.ok) {
+        throw new Error(`登出失敗：${response.status}`);
+      }
+      const result = await response.text();
+      // 可根據後端回傳格式調整
+      alert(result || "登出成功");
+      // 清除 localStorage/sessionStorage
+      localStorage.removeItem("currentAdmin");
+      sessionStorage.removeItem("currentAdmin");
+      localStorage.removeItem("adminRememberMe");
+      sessionStorage.removeItem("adminRememberMe");
+      // 跳轉到登入頁
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 500);
+    } catch (error) {
+      alert(`登出失敗：${error.message}`);
+    }
   }
 }
 
@@ -1615,7 +2329,7 @@ function viewShopOrderDetails(orderId) {
   }
 
   // 查找訂單詳情
-  const orderDetails = shopOrderDetailsData.data.filter(
+  const orderDetails = shopOrderDetailsData.filter(
     (d) => d.shopOrderId === orderId
   );
 
@@ -1624,17 +2338,27 @@ function viewShopOrderDetails(orderId) {
   modal.className = "modal";
   modal.id = "shop-order-detail-modal";
 
-  // 訂單狀態資訊
-  const statusInfo = getShopOrderStatusInfo(order.shopOrderStatus);
+  // 使用 DTO 的 str() 方法獲取狀態文字
+  const statusText =
+    order.shopOrderStatusStr ||
+    getShopOrderStatusInfo(order.shopOrderStatus).text;
+  const statusClass = getShopOrderStatusInfo(order.shopOrderStatus).class;
 
-  // 付款方式文字
-  const paymentMethod = getPaymentMethodText(order.shopOrderPayment);
+  // 使用 DTO 的 str() 方法獲取付款方式文字
+  const paymentMethod =
+    order.shopOrderPaymentStr || getPaymentMethodText(order.shopOrderPayment);
 
-  // 配送方式文字
-  const shipmentMethod = getShipmentMethodText(order.shopOrderShipment);
+  // 使用 DTO 的 str() 方法獲取出貨方式文字
+  const shipmentMethod =
+    order.shopOrderShipmentStr ||
+    getShipmentMethodText(order.shopOrderShipment);
 
-  // 格式化日期
-  const orderDate = new Date(order.shopOrderDate).toLocaleDateString("zh-TW");
+  // 使用 DTO 的 str() 方法獲取退貨申請文字
+  const returnApplyText =
+    order.shopReturnApplyStr || getReturnApplyText(order.shopReturnApply);
+
+  // 格式化日期（含時間）
+  const orderDate = formatDateTime(order.shopOrderDate);
 
   // 計算商品總數
   const totalItems = orderDetails.reduce(
@@ -1645,23 +2369,22 @@ function viewShopOrderDetails(orderId) {
   // 生成商品列表
   let productRows = "";
   orderDetails.forEach((detail) => {
-    // 由於沒有商品資料，直接使用商品ID
-    const productName = `商品 #${detail.prodId}`; // 從商品資料中獲取名稱
-
-    // 顏色和規格ID
-    const colorId = detail.prodColorId || "無"; // 從商品顏色資料表格中獲取名稱
-    const specId = detail.prodSpecId || "無"; // 從商品規格資料表格中獲取名稱
-
-    // 計算小計
-    const subtotal = detail.shopOrderQty * detail.prodOrderPrice;
+    // 商品名稱、顏色、規格、單價、小計都從 detail 拿取
+    const productName = detail.prodName || `商品 #${detail.prodId}`;
+    const colorName =
+      detail.prodColorName || `顏色 #${detail.prodColorId || "無"}`;
+    const specName =
+      detail.prodSpecName || `規格 #${detail.prodSpecId || "無"}`;
+    const unitPrice = detail.prodOrderPrice != null ? detail.prodOrderPrice : 0;
+    const subtotal = detail.shopOrderQty * unitPrice;
 
     productRows += `
       <tr>
         <td>${productName}</td>
-        <td>顏色 #${colorId}</td>
-        <td>規格 #${specId}</td>
+        <td>${colorName}</td>
+        <td>${specName}</td>
         <td>${detail.shopOrderQty}</td>
-        <td>NT$ ${detail.prodOrderPrice}</td>
+        <td>NT$ ${unitPrice}</td>
         <td>NT$ ${subtotal.toLocaleString()}</td>
         <td>
           ${
@@ -1678,7 +2401,7 @@ function viewShopOrderDetails(orderId) {
   modal.innerHTML = `
     <div class="modal-content order-detail-modal">
       <div class="modal-header">
-        <h3>訂單詳情 #${order.shopOrderId}</h3>
+        <h3 style="font-size: 20px;color: white;">訂單詳情 #${order.shopOrderId}</h3>
         <button class="close-btn" onclick="closeShopOrderDetailModal()">×</button>
       </div>
       
@@ -1690,14 +2413,16 @@ function viewShopOrderDetails(orderId) {
             <span class="info-value">${order.shopOrderId}</span>
           </div>
           <div class="info-item">
+            <span class="info-label">會員編號:</span>
+            <span class="info-value">${order.memId}</span>
+          </div>
+          <div class="info-item">
             <span class="info-label">訂單日期:</span>
             <span class="info-value">${orderDate}</span>
           </div>
           <div class="info-item">
             <span class="info-label">訂單狀態:</span>
-            <span class="info-value status-badge ${statusInfo.class}">${
-    statusInfo.text
-  }</span>
+            <span class="info-value status-badge ${statusClass}">${statusText}</span>
           </div>
           <div class="info-item">
             <span class="info-label">付款方式:</span>
@@ -1710,6 +2435,22 @@ function viewShopOrderDetails(orderId) {
           <div class="info-item">
             <span class="info-label">商品總數:</span>
             <span class="info-value">${totalItems} 件</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">退貨申請狀態:</span>
+            <span class="info-value">${returnApplyText}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">出貨日期:</span>
+            <span class="info-value">${
+              order.shopOrderShipDate
+                ? formatDateOnly(order.shopOrderShipDate)
+                : ""
+            }</span>
+          </div>
+           <div class="info-item">
+            <span class="info-label">訂單備註:</span>
+            <span class="info-value">${order.shopOrderNote}</span>
           </div>
         </div>
       </div>
@@ -1771,9 +2512,9 @@ function viewShopOrderDetails(orderId) {
           </div>
           <div class="amount-item discount">
             <span class="amount-label">折扣金額:</span>
-            <span class="amount-value">- NT$ ${(
-              order.BeforeDiscountAmount - order.afterDiscountAmount
-            ).toLocaleString()}</span>
+            <span class="amount-value">- NT$ ${
+              order.discountAmount == null ? 0 : order.discountAmount
+            }</span>
           </div>
           <div class="amount-item total">
             <span class="amount-label">訂單總額:</span>
@@ -1784,26 +2525,6 @@ function viewShopOrderDetails(orderId) {
       
       <div class="modal-actions">
         <button class="action-btn btn-close" onclick="closeShopOrderDetailModal()">關閉</button>
-        ${
-          order.shopOrderStatus === 0
-            ? `<button class="action-btn btn-activate" onclick="updateShopOrderStatus(${order.shopOrderId}, 1); closeShopOrderDetailModal();">確認訂單</button>`
-            : ""
-        }
-        ${
-          order.shopOrderStatus === 1
-            ? `<button class="action-btn btn-activate" onclick="updateShopOrderStatus(${order.shopOrderId}, 2); closeShopOrderDetailModal();">出貨</button>`
-            : ""
-        }
-        ${
-          order.shopOrderStatus === 2
-            ? `<button class="action-btn btn-activate" onclick="updateShopOrderStatus(${order.shopOrderId}, 3); closeShopOrderDetailModal();">已送達</button>`
-            : ""
-        }
-        ${
-          order.shopReturnApply === 1 && order.shopOrderStatus !== 5
-            ? `<button class="action-btn btn-deactivate" onclick="updateShopOrderStatus(${order.shopOrderId}, 5); closeShopOrderDetailModal();">處理退貨</button>`
-            : ""
-        }
       </div>
     </div>
   `;
@@ -1823,7 +2544,7 @@ function closeShopOrderDetailModal() {
 // 查看商品評論
 function viewProductComment(productId, orderId) {
   // 查找訂單詳情
-  const orderDetail = shopOrderDetailsData.data.find(
+  const orderDetail = shopOrderDetailsData.find(
     (d) => d.prodId === productId && d.shopOrderId === orderId
   );
 
@@ -1831,9 +2552,6 @@ function viewProductComment(productId, orderId) {
     alert("找不到評論資料");
     return;
   }
-
-  // 由於沒有商品資料，直接使用商品ID
-  const productName = `商品 #${productId}`;
 
   // 建立模態框
   const modal = document.createElement("div");
@@ -1862,7 +2580,7 @@ function viewProductComment(productId, orderId) {
       </div>
       
       <div class="comment-content">
-        <h4>${productName}</h4>
+        <h4>${orderDetail.prodName}</h4>
         
         <div class="comment-info">
           <div class="rating">
@@ -1911,36 +2629,52 @@ function updateShopOrderStatus(orderId, newStatus) {
 
   // 狀態文字對照
   const statusText = {
-    0: "待確認",
-    1: "已確認",
-    2: "已出貨",
-    3: "已送達",
-    4: "已完成",
-    5: "已退貨",
+    0: "等待付款中",
+    1: "已取消",
+    2: "等待賣家確認中",
+    3: "準備出貨中",
+    4: "已出貨",
+    5: "已取貨，完成訂單",
+    6: "未取貨，退回賣家 ",
+    7: "付款成功，待賣家確認 ",
   };
 
   // 確認更新
   if (
     confirm(
-      `確定要將訂單 #${orderId} 狀態更新為「${statusText[newStatus]}」嗎？`
+      `確定要將訂單 #${orderId} 狀態更新為「${
+        statusText[newStatus] || ""
+      }」嗎？`
     )
   ) {
-    // 更新狀態
-    order.shopOrderStatus = newStatus;
-
-    // 如果是標記為已完成，同時更新相關欄位
-    if (newStatus === 5) {
-      // 可以在這裡添加其他需要更新的欄位
-    }
-
-    // 如果是標記為已取消，重置退貨申請狀態
-    if (newStatus === 1) {
-    }
-
-    // 重新載入訂單表格
-    updateShopOrdersTable(shopOrdersData);
-
-    alert(`訂單 #${orderId} 狀態已更新為「${statusText[newStatus]}」`);
+    // 呼叫 API 更新後端狀態
+    fetch(`${window.api_prefix}/api/updateShopOrder`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        shopOrderId: orderId,
+        shopOrderStatus: newStatus,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result && (result.success || result.status === "success")) {
+          // 前端同步更新
+          order.shopOrderStatus = newStatus;
+          updateShopOrdersTable(shopOrdersData);
+          if (newStatus === 3) {
+            alert("訂單已確認");
+          }
+          alert(
+            `訂單 #${orderId} 狀態已更新為「${statusText[newStatus] || ""}」`
+          );
+        } else {
+          alert("訂單狀態更新失敗");
+        }
+      })
+      .catch(() => {
+        alert("連線失敗");
+      });
   }
 }
 
@@ -2166,675 +2900,18 @@ const modalStyles = `
 // 將樣式加入頁面
 document.head.insertAdjacentHTML("beforeend", modalStyles);
 
-// ... existing code ...
-
-// 商品管理相關變量
-let productsData = [];
-let productTypesData = [];
-let currentPage = 1;
-let itemsPerPage = 10;
-let filteredProducts = [];
-
-// 載入商品管理功能
-function loadProductManagement() {
-  if (sectionInitialized.productManagement) return;
-  
-  // 載入商品數據
-  loadProductsData();
-  
-  // 標記為已初始化
-  sectionInitialized.productManagement = true;
-}
-
-// 載入商品數據
-async function loadProductsData() {
-  try {
-    // 顯示載入中提示
-    const content = document.getElementById("product-management-content");
-    content.innerHTML = `<div class="loading">載入商品數據中...</div>`;
-    
-    // 模擬從API獲取數據
-    // 實際項目中應該使用 fetch 從後端 API 獲取數據
-    setTimeout(() => {
-      // 生成模擬數據
-      productsData = generateMockProducts(30);
-      productTypesData = [
-        { id: 1, name: "帳篷" },
-        { id: 2, name: "睡袋" },
-        { id: 3, name: "炊具" },
-        { id: 4, name: "燈具" },
-        { id: 5, name: "戶外家具" }
-      ];
-      
-      // 初始化篩選後的商品為所有商品
-      filteredProducts = [...productsData];
-      
-      // 顯示商品數據
-      displayProducts();
-      
-      // 初始化商品類型篩選器
-      initProductTypeFilter();
-    }, 500);
-  } catch (error) {
-    console.error("載入商品數據失敗:", error);
-    document.getElementById("product-management-content").innerHTML = 
-      `<div class="error-message">載入商品數據失敗，請稍後再試</div>`;
-  }
-}
-
-// 生成模擬商品數據
-function generateMockProducts(count) {
-  const products = [];
-  const statuses = ["上架中", "已下架"];
-  
-  for (let i = 1; i <= count; i++) {
-    const typeId = Math.floor(Math.random() * 5) + 1;
-    const price = Math.floor(Math.random() * 10000) + 500;
-    const stock = Math.floor(Math.random() * 100);
-    
-    products.push({
-      id: i,
-      name: `露營商品 ${i}`,
-      typeId: typeId,
-      price: price,
-      stock: stock,
-      imageUrl: `images/product-${(i % 4) + 1}.jpg`,
-      description: `這是商品 ${i} 的詳細描述，包含了商品的特點和使用方法。`,
-      status: statuses[Math.floor(Math.random() * 2)],
-      createdAt: new Date(Date.now() - Math.floor(Math.random() * 10000000000))
-    });
-  }
-  
-  return products;
-}
-
-// 顯示商品數據
-function displayProducts() {
-  const content = document.getElementById("product-management-content");
-  
-  // 計算分頁
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, filteredProducts.length);
-  const currentProducts = filteredProducts.slice(startIndex, endIndex);
-  
-  // 如果沒有商品數據
-  if (currentProducts.length === 0) {
-    content.innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-box-open"></i>
-        <h3>沒有商品數據</h3>
-        <p>目前沒有符合條件的商品，請嘗試調整篩選條件或添加新商品</p>
-      </div>
-    `;
-    return;
-  }
-  
-  // 生成商品表格
-  let html = `
-    <div class="filter-section">
-      <select id="product-type-filter" class="filter-select">
-        <option value="all">所有類型</option>
-        <!-- 動態添加商品類型選項 -->
-      </select>
-      <select id="product-status-filter" class="filter-select">
-        <option value="all">所有狀態</option>
-        <option value="上架中">上架中</option>
-        <option value="已下架">已下架</option>
-      </select>
-    </div>
-    
-    <div class="table-container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>商品ID</th>
-            <th>商品圖片</th>
-            <th>商品名稱</th>
-            <th>類型</th>
-            <th>價格</th>
-            <th>庫存</th>
-            <th>狀態</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-  
-  // 添加商品行
-  currentProducts.forEach(product => {
-    html += `
-      <tr>
-        <td>${product.id}</td>
-        <td><img src="${product.imageUrl}" alt="${product.name}" class="product-thumbnail" /></td>
-        <td>${product.name}</td>
-        <td>${getProductTypeName(product.typeId)}</td>
-        <td>NT$ ${product.price.toLocaleString()}</td>
-        <td>${product.stock}</td>
-        <td>
-          <span class="status-badge ${product.status === '上架中' ? 'active' : 'inactive'}">
-            ${product.status}
-          </span>
-        </td>
-        <td>
-          <button class="action-btn btn-view" onclick="viewProductDetail(${product.id})">
-            <i class="fas fa-eye"></i>
-          </button>
-          <button class="action-btn btn-edit" onclick="showEditProductModal(${product.id})">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="action-btn ${product.status === '上架中' ? 'btn-deactivate' : 'btn-activate'}" 
-                  onclick="toggleProductStatus(${product.id})">
-            <i class="fas ${product.status === '上架中' ? 'fa-toggle-off' : 'fa-toggle-on'}"></i>
-          </button>
-        </td>
-      </tr>
-    `;
-  });
-  
-  html += `
-        </tbody>
-      </table>
-    </div>
-  `;
-  
-  // 添加分頁控件
-  if (totalPages > 1) {
-    html += `
-      <div class="pagination">
-        <button class="page-btn" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>
-          <i class="fas fa-angle-double-left"></i>
-        </button>
-        <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-          <i class="fas fa-angle-left"></i>
-        </button>
-        <span class="page-info">第 ${currentPage} 頁，共 ${totalPages} 頁</span>
-        <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-          <i class="fas fa-angle-right"></i>
-        </button>
-        <button class="page-btn" onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>
-          <i class="fas fa-angle-double-right"></i>
-        </button>
-      </div>
-    `;
-  }
-  
-  content.innerHTML = html;
-  
-  // 初始化篩選器事件
-  document.getElementById("product-status-filter").addEventListener("change", filterProducts);
-  document.getElementById("product-type-filter").addEventListener("change", filterProducts);
-}
-
-// 初始化商品類型篩選器
-function initProductTypeFilter() {
-  const typeFilter = document.getElementById("product-type-filter");
-  if (!typeFilter) return;
-  
-  // 清空現有選項（保留「所有類型」選項）
-  while (typeFilter.options.length > 1) {
-    typeFilter.remove(1);
-  }
-  
-  // 添加商品類型選項
-  productTypesData.forEach(type => {
-    const option = document.createElement("option");
-    option.value = type.id;
-    option.textContent = type.name;
-    typeFilter.appendChild(option);
-  });
-}
-
-// 獲取商品類型名稱
-function getProductTypeName(typeId) {
-  const type = productTypesData.find(t => t.id === typeId);
-  return type ? type.name : "未知類型";
-}
-
-// 篩選商品
-function filterProducts() {
-  const typeFilter = document.getElementById("product-type-filter").value;
-  const statusFilter = document.getElementById("product-status-filter").value;
-  
-  // 重置為第一頁
-  currentPage = 1;
-  
-  // 篩選商品
-  filteredProducts = productsData.filter(product => {
-    // 類型篩選
-    if (typeFilter !== "all" && product.typeId !== parseInt(typeFilter)) {
-      return false;
-    }
-    
-    // 狀態篩選
-    if (statusFilter !== "all" && product.status !== statusFilter) {
-      return false;
-    }
-    
-    return true;
-  });
-  
-  // 重新顯示商品
-  displayProducts();
-}
-
-// 搜索商品
-function searchProducts() {
-  const searchInput = document.getElementById("product-search").value.toLowerCase();
-  
-  // 如果搜索框為空，顯示所有商品
-  if (!searchInput.trim()) {
-    filteredProducts = [...productsData];
-    currentPage = 1;
-    displayProducts();
-    return;
-  }
-  
-  // 篩選符合搜索條件的商品
-  filteredProducts = productsData.filter(product => {
-    return (
-      product.name.toLowerCase().includes(searchInput) ||
-      product.id.toString().includes(searchInput) ||
-      getProductTypeName(product.typeId).toLowerCase().includes(searchInput)
-    );
-  });
-  
-  // 重置為第一頁並顯示結果
-  currentPage = 1;
-  displayProducts();
-}
-
-// 切換頁面
-function changePage(page) {
-  currentPage = page;
-  displayProducts();
-}
-
-// 查看商品詳情
-function viewProductDetail(productId) {
-  const product = productsData.find(p => p.id === productId);
-  if (!product) {
-    alert("找不到商品資料");
-    return;
-  }
-  
-  // 創建模態框
-  const modal = document.createElement("div");
-  modal.className = "modal";
-  modal.innerHTML = `
-    <div class="modal-content product-detail-modal">
-      <div class="modal-header">
-        <h3>商品詳情</h3>
-        <button class="close-btn" onclick="closeModal()">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="product-detail-container">
-          <div class="product-detail-image">
-            <img src="${product.imageUrl}" alt="${product.name}" />
-          </div>
-          <div class="product-detail-info">
-            <h4>${product.name}</h4>
-            <p><strong>商品ID:</strong> ${product.id}</p>
-            <p><strong>類型:</strong> ${getProductTypeName(product.typeId)}</p>
-            <p><strong>價格:</strong> NT$ ${product.price.toLocaleString()}</p>
-            <p><strong>庫存:</strong> ${product.stock}</p>
-            <p><strong>狀態:</strong> ${product.status}</p>
-            <p><strong>建立日期:</strong> ${product.createdAt.toLocaleDateString()}</p>
-          </div>
-        </div>
-        <div class="product-description">
-          <h5>商品描述</h5>
-          <p>${product.description}</p>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  // 添加到頁面
-  document.body.appendChild(modal);
-}
-
-// 顯示編輯商品模態框
-function showEditProductModal(productId) {
-  const product = productsData.find(p => p.id === productId);
-  if (!product) {
-    alert("找不到商品資料");
-    return;
-  }
-  
-  // 創建模態框
-  const modal = document.createElement("div");
-  modal.className = "modal";
-  
-  // 生成商品類型選項
-  let typeOptions = '';
-  productTypesData.forEach(type => {
-    typeOptions += `<option value="${type.id}" ${product.typeId === type.id ? 'selected' : ''}>${type.name}</option>`;
-  });
-  
-  modal.innerHTML = `
-    <div class="modal-content product-form-modal">
-      <div class="modal-header">
-        <h3>編輯商品</h3>
-        <button class="close-btn" onclick="closeModal()">×</button>
-      </div>
-      <div class="modal-body">
-        <form id="edit-product-form">
-          <input type="hidden" id="product-id" value="${product.id}">
-          
-          <div class="form-group">
-            <label for="product-name">商品名稱</label>
-            <input type="text" id="product-name" value="${product.name}" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="product-type">商品類型</label>
-            <select id="product-type" required>
-              ${typeOptions}
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label for="product-price">價格 (NT$)</label>
-            <input type="number" id="product-price" value="${product.price}" min="0" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="product-stock">庫存</label>
-            <input type="number" id="product-stock" value="${product.stock}" min="0" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="product-image">商品圖片URL</label>
-            <input type="text" id="product-image" value="${product.imageUrl}">
-          </div>
-          
-          <div class="form-group">
-            <label for="product-description">商品描述</label>
-            <textarea id="product-description" rows="4">${product.description}</textarea>
-          </div>
-          
-          <div class="form-group">
-            <label for="product-status">商品狀態</label>
-            <select id="product-status" required>
-              <option value="上架中" ${product.status === '上架中' ? 'selected' : ''}>上架中</option>
-              <option value="已下架" ${product.status === '已下架' ? 'selected' : ''}>已下架</option>
-            </select>
-          </div>
-          
-          <div class="form-actions">
-            <button type="button" class="btn-cancel" onclick="closeModal()">取消</button>
-            <button type="submit" class="btn-save">保存更改</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  `;
-  
-  // 添加到頁面
-  document.body.appendChild(modal);
-  
-  // 綁定表單提交事件
-  document.getElementById("edit-product-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-    saveProductChanges();
-  });
-}
-
-// 保存商品更改
-async function saveProductChanges() {
-  const productId = parseInt(document.getElementById("product-id").value);
-  const productName = document.getElementById("product-name").value;
-  const productType = parseInt(document.getElementById("product-type").value);
-  const productPrice = parseInt(document.getElementById("product-price").value);
-  const productStock = parseInt(document.getElementById("product-stock").value);
-  const productImage = document.getElementById("product-image").value;
-  const productDescription = document.getElementById("product-description").value;
-  const productStatus = document.getElementById("product-status").value;
-  
-  // 表單驗證
-  if (!productName || isNaN(productType) || isNaN(productPrice) || isNaN(productStock)) {
-    alert("請填寫所有必填欄位");
-    return;
-  }
-  
-  try {
-    // 在實際應用中，這裡應該發送 PUT 請求到 API
-    // 模擬 API 請求
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // 更新本地數據
-    const productIndex = productsData.findIndex(p => p.id === productId);
-    if (productIndex !== -1) {
-      productsData[productIndex] = {
-        ...productsData[productIndex],
-        name: productName,
-        typeId: productType,
-        price: productPrice,
-        stock: productStock,
-        imageUrl: productImage,
-        description: productDescription,
-        status: productStatus
-      };
-      
-      // 更新篩選後的商品
-      const filteredIndex = filteredProducts.findIndex(p => p.id === productId);
-      if (filteredIndex !== -1) {
-        filteredProducts[filteredIndex] = productsData[productIndex];
-      }
-      
-      // 關閉模態框
-      closeModal();
-      
-      // 重新顯示商品
-      displayProducts();
-      
-      // 顯示成功消息
-      showNotification("商品更新成功", "success");
-    }
-  } catch (error) {
-    console.error("更新商品失敗:", error);
-    showNotification("更新商品失敗，請稍後再試", "error");
-  }
-}
-
-// 切換商品狀態
-async function toggleProductStatus(productId) {
-  const product = productsData.find(p => p.id === productId);
-  if (!product) {
-    alert("找不到商品資料");
-    return;
-  }
-  
-  const newStatus = product.status === "上架中" ? "已下架" : "上架中";
-  const confirmMessage = `確定要將商品「${product.name}」${newStatus === "上架中" ? "上架" : "下架"}嗎？`;
-  
-  if (!confirm(confirmMessage)) {
-    return;
-  }
-  
-  try {
-    // 在實際應用中，這裡應該發送 PATCH 請求到 API
-    // 模擬 API 請求
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // 更新本地數據
-    product.status = newStatus;
-    
-    // 重新顯示商品
-    displayProducts();
-    
-    // 顯示成功消息
-    showNotification(`商品已${newStatus === "上架中" ? "上架" : "下架"}`, "success");
-  } catch (error) {
-    console.error("更新商品狀態失敗:", error);
-    showNotification("更新商品狀態失敗，請稍後再試", "error");
-  }
-}
-
-// 顯示添加商品模態框
-function showAddProductModal() {
-  // 創建模態框
-  const modal = document.createElement("div");
-  modal.className = "modal";
-  
-  // 生成商品類型選項
-  let typeOptions = '';
-  productTypesData.forEach(type => {
-    typeOptions += `<option value="${type.id}">${type.name}</option>`;
-  });
-  
-  modal.innerHTML = `
-    <div class="modal-content product-form-modal">
-      <div class="modal-header">
-        <h3>添加新商品</h3>
-        <button class="close-btn" onclick="closeModal()">×</button>
-      </div>
-      <div class="modal-body">
-        <form id="add-product-form">
-          <div class="form-group">
-            <label for="product-name">商品名稱</label>
-            <input type="text" id="product-name" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="product-type">商品類型</label>
-            <select id="product-type" required>
-              ${typeOptions}
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label for="product-price">價格 (NT$)</label>
-            <input type="number" id="product-price" min="0" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="product-stock">庫存</label>
-            <input type="number" id="product-stock" min="0" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="product-image">商品圖片URL</label>
-            <input type="text" id="product-image" value="images/product-1.jpg">
-          </div>
-          
-          <div class="form-group">
-            <label for="product-description">商品描述</label>
-            <textarea id="product-description" rows="4"></textarea>
-          </div>
-          
-          <div class="form-group">
-            <label for="product-status">商品狀態</label>
-            <select id="product-status" required>
-              <option value="上架中">上架中</option>
-              <option value="已下架">已下架</option>
-            </select>
-          </div>
-          
-          <div class="form-actions">
-            <button type="button" class="btn-cancel" onclick="closeModal()">取消</button>
-            <button type="submit" class="btn-save">添加商品</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  `;
-  
-  // 添加到頁面
-  document.body.appendChild(modal);
-  
-  // 綁定表單提交事件
-  document.getElementById("add-product-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-    addNewProduct();
-  });
-}
-
-// 添加新商品
-async function addNewProduct() {
-  const productName = document.getElementById("product-name").value;
-  const productType = parseInt(document.getElementById("product-type").value);
-  const productPrice = parseInt(document.getElementById("product-price").value);
-  const productStock = parseInt(document.getElementById("product-stock").value);
-  const productImage = document.getElementById("product-image").value;
-  const productDescription = document.getElementById("product-description").value;
-  const productStatus = document.getElementById("product-status").value;
-  
-  // 表單驗證
-  if (!productName || isNaN(productType) || isNaN(productPrice) || isNaN(productStock)) {
-    alert("請填寫所有必填欄位");
-    return;
-  }
-  
-  try {
-    // 在實際應用中，這裡應該發送 POST 請求到 API
-    // 模擬 API 請求
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // 生成新商品ID
-    const newId = productsData.length > 0 ? Math.max(...productsData.map(p => p.id)) + 1 : 1;
-    
-    // 創建新商品對象
-    const newProduct = {
-      id: newId,
-      name: productName,
-      typeId: productType,
-      price: productPrice,
-      stock: productStock,
-      imageUrl: productImage || "images/product-1.jpg",
-      description: productDescription,
-      status: productStatus,
-      createdAt: new Date()
-    };
-    
-    // 添加到本地數據
-    productsData.push(newProduct);
-    
-    // 更新篩選後的商品
-    if (shouldIncludeInFiltered(newProduct)) {
-      filteredProducts.push(newProduct);
-    }
-    
-    // 關閉模態框
-    closeModal();
-    
-    // 重新顯示商品
-    displayProducts();
-    
-    // 顯示成功消息
-    showNotification("商品添加成功", "success");
-  } catch (error) {
-    console.error("添加商品失敗:", error);
-    showNotification("添加商品失敗，請稍後再試", "error");
-  }
-}
-
-// 檢查商品是否應該包含在篩選結果中
-function shouldIncludeInFiltered(product) {
-  const typeFilter = document.getElementById("product-type-filter").value;
-  const statusFilter = document.getElementById("product-status-filter").value;
-  
-  // 類型篩選
-  if (typeFilter !== "all" && product.typeId !== parseInt(typeFilter)) {
-    return false;
-  }
-  
-  // 狀態篩選
-  if (statusFilter !== "all" && product.status !== statusFilter) {
-    return false;
-  }
-  
-  return true;
-}
-
-// 關閉模態框
-function closeModal() {
-  const modal = document.querySelector(".modal");
-  if (modal) {
-    modal.remove();
-  }
-}
+// // 模擬圖片上傳
+// async function simulateImageUpload(file) {
+//   // 在實際應用中，這裡應該將圖片上傳到伺服器
+//   // 這裡僅返回一個模擬的URL
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       // 隨機選擇一個示例圖片URL
+//       const randomIndex = Math.floor(Math.random() * 4) + 1;
+//       resolve(`images/product-${randomIndex}.jpg`);
+//     }, 300);
+//   });
+// }
 
 // 顯示通知消息
 function showNotification(message, type = "success") {
@@ -2842,13 +2919,15 @@ function showNotification(message, type = "success") {
   const notification = document.createElement("div");
   notification.className = `notification ${type}`;
   notification.innerHTML = `
-    <i class="fas ${type === "success" ? "fa-check-circle" : "fa-exclamation-circle"}"></i>
+    <i class="fas ${
+      type === "success" ? "fa-check-circle" : "fa-exclamation-circle"
+    }"></i>
     <span>${message}</span>
   `;
-  
+
   // 添加到頁面
   document.body.appendChild(notification);
-  
+
   // 設置自動消失
   setTimeout(() => {
     notification.classList.add("fade-out");
@@ -2861,4 +2940,562 @@ function showNotification(message, type = "success") {
 // 初始化區段標記
 if (!sectionInitialized.productManagement) {
   sectionInitialized.productManagement = false;
+}
+
+// 新增 showEditShopOrderModal 函數
+function showEditShopOrderModal(orderId) {
+  const order = shopOrdersData.find((o) => o.shopOrderId === orderId);
+  if (!order) {
+    alert("找不到訂單資料");
+    return;
+  }
+
+  // 使用 DTO 的 str() 方法獲取選項文字
+  const statusOptions = [
+    { value: 0, text: order.shopOrderStatusStr || "等待賣家確認中" },
+    { value: 1, text: "準備出貨中" },
+    { value: 2, text: "已出貨" },
+    { value: 3, text: "已取貨，完成訂單" },
+    { value: 4, text: "未取貨，退回賣家" },
+    { value: 5, text: "已取消" },
+  ];
+
+  const canEditPayment =
+    (order.shopOrderPayment === 2 || order.shopOrderPayment === 3) &&
+    (order.shopOrderStatus === 0 || order.shopOrderStatus === 7);
+
+  const paymentOptions = [
+    { value: 1, text: order.shopOrderPaymentStr || "LINEPAY" },
+    { value: 2, text: "宅配取貨付款" },
+    { value: 3, text: "超商取貨付款" },
+  ];
+
+  const shipmentOptions = [
+    { value: 1, text: order.shopOrderShipmentStr || "賣家宅配" },
+    { value: 2, text: "超商取貨付款" },
+  ];
+
+  const returnApplyOptions = [
+    { value: 0, text: order.shopReturnApplyStr || "未申請退貨" },
+    { value: 1, text: "申請退貨" },
+    { value: 2, text: "退貨成功" },
+    { value: 3, text: "退貨失敗" },
+  ];
+
+  // 生成選項 HTML
+  const statusOptionsHtml = statusOptions
+    .map(
+      (option) =>
+        `<option value="${option.value}" ${
+          order.shopOrderStatus == option.value ? "selected" : ""
+        }>${option.text}</option>`
+    )
+    .join("");
+
+  const paymentOptionsHtml = paymentOptions
+    .map(
+      (option) =>
+        `<option value="${option.value}" ${
+          order.shopOrderPayment == option.value ? "selected" : ""
+        }>${option.text}</option>`
+    )
+    .join("");
+
+  const shipmentOptionsHtml = shipmentOptions
+    .map(
+      (option) =>
+        `<option value="${option.value}" ${
+          order.shopOrderShipment == option.value ? "selected" : ""
+        }>${option.text}</option>`
+    )
+    .join("");
+
+  const returnApplyOptionsHtml = returnApplyOptions
+    .map(
+      (option) =>
+        `<option value="${option.value}" ${
+          order.shopReturnApply == option.value ? "selected" : ""
+        }>${option.text}</option>`
+    )
+    .join("");
+
+  // 根據後端邏輯決定哪些欄位可以編輯
+  const canEditBasicFields = order.shopOrderStatus === 0 || order.shopOrderStatus === 7; // 只有狀態0或7可以編輯基本欄位
+  const canEditStatus = order.shopOrderStatus !== 5; // 只有非已取消(5)才可修改訂單狀態
+  const canEditReturnApply = order.shopOrderStatus === 3; // 只有狀態3可以編輯退貨申請
+  // 根據後端邏輯：出貨日期在訂單狀態為3、4、5時才無法編輯，其他時間都可以編輯
+  const canEditShipDate = ![3, 4, 5].includes(order.shopOrderStatus);
+
+  // 建立 modal
+  const modal = document.createElement("div");
+  modal.className = "modal";
+  modal.id = "edit-shop-order-modal";
+  modal.innerHTML = `
+    <div class="modal-content order-detail-modal">
+      <div class="modal-header">
+        <h3>編輯訂單</h3>
+        <button class="close-btn" onclick="closeEditShopOrderModal()">×</button>
+      </div>
+      <form id="edit-shop-order-form">
+        <div class="form-group">
+          <label>訂單編號</label>
+          <input type="text" value="${order.shopOrderId}" disabled />
+        </div>
+        <div class="form-group">
+          <label>會員編號</label>
+          <input type="text" value="${order.memId}" disabled />
+        </div>
+        <div class="form-group">
+          <label>訂單狀態</label>
+          <select id="edit-order-status" ${canEditStatus ? "" : "disabled"}>
+            ${statusOptionsHtml}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>付款方式</label>
+          <select id="edit-order-payment" ${canEditPayment ? "" : "disabled"}>
+            ${paymentOptionsHtml}
+          </select>
+          ${
+            !canEditPayment
+              ? '<small style="color: #666;">只有宅配/超商取貨付款且訂單狀態為等待賣家確認或已取消時才能修改此欄位</small>'
+              : ""
+          }
+        </div>
+        <div class="form-group">
+          <label>出貨方式</label>
+          <select id="edit-order-shipment" ${
+            canEditBasicFields ? "" : "disabled"
+          }>
+            ${shipmentOptionsHtml}
+          </select>
+          ${
+            !canEditBasicFields
+              ? '<small style="color: #666;">只有等待賣家確認中的訂單才能修改此欄位</small>'
+              : ""
+          }
+        </div>
+        <div class="form-group">
+          <label>運費</label>
+          <input type="number" id="edit-order-shipfee" value="${
+            order.shopOrderShipFee ?? ""
+          }" ${canEditBasicFields ? "" : "disabled"} />
+          ${
+            !canEditBasicFields
+              ? '<small style="color: #666;">只有等待賣家確認中的訂單才能修改此欄位</small>'
+              : ""
+          }
+        </div>
+        <div class="form-group">
+          <label>收件人姓名</label>
+          <input type="text" id="edit-order-name" value="${
+            order.orderName ?? ""
+          }" ${canEditBasicFields ? "" : "disabled"} />
+          ${
+            !canEditBasicFields
+              ? '<small style="color: #666;">只有等待賣家確認中的訂單才能修改此欄位</small>'
+              : ""
+          }
+        </div>
+        <div class="form-group">
+          <label>收件人電話</label>
+          <input type="text" id="edit-order-phone" value="${
+            order.orderPhone ?? ""
+          }" ${canEditBasicFields ? "" : "disabled"} />
+          ${
+            !canEditBasicFields
+              ? '<small style="color: #666;">只有等待賣家確認中的訂單才能修改此欄位</small>'
+              : ""
+          }
+        </div>
+        <div class="form-group">
+          <label>收件人Email</label>
+          <input type="email" id="edit-order-email" value="${
+            order.orderEmail ?? ""
+          }" ${canEditBasicFields ? "" : "disabled"} />
+          ${
+            !canEditBasicFields
+              ? '<small style="color: #666;">只有等待賣家確認中的訂單才能修改此欄位</small>'
+              : ""
+          }
+        </div>
+        <div class="form-group">
+          <label>收件人地址</label>
+          <input type="text" id="edit-order-address" value="${
+            order.orderShippingAddress ?? ""
+          }" ${canEditBasicFields ? "" : "disabled"} />
+          ${
+            !canEditBasicFields
+              ? '<small style="color: #666;">只有等待賣家確認中的訂單才能修改此欄位</small>'
+              : ""
+          }
+        </div>
+        <div class="form-group">
+          <label>備註</label>
+          <input type="text" id="edit-order-note" value="${
+            order.shopOrderNote ?? ""
+          }" ${canEditBasicFields ? "" : "disabled"} />
+          ${
+            !canEditBasicFields
+              ? '<small style="color: #666;">只有等待賣家確認中的訂單才能修改此欄位</small>'
+              : ""
+          }
+        </div>
+        <div class="form-group">
+          <label>出貨日期</label>
+          <input type="date" id="edit-order-shipdate" value="${
+            order.shopOrderShipDate ? order.shopOrderShipDate.split("T")[0] : ""
+          }" min="${getTomorrowDateString()}" ${canEditShipDate ? "" : "disabled"} />
+          ${
+            !canEditShipDate
+              ? '<small style="color: #666;">訂單狀態為已取貨完成、未取貨退回或已取消時無法修改出貨日期</small>'
+              : ""
+          }
+        </div>
+        <div class="form-group">
+          <label>折扣碼ID</label>
+          <select id="edit-discount-code-id" ${canEditBasicFields ? '' : 'disabled'}></select>
+          ${
+            !canEditBasicFields
+              ? '<small style="color: #666;">只有等待賣家確認中的訂單才能修改此欄位</small>'
+              : ''
+          }
+        </div>
+        <div class="form-group">
+          <label>退貨申請</label>
+          <select id="edit-order-return-apply" ${
+            canEditReturnApply ? "" : "disabled"
+          }>
+            ${returnApplyOptionsHtml}
+          </select>
+          ${
+            !canEditReturnApply
+              ? '<small style="color: #666;">只有已取貨完成的訂單才能修改退貨申請</small>'
+              : ""
+          }
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="closeEditShopOrderModal()">取消</button>
+          <button type="submit" class="btn-save">儲存</button>
+        </div>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  document.getElementById("edit-shop-order-form").onsubmit = function (e) {
+    e.preventDefault();
+    submitEditShopOrder(order.shopOrderId);
+  };
+
+  // 動態載入可用折價券並設置下拉選單
+  if (canEditBasicFields) {
+    const discountSelect = modal.querySelector('#edit-discount-code-id');
+    // 先加載 loading option
+    discountSelect.innerHTML = '<option value="">載入中...</option>';
+    fetch(`${window.api_prefix}/api/userdiscount/notUsed/${order.memId}`)
+      .then(res => res.json())
+      .then(list => {
+        let options = '<option value="">不使用折價券</option>';
+        list.forEach(item => {
+          options += `<option value="${item.discountCodeId}" ${order.discountCodeId === item.discountCodeId ? 'selected' : ''}>${item.discountCodeId} - ${item.discountCodeExplain || ''}</option>`;
+        });
+        discountSelect.innerHTML = options;
+      });
+    // 綁定選擇事件
+    let prevDiscountCodeId = order.discountCodeId;
+    discountSelect.addEventListener('change', async function() {
+      const newCode = this.value;
+      if (newCode && newCode !== prevDiscountCodeId) {
+        // 1. 標記新折價券為已使用
+        await fetch(`${window.api_prefix}/api/userdiscount/used`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ memId: order.memId, discountCodeId: newCode })
+        });
+        // 2. 取消原本折價券
+        if (prevDiscountCodeId) {
+          await fetch(`${window.api_prefix}/api/userdiscount/cancelUsed`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ memId: order.memId, discountCodeId: prevDiscountCodeId })
+          });
+        }
+        prevDiscountCodeId = newCode;
+      }
+    });
+  }
+}
+
+function closeEditShopOrderModal() {
+  const modal = document.getElementById("edit-shop-order-modal");
+  if (modal) modal.remove();
+}
+
+async function submitEditShopOrder(orderId) {
+  function parseOrNull(val, type = "number") {
+    if (val === undefined || val === null || val === "") return null;
+    if (type === "number") return isNaN(Number(val)) ? null : Number(val);
+    return val;
+  }
+  function parseDateTime(val) {
+    if (!val) return null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val + "T00:00";
+    if (/T/.test(val)) return val;
+    return null;
+  }
+
+  // 取得原始訂單資料
+  const order = shopOrdersData.find((o) => o.shopOrderId === orderId);
+
+  // 取得表單欄位值
+  const paymentVal = document.getElementById("edit-order-payment").value;
+  const shipFeeVal = document.getElementById("edit-order-shipfee").value;
+  const shipmentVal = document.getElementById("edit-order-shipment").value;
+  const shipDateVal = document.getElementById("edit-order-shipdate").value;
+  const returnApplyVal = document.getElementById(
+    "edit-order-return-apply"
+  ).value;
+
+  // 只送出允許修改的欄位
+  const payload = {
+    shopOrderId: parseOrNull(orderId),
+    shopOrderStatus: parseOrNull(
+      document.getElementById("edit-order-status").value
+    ),
+  };
+
+  // 狀態為0或7時，允許修改基本欄位
+  if (order.shopOrderStatus === 0 || order.shopOrderStatus === 7) {
+    payload.shopOrderPayment = paymentVal !== "" ? Number(paymentVal) : null;
+    payload.shopOrderShipment = shipmentVal !== "" ? Number(shipmentVal) : null;
+    payload.shopOrderShipFee = shipFeeVal !== "" ? Number(shipFeeVal) : null;
+    payload.orderName =
+      document.getElementById("edit-order-name").value || null;
+    payload.orderPhone =
+      document.getElementById("edit-order-phone").value || null;
+    payload.orderEmail =
+      document.getElementById("edit-order-email").value || null;
+    payload.orderShippingAddress =
+      document.getElementById("edit-order-address").value || null;
+    payload.shopOrderNote =
+      document.getElementById("edit-order-note").value || null;
+    payload.discountCodeId =
+      document.getElementById("edit-discount-code-id").value || null;
+  }
+
+  // 根據後端邏輯：出貨日期在訂單狀態為3、4、5時才無法編輯，其他時間都可以編輯
+  if (![3, 4, 5].includes(order.shopOrderStatus)) {
+    payload.shopOrderShipDate = parseDateTime(shipDateVal);
+  }
+
+  // 狀態為3時，允許修改退貨申請
+  if (order.shopOrderStatus === 3) {
+    payload.shopReturnApply =
+      returnApplyVal !== "" ? Number(returnApplyVal) : null;
+  }
+
+  // 移除值為 null 或 undefined 的欄位（shopOrderId, shopOrderStatus, shopReturnApply 例外）
+  Object.keys(payload).forEach((key) => {
+    if (
+      (payload[key] === null || payload[key] === undefined) &&
+      !["shopOrderId", "shopOrderStatus", "shopReturnApply"].includes(key)
+    ) {
+      delete payload[key];
+    }
+  });
+
+  try {
+    const res = await fetch(`${window.api_prefix}/api/updateShopOrder`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await res.json();
+    if (result && (result.success || result.status === "success")) {
+      alert("訂單更新成功");
+      closeEditShopOrderModal();
+      await loadAllData();
+      loadOrderManagement();
+    } else {
+      const errorMessage =
+        result?.message || result?.error || result?.exception || "訂單更新失敗";
+      alert(`訂單更新失敗：${errorMessage}`);
+    }
+  } catch (err) {
+    alert("連線失敗：" + err.message);
+  }
+}
+
+// 在 JS 結尾處插入樣式，統一所有 .action-btn 按鈕大小
+if (!document.getElementById("order-btn-styles")) {
+  const styleEl = document.createElement("style");
+  styleEl.id = "order-btn-styles";
+  styleEl.textContent = `
+    .action-btn {
+      min-width: 100px;
+      padding: 8px 14px;
+      box-sizing: border-box;
+      display: inline-block;
+      text-align: center;
+      font-size: 15px;
+    }
+    .action-btn + .action-btn {
+      margin-left: 2px;
+    }
+  `;
+  document.head.appendChild(styleEl);
+}
+
+// 新增 showReturnProcessModal 函數
+function showReturnProcessModal(orderId) {
+  const order = shopOrdersData.find((o) => o.shopOrderId === orderId);
+  if (!order) {
+    alert("找不到訂單資料");
+    return;
+  }
+
+  // 檢查訂單狀態是否為3(已取貨，完成訂單)
+  if (order.shopOrderStatus !== 3) {
+    alert("只有已取貨完成的訂單才能進行退貨處理");
+    return;
+  }
+
+  // 檢查退貨申請狀態是否為1(申請退貨)
+  if (order.shopReturnApply !== 1) {
+    alert("只有申請退貨中的訂單才能進行退貨處理");
+    return;
+  }
+
+  // 獲取當前退貨狀態文字
+  const currentReturnStatus =
+    order.shopReturnApplyStr || getReturnApplyText(order.shopReturnApply);
+
+  const modal = document.createElement("div");
+  modal.className = "modal";
+  modal.id = "return-process-modal";
+  modal.innerHTML = `
+    <div class="modal-content order-detail-modal">
+      <div class="modal-header">
+        <h3>處理退貨</h3>
+        <button class="close-btn" onclick="closeReturnProcessModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>訂單編號：</label>
+          <span>${order.shopOrderId}</span>
+        </div>
+        <div class="form-group">
+          <label>訂單狀態：</label>
+          <span class="status-badge ${
+            getShopOrderStatusInfo(order.shopOrderStatus).class
+          }">${
+    order.shopOrderStatusStr ||
+    getShopOrderStatusInfo(order.shopOrderStatus).text
+  }</span>
+        </div>
+        <div class="form-group">
+          <label>當前退貨狀態：</label>
+          <span class="status-badge ${getReturnApplyClass(
+            order.shopReturnApply
+          )}">${currentReturnStatus}</span>
+        </div>
+        <div class="form-group">
+          <label>請選擇退貨處理結果：</label>
+          <div class="button-group" style="margin-top: 10px;">
+            <button class="action-btn btn-activate" onclick="processReturnApply(${orderId}, 2)">退貨成功</button>
+            <button class="action-btn btn-deactivate" onclick="processReturnApply(${orderId}, 3)">退貨失敗</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+function closeReturnProcessModal() {
+  const modal = document.getElementById("return-process-modal");
+  if (modal) modal.remove();
+}
+
+async function processReturnApply(orderId, returnStatus) {
+  try {
+    // 再次檢查訂單狀態
+    const order = shopOrdersData.find((o) => o.shopOrderId === orderId);
+    if (!order) {
+      alert("找不到訂單資料");
+      return;
+    }
+
+    if (order.shopOrderStatus !== 3) {
+      alert("只有已取貨完成的訂單才能進行退貨處理");
+      return;
+    }
+
+    if (order.shopReturnApply !== 1) {
+      alert("只有申請退貨中的訂單才能進行退貨處理");
+      return;
+    }
+
+    const payload = {
+      shopOrderId: orderId,
+      shopReturnApply: returnStatus,
+    };
+
+    console.log("處理退貨申請:", payload);
+
+    const res = await fetch(`${window.api_prefix}/api/updateShopOrder`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await res.json();
+    console.log("退貨處理回應:", result);
+
+    if (result && (result.success || result.status === "success")) {
+      const statusText = returnStatus === 2 ? "退貨成功" : "退貨失敗";
+      alert(`退貨狀態已更新為：${statusText}`);
+      closeReturnProcessModal();
+      await loadAllData();
+      loadOrderManagement();
+    } else {
+      // 顯示後端返回的詳細錯誤訊息
+      const errorMessage =
+        result?.message ||
+        result?.error ||
+        result?.exception ||
+        "退貨狀態更新失敗";
+      alert(`退貨狀態更新失敗：${errorMessage}`);
+    }
+  } catch (err) {
+    console.error("退貨處理錯誤:", err);
+    alert("連線失敗：" + err.message);
+  }
+}
+
+// 格式化日期（含時間）
+function formatDateTime(dt) {
+  if (!dt) return "";
+  const d = new Date(dt);
+  if (isNaN(d.getTime())) return "";
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const hh = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+}
+
+// 格式化日期（只包含日期部分）
+function formatDateOnly(dateStr) {
+  if (!dateStr) return "";
+  const [datePart, timePart] = dateStr.split("T");
+  return datePart;
+}
+
+function getTomorrowDateString() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split('T')[0];
 }

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>裝備商城 - 露途</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/role-system.css" />
+    <link rel="stylesheet" href="css/shop.css" />
+  </head>
+  <body>
+    <!-- 載入header -->
+    <div id="header-container"></div>
+
+    <div class="breadcrumb">
+      <div class="container">
+        <ul>
+          <li><a href="index.html">首頁</a></li>
+          <li>裝備商城</li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="shop-hero">
+      <div class="container">
+        <div class="hero-content">
+          <h1>露營裝備商城</h1>
+          <p>精選優質露營裝備，打造完美露營體驗</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="shop-filter">
+      <div class="container">
+        <div class="filter-container">
+          <form action="#" method="get" class="filter-form">
+            <div class="filter-group">
+              <label for="category">商品分類</label>
+              <select id="category" name="category">
+                <!-- 選項將由 JS 動態插入 -->
+              </select>                       
+            </div>
+            <div class="filter-group">
+              <label for="price">價格範圍</label>
+              <select id="price" name="price">
+                <option value="">不限</option>
+                <option value="0-1000">NT$ 0 - 1,000</option>
+                <option value="1000-3000">NT$ 1,000 - 3,000</option>
+                <option value="3000-5000">NT$ 3,000 - 5,000</option>
+                <option value="5000+">NT$ 5,000 以上</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="sort">排序方式</label>
+              <select id="sort" name="sort">
+                <option value="popular">熱門程度</option>
+                <option value="discount" class="discount-option">折扣商品 SALE</option>
+                <option value="latest">最新上架</option>
+                <option value="price-asc">價格由低至高</option>
+                <option value="price-desc">價格由高至低</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-filter-submit">套用篩選</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="shop-products">
+      <div class="container">
+        <h2 class="section-title">熱門商品</h2>
+
+        <div class="product-grid">
+          <!-- 產品將由 JavaScript 動態生成 -->
+        </div>
+        
+      </div>
+    </section>
+
+    <section class="shop-categories-section">
+      <div class="container">
+        <h2 class="section-title">商品分類</h2>
+        <div class="shop-categories">
+          <div class="shop-category">
+            <div class="category-icon">
+              <i class="fas fa-campground"></i>
+            </div>
+            <h3>帳篷</h3>
+            <p>各種尺寸與款式的高品質帳篷</p>
+          </div>
+          <div class="shop-category">
+            <div class="category-icon">
+              <i class="fas fa-bed"></i>
+            </div>
+            <h3>睡袋/睡墊</h3>
+            <p>舒適保暖的睡袋與睡墊</p>
+          </div>
+          <div class="shop-category">
+            <div class="category-icon">
+              <i class="fas fa-utensils"></i>
+            </div>
+            <h3>炊具/餐具</h3>
+            <p>戶外烹飪與用餐的必備工具</p>
+          </div>
+          <div class="shop-category">
+            <div class="category-icon">
+              <i class="fas fa-lightbulb"></i>
+            </div>
+            <h3>照明設備</h3>
+            <p>各種露營燈具與照明工具</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shop-features">
+      <div class="container">
+        <div class="feature-cards">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-truck"></i>
+            </div>
+            <h3>全台配送</h3>
+            <p>滿NT$ 1,500免運費，離島地區另計</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-exchange-alt"></i>
+            </div>
+            <h3>彈性租借</h3>
+            <p>多款商品提供租借選項，露營更經濟</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>品質保證</h3>
+            <p>嚴選優質露營裝備，享有完善保固</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-headset"></i>
+            </div>
+            <h3>專業客服</h3>
+            <p>專業團隊提供露營裝備諮詢服務</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 導入 footer -->
+    <div id="footer-container"></div>
+
+    <!-- <script src="js/main.js"></script> -->
+    <script src="js/header-auth.js"></script>
+    <script src="js/shop-prod.js"></script>
+    <!-- 自動載入 header/footer 的 script -->
+    <script src="js/include.js"></script>
+    <script src="js/camp-data.js"></script>
+    
+  </body>
+</html>
+
+
+  <!-- 載入中動畫 -->
+  <div class="loading-overlay">
+    <div class="loading-animation">
+      <svg class="pine-cone" width="60" height="60" viewBox="0 0 60 60">
+        <!-- 松果動畫將在CSS中實現 -->
+        <circle cx="30" cy="30" r="25" fill="#3A5A40" />
+        <path class="pine-cone-scale" d="M30,5 L35,15 L25,15 Z" fill="#A68A64" />
+        <!-- 更多松果鱗片將在JavaScript中動態生成 -->
+      </svg>
+    </div>
+    <p>載入中，請稍候...</p>
+  </div>
+  

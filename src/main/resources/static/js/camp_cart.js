@@ -1,6 +1,7 @@
 // 購物車功能
 class CartManager {
   constructor() {
+    this.checkLoginStatus();
     this.cart = JSON.parse(localStorage.getItem("campingCart")) || [];
     this.bundleItems = []; // 加購商品
     this.campsiteTypes = []; // 營地房型資料
@@ -9,9 +10,34 @@ class CartManager {
     this.init(); // 初始化資料
   }
 
+  //確認會員登入狀態
+  async checkLoginStatus() {
+    console.log("確認會員登入狀態");
+
+    let memberInfo =
+      localStorage.getItem("currentMember") ||
+      sessionStorage.getItem("currentMember");
+    if (memberInfo) {
+      try {
+        const member = JSON.parse(memberInfo);
+        this.memId = member.mem_id || member.memId;
+        // console.log('初始化會員ID:', this.memId, '原始 memberInfo:', memberInfo);
+      } catch (e) {
+        console.error("解析會員資料失敗:", e);
+      }
+    }
+    if (!this.memId) {
+      console.log("未找到會員資料，跳轉到登入頁面");
+      localStorage.setItem("returnUrl", window.location.href);
+      window.location.href = "login.html";
+      return;
+    }
+  }
+
   // 初始化資料
   async init() {
     try {
+      console.log("init:", this.campId);
       await Promise.all([this.loadCampsiteTypes(), this.loadBundleItems()]);
       this.initialized = true;
       console.log("購物車資料初始化完成");
@@ -31,11 +57,23 @@ class CartManager {
   // 載入房型資料
   async loadCampsiteTypes() {
     try {
-      const response = await fetch("/data/campsite_type.json");
+      // 確保 api_prefix 已設置
+      if (!window.api_prefix) {
+        console.log("api_prefix 未設置，使用預設值");
+        window.api_prefix = "http://localhost:8081/CJA101G02";
+      }
+      const url = `${window.api_prefix}/campsitetype/getAllCampsiteTypes`;
+      console.log("url:", url);
+      const response = await fetch(
+        `${window.api_prefix}/campsitetype/getAllCampsiteTypes`
+      );
+      console.log("載入房型資料", response.status);
       if (!response.ok) {
         throw new Error("Failed to fetch campsite types");
       }
-      this.campsiteTypes = await response.json();
+
+      const dataJson = await response.json();
+      this.campsiteTypes = dataJson.data;
       console.log("房型資料載入成功", this.campsiteTypes.length);
       return this.campsiteTypes;
     } catch (error) {
@@ -48,17 +86,38 @@ class CartManager {
   // 載入加購商品資料
   async loadBundleItems() {
     try {
-      const response = await fetch("/data/bundle_item.json");
-      if (!response.ok) {
-        throw new Error("Failed to fetch bundle items");
+      // 從 localStorage 的 campingCart 中取得 campId
+      const campingCart = JSON.parse(localStorage.getItem("campingCart")) || [];
+      let campId = campingCart.length > 0 ? campingCart[0].campId : null;
+
+      console.log("loadBundleItems:", campId);
+
+      // 如果沒有 campId，嘗試載入預設的加購商品或所有加購商品
+      if (!campId) {
+        console.warn("沒有找到 campId，嘗試載入所有加購商品");
+        // 可以設定一個預設的 campId 或載入所有加購商品
+        // 這裡先嘗試載入 campId = 1 的加購商品作為預設
+        campId = 1;
       }
-      this.bundleItems = await response.json();
-      console.log("加購商品資料載入成功", this.bundleItems.length);
+
+      // const response = await fetch("/data/bundle_item.json");
+      const response = await fetch(
+        `${window.api_prefix}/bundleitem/${campId}/getBundleItems`
+      );
+      if (!response.ok) {
+        console.warn(`載入 campId ${campId} 的加購商品失敗`);
+        throw new Error("Failed to fetch bundle items from  API ");
+      }
+      const bundleItemsJson = await response.json();
+      this.bundleItems = bundleItemsJson.data || bundleItemsJson;
+
+      console.log("加購商品資料載入成功", this.bundleItems);
       return this.bundleItems;
     } catch (error) {
       console.error("載入加購商品資料失敗:", error);
       this.bundleItems = [];
-      throw error;
+      // 不要拋出錯誤，讓程式繼續執行
+      return this.bundleItems;
     }
   }
 
@@ -73,7 +132,7 @@ class CartManager {
       guests,
       tentType,
       image,
-      campsite_type_id,
+      campsiteTypeId,
     } = campsiteData;
 
     // 檢查是否有不同營地或不同日期的項目
@@ -103,7 +162,7 @@ class CartManager {
         item.campId === id &&
         item.checkIn === checkIn &&
         item.checkOut === checkOut &&
-        item.campsite_type_id === campsite_type_id
+        item.campsiteTypeId === campsiteTypeId
     );
 
     if (existingIndex > -1) {
@@ -120,7 +179,7 @@ class CartManager {
         guests,
         tentType,
         image,
-        campsite_type_id,
+        campsiteTypeId,
         addedAt: new Date().toISOString(),
       });
     }
@@ -143,7 +202,7 @@ class CartManager {
     let bundleItemsStorage =
       JSON.parse(localStorage.getItem("bundleItems")) || [];
     const existingBundleIndex = bundleItemsStorage.findIndex(
-      (item) => item.bundle_id === bundleItem.bundle_id
+      (item) => item.bundleId === bundleItem.bundleId
     );
 
     if (existingBundleIndex > -1) {
@@ -177,12 +236,16 @@ class CartManager {
     let bundleItemsStorage =
       JSON.parse(localStorage.getItem("bundleItems")) || [];
     const bundleIndex = bundleItemsStorage.findIndex(
-      (bundleItem) => bundleItem.bundle_id === bundleId
+      (bundleItem) => bundleItem.bundleId == bundleId
     );
 
     if (bundleIndex > -1) {
       bundleItemsStorage.splice(bundleIndex, 1);
       localStorage.setItem("bundleItems", JSON.stringify(bundleItemsStorage));
+      this.updateCartCount();
+      console.log(`Successfully removed bundle item: ${bundleId}`);
+    } else {
+      console.error("Bundle item not found for removal:", bundleId);
     }
   }
 
@@ -222,8 +285,8 @@ class CartManager {
       const nights = this.calculateNights(item.checkIn, item.checkOut);
 
       // 從campsiteTypes中獲取房型價格
-      const campsiteType = this.getCampsiteTypeById(item.campsite_type_id);
-      let itemPrice = campsiteType.campsite_price * nights;
+      const campsiteType = this.getCampsiteTypeById(item.campsiteTypeId);
+      let itemPrice = campsiteType.campsitePrice * nights;
 
       // 添加帳篷租借費用
       if (item.tentType && item.tentType.includes("rent")) {
@@ -238,7 +301,8 @@ class CartManager {
     const bundleItemsStorage =
       JSON.parse(localStorage.getItem("bundleItems")) || [];
     const bundleTotal = bundleItemsStorage.reduce((total, item) => {
-      return total + item.bundle_price * (item.quantity || 1);
+      const price = item.bundlePrice || item.bundle_price || 0;
+      return total + price * (item.quantity || 1);
     }, 0);
 
     return campsiteTotal + bundleTotal;
@@ -326,7 +390,7 @@ class CartManager {
   getBundleItemsByCampId(campId) {
     console.log("bundleItems_length:" + this.bundleItems.length);
 
-    return this.bundleItems.filter((item) => item.camp_id == campId);
+    return this.bundleItems.filter((item) => item.campId == campId);
   }
 
   // 根據ID獲取房型資料
@@ -344,7 +408,7 @@ class CartManager {
     }
 
     const campsiteType = this.campsiteTypes.find(
-      (type) => type.campsite_type_id == id
+      (type) => type.campsiteTypeId == id
     );
     if (!campsiteType) {
       console.warn(`找不到ID為${id}的房型資料`);

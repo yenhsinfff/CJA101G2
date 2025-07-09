@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>營地主後台管理 - 露途 LUTU</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/role-system.css" />
+  <link rel="stylesheet" href="css/room-type-images.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <!-- 網站標頭 -->
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">
+        <a href="index.html">
+          <img src="images/logo.svg" alt="露途 LUTU" />
+          <!-- <span>露途</span> -->
+        </a>
+      </div>
+      <div class="header-title">
+        <h1>營地主後台</h1>
+      </div>
+      <div class="user-actions">
+        <select id="ownerProfileSelect" class="form-select" style="width:auto;display:inline-block;min-width:180px;"></select>
+        <button type="button" class="btn btn-camping ms-2" data-bs-toggle="modal" data-bs-target="#addCampModal">
+          <i class="fas fa-plus"></i> 新增營地
+        </button>
+      </div>
+    </header>
+
+  <div class="dashboard-container">
+    <main class="dashboard-content">
+      <div class="profile-container">
+        <div class="profile-sidebar">
+          <div class="profile-menu">
+            <a href="#owner-info" class="profile-menu-item active" data-tab="owner-info">
+              <i class="fas fa-user"></i> 營地主基本資料
+            </a>
+            <a href="#camp-info" class="profile-menu-item" data-tab="camp-info">
+              <i class="fas fa-campground"></i> 營地基本資料
+            </a>
+            <a href="#room-types" class="profile-menu-item" data-tab="room-types">
+              <i class="fas fa-bed"></i> 房型與房間管理
+            </a>
+            <a href="#bundle-items" class="profile-menu-item" data-tab="bundle-items">
+              <i class="fas fa-shopping-cart"></i> 加購商品管理
+            </a>
+            <a href="#orders" class="profile-menu-item" data-tab="orders">
+              <i class="fas fa-list-alt"></i> 營地訂單管理
+            </a>
+            <!-- <a href="#discount-codes" class="profile-menu-item" data-tab="discount-codes">
+              <i class="fas fa-tags"></i> 折價券管理
+            </a> -->
+            <a href="#chat-management" class="profile-menu-item" data-tab="chat-management">
+              <i class="fas fa-comments"></i> 聊天管理
+            </a>
+            <div class="menu-divider"></div>
+            <a href="#" class="profile-menu-item logout-btn" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i> 登出
+            </a>
+          </div>
+        </div>
+
+        <div class="profile-content">
+          <!-- 營地主基本資料 -->
+          <div class="profile-section active" id="owner-info">
+            <h2 class="section-header">營地主基本資料</h2>
+            <form class="profile-form" id="ownerInfoForm">
+              <div class="avatar-upload">
+                <div class="avatar-preview">
+                  <img src="images/default-avatar.png" alt="營地主頭像" id="avatar-preview" />
+                </div>
+                <div class="avatar-edit">
+                  <input type="file" id="profile-picture" name="ownerPic" accept="image/*" />
+                  <p class="upload-hint">
+                    建議使用 1:1 比例的圖片，檔案大小不超過 2MB
+                  </p>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="ownerId">營地主編號</label>
+                  <input type="text" id="ownerId" name="ownerId" value="" readonly />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="storeName">店家名稱</label>
+                  <input type="text" id="ownerName" name="ownerName" value="" readonly />
+                </div>
+                <div class="form-group">
+                  <label for="taxId">統一編號</label>
+                  <input type="text" id="ownerGui" name="ownerGui" value="" readonly />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="ownerName">負責人</label>
+                  <input type="text" id="ownerRep" name="ownerRep" value="" />
+                </div>
+                <div class="form-group">
+                  <label for="ownerPhone">負責人電話</label>
+                  <input type="text" id="ownerTel" name="ownerTel" value="" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="contactName">聯絡人</label>
+                  <input type="text" id="ownerPoc" name="ownerPoc" value="" />
+                </div>
+                <div class="form-group">
+                  <label for="contactPhone">聯絡人電話</label>
+                  <input type="text" id="ownerConPhone" name="ownerConPhone" value="" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="address">登記地址</label>
+                  <input type="text" id="ownerAddr" name="ownerAddr" value="" readonly />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="email">電子郵件</label>
+                  <input type="email" id="email" name="email" value="" readonly placeholder="電子郵件為您的登入帳號，無法修改" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="password">密碼</label>
+                  <div class="password-field">
+                    <input type="password" id="ownerPwd" value="********" readonly />
+                    <button type="button" class="btn btn-warning btn-change-password">更改密碼</button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="bankAccount">轉帳帳號</label>
+                  <input type="text" id="bankAccount" name="bankAccount" value="" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label for="ownerIntro">營地主簡介</label>
+                  <textarea id="ownerIntro" name="ownerIntro" rows="4"></textarea>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-camping">儲存變更</button>
+                <button type="button" class="btn btn-outline-secondary btn-cancel">取消變更</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- 營地基本資料管理 -->
+          <div class="profile-section" id="camp-info">
+            <h2 class="section-header">營地基本資料管理</h2>
+            <div class="camp-info-form">
+              <form id="campInfoForm">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="camp-name">營地名稱</label>
+                    <input type="text" id="camp-name" name="camp_name" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="camp-location">營地位置</label>
+                    <input type="text" id="camp-location" name="camp_location" required />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="camp-status">營地狀態</label>
+                    <select id="camp-status" name="camp_status">
+                      <option value="1">營業中</option>
+                      <option value="0">暫停營業</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="camp-score">營地評分</label>
+                    <input type="number" id="camp-score" name="camp_score" min="0" max="5" step="0.1" readonly />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="camp-description">營地描述</label>
+                  <textarea id="camp-description" name="camp_description" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                  <label>營地照片</label>
+                  <div class="camp-images-container">
+                    <div class="image-upload-grid">
+                      <div class="image-upload-item">
+                        <label>照片1</label>
+                        <div class="image-cell" id="campImage1Container">
+                          <div class="image-placeholder" onclick="ownerDashboard.uploadCampImage(1, event)">
+                            <i class="fas fa-plus"></i>
+                            <span>上傳圖片</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="image-upload-item">
+                        <label>照片2</label>
+                        <div class="image-cell" id="campImage2Container">
+                          <div class="image-placeholder" onclick="ownerDashboard.uploadCampImage(2, event)">
+                            <i class="fas fa-plus"></i>
+                            <span>上傳圖片</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="image-upload-item">
+                        <label>照片3</label>
+                        <div class="image-cell" id="campImage3Container">
+                          <div class="image-placeholder" onclick="ownerDashboard.uploadCampImage(3, event)">
+                            <i class="fas fa-plus"></i>
+                            <span>上傳圖片</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="image-upload-item">
+                        <label>照片4</label>
+                        <div class="image-cell" id="campImage4Container">
+                          <div class="image-placeholder" onclick="ownerDashboard.uploadCampImage(4, event)">
+                            <i class="fas fa-plus"></i>
+                            <span>上傳圖片</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-camping">
+                    更新營地資料
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- 房型管理 -->
+          <div class="profile-section" id="room-types">
+            <div class="section-header">
+              <h2>房型與房間管理</h2>
+              <button type="button" class="btn btn-camping" data-bs-toggle="modal" data-bs-target="#addRoomTypeModal">
+                <i class="fas fa-plus"></i> 新增房型
+              </button>
+            </div>
+            <div class="room-types-table-container">
+              <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>照片</th>
+                    <th>房型編號</th>
+                    <th>名稱</th>
+                    <th>預設間數</th>
+                    <th>實際間數</th>
+                    <th>人數</th>
+                    <th>價格</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="roomTypesTableBody">
+                  <!-- 房型資料將由JavaScript動態生成 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 房型房間明細 Modal -->
+          <div class="modal fade" id="roomDetailModal" tabindex="-1" aria-labelledby="roomDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="roomDetailModalLabel">房間明細</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>房間編號</th>
+                        <th>房間名稱</th>
+                        <th>入住者姓名(Check In登記)</th>
+                        <th>操作</th>
+                      </tr>
+                    </thead>
+                    <tbody id="roomDetailTableBody">
+                      <!-- 動態產生 -->
+                    </tbody>
+                  </table>
+                  <button class="btn btn-camping mt-3" id="addRoomBtn">
+                    <i class="fas fa-plus"></i> 新增房間
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 新增房型 Modal -->
+          <div class="modal fade" id="addRoomTypeModal" tabindex="-1" aria-labelledby="addRoomTypeLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="addRoomTypeLabel">新增房型</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="addRoomTypeForm">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group mb-3">
+                          <label for="campsite-name">房型名稱</label>
+                          <input type="text" id="campsite-name" name="campsiteName" class="form-control" required />
+                        </div>
+                        <div class="form-group mb-3">
+                          <label for="campsite-people">可入住人數</label>
+                          <input type="number" id="campsite-people" name="campsitePeople" class="form-control" min="1" required />
+                        </div>
+                        <div class="form-group mb-3">
+                          <label for="campsite-num">房間數量</label>
+                          <input type="number" id="campsite-num" name="campsiteNum" class="form-control" min="1" required />
+                        </div>
+                        <div class="form-group mb-3">
+                          <label for="campsite-price">房間價格</label>
+                          <input type="number" id="campsite-price" name="campsitePrice" class="form-control" min="0" required />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group mb-3">
+                          <label>房間照片上傳</label>
+                          <div class="d-flex flex-wrap gap-3 mb-2">
+                            <div class="image-upload-item text-center">
+                              <div class="image-card" id="preview-add-campsite-img1" style="cursor:pointer;" onclick="document.getElementById('add-roomtype-img1').click()">
+                                <img id="add-roomtype-img-preview1" src="#" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:12px;" />
+                                <div id="add-upload-hint1" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;">
+                                  <i class="fas fa-plus" style="font-size:20px;margin-bottom:4px;"></i>
+                                  <span style="font-size:10px;">房間照片1 *</span>
+                                </div>
+                              </div>
+                              <input type="file" id="add-roomtype-img1" name="roomtypeImg1" accept="image/*" style="display:none;">
+                            </div>
+                            <div class="image-upload-item text-center">
+                              <div class="image-card" id="preview-add-campsite-img2" style="cursor:pointer;" onclick="document.getElementById('add-roomtype-img2').click()">
+                                <img id="add-roomtype-img-preview2" src="#" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:12px;" />
+                                <div id="add-upload-hint2" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;">
+                                  <i class="fas fa-plus" style="font-size:20px;margin-bottom:4px;"></i>
+                                  <span style="font-size:10px;">房間照片2</span>
+                                </div>
+                              </div>
+                              <input type="file" id="add-roomtype-img2" name="roomtypeImg2" accept="image/*" style="display:none;">
+                            </div>
+                            <div class="image-upload-item text-center">
+                              <div class="image-card" id="preview-add-campsite-img3" style="cursor:pointer;" onclick="document.getElementById('add-roomtype-img3').click()">
+                                <img id="add-roomtype-img-preview3" src="#" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:12px;" />
+                                <div id="add-upload-hint3" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;">
+                                  <i class="fas fa-plus" style="font-size:20px;margin-bottom:4px;"></i>
+                                  <span style="font-size:10px;">房間照片3</span>
+                                </div>
+                              </div>
+                              <input type="file" id="add-roomtype-img3" name="roomtypeImg3" accept="image/*" style="display:none;">
+                            </div>
+                            <div class="image-upload-item text-center">
+                              <div class="image-card" id="preview-add-campsite-img4" style="cursor:pointer;" onclick="document.getElementById('add-roomtype-img4').click()">
+                                <img id="add-roomtype-img-preview4" src="#" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:12px;" />
+                                <div id="add-upload-hint4" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;">
+                                  <i class="fas fa-plus" style="font-size:20px;margin-bottom:4px;"></i>
+                                  <span style="font-size:10px;">房間照片4</span>
+                                </div>
+                              </div>
+                              <input type="file" id="add-roomtype-img4" name="roomtypeImg4" accept="image/*" style="display:none;">
+                            </div>
+                          </div>
+                          <small class="form-text text-muted">* 房間照片1為必填項目</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-actions mt-3">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        取消
+                      </button>
+                      <button type="submit" class="btn btn-camping">新增房型</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 編輯房型 Modal -->
+          <div class="modal fade" id="editRoomTypeModal" tabindex="-1" aria-labelledby="editRoomTypeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editRoomTypeModalLabel">編輯房型</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="editRoomTypeForm">
+                    <input type="hidden" id="edit-campsite-type-id" name="campsiteTypeId" />
+                    <input type="hidden" id="edit-camp-id" name="campId" />
+                    <div class="form-group mb-2">
+                      <label for="edit-campsite-name">房型名稱</label>
+                      <input type="text" id="edit-campsite-name" name="campsiteName" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-2">
+                      <label for="edit-campsite-people">可容納人數</label>
+                      <input type="number" id="edit-campsite-people" name="campsitePeople" class="form-control" min="1" required />
+                    </div>
+                    <div class="form-group mb-2">
+                      <label for="edit-campsite-num">房間數量</label>
+                      <input type="number" id="edit-campsite-num" name="campsiteNum" class="form-control" min="1" required />
+                    </div>
+                    <div class="form-group mb-2">
+                      <label for="edit-campsite-price">房間價格</label>
+                      <input type="number" id="edit-campsite-price" name="campsitePrice" class="form-control" min="0" required />
+                    </div>
+                    <div class="form-group mb-2">
+                      <label>房型照片上傳</label>
+                      <div class="d-flex flex-wrap gap-3 mb-2">
+                        <div class="image-upload-item text-center">
+                          <div class="image-card" id="preview-campsite-img1" style="cursor:pointer;" onclick="document.getElementById('edit-roomtype-img1').click()">
+                            <img id="edit-roomtype-img-preview1" src="#" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:12px;" />
+                            <div id="upload-hint1" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;">
+                              <i class="fas fa-plus" style="font-size:20px;margin-bottom:4px;"></i>
+                              <span style="font-size:10px;">上傳照片</span>
+                            </div>
+                          </div>
+                          <input type="file" id="edit-roomtype-img1" name="roomtypeImg1" accept="image/*" style="display:none;">
+                        </div>
+                        <div class="image-upload-item text-center">
+                          <div class="image-card" id="preview-campsite-img2" style="cursor:pointer;" onclick="document.getElementById('edit-roomtype-img2').click()">
+                            <img id="edit-roomtype-img-preview2" src="#" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:12px;" />
+                            <div id="upload-hint2" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;">
+                              <i class="fas fa-plus" style="font-size:20px;margin-bottom:4px;"></i>
+                              <span style="font-size:10px;">上傳照片</span>
+                            </div>
+                          </div>
+                          <input type="file" id="edit-roomtype-img2" name="roomtypeImg2" accept="image/*" style="display:none;">
+                        </div>
+                        <div class="image-upload-item text-center">
+                          <div class="image-card" id="preview-campsite-img3" style="cursor:pointer;" onclick="document.getElementById('edit-roomtype-img3').click()">
+                            <img id="edit-roomtype-img-preview3" src="#" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:12px;" />
+                            <div id="upload-hint3" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;">
+                              <i class="fas fa-plus" style="font-size:20px;margin-bottom:4px;"></i>
+                              <span style="font-size:10px;">上傳照片</span>
+                            </div>
+                          </div>
+                          <input type="file" id="edit-roomtype-img3" name="roomtypeImg3" accept="image/*" style="display:none;">
+                        </div>
+                        <div class="image-upload-item text-center">
+                          <div class="image-card" id="preview-campsite-img4" style="cursor:pointer;" onclick="document.getElementById('edit-roomtype-img4').click()">
+                            <img id="edit-roomtype-img-preview4" src="#" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:12px;" />
+                            <div id="upload-hint4" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;">
+                              <i class="fas fa-plus" style="font-size:20px;margin-bottom:4px;"></i>
+                              <span style="font-size:10px;">上傳照片</span>
+                            </div>
+                          </div>
+                          <input type="file" id="edit-roomtype-img4" name="roomtypeImg4" accept="image/*" style="display:none;">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-actions mt-3">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                      <button type="submit" class="btn btn-camping">儲存</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 加購商品管理 -->
+          <div class="profile-section" id="bundle-items">
+            <div class="section-header">
+              <h2>加購商品管理</h2>
+              <button class="btn btn-camping" id="addBundleItemBtn">
+                <i class="fas fa-plus"></i> 新增加購商品
+              </button>
+            </div>
+            <div class="bundle-items-table-container">
+              <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>商品名稱</th>
+                    <th>價格</th>
+                    <th>建立日期</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="bundleItemsTableBody">
+                  <!-- 加購商品資料將由JavaScript動態生成 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 營地訂單管理 -->
+          <div class="profile-section" id="orders">
+            <div class="section-header">
+              <h2>營地訂單管理</h2>
+              <div class="order-filters">
+                <select id="orderStatusFilter">
+                  <option value="">所有訂單</option>
+                  <option value="0">露營者未付款</option>
+                  <option value="1">營地主未確認</option>
+                  <option value="2">營地主已確認</option>
+                  <option value="3">露營者自行取消</option>
+                  <option value="4">訂單結案</option>
+                  <option value="5">營地主自行取消</option>
+                </select>
+              </div>
+            </div>
+            <div class="orders-table-container">
+              <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>訂單編號</th>
+                    <th>客戶姓名</th>
+                    <th>房型</th>
+                    <th>營地數量</th>
+                    <th>營地金額</th>
+                    <th>入住日期</th>
+                    <th>退房日期</th>
+                    <th>總金額</th>
+                    <th>訂單狀態</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                  <!-- 訂單資料將由JavaScript動態生成 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 折價券管理 -->
+          <div class="profile-section" id="discount-codes">
+            <div class="section-header">
+              <h2>折價券管理</h2>
+              <button class="btn btn-camping" id="addDiscountCodeBtn">
+                <i class="fas fa-plus"></i> 新增折價券
+              </button>
+            </div>
+            <div class="discount-codes-table-container">
+              <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>ID</th>
+                    <th>折價券代碼</th>
+                    <th>說明</th>
+                    <th>折扣類型</th>
+                    <th>折扣值</th>
+                    <th>最低消費</th>
+                    <th>有效期間</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="discountCodesTableBody">
+                  <!-- 折價券資料將由JavaScript動態生成 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 聊天管理 -->
+          <div class="profile-section" id="chat-management">
+            <div class="section-header">
+              <h2>聊天管理</h2>
+            </div>
+            <div class="chat-management-container">
+              <div class="chat-list" id="chat-list">
+                <div class="empty-state">
+                  <i class="fas fa-comments"></i>
+                  <h3>載入中...</h3>
+                  <p>正在載入您的聊天記錄</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 新增房間 Modal -->
+          <div class="modal fade" id="addRoomModal" tabindex="-1" aria-labelledby="addRoomModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="addRoomModalLabel">新增房間</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="addRoomForm">
+                    <input type="hidden" id="add-room-camp-id" name="campId" />
+                    <input type="hidden" id="add-room-type-id" name="campsiteTypeId" />
+                    <div class="form-group mb-2">
+                      <label for="add-room-name">房間名稱</label>
+                      <input type="text" id="add-room-name" name="campsiteIdName" class="form-control" required />
+                    </div>
+                    <div class="form-actions mt-3">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                      <button type="submit" class="btn btn-camping">新增房間</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 編輯房間 Modal -->
+          <div class="modal fade" id="editRoomModal" tabindex="-1" aria-labelledby="editRoomModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editRoomModalLabel">編輯房間</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="editRoomForm">
+                    <input type="hidden" id="edit-room-id" name="campsiteId" />
+                    <input type="hidden" id="edit-room-camp-id" name="campId" />
+                    <input type="hidden" id="edit-room-type-id" name="campsiteTypeId" />
+                    <div class="form-group mb-2">
+                      <label for="edit-room-name">房間名稱</label>
+                      <input type="text" id="edit-room-name" name="campsiteIdName" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-2">
+                      <label for="edit-camper-name">入住者姓名(Check In登記)</label>
+                      <input type="text" id="edit-camper-name" name="camperName" class="form-control" />
+                    </div>
+                    <div class="form-actions mt-3">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                      <button type="submit" class="btn btn-camping">儲存</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 懸浮聊天室 -->
+  <div class="chat-widget" style="display: none;">
+    <div class="chat-window" id="chat-window">
+      <div class="chat-header">
+        <div class="chat-title">
+          <i class="fas fa-comments"></i>
+          <span id="chat-title-text">會員客服</span>
+        </div>
+        <button class="btn-close-chat" id="btn-close-chat">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="chat-body" id="chat-messages">
+        <!-- 聊天訊息將在這裡動態生成 -->
+      </div>
+      <div class="chat-footer">
+        <div class="chat-input-container">
+          <input
+            type="text"
+            class="chat-input"
+            id="chat-message-input"
+            placeholder="輸入訊息..."
+          />
+          <button class="chat-send" id="btn-send-message">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 隱藏的營地主ID和會員ID輸入框 -->
+  <input type="hidden" id="ownerId" value="" />
+  <input type="hidden" id="memId" value="" />
+
+  <!-- 新增營地模態框 -->
+  <div class="modal fade" id="addCampModal" tabindex="-1" aria-labelledby="addCampModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addCampModalLabel">新增營地</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addCampForm" onsubmit="handleAddCampSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="new-camp-name">營地名稱</label>
+                <input type="text" id="new-camp-name" name="camp_name" required />
+              </div>
+              <div class="form-group">
+                <label for="new-camp-region">地區</label>
+                <select id="new-camp-region" name="camp_region" required>
+                  <option value="">選擇地區</option>
+                  <option value="0">北部</option>
+                  <option value="1">中部</option>
+                  <option value="2">南部</option>
+                  <option value="3">東部</option>
+                  <option value="4">離島</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="new-camp-city">縣市</label>
+                <select id="new-camp-city" name="camp_city" required>
+                  <option value="">請先選擇地區</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="new-camp-district">鄉鎮市區</label>
+                <select id="new-camp-district" name="camp_district" required>
+                  <option value="">請先選擇縣市</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="new-camp-address">詳細地址</label>
+                <input type="text" id="new-camp-address" name="camp_address" placeholder="請輸入詳細地址" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="new-camp-status">營地狀態</label>
+                <select id="new-camp-status" name="camp_status">
+                  <option value="1">營業中</option>
+                  <option value="0">暫停營業</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="new-camp-description">營地描述</label>
+              <textarea id="new-camp-description" name="camp_description" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+              <label>營地照片</label>
+              <div class="camp-images-container">
+                <div class="image-upload-grid">
+                  <div class="image-upload-item">
+                    <label>照片1</label>
+                    <div class="image-cell" id="addCampImage1Container">
+                      <div class="image-placeholder d-flex flex-column align-items-center justify-content-center" onclick="uploadAddCampImage(1, event)" style="height: 150px; border: 2px dashed #ddd; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-plus mb-2"></i>
+                        <span>上傳圖片</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="image-upload-item">
+                    <label>照片2</label>
+                    <div class="image-cell" id="addCampImage2Container">
+                      <div class="image-placeholder d-flex flex-column align-items-center justify-content-center" onclick="uploadAddCampImage(2, event)" style="height: 150px; border: 2px dashed #ddd; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-plus mb-2"></i>
+                        <span>上傳圖片</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="image-upload-item">
+                    <label>照片3</label>
+                    <div class="image-cell" id="addCampImage3Container">
+                      <div class="image-placeholder d-flex flex-column align-items-center justify-content-center" onclick="uploadAddCampImage(3, event)" style="height: 150px; border: 2px dashed #ddd; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-plus mb-2"></i>
+                        <span>上傳圖片</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="image-upload-item">
+                    <label>照片4</label>
+                    <div class="image-cell" id="addCampImage4Container">
+                      <div class="image-placeholder d-flex flex-column align-items-center justify-content-center" onclick="uploadAddCampImage(4, event)" style="height: 150px; border: 2px dashed #ddd; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-plus mb-2"></i>
+                        <span>上傳圖片</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <i class="fas fa-times"></i> 取消
+              </button>
+              <button type="submit" class="btn btn-camping">
+                <i class="fas fa-plus"></i> 新增營地
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增/編輯加購商品模態框 -->
+  <div class="modal fade" id="addBundleItemModal" tabindex="-1" aria-labelledby="bundleModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bundleModalTitle">新增加購商品</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addBundleItemForm">
+            <input type="hidden" id="bundle-id" name="bundle_id" />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bundle-name">
+                  <i class="fas fa-tag"></i> 加購項目名稱
+                </label>
+                <input type="text" id="bundle-name" name="bundle_name" placeholder="請輸入加購項目名稱" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bundle-price">
+                  <i class="fas fa-dollar-sign"></i> 加購項目價格
+                </label>
+                <div class="input-group">
+                  <span class="input-prefix">NT$</span>
+                  <input type="number" id="bundle-price" name="bundle_price" placeholder="0" min="0" step="1"
+                    required />
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <i class="fas fa-times"></i> 取消
+              </button>
+              <button type="submit" class="btn btn-camping" id="submitBundleItem">
+                <i class="fas fa-plus"></i> 新增商品
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增折價券模態框
+  <div class="modal fade" id="addDiscountCodeModal" tabindex="-1" aria-labelledby="addDiscountCodeLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addDiscountCodeLabel">新增折價券</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addDiscountCodeForm">
+            <div class="form-group">
+              <label for="discount-code">折價券代碼</label>
+              <input type="text" id="discount-code" name="discount_code" required />
+            </div>
+            <div class="form-group">
+              <label for="discount-explain">折價券說明</label>
+              <input type="text" id="discount-explain" name="discount_explain" required />
+            </div>
+            <div class="form-group">
+              <label for="discount-type">折扣類型</label>
+              <select id="discount-type" name="discount_type" required>
+                <option value="1">百分比折扣</option>
+                <option value="0">固定金額折扣</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="discount-value">折扣值</label>
+              <input type="number" id="discount-value" name="discount_value" min="0" step="0.01" required />
+              <small class="form-help">百分比請輸入0-1之間的小數（如0.1代表10%），固定金額請輸入金額數字</small>
+            </div>
+            <div class="form-group">
+              <label for="min-order-amount">最低消費金額</label>
+              <input type="number" id="min-order-amount" name="min_order_amount" min="0" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="discount-start-date">開始日期</label>
+                <input type="date" id="discount-start-date" name="start_date" required />
+              </div>
+              <div class="form-group">
+                <label for="discount-end-date">結束日期</label>
+                <input type="date" id="discount-end-date" name="end_date" required />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                取消
+              </button>
+              <button type="submit" class="btn btn-camping">
+                新增折價券
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- 更改密碼模態框 -->
+  <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordModalLabel">更改密碼</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="changePasswordForm">
+            <div class="form-group mb-3">
+              <label for="currentPassword">目前密碼</label>
+              <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+            </div>
+            <div class="form-group mb-3">
+              <label for="newPassword">新密碼</label>
+              <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+              <small class="form-text text-muted">密碼長度至少8個字元，需包含大小寫字母和數字</small>
+            </div>
+            <div class="form-group mb-3">
+              <label for="confirmPassword">確認新密碼</label>
+              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <div class="alert alert-danger d-none" id="passwordError"></div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+              <button type="submit" class="btn btn-camping">確認更改</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-container"></div>
+
+  <!-- WebSocket相關庫 -->
+  <script>
+    window.api_prefix = "http://localhost:8081/CJA101G02";
+    console.log("API prefix set:", window.api_prefix);
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  
+  <!-- JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/camp-data.js"></script>
+  <script src="js/owner-dashboard.js"></script>
+  <script src="js/chat-management.js"></script>
+  <script src="js/include.js"></script>
+  <link rel="stylesheet" href="css/chat.css" />
+</body>
+
+</html>

@@ -207,9 +207,9 @@ public class ApiController {
 				Boolean response1 = caService.deductRoomsByDateRange(dto.getCheckIn(),dto.getCheckOut(), dto.getOrderDetails());
 				System.out.println("linpay_response:"+response1);
 				if(response1) {
-					responseServlet.sendRedirect("http://127.0.0.1:5503/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
+					responseServlet.sendRedirect("http://lutu.ddnsking.com/linepay-success.html?orderId=" + orderId + "&isCamp=" + isCamp);
 				}else {
-					responseServlet.sendRedirect("http://127.0.0.1:5503/linepay-cancel.html?orderId=" + orderId + "&isCamp=" + isCamp);
+					responseServlet.sendRedirect("http://lutu.ddnsking.com/linepay-cancel.html?orderId=" + orderId + "&isCamp=" + isCamp);
 				}
 				
 				
@@ -219,17 +219,17 @@ public class ApiController {
 				Integer shopOrderId = Integer.parseInt(orderId.replace("SHOP", ""));
 				shopOrderSvc.updatePaymentStatus(shopOrderId, (byte) 7);;
 				responseServlet.sendRedirect(
-						"http://127.0.0.1:5503/linepay-success-shop.html?orderId=" + orderId + "&isCamp=" + isCamp);
+						"http://lutu.ddnsking.com/linepay-success-shop.html?orderId=" + orderId + "&isCamp=" + isCamp);
 			}
 
 		} else {
 			// 交易失敗
 			if (isCamp) {
 			responseServlet
-					.sendRedirect("http://127.0.0.1:5501/linepay-cancel.html?orderId=" + orderId + "&isCamp=" + isCamp);
+					.sendRedirect("http://lutu.ddnsking.com/linepay-cancel.html?orderId=" + orderId + "&isCamp=" + isCamp);
 			} else {
 				responseServlet
-				.sendRedirect("http://127.0.0.1:5503/linepay-cancel-shop.html?orderId=" + orderId + "&isCamp=" + isCamp);
+				.sendRedirect("http://lutu.ddnsking.com/linepay-cancel-shop.html?orderId=" + orderId + "&isCamp=" + isCamp);
 			}
 		}
 	}

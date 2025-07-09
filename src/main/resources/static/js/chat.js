@@ -6,6 +6,7 @@ class ChatWidget {
     this.stompClient = null;
     this.memId = null;
     this.ownerId = null;
+    this.hasSubscribedMessages = false; // 避免重複訂閱
     this.init();
   }
 
@@ -147,8 +148,8 @@ class ChatWidget {
 
     if (memberData) {
       const member = JSON.parse(memberData);
-      document.getElementById("memId").value = member.mem_id;
-      console.log("設置會員ID:", member.mem_id);
+      document.getElementById("memId").value = member.memId;
+      console.log("設置會員ID:", member.memId);
     } else {
       // 如果未登入，可以設置一個預設值或提示用戶登入
       document.getElementById("memId").value = "guest";
@@ -210,6 +211,103 @@ class ChatWidget {
     }
   }
 
+  // 訂閱聊天相關頻道並請求歷史資料
+  subscribeToChat() {
+    console.log("訂閱聊天相關頻道");
+
+    if (!this.stompClient || !this.stompClient.connected) {
+      console.warn("WebSocket尚未連線，無法訂閱");
+      return;
+    }
+
+    // 即時訊息 - 避免重複訂閱
+    if (!this.hasSubscribedMessages) {
+      this.stompClient.subscribe("/user/queue/messages", (msg) => {
+        console.log("收到新訊息:", msg.body);
+        const message = JSON.parse(msg.body);
+        console.log("✅ 收到訊息:", message);
+
+        // 加入排除自己發送的訊息（防止本地與推播重複）
+        if (parseInt(message.memId) === parseInt(this.memId) && 
+            message.chatMsgDirect === 0) {
+          return; // 忽略自己已顯示的訊息
+        }
+
+        const time = this.formatTime(message.chatMsgTime);
+
+        // 根據訊息方向決定顯示方式
+        if (message.chatMsgDirect === 0) {
+          // 會員發送的訊息
+          this.addMessage(message.chatMsgContent, "user", time);
+        } else {
+          // 營地主發送的訊息
+          this.addMessage(message.chatMsgContent, "other", time);
+        }
+      });
+
+      this.hasSubscribedMessages = true;
+    }
+    console.log("訂閱聊天完成即時顯示");
+
+    // 一次性歷史訊息接收
+    const historyTopic = "/user/queue/history";
+    console.log("訂閱歷史訊息頻道:", historyTopic);
+
+    this.stompClient.subscribe(historyTopic, (msg) => {
+      console.log("收到歷史訊息:", msg.body);
+      const messageList = JSON.parse(msg.body); // 是陣列
+      if (Array.isArray(messageList)) {
+        // 清空現有訊息
+        const messagesContainer = document.getElementById("chat-messages");
+        if (messagesContainer) {
+          messagesContainer.innerHTML = "";
+        }
+
+        // 顯示歷史訊息
+        messageList.forEach((message) => {
+          const time = this.formatTime(message.chatMsgTime);
+          console.log(
+            "歷史訊息:",
+            message.chatMsgContent,
+            message.chatMsgDirect
+          );
+
+          if (message.chatMsgDirect === 0) {
+            // 會員發送的訊息
+            this.addMessage(message.chatMsgContent, "user", time);
+          } else {
+            // 營地主發送的訊息
+            this.addMessage(message.chatMsgContent, "other", time);
+          }
+        });
+      } else {
+        this.log("⚠️ 歷史訊息格式錯誤");
+      }
+    });
+
+    // 已讀通知（可選）
+    this.stompClient.subscribe("/user/" + this.memId + "/queue/read", (msg) => {
+      const message = JSON.parse(msg.body);
+      this.log(`📖 [已讀通知] ${message.chatMsgContent}`);
+    });
+
+    // 發送請求歷史資料
+    const currentMemId = parseInt(this.memId);
+    const currentOwnerId = parseInt(this.ownerId);
+    console.log("請求歷史訊息數據:", {
+      memId: currentMemId,
+      ownerId: currentOwnerId,
+    });
+    this.stompClient.send(
+      "/app/chat.history",
+      {},
+      JSON.stringify({
+        memId: currentMemId,
+        ownerId: currentOwnerId,
+      })
+    );
+  }
+
   // 連接WebSocket
   connect() {
     this.memId = document.getElementById("memId").value.trim();
@@ -233,13 +331,17 @@ class ChatWidget {
       return;
     }
 
-    // 如果已經連接，不要重複連接
+    // 如果已經連接，重新載入歷史訊息與訂閱
     if (this.stompClient && this.stompClient.connected) {
+      this.log("🔄 已連線，重新載入歷史訊息與訂閱...");
+      this.subscribeToChat();
       return;
     }
 
     try {
-      const socket = new SockJS("http://localhost:8081/CJA101G02/ws-chat");
+      const socket = new SockJS(
+        `${window.api_prefix}/ws-chat?memId=${this.memId.toString()}`
+      );
       this.stompClient = Stomp.over(socket);
 
       // 啟用 STOMP 客戶端的調試模式
@@ -247,90 +349,23 @@ class ChatWidget {
       //   console.log("STOMP:", str);
       // };
 
-      console.log("嘗試連接 WebSocket...");
+      console.log(`${this.memId.toString()}嘗試連接 WebSocket...`);
 
       this.stompClient.connect(
-        {},
+        { memId: this.memId.toString() }, // ✅ 把 memId 傳給後端（供 HandshakeHandler 使用）
         () => {
           this.log(`🔗 已與伺服器建立連線`);
-
-          // 即時訊息
-          this.stompClient.subscribe("/user/queue/messages", (msg) => {
-            console.log("收到新訊息:", msg.body);
-            const message = JSON.parse(msg.body);
-            const time = this.formatTime(message.chatMsgTime);
-
-            // 根據訊息方向決定顯示方式
-            if (message.chatMsgDirect === 0) {
-              // 會員發送的訊息
-              this.addMessage(message.chatMsgContent, "user", time);
-            } else {
-              // 營地主發送的訊息
-              this.addMessage(message.chatMsgContent, "other", time);
-            }
-          });
-
-          // 一次性歷史訊息接收
-          const historyTopic = "/user/queue/history";
-          console.log("訂閱歷史訊息頻道:", historyTopic);
-
-          this.stompClient.subscribe(historyTopic, (msg) => {
-            console.log("收到歷史訊息:", msg.body);
-            const messageList = JSON.parse(msg.body); // 是陣列
-            if (Array.isArray(messageList)) {
-              // 清空現有訊息
-              const messagesContainer =
-                document.getElementById("chat-messages");
-              if (messagesContainer) {
-                messagesContainer.innerHTML = "";
-              }
-
-              // 顯示歷史訊息
-              messageList.forEach((message) => {
-                const time = this.formatTime(message.chatMsgTime);
-                if (message.chatMsgDirect === 0) {
-                  // 會員發送的訊息
-                  this.addMessage(message.chatMsgContent, "user", time);
-                } else {
-                  // 營地主發送的訊息
-                  this.addMessage(message.chatMsgContent, "other", time);
-                }
-              });
-            } else {
-              this.log("⚠️ 歷史訊息格式錯誤");
-            }
-          });
-
-          // 已讀通知（可選）
-          this.stompClient.subscribe(
-            "/user/" + this.memId + "/queue/read",
-            (msg) => {
-              const message = JSON.parse(msg.body);
-              this.log(`📖 [已讀通知] ${message.chatMsgContent}`);
-            }
-          );
-
-          // 發送請求歷史資料
-          console.log("請求歷史訊息數據:", {
-            memId: parseInt(this.memId),
-            ownerId: parseInt(this.ownerId),
-          });
-          this.stompClient.send(
-            "/app/chat.history",
-            {},
-            JSON.stringify({
-              memId: parseInt(this.memId),
-              ownerId: parseInt(this.ownerId),
-            })
-          );
+          this.subscribeToChat();
         },
         (error) => {
           // 連接錯誤處理
+          this.hasSubscribedMessages = false; // 重置訂閱標誌
           console.error("WebSocket連接錯誤:", error);
           this.addMessage("無法連接到聊天服務，請稍後再試", "system");
         }
       );
     } catch (error) {
+      this.hasSubscribedMessages = false; // 重置訂閱標誌
       console.error("WebSocket初始化錯誤:", error);
       this.addMessage("聊天服務暫時不可用", "system");
     }
@@ -351,9 +386,11 @@ class ChatWidget {
     }
 
     // 創建訊息物件
+    const currentMemId = parseInt(this.memId);
+    const currentOwnerId = parseInt(this.ownerId);
     const msg = {
-      memId: parseInt(this.memId),
-      ownerId: parseInt(this.ownerId),
+      memId: currentMemId,
+      ownerId: currentOwnerId,
       chatMsgContent: content,
       chatMsgDirect: 0, // 0表示會員發送
       chatMsgTime: Date.now(),
@@ -402,10 +439,14 @@ class ChatWidget {
       `;
     } else if (sender === "other") {
       // 營地主發送的訊息
+      // 動態獲取當前營地名稱
+      const campName = this.getCurrentCampName();
+      const customerServiceName = campName ? `${campName}客服` : '客服小露';
+      
       messageElement.innerHTML = `
         <div class="chat-user">
           <img src="images/user-1.jpg" alt="客服">
-          <span>客服小露</span>
+          <span>${customerServiceName}</span>
         </div>
         <div class="message-content">${content}</div>
         <div class="message-info">${time}</div>
@@ -429,6 +470,37 @@ class ChatWidget {
       hour: "2-digit",
       minute: "2-digit",
     });
+  }
+
+  // 獲取當前營地名稱
+  getCurrentCampName() {
+    // 方法1: 從頁面元素獲取營地名稱
+    const campsiteNameElement = document.getElementById('campsite-name');
+    if (campsiteNameElement && campsiteNameElement.textContent && campsiteNameElement.textContent !== '載入中...') {
+      return campsiteNameElement.textContent.trim();
+    }
+    
+    // 方法2: 從 campData 獲取當前營地名稱
+    if (window.campData && Array.isArray(window.campData)) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const campId = urlParams.get('id');
+      if (campId) {
+        const campIdNum = parseInt(campId, 10);
+        const camp = window.campData.find(c => c.camp_id === campIdNum);
+        if (camp && camp.campName) {
+          return camp.campName;
+        }
+      }
+    }
+    
+    // 方法3: 從頁面標題獲取（作為備用方案）
+    const title = document.title;
+    if (title && title.includes(' - 露途')) {
+      return title.replace(' - 露途', '');
+    }
+    
+    // 如果都無法獲取，返回 null
+    return null;
   }
 
   // 記錄日誌（僅在控制台顯示）

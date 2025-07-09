@@ -122,6 +122,8 @@ public class MemberAuthServiceImpl implements MemberAuthService {
 
             helper.setTo(toEmail);
             helper.setSubject(subject);
+            //需要新增這行
+            helper.setFrom("發送者的MAIL");
             helper.setText(content, true);
 
             mailSender.send(message);

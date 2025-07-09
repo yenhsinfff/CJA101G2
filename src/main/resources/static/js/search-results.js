@@ -17,6 +17,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // 初始化修改搜尋按鈕
   initModifySearchButton();
 
+  // 初始化營地收藏清單
+  initFavoriteCampIds();
+
   // 模擬頁面載入
   simulatePageLoading();
 });
@@ -65,7 +68,7 @@ async function filterCampsBySearchCriteria() {
 
     if (regionCounties) {
       filteredCamps = filteredCamps.filter((camp) =>
-        regionCounties.includes(camp.camp_city)
+        regionCounties.includes(camp.campCity)
       );
     }
   }
@@ -73,7 +76,7 @@ async function filterCampsBySearchCriteria() {
   // 根據縣市篩選
   const county = urlParams.get("county");
   if (county) {
-    filteredCamps = filteredCamps.filter((camp) => camp.camp_city == county);
+    filteredCamps = filteredCamps.filter((camp) => camp.campCity == county);
   }
 
   // 根據鄉鎮市區篩選
@@ -84,8 +87,26 @@ async function filterCampsBySearchCriteria() {
   //   );
   // }
 
-  // 根據人數篩選
+  // 檢查是否有日期和人數參數，如果有則調用API檢查可用性
+  const checkIn = urlParams.get("check-in");
+  const checkOut = urlParams.get("check-out");
   const guests = urlParams.get("guests");
+  console.log("checkIn:" + checkIn);
+  console.log("checkOut:" + checkOut);
+  console.log("guests:" + guests);
+  if (checkIn && checkOut && guests) {
+    console.log("日期篩選");
+    // 如果有完整的搜尋條件，調用API獲取可用營地
+    const availableCamps = await getAvailableCampsFromAPI(
+      checkIn,
+      checkOut,
+      guests,
+      filteredCamps
+    );
+    return availableCamps;
+  }
+
+  // 根據人數篩選（原有邏輯，當沒有日期時使用）
   if (guests) {
     const guestCount = parseInt(guests);
     console.log("篩選人數:" + guestCount);
@@ -95,10 +116,10 @@ async function filterCampsBySearchCriteria() {
 
     // 篩選出有符合人數條件房型的營地
     filteredCamps = filteredCamps.filter(async (camp) => {
-      console.log("camp_id1:" + camp.camp_id);
+      console.log("campId1:" + camp.campId);
 
       const campsiteTypes = await getCampsiteTypesByCampId(
-        camp.camp_id,
+        camp.campId,
         guestCount
       );
 
@@ -113,6 +134,86 @@ async function filterCampsBySearchCriteria() {
   }
 
   return filteredCamps;
+}
+
+// 調用API獲取可用營地
+async function getAvailableCampsFromAPI(
+  checkIn,
+  checkOut,
+  guests,
+  filteredCamps
+) {
+  try {
+    // 從篩選後的營地中提取campId列表
+    const campIds = filteredCamps.map((camp) => camp.campId);
+    console.log("準備查詢的營地ID列表:", campIds);
+
+    // 構建API請求參數
+    const requestBody = new URLSearchParams();
+    campIds.forEach((id) => {
+      requestBody.append("campIds", id);
+    });
+    requestBody.append("people", guests);
+    requestBody.append("checkIn", checkIn);
+    requestBody.append("checkOut", checkOut);
+
+    console.log("API請求參數:", requestBody.toString());
+
+    // 調用API
+    const response = await fetch(
+      `${window.api_prefix}/api/ca/available/Remaing`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: requestBody,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`API請求失敗: ${response.status}`);
+    }
+
+    const apiResult = await response.json();
+    console.log("API回應1:", apiResult);
+
+    // 更新全域變數
+    if (!window.availableRoomData) {
+      window.availableRoomData = null;
+    }
+    if (apiResult.status === "success" && apiResult.data) {
+      window.availableRoomData = {
+        timestamp: new Date().getTime(),
+        data: apiResult.data,
+        requestParams: { guests, checkIn, checkOut },
+      };
+      console.log(
+        "已更新全域變數 availableRoomData:",
+        window.availableRoomData
+      );
+      // 從API回應中提取有可用房型的營地ID
+      const availableCampIds = [
+        ...new Set(apiResult.data.map((item) => item.campId)),
+      ];
+      console.log("有可用房型的營地ID:", availableCampIds);
+
+      // 篩選出有可用房型的營地
+      const availableCamps = filteredCamps.filter((camp) =>
+        availableCampIds.includes(parseInt(camp.campId))
+      );
+
+      console.log("最終可用營地數量:", availableCamps.length);
+      return availableCamps;
+    } else {
+      console.warn("API回應格式異常或無可用資料");
+      return [];
+    }
+  } catch (error) {
+    console.error("調用可用性API失敗:", error);
+    // 如果API調用失敗，返回原始篩選結果
+    return filteredCamps;
+  }
 }
 
 // 顯示無結果狀態
@@ -205,8 +306,8 @@ function initSorting() {
 function sortCampsByPrice(camps, ascending) {
   return camps.sort((a, b) => {
     // 基於營地ID生成固定的價格，確保排序一致性
-    const priceA = generateFixedPrice(a.camp_id);
-    const priceB = generateFixedPrice(b.camp_id);
+    const priceA = generateFixedPrice(a.campId);
+    const priceB = generateFixedPrice(b.campId);
     return ascending ? priceA - priceB : priceB - priceA;
   });
 }
@@ -223,12 +324,12 @@ function generateFixedPrice(campId) {
 function sortCampsByRating(camps) {
   return camps.sort((a, b) => {
     const ratingA = calculateRating(
-      a.camp_comment_sun_score,
-      a.camp_comment_number_count
+      a.campCommentSumScore,
+      a.campCommentNumberCount
     );
     const ratingB = calculateRating(
-      b.camp_comment_sun_score,
-      b.camp_comment_number_count
+      b.campCommentSumScore,
+      b.campCommentNumberCount
     );
     return ratingB - ratingA;
   });
@@ -237,8 +338,8 @@ function sortCampsByRating(camps) {
 // 按人氣（評論數）排序（針對營地資料物件）
 function sortCampsByPopularity(camps) {
   return camps.sort((a, b) => {
-    const reviewsA = parseInt(a.camp_comment_number_count) || 0;
-    const reviewsB = parseInt(b.camp_comment_number_count) || 0;
+    const reviewsA = parseInt(a.campCommentNumberCount) || 0;
+    const reviewsB = parseInt(b.campCommentNumberCount) || 0;
     return reviewsB - reviewsA;
   });
 }
@@ -246,8 +347,8 @@ function sortCampsByPopularity(camps) {
 // 按新上架排序（針對營地資料物件）
 function sortCampsByNew(camps) {
   return camps.sort((a, b) => {
-    const dateA = new Date(a.camp_reg_date);
-    const dateB = new Date(b.camp_reg_date);
+    const dateA = new Date(a.campRegDate);
+    const dateB = new Date(b.campRegDate);
     return dateB - dateA; // 最新的在前面
   });
 }
@@ -354,25 +455,14 @@ async function renderPaginatedResults(camps) {
 
 // 顯示當前頁面的營地
 async function displayCurrentPage() {
+  await initFavoriteCampIds();
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentPageCamps = allCampCards.slice(startIndex, endIndex);
 
-  // 清空並渲染當前頁面的營地
-  const searchResults = document.getElementById("search-results");
-  if (searchResults) {
-    searchResults.innerHTML = "";
-
-    // 使用Promise.all來並行處理所有營地卡片的創建
-    const campCardPromises = currentPageCamps.map((camp) =>
-      createCampCard(camp)
-    );
-    const campCards = await Promise.all(campCardPromises);
-
-    campCards.forEach((campCard) => {
-      searchResults.appendChild(campCard);
-    });
-  }
+  // 使用優化後的渲染函數
+  await renderCampCards(currentPageCamps, "search-results");
 
   // 更新結果數量顯示
   updateSearchResultsCount(totalItems);

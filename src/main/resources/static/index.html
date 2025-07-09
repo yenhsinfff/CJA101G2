@@ -14,7 +14,9 @@
   <link rel="stylesheet" href="css/role-system.css" />
 </head>
 
+
 <body>
+  
   <div id="header-container"></div>
 
   <section class="hero">
@@ -86,29 +88,9 @@
 
   <section class="shop-preview">
     <div class="container">
-      <h2 class="section-title">露營裝備商城</h2>
-      <div class="shop-categories">
-        <a href="shop.html?type=rent" class="shop-category">
-          <div class="category-icon">
-            <i class="fas fa-exchange-alt"></i>
-          </div>
-          <h3>裝備租借</h3>
-          <p>短期露營的最佳選擇</p>
-        </a>
-        <a href="shop.html?type=buy" class="shop-category">
-          <div class="category-icon">
-            <i class="fas fa-tag"></i>
-          </div>
-          <h3>全新商品</h3>
-          <p>優質露營裝備一次購足</p>
-        </a>
-        <a href="shop.html?type=used" class="shop-category">
-          <div class="category-icon">
-            <i class="fas fa-sync-alt"></i>
-          </div>
-          <h3>二手市集</h3>
-          <p>環保經濟的實用選擇</p>
-        </a>
+      <h2 class="section-title">精選商品推薦</h2>
+      <div class="index-product-container" id="index-product-container">
+        <!-- 商品卡片由 JavaScript 動態插入 -->
       </div>
       <div class="view-more">
         <a href="shop.html" class="btn-more">前往商城</a>
@@ -206,7 +188,8 @@
     <div class="container">
       <div class="cta-content">
         <h2>準備好開始您的露營冒險了嗎？</h2>
-        <p>立即註冊，獲得新會員專屬優惠券！</p>
+        <br>
+        <!-- <p>立即註冊，獲得新會員專屬優惠券！</p> -->
         <a href="login.html" class="btn-cta">立即註冊</a>
       </div>
     </div>
@@ -225,11 +208,12 @@
     </div>
     <p>載入中，請稍候...</p>
   </div>
-
+  
   <script src="js/main.js"></script>
   <script src="js/camp-data.js"></script>
   <script src="js/header-auth.js"></script>
   <script src="js/include.js"></script>
+
 </body>
 
 </html>
