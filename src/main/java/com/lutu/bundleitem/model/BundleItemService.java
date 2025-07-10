@@ -66,6 +66,7 @@ public class BundleItemService {
 	
 	public void deleteBundleItem(Integer bundleId) {
 		if (repository.existsById(bundleId))
+			System.out.println("開始除錯");
 			repository.deleteById(bundleId);
 	}
 	

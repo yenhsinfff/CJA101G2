@@ -72,6 +72,7 @@ public class BundleItemController {
 	@PostMapping("/deleteBundleItem")
 	public ApiResponse<String> deleteBundleItem(@RequestBody Map<String, Integer> payload) {
 		Integer bundleId = payload.get("bundleId");
+		System.out.println("deleteBundleItem_ID:"+bundleId);
 		try {
 			bundleItemSvc.deleteBundleItem(bundleId);
 			return new ApiResponse<>("success", null, "刪除成功");
