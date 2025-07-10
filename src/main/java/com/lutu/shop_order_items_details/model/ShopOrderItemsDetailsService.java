@@ -129,8 +129,11 @@ public class ShopOrderItemsDetailsService {
 		ShopOrderVO order = sos.getOneShopOrder(dtoUpdate.getShopOrderId());
 
 		final int ORDER_STATUS_COMPLETED = 3; // 設定訂單完成的狀態為常數，3: 已取貨，完成訂單
+		
+		final int NO_RETURN_APPLY = 0;	//設定申請退貨狀態為常數，0: 未申請退貨
 
-		if (order.getShopOrderStatus() != ORDER_STATUS_COMPLETED) { // 訂單狀態還沒取貨無法修改
+		if (order.getShopOrderStatus() != ORDER_STATUS_COMPLETED 
+				&& order.getShopReturnApply() == NO_RETURN_APPLY) { // 訂單狀態還沒取貨或申請退貨後無法修改
 			throw new RuntimeException("訂單未完成，無法評論或修改評價");
 		}
 

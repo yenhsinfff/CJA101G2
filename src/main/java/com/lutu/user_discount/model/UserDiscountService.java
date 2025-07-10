@@ -143,8 +143,9 @@ public class UserDiscountService {
 
 		for (UserDiscountVO vo : voList) {
 			LocalDateTime endDate = vo.getDiscountCodeVO().getEndDate();
+			LocalDateTime startDate = vo.getDiscountCodeVO().getStartDate();
 			// 未使用過，且在使用效期內
-			if (vo.getUsedAt() == null && !endDate.isBefore(now)) {
+			if (vo.getUsedAt() == null && endDate.isAfter(now) && startDate.isBefore(now)) {
 				UserDiscountDTO dto = new UserDiscountDTO();
 				dto.setDiscountCode(vo.getDiscountCodeVO().getDiscountCode());
 				dto.setDiscountCodeId(vo.getDiscountCodeVO().getDiscountCodeId());

@@ -25,7 +25,6 @@ import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsDTO_insert_r
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsRepository;
 import com.lutu.shop_order_items_details.model.ShopOrderItemsDetailsVO;
 
-
 @Service
 public class ShopOrderService {
 
@@ -56,23 +55,23 @@ public class ShopOrderService {
 
 		// 驗證必要欄位
 		if (!orderJson.has("memId")) {
-	        System.out.println("orderJson 鍵名檢查: " + orderJson.keySet());
-	        throw new IllegalArgumentException("缺少會員編號, 可用鍵: " + orderJson.keySet());
-	    }
-	    try {
-	        Object memIdObj = orderJson.get("memId");
-	        if (memIdObj instanceof Integer) {
-	            dto.setMemId((Integer) memIdObj);
-	        } else if (memIdObj instanceof String) {
-	            dto.setMemId(Integer.parseInt((String) memIdObj));
-	        } else {
-	            throw new IllegalArgumentException("會員編號必須為數值: " + memIdObj);
-	        }
-	        System.out.println("接收到的 memId: " + dto.getMemId());
-	    } catch (NumberFormatException e) {
-	        System.out.println("memId 格式錯誤, 原始值: " + orderJson.get("memId"));
-	        throw new IllegalArgumentException("會員編號格式錯誤: " + orderJson.get("memId"));
-	    }
+			System.out.println("orderJson 鍵名檢查: " + orderJson.keySet());
+			throw new IllegalArgumentException("缺少會員編號, 可用鍵: " + orderJson.keySet());
+		}
+		try {
+			Object memIdObj = orderJson.get("memId");
+			if (memIdObj instanceof Integer) {
+				dto.setMemId((Integer) memIdObj);
+			} else if (memIdObj instanceof String) {
+				dto.setMemId(Integer.parseInt((String) memIdObj));
+			} else {
+				throw new IllegalArgumentException("會員編號必須為數值: " + memIdObj);
+			}
+			System.out.println("接收到的 memId: " + dto.getMemId());
+		} catch (NumberFormatException e) {
+			System.out.println("memId 格式錯誤, 原始值: " + orderJson.get("memId"));
+			throw new IllegalArgumentException("會員編號格式錯誤: " + orderJson.get("memId"));
+		}
 
 		if (!orderJson.has("detailsDto")) {
 			throw new IllegalArgumentException("缺少訂單明細");
@@ -140,7 +139,27 @@ public class ShopOrderService {
 		MemberVO mvo = mr.findById(dto.getMemId()).orElseThrow(() -> new RuntimeException("查無該筆會員編號"));
 		sovo.setMemId(mvo);
 
-		sovo.setShopOrderShipment(dto.getShopOrderShipment());
+		// 如果訂單付款方式是宅配貨到付款(2)，取貨方式只能是宅配取貨(1)；如果是超商取貨付款(3)，取貨方式只能選擇超商取貨(2)
+		if (dto.getShopOrderPayment() == 2) {
+			if (dto.getShopOrderShipment() == 1) {
+				sovo.setShopOrderShipment(dto.getShopOrderShipment());
+			} else {
+				throw new RuntimeException("宅配付款只能宅配取貨");
+			}
+
+		} else if (dto.getShopOrderPayment() == 3) {
+			if (dto.getShopOrderShipment() == 2) {
+				sovo.setShopOrderShipment(dto.getShopOrderShipment());
+			} else {
+				throw new RuntimeException("超商付款只能超商取貨");
+			}
+
+		} else if (dto.getShopOrderPayment() == 1) { // linepay
+		    sovo.setShopOrderShipment(dto.getShopOrderShipment()); // 允許任選
+		} else {
+			 throw new RuntimeException("不支援的付款方式");
+		}
+
 		sovo.setShopOrderShipFee(dto.getShopOrderShipFee());
 
 		// 於明細建立完成後取得折扣前總金額，先預設為BigDecimal 0，方便後續計算
@@ -228,6 +247,12 @@ public class ShopOrderService {
 			DiscountCodeVO dcVO = dcr.findById(dto.getDiscountCodeId())
 					.orElseThrow(() -> new RuntimeException("查無該種折扣碼"));
 			sovo.setDiscountCodeId(dcVO);
+			
+			// 取得折價券最低使用金額比較折價前金額，確認是否有資格使用
+			BigDecimal miniAmount = dcVO.getMinOrderAmount();
+			if (beforeDiscountAmount.compareTo(miniAmount) < 0) { //折價前金額低於折價券最低使用金額
+				throw new RuntimeException("未達折價券最低使用金額，無法套用折價券");
+			}
 
 			// 取得discountCodeType
 			if (sovo.getDiscountCodeId() != null) {
@@ -254,6 +279,7 @@ public class ShopOrderService {
 
 					// 計算折扣後金額，先以BigDecimal計算
 					BigDecimal totalAmount = beforeDiscountAmount.subtract(discountAmount);
+					
 
 					// 加入運費計算實付金額
 					afterDiscountAmount = totalAmount.add(shipFee);
@@ -439,7 +465,7 @@ public class ShopOrderService {
 
 		// 只允許會員在未出貨前申請取消訂單
 		if (dtoUpdate.getShopOrderStatus() != null) {
-			if ((sovo.getShopOrderStatus() == 0 || sovo.getShopOrderStatus() == 1)
+			if ((sovo.getShopOrderStatus() == 0 || sovo.getShopOrderStatus() == 1 || sovo.getShopOrderStatus() == 7)
 					&& dtoUpdate.getShopOrderStatus() == 5) {
 				sovo.setShopOrderStatus((byte) 5);
 			} else {
@@ -456,13 +482,13 @@ public class ShopOrderService {
 		ShopOrderVO sovo2 = getOneShopOrder(sovo.getShopOrderId());
 		return sovo2;
 	}
-	
+
 	@Transactional
 	// 僅提供結帳後確認付款後修改訂單狀態
-	public ShopOrderVO updatePaymentStatus(Integer shopOrderId,Byte status) {
-		
+	public ShopOrderVO updatePaymentStatus(Integer shopOrderId, Byte status) {
+
 		ShopOrderVO sovo = sor.findById(shopOrderId).orElseThrow(() -> new RuntimeException("查無此筆訂單資料"));
-		
+
 		try {
 			sovo.setShopOrderStatus(status);
 			sor.save(sovo);
@@ -473,7 +499,6 @@ public class ShopOrderService {
 			return sovo;
 		}
 
-		
 	}
 
 	public ShopOrderVO getOneShopOrder(Integer shopOrderId) {
