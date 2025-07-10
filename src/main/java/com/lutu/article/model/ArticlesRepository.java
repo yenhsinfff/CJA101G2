@@ -96,4 +96,13 @@ public interface ArticlesRepository extends JpaRepository<ArticlesVO, Integer> {
      * @return Optional<ArticlesVO>
      */
     Optional<ArticlesVO> findTopByOrderByAcViewCountDesc();
+
+    /**
+     * 綜合搜尋：同時搜尋文章標題、內文和作者姓名
+     * 
+     * @param keyword 搜尋關鍵字
+     * @return 符合任一條件的所有文章
+     */
+    @Query("SELECT a FROM ArticlesVO a WHERE a.acTitle LIKE %:keyword% OR a.acContext LIKE %:keyword% OR a.memberVO.memName LIKE %:keyword%")
+    List<ArticlesVO> findByTitleOrContentOrMemberName(@Param("keyword") String keyword);
 }
