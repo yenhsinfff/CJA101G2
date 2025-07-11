@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 @RestController
-//@CrossOrigin(origins = "*")
+// @CrossOrigin(origins = "*")
 public class ArticlesApiController {
     @Autowired
     ArticlesService articlesService;
@@ -291,6 +291,16 @@ public class ArticlesApiController {
             @RequestParam("keyword") String keyword,
             @RequestParam(value = "acTypeId", required = false) Integer acTypeId) {
         List<ArticlesVO> articles = articlesService.findByAcTitleOrContextAndOptionalType(keyword, acTypeId);
+        List<ArticlesDTO> articlesDTOs = articles.stream()
+                .map(ArticlesDTO::new)
+                .collect(Collectors.toList());
+        return new ApiResponse<>("success", articlesDTOs, "查詢成功");
+    }
+
+    // 綜合搜尋：同時搜尋文章標題、內文和作者姓名
+    @GetMapping("/api/articles/search/comprehensive")
+    public ApiResponse<List<ArticlesDTO>> searchArticlesComprehensive(@RequestParam("keyword") String keyword) {
+        List<ArticlesVO> articles = articlesService.findByTitleOrContentOrMemberName(keyword);
         List<ArticlesDTO> articlesDTOs = articles.stream()
                 .map(ArticlesDTO::new)
                 .collect(Collectors.toList());

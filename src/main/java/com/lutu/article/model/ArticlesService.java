@@ -279,6 +279,16 @@ public class ArticlesService {
     }
 
     /**
+     * 綜合搜尋：同時搜尋文章標題、內文和作者姓名
+     * 
+     * @param keyword 搜尋關鍵字
+     * @return 符合任一條件的所有文章
+     */
+    public List<ArticlesVO> findByTitleOrContentOrMemberName(String keyword) {
+        return repository.findByTitleOrContentOrMemberName(keyword);
+    }
+
+    /**
      * 查詢瀏覽次數最多的文章
      * 
      * @return ArticlesVO 或 null
